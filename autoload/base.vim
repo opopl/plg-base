@@ -1,0 +1,4 @@
+
+function! base#loadvimfunc (...)
+	
+endfunction
