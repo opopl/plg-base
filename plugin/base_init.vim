@@ -13,6 +13,10 @@ command! -nargs=1 -complete=custom,base#complete#vimfuns RFUN
 
 LCOM RTAGS
 LCOM STAGS
+
 LCOM VCOM
+LCOM VFUN
+
+LCOM LMK
 
 LCOM VarUpdate
