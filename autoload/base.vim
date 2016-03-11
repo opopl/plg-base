@@ -32,28 +32,11 @@ fun! base#loadvimfunc(fun)
   
 endfun
 
-"fun! base#viewvimfunc(fun)
- 
-  "let fun=a:fun
-
-  "call base#varcheckexist("dirs")
-
-  "let fundir=g:dirs.funs
-
-  "let fun=substitute(fun,'\s*$','','g')
-  "let fun=substitute(fun,'^\s*','','g')
-
-  "let funfile=fundir . '/' . fun . '.vim'
-
-  "exe 'edit ' . funfile
-  
-"endfun
-
 """base_viewvimfunc
 fun! base#viewvimfunc(...)
   let fun=a:1
 
-  let funfile = base#catpath('vimfun',fun . '.vim')
+  let funfile = base#catpath('funs',fun . '.vim')
 
   if ! base#vimfuncexists(fun)
     call base#vimfuncnew(fun)
@@ -64,6 +47,21 @@ fun! base#viewvimfunc(...)
   let g:vimfun=fun
 
   call base#statusline(g:vimfun)
+endfun
+
+"""base_viewvimcom
+com! base#viewvimcom(...)
+  let com=a:1
+
+  let comfile = base#catpath('coms',com . '.vim')
+
+  "if ! base#vimcomexists(fun)
+    "call base#vimcomnew(fun)
+  "endif
+
+  call base#fileopen(comfile)
+
+  call base#statusline(comfile)
 endfun
 
 """base_vimfuncexists
@@ -192,9 +190,8 @@ fun! base#runvimfunc(fun,...)
   
 endfun
 
-
 """base_loadvimcommand
-fun! base#loadvimcommand(com)
+fun! base#loadvimcom(com)
 
   let com=a:com
 
@@ -382,8 +379,8 @@ endf
 """base_catpath
 fun! base#catpath(key,file,...)
  
- if !exists("g:paths")
-    call base#setpaths()
+ if !exists("s:paths")
+    call base#initpaths()
  endif
 
  if a:0 ==1 
@@ -392,8 +389,8 @@ fun! base#catpath(key,file,...)
 
  let sep = '/'
 
- if has_key(g:paths,a:key)
-    let fpath=g:paths[a:key] . sep . a:file
+ if has_key(s:paths,a:key)
+    let fpath=s:paths[a:key] . sep . a:file
  elseif a:key == '~'
     let fpath='~' . sep . a:file
  else
@@ -405,21 +402,40 @@ fun! base#catpath(key,file,...)
 endf
 
 """base_setpaths
-fun! base#setpaths()
+fun! base#initpaths()
  
-    let g:mrc     = $MYVIMRC
-    let g:vrt     = $VIMRUNTIME
-    let g:confdir = $confdir
-    let g:hm      = $hm
-
 """define_paths
-    let g:paths={}
-"    let g:paths={
+    let s:paths={}
+
+	let confdir   = base#envvar('CONFDIR')
+	let vrt       = base#envvar('VIMRUNTIME')
+	let hm        = base#envvar('hm')
+	let mrc       = base#envvar('MYVIMRC')
+	let projsdir  = base#envvar('PROJSDIR')
+
+	call base#pathset({ 
+			\ 'conf' : confdir ,
+			\ 'vrt'  : vrt,
+			\	})
+
+	let mkvimrc = base#file#catfile([ base#path('conf'), 'mk', 'vimrc' ])
+	let mkbashrc = base#file#catfile([ base#path('conf'), 'mk', 'bashrc' ])
+
+	call base#pathset({
+		\	'mkvimrc' : mkvimrc,
+		\	'mkbashrc' : mkbashrc,
+		\	'coms' : base#file#catfile([ mkvimrc, '_coms_' ]) ,
+		\	'funs' : base#file#catfile([ mkvimrc, '_fun_' ]) ,
+		\	'projs' : projsdir,
+		\	'perlmod' : base#file#catfile([ hm, base#qw("repos git perlmod") ]),
+		\	'perlscripts' : base#file#catfile([ hm, base#qw("scripts perl") ]),
+		\	'scripts' : base#file#catfile([ hm, base#qw("scripts") ]),
+		\	})
+	
+"    let s:paths={
 "        \ 'aptmirror'  	  :         g:hm . '/doc/mirrors/apt',
 "        \ 'autoload' :     g:vrt . '/autoload/',
 "        \ 'cit' :         $hm . '/doc/cit',
-"        \ 'coms' :         $hm . '/doc/coms',
-"        \ 'conf' :         g:confdir,
 "        \ 'cvim'   :       g:confdir . '/mk/vimrc/',
 "        \ 'dict'   :       g:confdir . '/mk/vimrc/dict/',
 "        \ 'docperltex'    :         '/doc/perl/tex',
@@ -461,25 +477,13 @@ fun! base#setpaths()
 "        \ 'vrt'  :         g:vrt,
 "        \}
 
-    let g:paths.pdfperldoc = g:paths['pdfout'] . '/perldoc'
-
-    for k in keys(g:paths)
-       let g:paths[k]=substitute(g:paths[k],'\/\s*$','','g')
+    for k in keys(s:paths)
+       let s:paths[k]=substitute(s:paths[k],'\/\s*$','','g')
     endfor
 
-	call base#varcheckexist('pluginroot')
+    let pathlist= sort(keys(s:paths))
 
-	if exists("g:pluginroot")
-	  let g:paths['plugins'] = g:paths['vim'] . '/' . g:pluginroot
-	endif
-
-	if exists("g:dirs")
-		for [key,dir] in items(g:dirs)
-			let g:paths[key]=g:dirs[key]
-		endfor
-	endif
-
-    let g:paths_list=sort(keys(g:paths))
+	call base#var('pathlist',pathlist)
 
 endf
  
@@ -1170,7 +1174,7 @@ function! base#varupdate(ref)
 
 """varupdate_paths
      elseif base#inlist(varname, [ 'paths', 'paths_list' ])
-        RFUN F_SetPaths
+        call base#initpaths() 
 
      elseif varname == 'modelines'
         call base#varreset(varname,base#readdictDat(varname))
@@ -1199,7 +1203,7 @@ function! base#varupdate(ref)
 """pdf_perldoc
      elseif varname == 'pdf_perldoc'
        let g:{varname}=base#find({
-                \   'dir'           : g:paths['pdfout'] . '/perldoc',
+                \   'dir'           : s:paths['pdfout'] . '/perldoc',
                 \   'ext'           : 'pdf',
                 \   'fnamemodify'   : ':p:t:r',
                 \   })
@@ -1283,7 +1287,7 @@ function! base#varupdate(ref)
 
     elseif varname == 'PAP_PdfGen'
       let g:{varname}=base#find({ 
-            \   'dir' : g:paths['p'] . '/out',
+            \   'dir' : s:paths['p'] . '/out',
             \   'ext' : 'pdf',
             \   'relpath' : 1,
             \   'fnamemodify' : ':p:r',
@@ -1325,7 +1329,7 @@ function! base#varupdate(ref)
      elseif varname == 'DC_PrjTexOutDir'
        "let g:{varname}=$hm . '/texbuilds/projs/'
        call base#varcheckexist('paths')
-       let g:{varname}=g:paths['projs']
+       let g:{varname}=s:paths['projs']
 
      elseif varname == 'DC_PrjTexMode'
        let g:{varname}='nonstopmode'
@@ -1467,13 +1471,15 @@ function! base#varupdate(ref)
         let g:{varname}=sort(keys(g:APACHE_Files))
 
      elseif varname == 'vim_funcs_user'
-        let g:vim_funcs_user=base#fnamemodifysplitglob('vimfun','*.vim',':t:r')
+		call base#var(varname,
+			\	base#fnamemodifysplitglob('funs','*.vim',':t:r')
+			\	)
 
-     elseif varname == 'VimCommands'
-        let g:VimCommands=base#fnamemodifysplitglob('vimcom','*.vim',':t:r')
+     elseif varname == 'vim_coms'
+        let g:vim_coms=base#fnamemodifysplitglob('vimcom','*.vim',':t:r')
 
      elseif varname == 'DC_ProjsDir'
-        let g:DC_ProjsDir=g:paths['projs']
+        let g:DC_ProjsDir=s:paths['projs']
 
      elseif varname == 'DC_ProjsFile'
         let g:DC_ProjsFile=base#catpath('projs','PROJS.i.dat')
@@ -1526,9 +1532,9 @@ function! base#varupdate(ref)
             call base#varreset(varname,{})
 
 """_pdf_docs
-            if exists("g:paths.pdfdocs")
+            if exists("s:paths.pdfdocs")
                 
-                let dir=g:paths['pdfdocs']
+                let dir=s:paths['pdfdocs']
                 let docs={}
 
                 if len(dir) 
@@ -1584,8 +1590,8 @@ function! base#varupdate(ref)
         call base#varcheckexist([ 'paths', 'pathsep' ])
 
         let g:datfiles = base#readdatpaths({ 
-            \ 'rootdir'   : g:paths['mkvimrc'],
-            \ 'file'      : g:paths['mkvimrc'] . g:pathsep . 'datfiles.i.dat',
+            \ 'rootdir'   : s:paths['mkvimrc'],
+            \ 'file'      : s:paths['mkvimrc'] . s:pathsep . 'datfiles.i.dat',
             \ 'ext'       : '.i.dat',
             \ })
 
@@ -1829,7 +1835,7 @@ function! base#varupdate(ref)
 """TEX
      elseif varname == 'TEX_PlainTexMacros'
        let g:{varname}=sort(base#find({
-        \ 'dir' : g:paths['tex'] . '/texmf-dist/tex/plain',
+        \ 'dir' : s:paths['tex'] . '/texmf-dist/tex/plain',
         \ 'ext' : 'tex',
         \ 'relpath' : 1,
         \}))
@@ -1855,7 +1861,7 @@ function! base#varupdate(ref)
 
      elseif varname == 'TEX_PlainTexExamples'
        let g:{varname}=sort(base#find({
-        \ 'dir' : g:paths['tex'] . '/texmf-dist/doc/plain',
+        \ 'dir' : s:paths['tex'] . '/texmf-dist/doc/plain',
         \ 'ext' : 'tex',
         \ 'relpath' : 1,
         \}))
@@ -1992,7 +1998,7 @@ function! base#varupdate(ref)
         
            let dirkey=substitute(dirkey,'_\(\w\+\)_','\1','g')
         
-           let dir=get(g:paths,dirkey)
+           let dir=get(s:paths,dirkey)
         
            if isdirectory(dir)
             let filepath=dir . '/' . fname
@@ -2033,15 +2039,15 @@ function! base#varupdate(ref)
          let g:CTAGS_tagdirs={}
         
          let g:CTAGS_tagdirs={
-                \ '_gops_B_ff_'   : g:paths['gops'] . '/B',
-                \ '_mkvimrc_'     : g:paths['mkvimrc'],
-                \ '_lasu_'        : g:paths['lasu'],
-                \ '_proj_'        : g:paths['projs'],
-                \ 'vh_perldoc'    : g:paths['plugins'] . '/perldoc/doc',
+                \ '_gops_B_ff_'   : s:paths['gops'] . '/B',
+                \ '_mkvimrc_'     : s:paths['mkvimrc'],
+                \ '_lasu_'        : s:paths['lasu'],
+                \ '_proj_'        : s:paths['projs'],
+                \ 'vh_perldoc'    : s:paths['plugins'] . '/perldoc/doc',
                 \}
         
          for id in base#qw(" _paptex_  repdoc_bib psh_pl ")
-            let g:CTAGS_tagdirs[id]=g:paths['p']
+            let g:CTAGS_tagdirs[id]=s:paths['p']
          endfor
 
      
@@ -2073,7 +2079,7 @@ function! base#varupdate(ref)
 
     elseif varname == 'allplugins'
         let g:{varname}=base#find( { 
-            \   'dir'       : g:paths['plugins'], 
+            \   'dir'       : s:paths['plugins'], 
             \   'type'      : 'd'   ,
             \   'maxdepth'  : 1     ,
             \   'mindepth'  : 1     ,
@@ -2427,7 +2433,7 @@ fun! base#datupdate(...)
  call writefile(lines,datfile)
 
 endfun
-""" end base#datupdate
+"" end base#datupdate
  
 fun! base#readdictdat(ref)
  
@@ -2473,21 +2479,21 @@ fun! base#find(ref)
         \   'startpattern'   : '',
         \   'sort'      : 1,
         \   'maxdepth'  : '',
-        \   'mindepth'  : '',
+        \   'mindepth'     : '',
         \   'fnamemodify'  : '',
-        \   'map'  : '',
-        \   'fileroot'  : 0,
-        \   'relpath'  : 0,
+        \   'map'          : '',
+        \   'fileroot'     : 0,
+        \   'relpath'      : 0,
         \   }
   
  call extend(opts,a:ref)
 
  if len(opts.path)
-   let opts.dir=base#catpath(opts.path,'')
+   	let opts.dir=base#catpath(opts.path,'')
  endif
 
  if opts.fileroot
-   let opts.fnamemodify=':p:t:r'
+   	let opts.fnamemodify=':p:t:r'
  endif
 
  if ! isdirectory( fnamemodify(opts.dir,':p') )
@@ -2505,48 +2511,44 @@ fun! base#find(ref)
 
  else
     let cmds=[ opts.dir ]
-
  endif
 
  let knowntypes=[ 'd' , 'f' ]
- if strlen(opts.type) && F_InList( opts.type, knowntypes )
-   call map(cmds,"v:val . ' -type ' . opts.type"  )
+ if strlen(opts.type) && base#inlist( opts.type, knowntypes )
+	call map(cmds,"v:val . ' -type ' . opts.type"  )
  endif
 
  if strlen(opts.maxdepth)
-   call map(cmds,"v:val . ' -maxdepth ' .  opts.maxdepth ")
+	call map(cmds,"v:val . ' -maxdepth ' .  opts.maxdepth ")
  endif
 
  if strlen(opts.mindepth)
-   call map(cmds,"v:val . ' -mindepth ' .  opts.mindepth ")
+	call map(cmds,"v:val . ' -mindepth ' .  opts.mindepth ")
  endif
-
  
  let foundfiles=[]
 
  for cmd in cmds
-   call extend(foundfiles,base#splitsystem('find ' . cmd))
+   	call extend(foundfiles,base#splitsystem('find ' . cmd))
  endfor
 
  if strlen(opts.fnamemodify)
-   call map(foundfiles,"fnamemodify(v:val,'" . opts.fnamemodify . "')" )
+	call map(foundfiles,"fnamemodify(v:val,'" . opts.fnamemodify . "')" )
  endif
 
  if opts.sort
-   let foundfiles=sort(foundfiles)
+	let foundfiles=sort(foundfiles)
  endif
 
  if opts.relpath
-   call map(foundfiles,"substitute(v:val,'^' . opts.dir . '[/]*','','g') ")
+	call map(foundfiles,"substitute(v:val,'^' . opts.dir . '[/]*','','g') ")
  endif
-
 
  echo opts.map
 
  if opts.map
-   call map(foundfiles,"'" . opts.map . "'")
+	call map(foundfiles,"'" . opts.map . "'")
  endif
-
 
  call filter(foundfiles,"v:val != '' ")
 
@@ -2594,7 +2596,7 @@ function! base#readdatpaths(ref)
                 let rootdir=remove(vars,0)
     
                 let rootdir=substitute(rootdir,'_\(\w\+\)_','\1','g')
-                let rootdir=g:paths[rootdir]
+                let rootdir=s:paths[rootdir]
             endif
 
             if len(vars)
@@ -2607,7 +2609,7 @@ function! base#readdatpaths(ref)
             let datfile=rootdir . '/' . subdirs . dat . ref.ext
 
 			if has('win32')
-            	let datfile=substitute(datfile,'[\/]\+',g:pathsep,'g')
+            	let datfile=substitute(datfile,'[\/]\+',s:pathsep,'g')
 			endif
 
             let res[dat]=datfile
@@ -2679,33 +2681,32 @@ fun! base#getfileinfo(...)
  let g:ext = fnamemodify(g:path,':e')
 
  let g:fileinfo={
-	\	'path' : g:path,
-	\	'ext' : g:ext,
-	\	'filename' : g:filename,
-	\	'dirname' : g:dirname,
-	\	'filename_root' : g:filename_root,
+	\	'path'          : g:path          ,
+	\	'ext'           : g:ext           ,
+	\	'filename'      : g:filename      ,
+	\	'dirname'       : g:dirname       ,
+	\	'filename_root' : g:filename_root ,
 	\	}
 
 endfun
 
-
 " pass command to be executed as String
-""" base#sys(cmd)
+"" base#sys(cmd)
 
 " pass commands to be executed as List
-""" base#sys([ cmd1, cmd2 ])
+"" base#sys([ cmd1, cmd2 ])
 
 " specify a custom error message 
-""" base#sys(ref, error_message)
+"" base#sys(ref, error_message)
 
 fun! base#sys(...)
 
  let cmds=[]
 
  let opts={
-			\	'custom_error_message': 0,
-			\	'show_output': 0,
- 			\	}
+	\	'custom_error_message': 0 ,
+	\	'show_output': 0          ,
+	\	}
 
  if a:0 
    if base#type(a:1) == 'String'
@@ -2762,11 +2763,25 @@ fun! base#sys(...)
 
 endfun
 
+function! base#pathset (ref)
+
+	for [ pathid, path ] in items(a:ref) 
+		let e = { pathid : path }
+		if ! exists("s:paths")
+			let s:paths=e
+		else
+			call extend(s:paths,e)
+		endif
+	endfor
+
+endfun
+
 """base_path
 function! base#path (pathid)
+	let prefix=''
 
-	if exists("g:paths[a:pathid]")
-		let path = g:paths[a:pathid]
+	if exists("s:paths[a:pathid]")
+		let path = s:paths[a:pathid]
 	else
 		let path = ''
 
@@ -2816,15 +2831,15 @@ function! base#info (...)
  let indentlev = 2
  let indent    = repeat(' ',indentlev)
 
- call base#varcheckexist('F_INFO_topics')
+ call base#varcheckexist('info_topics')
 
  if topic == 'all'
-   for topic in g:F_INFO_topics
+   for topic in base#var('info_topics') 
         call base#info(topic)
    endfor
  else
 
-"""file
+"""info_file
    if topic == 'file'
        call base#echo({ 'text' : "Current file: " } )
        echo indent . expand('%:p')
@@ -2841,22 +2856,22 @@ function! base#info (...)
        call base#echovar({ 'var' : 'g:path', 'indent' : indentlev })
        call base#echovar({ 'var' : 'g:ext' , 'indent' : indentlev })
 
-"""plugins
+"""info_plugins
    elseif topic == 'plugins'
 
-"""dirs
+"""info_dirs
    elseif topic == 'dirs'
 
        call base#echo({ 'text'   : "Directory-related variables: " } )
        call base#echovar({ 'var' : 'g:dirs', 'indent' : indentlev })
 
-"""paths
+"""info_paths
    elseif topic == 'paths'
 
        call base#echo({ 'text'   : "Paths-related variables: " } )
-       call base#echovar({ 'var' : 'g:paths', 'indent' : indentlev })
+       call base#echovar({ 'var' : 's:paths', 'indent' : indentlev })
 
-"""encodings
+"""info_encodings
    elseif topic == 'encodings'
      call base#echo({ 'text' : "ENCODINGS ", 'hl' : 'Title' } )
 
@@ -2950,18 +2965,18 @@ function! base#info (...)
            call base#echovar({ 'var' : 'g:PMOD_ModuleDir', 'indent' : indentlev })
        endif
 
-"""make
+"""info_make
    elseif topic == 'make'
        call base#echo({ 'text' : "MAKE: " } )
        call base#echovar({ 'var' : '&makeprg', 'indent' : indentlev })
        call base#echovar({ 'var' : 'g:F_MakePrg', 'indent' : indentlev })
        call base#echovar({ 'var' : 'g:F_ErrorFormat', 'indent' : indentlev })
 
-"""opts
+"""info_opts
    elseif topic == 'opts'
        call base#echo({ 'text' : "OPTIONS: " } )
 	   call base#varcheckexist('opts')
-	   echo g:opts
+	   echo base#var('opts')
 
    endif
  endif
@@ -3060,6 +3075,19 @@ function! base#plgcd ()
 	exe 'cd ' . dir
 endf	
 
+function! base#envvar (varname)
+
+	let var  = '$' . a:varname
+	let val  = ''
+
+	if exists(var)
+		exe 'let val = ' . var
+	endif
+
+	return val
+
+endf	
+
 function! base#var (...)
 	if a:0 == 1
 		let var = a:1
@@ -3069,6 +3097,11 @@ function! base#var (...)
 		let val = a:2
 		return base#varset(var,val)
 	endif
+endfunction
+
+function! base#varecho (varname)
+	echo base#var(a:varname)
+
 endfunction
 
 function! base#varget (varname)
@@ -3125,7 +3158,7 @@ endfunction
 function! base#datafile (id)
 	let datadir = base#datadir()
 	let file = a:id . ".i.dat"
-	let file = ap#file#catfile([ datadir, file ])
+	let file = base#file#catfile([ datadir, file ])
 	return file
 endfunction
 
@@ -3136,7 +3169,7 @@ endf
 function! base#init (...)
 	
 	let datvars=''
-	let datvars.='opts info_topics'
+	let datvars.=' opts info_topics '
 
 	let e={
 		\	"varsfromdat" : base#qw(datvars),
@@ -3152,6 +3185,49 @@ function! base#init (...)
 		call base#varsetfromdat(v)
 	endfor
 
+	call base#initpaths()
+
+	call base#var('vim_funcs_user',
+		\	base#fnamemodifysplitglob('funs','*.vim',':t:r'))
+
+	call base#var('vim_coms',
+		\	base#fnamemodifysplitglob('coms','*.vim',':t:r'))
+
+	let varlist=''
+	let varlist.= " vim_funcs_user vim_coms "
+
+	call base#var('varlist',base#qw(varlist))
+
 endfunction
+
+
+function! base#viewdat (...)
+			
+	LFUN OMNI_Select_Completion
+
+  if a:0
+    let dat=a:1
+  else
+    let dat=base#getfromchoosedialog({ 
+        \ 'list'        : sort(keys(g:datfiles)),
+        \ 'startopt'    : 'perl_local_modules_to_install',
+        \ 'header'      : "Available DAT files are: ",
+        \ 'numcols'     : 1,
+        \ 'bottom'      : "Choose DAT file by number: ",
+        \ })
+  endif
+
+  if has_key(g:datfiles,dat)
+    let datfile=g:datfiles[dat]
+  else
+    call base#subwarn("Given dat file does not exist in g:datfiles dictionary")
+  endif
+
+  if dat == '_vimrc_console_funcs_to_load_'
+    call OMNI_Select_Completion('vimfuncs')
+  endif
+
+  call base#fileopen(datfile)
+endf
  
  

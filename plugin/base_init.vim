@@ -7,6 +7,9 @@ call base#var('datadir',ap#file#catfile([ dir, 'data' ]))
 
 call base#init()
 
+command! -nargs=* -complete=custom,base#complete#CD 
+	\	CD call base#CD(<f-args>) 
+
 "command! -nargs=1 -complete=custom,base#complete#vimfuns LFUN 
   "\	call base#loadvimfunc(<f-args>)
 

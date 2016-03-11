@@ -1,21 +1,32 @@
 
-"""base_complete_vimcommands
-function! base#complete#vimcommands (...)
-  
-  return base#complete#custom([ 'VimCommands' ])
- 
-endfun
-
 """base_complete_vimfuns
 function! base#complete#vimfuns (...)
   
-  return base#complete#custom([ 'vim_funcs_user' ])
+  return base#complete#vars([ 'vim_funcs_user' ])
  
 endfun
+
+function! base#complete#vimcoms (...)
+  
+  return base#complete#vars([ 'vim_coms' ])
+ 
+endfun
+
+function! base#complete#CD (...)
+
+  return base#complete#vars([ 'pathlist' ])
+	
+endfunction
 
 function! base#complete#info (...)
 
   return base#complete#vars([ 'info_topics' ])
+	
+endfunction
+
+function! base#complete#varlist (...)
+
+  return base#complete#vars([ 'varlist' ])
 	
 endfunction
 
