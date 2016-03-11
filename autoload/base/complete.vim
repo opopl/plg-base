@@ -1,21 +1,26 @@
 
+"""base_complete_vimcommands
 function! base#complete#vimcommands (...)
   
   return base#complete#custom([ 'VimCommands' ])
  
 endfun
 
+"""base_complete_vimfuns
 function! base#complete#vimfuns (...)
   
   return base#complete#custom([ 'vim_funcs_user' ])
  
 endfun
- 
 
+function! base#complete#info (...)
+
+  return base#complete#custom([ 'F_INFO_topics' ])
+	
+endfunction
+
+"""base_complete_vimfuns
 function! base#complete#custom (...)
-
- LFUN F_uniq
- LFUN F_VarCheckExist
 
  let comps=[]
 
@@ -32,12 +37,12 @@ function! base#complete#custom (...)
   for varname in vars
     let varname=substitute(varname, '^\(g:\)*' , 'g:' , 'g' )
   
-    call F_VarCheckExist(varname)
+    call base#varcheckexist(varname)
     call extend(comps,{varname})
 
   endfor
 
- let comps=F_uniq(sort(comps))
+ let comps=base#uniq(sort(comps))
 
  return join(comps,"\n")
  

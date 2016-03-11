@@ -1,0 +1,6 @@
+UsePerl 0 
+warn 1
+debug 1
+FileOpen_action tabnew
+use_F_OnLoad_perl 1
+use_F_OnLoad_vim 1
