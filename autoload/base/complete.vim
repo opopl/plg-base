@@ -15,7 +15,7 @@ endfun
 
 function! base#complete#info (...)
 
-  return base#complete#custom([ 'F_INFO_topics' ])
+  return base#complete#vars([ 'info_topics' ])
 	
 endfunction
 
@@ -40,6 +40,30 @@ function! base#complete#custom (...)
     call base#varcheckexist(varname)
     call extend(comps,{varname})
 
+  endfor
+
+ let comps=base#uniq(sort(comps))
+
+ return join(comps,"\n")
+ 
+endfunction
+
+function! base#complete#vars (...)
+
+ let comps=[]
+
+ if a:0
+   if type(a:1) == type([])
+     let vars=a:1
+
+   elseif type(a:1) == type('')
+     let vars=[ a:1 ] 
+
+   endif
+ endif
+
+  for varname in vars
+    call extend(comps,base#var(varname))
   endfor
 
  let comps=base#uniq(sort(comps))

@@ -2874,7 +2874,7 @@ function! base#info (...)
        call base#echo({ 'text' : "File encodings: " } )
        call base#echovar({ 'var' : '&fileencodings', 'indent' : indentlev })
      endif
-"""vhooks
+"""info_vhooks
 "   elseif topic == 'vhooks'
        "LFUN VH_GetHooks
        "call base#echo({ 'text' : "VimHelp Hooks ", 'hl' : 'Title' } )
@@ -2892,7 +2892,7 @@ function! base#info (...)
 		   "endif
        "endif
 
-"""completions
+"""info_completions
    elseif topic == 'completions'
        call base#echo({ 'text' : "COMPLETIONS ", 'hl' : 'Title' } )
 
@@ -2908,7 +2908,7 @@ function! base#info (...)
        call base#echovar({ 'var' : '&completeopt', 'indent' : indentlev })
        call base#echovar({ 'var' : '&completefunc', 'indent' : indentlev })
 
-"""tags
+"""info_tags
    elseif topic == 'tags'
        call base#echo({ 'text' : "Tags: " } )
        call base#echovar({ 'var' : 'g:CTAGS_CurrentTagID', 'indent' : indentlev })
@@ -2919,7 +2919,7 @@ function! base#info (...)
        call base#echovar({ 'var' : 'g:tagfiles', 'indent' : indentlev, })
        call base#echovar({ 'var' : 'g:tagdir', 'indent' : indentlev,  })
 
-"""proj
+"""info_proj
    elseif topic == 'proj'
        if exists("g:proj")
            call base#echo({ 'text' : "PROJECTS ", 'hl' : 'Title' } )
@@ -3046,17 +3046,112 @@ fun! base#echovar(ref)
  
 endfun
 
-function! projs#plgdir ()
-	return projs#var('plgdir')
+
+function! base#plgdir ()
+	return base#var('plgdir')
 endf	
 
-function! projs#datadir ()
-	return projs#var('datadir')
+function! base#datadir ()
+	return base#var('datadir')
 endf	
 
-function! projs#plgcd ()
-	let dir = projs#plgdir()
+function! base#plgcd ()
+	let dir = base#plgdir()
 	exe 'cd ' . dir
 endf	
+
+function! base#var (...)
+	if a:0 == 1
+		let var = a:1
+		return base#varget(var)
+	elseif a:0 == 2
+		let var = a:1
+		let val = a:2
+		return base#varset(var,val)
+	endif
+endfunction
+
+function! base#varget (varname)
+	
+	if exists("s:basevars[a:varname]")
+		let val = s:basevars[a:varname]
+	else
+		call base#warn("Undefined variable: " . a:varname)
+		let val = ''
+	endif
+
+	return val
+	
+endfunction
+
+function! base#varset (varname, value)
+
+	let s:basevars[a:varname] = a:value
+	
+endfunction
+
+function! base#varexists (varname)
+	if exists("s:basevars")
+		if exists("s:basevars[a:varname]")
+			return 1
+		else
+			return 0
+		endif
+	else
+		return 0
+	endif
+	
+endfunction
+
+function! base#varsetfromdat (varname)
+	let datafile = base#datafile(a:varname)
+
+	if !filereadable(datafile)
+		call base#warn('NO datafile for: ' . a:varname)
+		return 0
+	endif
+
+	let data = base#readdatfile({ 
+		\   "file" : datafile ,
+		\   "type" : "List" ,
+		\	})
+
+	call base#var(a:varname,data)
+
+	return 1
+
+endfunction
+
+function! base#datafile (id)
+	let datadir = base#datadir()
+	let file = a:id . ".i.dat"
+	let file = ap#file#catfile([ datadir, file ])
+	return file
+endfunction
+
+function! base#initvars (...)
+	let s:basevars={}
+endf	
+
+function! base#init (...)
+	
+	let datvars=''
+	let datvars.='opts info_topics'
+
+	let e={
+		\	"varsfromdat" : base#qw(datvars),
+		\	}
+
+	if exists("s:basevars")
+		call extend(s:basevars,e)
+	else
+		let s:basevars=e
+	endif
+
+	for v in base#var('varsfromdat')
+		call base#varsetfromdat(v)
+	endfor
+
+endfunction
  
  
