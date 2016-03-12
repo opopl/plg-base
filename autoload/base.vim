@@ -46,11 +46,11 @@ fun! base#viewvimfunc(...)
 
   let g:vimfun=fun
 
-  call base#statusline(g:vimfun)
+  call base#statusline(fun)
 endfun
 
 """base_viewvimcom
-com! base#viewvimcom(...)
+fun! base#viewvimcom(...)
   let com=a:1
 
   let comfile = base#catpath('coms',com . '.vim')
@@ -67,11 +67,13 @@ endfun
 """base_vimfuncexists
 fun! base#vimfuncexists(fun,...)
 
-  if index(g:vim_funcs_user,a:fun) >= 0
-    return 1
-  endif
+	let f = base#var('vim_funcs_user')
 
-  return 0
+	if index(f,a:fun) >= 0
+		return 1
+	endif
+
+	return 0
   
 endf
 
@@ -346,17 +348,6 @@ fun! base#type(var)
 
 endf
 
-fun! base#catfile(key,...)
-
-  if a:0
-    let file = join(a:000,'/')
-	let file = substitute(file,'\s\+','/','g')
-  endif
-
-  return base#catpath(a:key,file)
-
-endf
-
 function! base#cd(dir)
 	exe 'cd ' . a:dir
 	echohl MoreMsg
@@ -383,16 +374,10 @@ fun! base#catpath(key,file,...)
     call base#initpaths()
  endif
 
- if a:0 ==1 
-    let mode=a:1
- endif
-
- let sep = '/'
-
  if has_key(s:paths,a:key)
-    let fpath=s:paths[a:key] . sep . a:file
+    let fpath=base#file#catfile([ s:paths[a:key], a:file ])
  elseif a:key == '~'
-    let fpath='~' . sep . a:file
+    let fpath=base#file#catfile('~', a:file)
  else
     let fpath=a:file
  endif
@@ -477,9 +462,15 @@ fun! base#initpaths()
 "        \ 'vrt'  :         g:vrt,
 "        \}
 
+	"" remove / from the end of the directory
     for k in keys(s:paths)
        let s:paths[k]=substitute(s:paths[k],'\/\s*$','','g')
     endfor
+
+	if exists("g:dirs")
+	   call extend(s:paths,g:dirs)
+	endif
+	let g:dirs = s:paths
 
     let pathlist= sort(keys(s:paths))
 
@@ -667,17 +658,16 @@ fun! base#statusline(...)
 
       let listcomps=g:F_StatusLineKeys
   
-      let liststr=join(listcomps,"\n")
-      let dialog="Available status line keys  are: " . "\n"
-      let dialog.=base#createprompt(liststr, 1, "\n") . "\n"
-      let dialog.="Choose status line key by number: " . "\n"
+      let liststr = join(listcomps,"\n")
+      let dialog  = "Available status line keys  are: " . "\n"
+      let dialog .= base#createprompt(liststr, 1, "\n") . "\n"
+      let dialog .= "Choose status line key by number: " . "\n"
 
-      let opt= base#choosefromprompt(dialog,liststr,"\n",'neat')
+      let opt = base#choosefromprompt(dialog,liststr,"\n",'neat')
       echo "Selected: " . opt
 
     endif
 
-    call base#setstatuslines()
 
     if exists('g:F_StatusLines')
         let sline  = get(g:F_StatusLines,opt)
@@ -890,7 +880,7 @@ fun! base#setstatuslineparts()
 
     let g:stlparts['makeprg']='%1*\ %{&makeprg}' 
 
-	call base#varupdate('PMOD_ModuleName')
+	"call base#varupdate('PMOD_ModuleName')
     let g:stlparts['perl_module_name']='%5*\ %{g:PMOD_ModuleName}\ %0*' 
     let g:stlparts['path_relative_home']='%{expand(' . "'" . '%:~:t' . "'" . ')}'
 
@@ -905,7 +895,7 @@ endfun
 
 fun! base#readdatfile(ref,...)
 
- call base#varcheckexist('g:datfiles')
+ call base#varcheckexist('datfiles')
 
  let opts={ 'type' : 'List' }
 
@@ -916,13 +906,16 @@ fun! base#readdatfile(ref,...)
  endif
 
  if base#type(a:ref) == 'String'
-   if has_key(g:datfiles,a:ref)
-      let file=g:datfiles[a:ref]
+   if base#varhash#haskey('datfiles',a:ref)
+	  let file = base#varhash#get('datfiles',a:ref)
    else 
       return []
    endif
  elseif base#type(a:ref) == 'Dictionary'
    let file=a:ref['file']
+   if exists("a:ref['type']")
+		let opts.type = a:ref['type']
+   endif
  endif
 
  if opts.type == 'Dictionary'
@@ -1360,10 +1353,10 @@ function! base#varupdate(ref)
        call base#uniq(varname)
 
      elseif varname == 'DC_Proj_SecDatFile'
-       let g:{varname}=base#catfile('projs',g:proj . '.secs.i.dat')
+       let g:{varname}=base#catpath('projs',g:proj . '.secs.i.dat')
 
      elseif varname == 'DC_Proj_SecOrderFile'
-       let g:{varname}=base#catfile('projs',g:proj . '.secorder.i.dat')
+       let g:{varname}=base#catpath('projs',g:proj . '.secorder.i.dat')
 
        "call DC_Proj_GenSecDat()
        "
@@ -1589,9 +1582,12 @@ function! base#varupdate(ref)
         
         call base#varcheckexist([ 'paths', 'pathsep' ])
 
-        let g:datfiles = base#readdatpaths({ 
-            \ 'rootdir'   : s:paths['mkvimrc'],
-            \ 'file'      : s:paths['mkvimrc'] . s:pathsep . 'datfiles.i.dat',
+		let s:datfiles={}
+		let file = base#catpath('mkvimrc','datfiles.i.dat') 
+
+        let s:datfiles = base#readdatpaths({ 
+            \ 'rootdir'   : base#path('mkvimrc'),
+            \ 'file'      : file,
             \ 'ext'       : '.i.dat',
             \ })
 
@@ -1604,8 +1600,11 @@ function! base#varupdate(ref)
         \ ]
 
       for id in vars
-        let g:datfiles['pp_' . id]=base#catpath('p',id . '.i.dat')
+        let s:datfiles['pp_' . id]=base#catpath('p',id . '.i.dat')
       endfor
+
+	  call base#var('datfiles',s:datfiles)
+	  call base#var('datlist',base#varhash#keys('datfiles'))
 
 """varupdate_allmenus
       elseif varname == 'allmenus'
@@ -2379,7 +2378,7 @@ fun! base#datupdate(...)
    	let dat=a:1
  else
 	let dat=base#getfromchoosedialog({ 
-	   \ 'list'        : sort(keys(g:datfiles)),
+	   \ 'list'        : sort(keys(s:datfiles)),
 	   \ 'startopt'    : 'datfiles',
 	   \ 'header'      : "Available datfiles are: ",
 	   \ 'numcols'     : 1,
@@ -2387,11 +2386,11 @@ fun! base#datupdate(...)
 	   \ })
  endif
 
- if ! exists("g:datfiles[dat]")
+ if ! exists("s:datfiles[dat]")
    return
  endif
 
- let datfile=get(g:datfiles,dat)
+ let datfile=get(s:datfiles,dat)
 
  let lines=[]
 
@@ -2444,10 +2443,10 @@ fun! base#readdictdat(ref)
  call base#varcheckexist('datfiles')
 
  if base#type(ref) == 'String'
-   let opts['file']=g:datfiles[ref]
+   let opts['file']=s:datfiles[ref]
  elseif base#type(ref) == 'Dictionary'
    if has_key(ref,'dat')
-     let opts['file']=g:datfiles[ref['dat']]
+     let opts['file']=s:datfiles[ref['dat']]
    endif
    call extend(opts,ref)
  endif
@@ -2573,50 +2572,48 @@ endfunction
 
  
 function! base#readdatpaths(ref)
-  let ref=a:ref
+	let ref=a:ref
 
-  call base#varcheckexist([ 'pathsep', 'paths' ])
+	call base#varcheckexist([ 'pathsep', 'paths' ])
 
-  let res={}
-
-          let lines=readfile(ref.file)
-
-          for line in lines
-
-            let rootdir=ref.rootdir
-
-            if line =~ '^\s*#' || line =~ '^\s*$'
-              continue
-            endif
-
-            let vars = split(line,'\s\+')
-            let dat  = remove(vars,0)
-
-            if len(vars)
-                let rootdir=remove(vars,0)
-    
-                let rootdir=substitute(rootdir,'_\(\w\+\)_','\1','g')
-                let rootdir=s:paths[rootdir]
-            endif
-
-            if len(vars)
-			  let subdirs=vars[0] . '/'
-              let subdirs=substitute(subdirs,'[\/]*$','/','g')
-            else 
-              let subdirs=''
-            endif
-
-            let datfile=rootdir . '/' . subdirs . dat . ref.ext
-
-			if has('win32')
-            	let datfile=substitute(datfile,'[\/]\+',s:pathsep,'g')
-			endif
-
-            let res[dat]=datfile
-
-          endfor
-
-          return res
+	let res={}
+	
+	let lines=readfile(ref.file)
+	
+	for line in lines
+	
+		let rootdir=ref.rootdir
+		
+		if line =~ '^\s*#' || line =~ '^\s*$'
+			continue
+		endif
+		
+		let vars = split(line,'\s\+')
+		let dat  = remove(vars,0)
+		
+		if len(vars)
+			let rootdir=remove(vars,0)
+			
+			let rootdir=substitute(rootdir,'_\(\w\+\)_','\1','g')
+			let rootdir=base#path(rootdir)
+		endif
+		
+		if len(vars)
+			let subdirs=vars[0] . '/'
+			let subdirs=substitute(subdirs,'[\/]*$','/','g')
+		else 
+			let subdirs=''
+		endif
+		
+		let datfile=base#file#catfile([  
+			\	rootdir, subdirs . dat . ref.ext
+			\	])
+		
+		let res[dat]=datfile
+	
+	endfor
+	
+	return res
 
 endfunction
 
@@ -3109,7 +3106,10 @@ function! base#varget (varname)
 	if exists("s:basevars[a:varname]")
 		let val = s:basevars[a:varname]
 	else
-		call base#warn("Undefined variable: " . a:varname)
+		call base#warn({ 
+			\	"text" : "Undefined variable: " . a:varname,
+			\	"prefix" : "(base#varget) ",
+			\	})
 		let val = ''
 	endif
 
@@ -3119,6 +3119,9 @@ endfunction
 
 function! base#varset (varname, value)
 
+	if exists("s:basevars[a:varname]")
+		unlet s:basevars[a:varname]
+	endif
 	let s:basevars[a:varname] = a:value
 	
 endfunction
@@ -3136,20 +3139,29 @@ function! base#varexists (varname)
 	
 endfunction
 
-function! base#varsetfromdat (varname)
-	let datafile = base#datafile(a:varname)
+function! base#varsetfromdat (...)
+	let varname = a:1
+
+	let type = "List"
+	if a:0 == 2
+		let type = a:2
+	endif
+
+	let datafile = base#datafile(varname)
 
 	if !filereadable(datafile)
-		call base#warn('NO datafile for: ' . a:varname)
+		call base#warn({ 
+			\	"text": 'NO datafile for: ' . varname 
+			\	})
 		return 0
 	endif
 
 	let data = base#readdatfile({ 
 		\   "file" : datafile ,
-		\   "type" : "List" ,
+		\   "type" : type ,
 		\	})
 
-	call base#var(a:varname,data)
+	call base#var(varname,data)
 
 	return 1
 
@@ -3168,11 +3180,15 @@ endf
 
 function! base#init (...)
 	
-	let datvars=''
-	let datvars.=' opts info_topics '
+	let datvars  =''
+	let datvars .=' opts info_topics '
+
+	let dathashvars  =''
+	let dathashvars .=' datfiles '
 
 	let e={
-		\	"varsfromdat" : base#qw(datvars),
+		\	"varsfromdatlist" : base#qw(datvars),
+		\	"varsfromdathash" : base#qw(dathashvars),
 		\	}
 
 	if exists("s:basevars")
@@ -3182,7 +3198,11 @@ function! base#init (...)
 	endif
 
 	for v in base#var('varsfromdat')
-		call base#varsetfromdat(v)
+		call base#varsetfromdat(v,"List")
+	endfor
+
+	for v in base#var('varsfromdathash')
+		call base#varsetfromdat(v,"Dictionary")
 	endfor
 
 	call base#initpaths()
@@ -3193,10 +3213,13 @@ function! base#init (...)
 	call base#var('vim_coms',
 		\	base#fnamemodifysplitglob('coms','*.vim',':t:r'))
 
-	let varlist=''
-	let varlist.= " vim_funcs_user vim_coms "
+	let varlist = keys(s:basevars)
 
-	call base#var('varlist',base#qw(varlist))
+	call base#var('varlist',varlist)
+
+    "call base#setstatuslines()
+	"
+	return 1
 
 endfunction
 
@@ -3209,7 +3232,7 @@ function! base#viewdat (...)
     let dat=a:1
   else
     let dat=base#getfromchoosedialog({ 
-        \ 'list'        : sort(keys(g:datfiles)),
+        \ 'list'        : base#varhash#keys('datfiles'),
         \ 'startopt'    : 'perl_local_modules_to_install',
         \ 'header'      : "Available DAT files are: ",
         \ 'numcols'     : 1,
@@ -3217,10 +3240,10 @@ function! base#viewdat (...)
         \ })
   endif
 
-  if has_key(g:datfiles,dat)
-    let datfile=g:datfiles[dat]
+  if has_key(s:datfiles,dat)
+    let datfile=s:datfiles[dat]
   else
-    call base#subwarn("Given dat file does not exist in g:datfiles dictionary")
+    call base#subwarn("Given dat file does not exist in s:datfiles dictionary")
   endif
 
   if dat == '_vimrc_console_funcs_to_load_'

@@ -30,6 +30,12 @@ function! base#complete#varlist (...)
 	
 endfunction
 
+function! base#complete#datlist (...)
+
+  return base#complete#vars([ 'datlist' ])
+	
+endfunction
+
 """base_complete_vimfuns
 function! base#complete#custom (...)
 
