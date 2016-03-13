@@ -2542,12 +2542,12 @@ function! base#findwin(ref)
 				let cf = cfrel
 			endif
 
-		 	let fnm = get(ref,'fnamemodify')
+		 	let fnm = get(ref,'fnamemodify','')
 			if strlen(fnm)
 				let cf = fnamemodify(cf,fnm)
 			endif
 
-	 		let pat = get(ref,'pat')
+	 		let pat = get(ref,'pat','')
 			if strlen(pat)
 				"let pat = escape(pat,'\')
 				"if ( cf !~ "'".pat."'" )
@@ -2560,6 +2560,12 @@ function! base#findwin(ref)
 				call add(newfiles,cf)
 			endif
 		endfor
+
+		let map = get(ref,'map','')
+		if strlen(map)
+			call filter(newfiles,"'" . map . "'")
+			"call filter(newfiles,map)
+		endif
 
 		let files = newfiles
 		call extend(foundfiles,files)
@@ -3091,6 +3097,11 @@ function! base#info (...)
            call base#echovar({ 'var' : 'g:PMOD_ModuleDir', 'indent' : indentlev })
        endif
 
+"""info_keymap
+   elseif topic == 'keymap'
+       call base#echo({ 'text' : "KEYMAP: " } )
+       call base#echo({ 'text' : "&keymap =>  " . &keymap,'indentlev' : indentlev })
+
 """info_make
    elseif topic == 'make'
        call base#echo({ 'text' : "MAKE: " } )
@@ -3112,10 +3123,23 @@ endfun
 fun! base#echoprefix(...)
 	if !exists("s:echoprefix")
 		let s:echoprefix=''
+	else
+		let s:echoprefixold=s:echoprefix
 	endif
 
 	if a:0
 		let s:echoprefix = a:1
+	endif
+
+	return s:echoprefix
+	
+endf
+
+fun! base#echoprefixold(...)
+	if !exists("s:echoprefixold")
+		let s:echoprefix=''
+	else
+		let s:echoprefix=s:echoprefixold
 	endif
 
 	return s:echoprefix

@@ -1,9 +1,11 @@
 completions
-dirs paths
+dirs
 encodings
 file
+keymap
 make
 opts
+paths
 plugins
 proj
 tags
