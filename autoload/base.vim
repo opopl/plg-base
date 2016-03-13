@@ -473,7 +473,6 @@ fun! base#initpaths()
 	let g:dirs = s:paths
 
     let pathlist= sort(keys(s:paths))
-
 	call base#var('pathlist',pathlist)
 
 endf
@@ -669,6 +668,7 @@ fun! base#statusline(...)
     endif
 
 
+	let evs=''
     if exists('g:F_StatusLines')
         let sline  = get(g:F_StatusLines,opt)
         let evs    = "setlocal statusline=" . sline
@@ -679,8 +679,8 @@ fun! base#statusline(...)
             let g:F_StatusLineOrder=g:F_StatusLineOrders[opt]
         endif
     endif
+	if evs | exe evs | endif
 
-    exe evs
 endfun
 
  
@@ -895,8 +895,6 @@ endfun
 
 fun! base#readdatfile(ref,...)
 
- call base#varcheckexist('datfiles')
-
  let opts={ 'type' : 'List' }
 
  if a:0 
@@ -912,6 +910,7 @@ fun! base#readdatfile(ref,...)
       return []
    endif
  elseif base#type(a:ref) == 'Dictionary'
+   call extend(opts,a:ref)
    let file=a:ref['file']
    if exists("a:ref['type']")
 		let opts.type = a:ref['type']
@@ -936,11 +935,12 @@ fun! base#readarr(file,...)
   let file=a:file
 
   let opts={ 
-    \   'splitlines'    : 1,
-    \   'uniq'          : 0,
-    \   'select_fields' : 'all',
-    \   'sep'           : '\s\+',
-    \   'joinsep'       : ' ',
+    \   'splitlines'    : 1      ,
+    \   'uniq'          : 0      ,
+    \   'select_fields' : 'all'  ,
+    \   'sep'           : '\s\+' ,
+    \   'joinsep'       : ' '    ,
+    \   'sort'          : 0      ,
     \    }
 
   if a:0
@@ -985,6 +985,10 @@ fun! base#readarr(file,...)
 
     if opts.uniq
        let arr=base#uniq(arr)
+    endif
+
+    if opts.sort
+       let arr = sort(arr)
     endif
     
     return arr
@@ -1186,7 +1190,7 @@ function! base#varupdate(ref)
 
 """VimSnips
      elseif varname == 'VimSnips'
-       let g:{varname}=base#find({ 
+       let g:{varname}=base#findunix({ 
             \   'path'          : 'vimsnips',
             \   'ext'           : 'vim',
             \   'fnamemodify'   : ':p:t:r',
@@ -1195,7 +1199,7 @@ function! base#varupdate(ref)
 
 """pdf_perldoc
      elseif varname == 'pdf_perldoc'
-       let g:{varname}=base#find({
+       let g:{varname}=base#findunix({
                 \   'dir'           : s:paths['pdfout'] . '/perldoc',
                 \   'ext'           : 'pdf',
                 \   'fnamemodify'   : ':p:t:r',
@@ -1279,7 +1283,7 @@ function! base#varupdate(ref)
       endif
 
     elseif varname == 'PAP_PdfGen'
-      let g:{varname}=base#find({ 
+      let g:{varname}=base#findunix({ 
             \   'dir' : s:paths['p'] . '/out',
             \   'ext' : 'pdf',
             \   'relpath' : 1,
@@ -1534,7 +1538,7 @@ function! base#varupdate(ref)
     
                     let docs[dir]=base#fnamemodifysplitglob('pdfdocs','*.pdf',':p:t:r')
         
-                    let docs[dir]=base#find({  'path'              : 'pdfdocs', 
+                    let docs[dir]=base#findunix({  'path'              : 'pdfdocs', 
                               \       'relpath'           : 1, 
                               \       'ext'               : 'pdf',
                               \       'fnamemodify'       : ':r',
@@ -1813,7 +1817,7 @@ function! base#varupdate(ref)
        call base#varcheckexist('texinputs')
 
        for dir in g:texinputs
-          let files=base#find({
+          let files=base#findunix({
                 \ 'dir'           : dir,
                 \ 'ext'           : 'tex',
                 \ 'startpattern'  : '_cfg.',
@@ -1833,7 +1837,7 @@ function! base#varupdate(ref)
 
 """TEX
      elseif varname == 'TEX_PlainTexMacros'
-       let g:{varname}=sort(base#find({
+       let g:{varname}=sort(base#findunix({
         \ 'dir' : s:paths['tex'] . '/texmf-dist/tex/plain',
         \ 'ext' : 'tex',
         \ 'relpath' : 1,
@@ -1848,7 +1852,7 @@ function! base#varupdate(ref)
         \ ]
 
      for dir in dirs
-       let files=sort(base#find({
+       let files=sort(base#findunix({
           \ 'dir' : g:texlive['TEXMFDIST'] . '/' . dir,
           \ 'ext' : 'tex,env,4ht',
           \} ))
@@ -1859,7 +1863,7 @@ function! base#varupdate(ref)
      endfor
 
      elseif varname == 'TEX_PlainTexExamples'
-       let g:{varname}=sort(base#find({
+       let g:{varname}=sort(base#findunix({
         \ 'dir' : s:paths['tex'] . '/texmf-dist/doc/plain',
         \ 'ext' : 'tex',
         \ 'relpath' : 1,
@@ -1901,7 +1905,7 @@ function! base#varupdate(ref)
        let g:{varname}=sort(base#fnamemodifysplitglob('p',"htex.*.tex",':r:e'))
 
      elseif varname == 'TEX_LatexPackages'
-       let g:{varname}=base#find({ 
+       let g:{varname}=base#findunix({ 
             \   'dir'           : g:texlive['TEXMFDIST'] . '/tex/latex/', 
             \   'type'          : 'd', 
             \   'maxdepth'      : 1, 
@@ -2077,7 +2081,7 @@ function! base#varupdate(ref)
 
 
     elseif varname == 'allplugins'
-        let g:{varname}=base#find( { 
+        let g:{varname}=base#findunix( { 
             \   'dir'       : s:paths['plugins'], 
             \   'type'      : 'd'   ,
             \   'maxdepth'  : 1     ,
@@ -2095,7 +2099,7 @@ function! base#varupdate(ref)
 
             let g:plugindir=base#catpath('plugins',g:plugin)
 
-            let g:plugindirs=base#find({ 
+            let g:plugindirs=base#findunix({ 
                 \   'dir'       : g:plugindir,
                 \   'type'      : 'd',
                 \   'maxdepth'  : 1,
@@ -2103,7 +2107,7 @@ function! base#varupdate(ref)
                 \   'fnamemodify'  : ':t',
                 \   } )
 
-            let g:{varname}=base#find({ 
+            let g:{varname}=base#findunix({ 
                     \   'dir' : g:plugindir,
                     \   'ext' : 'vim',
                     \   })
@@ -2455,16 +2459,132 @@ fun! base#readdictdat(ref)
 
  return dict
 endfun
- 
+
+"""base_find
+function! base#find(ref)
+
+	" list of found files to be returned
+	let files = []
+
+	if has('perl')
+		let files = base#findbyperl(a:ref)
+	else
+		if has('win32')
+			let files = base#findwin(a:ref)
+		else
+			let files = base#findunix(a:ref)
+		endif
+	endif
+
+	return files
+
+endf
+
+"""base_findwin 
+
+" echo base#find({ "cwd" : 1, "exts" : [ "vim" ]})
+" echo base#find({ "cwd" : 1, "exts" : [ "vim" ]})
+" echo base#find({ "subdirs" : 1, "exts" : [ "vim" ]})
+" echo base#find({ "subdirs" : 1})
+" echo base#find({ "subdirs" : 1, "pattern": "^a" })
+"
+function! base#findwin(ref)
+	let ref = a:ref
+
+	let dirs = []
+	let exts = [ '' ] 
+	
+	if exists("ref.exts") | let exts = ref.exts | endif
+	if exists("ref.dirs") | let dirs = ref.dirs | endif
+
+	let searchopts = ' /b/a:-d '
+
+	if get(ref,'cwd')
+		call add(dirs,getcwd())
+	endif
+
+	if get(ref,'subdirs')
+		let searchopts .= ' /s '
+	endif
+
+	" list of found files to be returned
+	let foundfiles = []
+
+	let olddir = getcwd()
+	
+	for dir in dirs
+		let found = ''
+		let dir = substitute(dir,'/','\','g')
+
+		exe 'cd ' . dir
+
+		for ext in exts 
+			if strlen(ext) | let ext = '.'.ext | endif
+
+			let searchcmd  = 'dir *'.ext.searchopts 
+			let found .= ap#sys( searchcmd ) . "\n"
+		endfor
+
+		let files=split(found,"\n")
+
+		let diru = base#file#win2unix(dir)
+		let newfiles=[]
+
+		for file in files
+			let add=1
+			let cf = copy(file)
+
+			let cfunix = base#file#win2unix(cf)
+			let cfrel = substitute(cf,'^' . diru . '[/]*','','g') 
+			let cfrel = base#file#unix2win(cfrel)
+
+	 		if get(ref,'relpath')
+				let cf = cfrel
+			endif
+
+		 	let fnm = get(ref,'fnamemodify')
+			if strlen(fnm)
+				let cf = fnamemodify(cf,fnm)
+			endif
+
+	 		let pat = get(ref,'pat')
+			if strlen(pat)
+				"let pat = escape(pat,'\')
+				"if ( cf !~ "'".pat."'" )
+				if ( cf !~ pat )
+					let add=0
+				endif
+			endif
+
+			if add
+				call add(newfiles,cf)
+			endif
+		endfor
+
+		let files = newfiles
+		call extend(foundfiles,files)
+	endfor
+
+	exe 'cd ' . olddir
+
+	return foundfiles
+
+endf
+
+"""base_findunix
  
 " input: Dictionary
 " return: List
 
-fun! base#find(ref)
+fun! base#findunix(ref)
 
- if ( base#type(a:ref) != 'Dictionary' )
-    return
- endif
+	let prefix="(base#findunix) "
+	if ( base#type(a:ref) != 'Dictionary' )
+		call base#warn({ 
+			\	"text" : "Need provide input parameter as dictionary", 
+			\	"prefix" : prefix })
+		return
+	endif
 
  if has('win32')
 	return
@@ -2707,11 +2827,11 @@ fun! base#sys(...)
 
  if a:0 
    if base#type(a:1) == 'String'
-		 	let cmd=a:1
-		 	let cmds=[ cmd ] 
+ 	let cmd=a:1
+ 	let cmds=[ cmd ] 
    	
    elseif base#type(a:1) == 'List'
-		 	let cmds=a:1
+ 	let cmds=a:1
    	
    endif
 	
@@ -2773,9 +2893,23 @@ function! base#pathset (ref)
 
 endfun
 
+function! base#pathlist ()
+	if ! exists("s:paths")
+		let s:paths={}
+	endif
+
+    let pathlist= sort(keys(s:paths))
+	call base#var('pathlist',pathlist)
+
+	return pathlist
+	
+endfunction
+
+
+
 """base_path
 function! base#path (pathid)
-	let prefix=''
+	let prefix='(base#path) '
 
 	if exists("s:paths[a:pathid]")
 		let path = s:paths[a:pathid]
@@ -2787,8 +2921,6 @@ function! base#path (pathid)
 			\	"prefix" : prefix ,
 			\	})
 	endif
-
-	let prefix = '( base#path ) '
 	
 	return path
 	
@@ -2804,7 +2936,8 @@ function! base#warn (ref)
 
 	let text = a:ref['text']
 
-	let prefix=''
+  let prefix    = base#echoprefix()
+
 	if exists("a:ref['prefix']")
 		let prefix = a:ref['prefix']
 	endif
@@ -2841,7 +2974,7 @@ function! base#info (...)
        call base#echo({ 'text' : "Current file: " } )
        echo indent . expand('%:p')
 
-       call base#echo({ 'text' : "Current directory: " } )
+       call base#echo({ 'text' : "Current directory: " })
        echo indent . expand('%:p:h')
 
        call base#echo({ 'text' : "Filetype: " } )
@@ -2856,17 +2989,22 @@ function! base#info (...)
 """info_plugins
    elseif topic == 'plugins'
 
+"""info_paths
+   elseif topic == 'paths'
+
+       call base#echo({ 'text'   : "Paths-related variables: " } )
+       call base#echo({ 
+	   	\	'text'   : 'pathlist => ' 
+	   		\	. "\n\t" . join(base#pathlist()," "), 
+	   	\	'indentlev' : indentlev })
+
 """info_dirs
    elseif topic == 'dirs'
 
        call base#echo({ 'text'   : "Directory-related variables: " } )
        call base#echovar({ 'var' : 'g:dirs', 'indent' : indentlev })
 
-"""info_paths
-   elseif topic == 'paths'
 
-       call base#echo({ 'text'   : "Paths-related variables: " } )
-       call base#echovar({ 'var' : 's:paths', 'indent' : indentlev })
 
 """info_encodings
    elseif topic == 'encodings'
@@ -2933,17 +3071,8 @@ function! base#info (...)
 
 """info_proj
    elseif topic == 'proj'
-       if exists("g:proj")
-           call base#echo({ 'text' : "PROJECTS ", 'hl' : 'Title' } )
-
-           call base#echo({ 'text' : "Current project: " } )
-           call base#echovar({ 'var' : 'g:proj', 'indent' : indentlev })
-
-           call base#echo({ 'text' : "Current section: " } )
-           call base#echovar({ 'var' : 'g:DC_Proj_SecName', 'indent' : indentlev })
-
-       endif
-
+	    call projs#info()
+       
    elseif topic == 'perl'
        call base#echo({ 'text' : "PERL ", 'hl' : 'Title' } )
 
@@ -2980,8 +3109,29 @@ function! base#info (...)
  
 endfun
 
+fun! base#echoprefix(...)
+	if !exists("s:echoprefix")
+		let s:echoprefix=''
+	endif
+
+	if a:0
+		let s:echoprefix = a:1
+	endif
+
+	return s:echoprefix
+	
+endf
+
 fun! base#echo(opts)
   let opts=a:opts
+
+  let prefix    = base#echoprefix()
+  let indentlev = 0
+
+  if exists("opts.indentlev")
+	let indentlev=opts.indentlev
+  endif
+  let indent    = repeat(' ',indentlev)
 
   let hl='MoreMsg'
   if exists("g:hl")
@@ -2990,9 +3140,12 @@ fun! base#echo(opts)
   if exists("opts.hl")
      let hl=opts.hl
   endif
+  if exists("opts.prefix")
+     let prefix=opts.prefix
+  endif
 
   exe "echohl " . hl
-  echo opts.text
+  echo indent . prefix . opts.text
   exe "echohl None"
 
 endf
@@ -3010,7 +3163,9 @@ fun! base#echovar(ref)
    
  elseif base#type(a:ref) == 'Dictionary'
    let varname   = a:ref.var
-   let indentlev = a:ref.indent
+   if exists("a:ref['indent']")
+		let indentlev = get(a:ref,'indent')
+   endif
    let spliton   = get(a:ref,'spliton')
    
  endif
@@ -3096,6 +3251,7 @@ function! base#var (...)
 	endif
 endfunction
 
+"""base_varecho
 function! base#varecho (varname)
 	echo base#var(a:varname)
 
@@ -3104,7 +3260,7 @@ endfunction
 function! base#varget (varname)
 	
 	if exists("s:basevars[a:varname]")
-		let val = s:basevars[a:varname]
+		let val = copy( s:basevars[a:varname] )
 	else
 		call base#warn({ 
 			\	"text" : "Undefined variable: " . a:varname,
@@ -3197,7 +3353,7 @@ function! base#init (...)
 		let s:basevars=e
 	endif
 
-	for v in base#var('varsfromdat')
+	for v in base#var('varsfromdatlist')
 		call base#varsetfromdat(v,"List")
 	endfor
 

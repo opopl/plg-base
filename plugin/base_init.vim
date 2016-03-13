@@ -1,7 +1,7 @@
 
 call base#initvars()
 
-let dir = ap#file#catfile( [ expand('<sfile>:p'), '..', '..' ])
+let dir = ap#file#catfile( [ expand('<sfile>:p:r'), '..', '..' ])
 call base#var('plgdir',dir)
 call base#var('datadir',ap#file#catfile([ dir, 'data' ]))
 

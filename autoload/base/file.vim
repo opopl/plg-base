@@ -34,10 +34,20 @@ function! base#file#catfile( ... )
 endf
 
 
-function! base#file#win( filename )
+function! base#file#unix2win( filename )
 
 	if has('win32')
 		return substitute(a:filename,'/','\','g')
+	endif
+
+	return a:filename
+
+endf
+
+function! base#file#win2unix( filename )
+
+	if has('win32')
+		return substitute(a:filename,'\\','/','g')
 	endif
 
 	return a:filename
