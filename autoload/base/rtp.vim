@@ -28,9 +28,7 @@ function! base#rtp#uniq()
 
 	exe 'set rtp=' . join(rtp,",")
 
-
 endf
-
 
 function! base#rtp#update()
 	call base#initplugins()

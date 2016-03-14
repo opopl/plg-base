@@ -37,6 +37,14 @@ function! base#complete#datlist (...)
 	
 endfunction
 
+function! base#complete#statuslines (...)
+ 
+  call base#setstatuslines()
+  return join(sort(keys(g:F_StatusLines)),"\n")
+ 
+endfun
+	
+
 """base_complete_vimfuns
 function! base#complete#custom (...)
 

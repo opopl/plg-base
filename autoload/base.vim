@@ -409,6 +409,7 @@ fun! base#initpaths()
 
 	call base#pathset({
 		\	'mkvimrc' : mkvimrc,
+		\	'pdfout' : base#envvar('PDFOUT'),
 		\	'mkbashrc' : mkbashrc,
 		\	'coms' : base#file#catfile([ mkvimrc, '_coms_' ]) ,
 		\	'funs' : base#file#catfile([ mkvimrc, '_fun_' ]) ,
@@ -622,7 +623,6 @@ fun! base#statusline(...)
       echo "Selected: " . opt
 
     endif
-
 
 	let evs=''
     if exists('g:F_StatusLines')
@@ -2442,7 +2442,7 @@ endf
 " echo base#find({ "cwd" : 1, "exts" : [ "vim" ]})
 " echo base#find({ "subdirs" : 1, "exts" : [ "vim" ]})
 " echo base#find({ "subdirs" : 1})
-" echo base#find({ "subdirs" : 1, "pattern": "^a" })
+" echo base#find({ "subdirs" : 1, "pat": "^a" })
 "
 function! base#findwin(ref)
 	let ref = a:ref
@@ -2954,6 +2954,17 @@ function! base#info (...)
        call base#echovar({ 'var' : 'g:path', 'indent' : indentlev })
        call base#echovar({ 'var' : 'g:ext' , 'indent' : indentlev })
 
+"""info_statusline
+   elseif topic == 'statusline'
+	let stl=''
+	if exists("g:F_StatusLine")
+  		let stl = g:F_StatusLine
+	endif
+
+       call base#echo({ 'text'   : "Statusline: " } )
+       call base#echo({ 'text'   : "\t"."g:F_StatusLine =>  " . stl } )
+       call base#echo({ 'text'   : "\t"."&stl =>  " . &stl } )
+
 
 """info_paths
    elseif topic == 'paths'
@@ -3081,8 +3092,15 @@ function! base#info (...)
    elseif topic == 'make'
        call base#echo({ 'text' : "MAKE: " } )
        call base#echovar({ 'var' : '&makeprg', 'indent' : indentlev })
-       call base#echovar({ 'var' : 'g:F_MakePrg', 'indent' : indentlev })
-       call base#echovar({ 'var' : 'g:F_ErrorFormat', 'indent' : indentlev })
+       call base#echovar({ 'var' : '&efm', 'indent' : indentlev })
+
+       call base#echo({ 
+	   	\	'text' : "makeprg id =>  " 
+	   	\	. make#var('makeprg') }) 
+
+       call base#echo({ 
+	   	\	'text' : "efm id =>  " 
+	   	\	. make#var('efm') }) 
 
 """info_opts
    elseif topic == 'opts'
@@ -3425,11 +3443,21 @@ function! base#init (...)
 
 	call base#rtp#update()
 
-    "call base#setstatuslines()
+    call base#setstatuslines()
 	"
 	return 1
 
 endfunction
+
+function! base#mkdir (dir)
+
+  try
+   	call mkdir(a:dir,'p')
+  catch
+	call base#warn({ "text" : "Failure to create dir: " . a:dir})
+  endtry
+
+endf
 
 
 function! base#viewdat (...)
@@ -3460,5 +3488,4 @@ function! base#viewdat (...)
 
   call base#fileopen(datfile)
 endf
- 
- 
+
