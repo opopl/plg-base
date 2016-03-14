@@ -18,8 +18,8 @@ command! -nargs=1 -complete=custom,base#complete#vimfuns VFUN
 command! -nargs=* -complete=custom,base#complete#info
     \   INFO call base#info(<f-args>)
    
-command! -nargs=* -complete=custom,base#complete#datlist VDAT 
-	\	call base#viewdat(<f-args>) 
+"command! -nargs=* -complete=custom,base#complete#datlist VDAT 
+	"\	call base#viewdat(<f-args>) 
 
 command! -nargs=* -complete=custom,base#complete#varlist
     \   BaseVarUpdate call base#varupdate(<f-args>) 
@@ -29,4 +29,7 @@ command! -nargs=* -complete=custom,base#complete#varlist
 
 command! -nargs=* 
     \   BaseInit call base#init() 
+
+command! -nargs=* -complete=custom,base#complete#datlist
+    \   BaseDatView call base#viewdat(<f-args>) 
 

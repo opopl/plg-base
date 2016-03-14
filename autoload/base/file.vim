@@ -33,14 +33,69 @@ function! base#file#catfile( ... )
 
 endf
 
-
-function! base#file#unix2win( filename )
-
+function! base#file#sep ()
 	if has('win32')
-		return substitute(a:filename,'/','\','g')
+		let sep = '\'
+	else
+		let sep = '/'
+	endif
+	return sep
+	
+endfunction
+
+function! base#file#std( filename,... )
+	let fname = a:filename
+
+	if a:0
+		let sep = a:1
+	else
+		let sep = base#file#sep()
 	endif
 
-	return a:filename
+	let pc = split(fname,sep)
+	let rpc = reverse(copy(pc))
+
+	let rm = 0
+	let npc=[]
+	while len(rpc)
+		let p = remove(rpc, 0)
+		if p == ".." 
+			let rm+=1
+		else
+			if ( rm > 0 )
+				let rm-=1
+			else
+				call add(npc,p)
+			endif
+		endif
+	endw
+	let pc = reverse(npc)
+
+	let fname = join(pc,sep)
+	return fname
+
+endf
+
+
+function! base#file#unix2win( filename )
+	let fname = a:filename
+
+	if has('win32')
+		return substitute(fname,'/','\','g')
+	endif
+
+	return fname
+
+endf
+
+function! base#file#ossep( filename )
+	let fname = a:filename
+
+	if has('win32')
+		return base#file#unix2win(fname) 
+	else
+		return base#file#win2unix(fname) 
+	endif
 
 endf
 

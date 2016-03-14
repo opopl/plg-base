@@ -401,6 +401,7 @@ fun! base#initpaths()
 	call base#pathset({ 
 			\ 'conf' : confdir ,
 			\ 'vrt'  : vrt,
+			\ 'vim'  : base#envvar('VIM'),
 			\	})
 
 	let mkvimrc = base#file#catfile([ base#path('conf'), 'mk', 'vimrc' ])
@@ -416,51 +417,6 @@ fun! base#initpaths()
 		\	'perlscripts' : base#file#catfile([ hm, base#qw("scripts perl") ]),
 		\	'scripts' : base#file#catfile([ hm, base#qw("scripts") ]),
 		\	})
-	
-"    let s:paths={
-"        \ 'aptmirror'  	  :         g:hm . '/doc/mirrors/apt',
-"        \ 'autoload' :     g:vrt . '/autoload/',
-"        \ 'cit' :         $hm . '/doc/cit',
-"        \ 'cvim'   :       g:confdir . '/mk/vimrc/',
-"        \ 'dict'   :       g:confdir . '/mk/vimrc/dict/',
-"        \ 'docperltex'    :         '/doc/perl/tex',
-"        \ 'ftplugin'  :    g:vrt . '/ftplugin',
-"        \ 'gittest' :         $hm . '/wrk/clones/gittest',
-"        \ 'gops'   :       g:hm . '/gops/',
-"        \ 'gops_scripts' : g:hm . '/gops/scripts/all',
-"        \ 'lasu'         :    g:vrt . '/ftplugin/latex-suite',
-"        \ 'menuicons' :         $hm . '/icons/vim',
-"        \ 'mkbashrc'   :    g:confdir . '/mk/bashrc/',
-"        \ 'mkvimrc'   :    g:confdir . '/mk/vimrc/',
-"        \ 'p'  :           $hm . '/wrk/p',
-"        \ 'pdfdocs'     :    $PDFDOCS,
-"        \ 'pdfout'      :    $PDFOUT,
-"        \ 'pdfpaps'  :        $hm . '/doc/papers/ChemPhys/',
-"        \ 'perlmod' :      g:hm . '/wrk/perlmod/',
-"        \ 'perlscripts'  : g:hm . '/scripts/perl/',
-"        \ 'pl'    :        g:vrt . '/plugin/',
-"        \ 'plugin'   :     g:vrt . '/plugin/',
-"        \ 'projs'   :      g:hm . '/wrk/texdocs/',
-"        \ 'scripts' :      g:hm . '/scripts/',
-"        \ 'sni'  :         g:vrt . '/snippets/',
-"        \ 'tags' :         g:hm . '/tags',
-"        \ 'tests'     :    g:hm . '/wrk/clones/tests',
-"        \ 'tex'              :    $texdir,
-"        \ 'texdist' : '/usr/share/texlive/texmf-dist/tex/latex',
-"        \ 'texdocs' :      g:hm . '/wrk/texdocs',
-"        \ 'texinputs' :    g:hm . '/wrk/texinputs',
-"        \ 'texpacks'         :    $texdir . '/texmf-dist/tex/latex/',
-"        \ 'traveltek_filer' :    g:hm . '/wrk/traveltek/filer/',
-"        \ 'traveltek_modules' :    g:hm . '/wrk/traveltek/filer/modules',
-"        \ 'traveltek_odtdms' :    g:hm . '/wrk/traveltek/filer/odtdms',
-"        \ 'vim'  :         g:vrt,
-"        \ 'vimcom'  :      g:confdir . '/mk/vimrc/_coms_/',
-"        \ 'vimprojects'  :    g:confdir . '/mk/vimrc/_projects_/',
-"        \ 'vimsnips'  :    g:confdir . '/mk/vimrc/_snippets_/',
-"        \ 'vimdoc'  :      g:vrt . '/doc',
-"        \ 'vimfun'  :      g:confdir . '/mk/vimrc/_fun_/',
-"        \ 'vrt'  :         g:vrt,
-"        \}
 
 	"" remove / from the end of the directory
     for k in keys(s:paths)
@@ -1414,7 +1370,7 @@ function! base#varupdate(ref)
             \       'select_fields'     : '0',
             \   })
 
-        let g:perl_used_modules_paths=base#readdictDat('perl_used_modules')
+        let g:perl_used_modules_paths=base#readdictdat('perl_used_modules')
 
 """perl_installed_modules
      elseif varname == 'perl_installed_modules'
@@ -2535,11 +2491,17 @@ function! base#findwin(ref)
 			let cf = copy(file)
 
 			let cfunix = base#file#win2unix(cf)
-			let cfrel = substitute(cf,'^' . diru . '[/]*','','g') 
-			let cfrel = base#file#unix2win(cfrel)
+			let cfrelunix = substitute(cfunix,'^' . diru . '[/]*','','g') 
+			let cfrel = base#file#unix2win(cfrelunix)
 
 	 		if get(ref,'relpath')
 				let cf = cfrel
+			endif
+
+	 		if get(ref,'rmext')
+				for ext in exts
+					let cf = substitute(cf,'.'.ext.'$','','g') 
+				endfor
 			endif
 
 		 	let fnm = get(ref,'fnamemodify','')
@@ -2547,11 +2509,11 @@ function! base#findwin(ref)
 				let cf = fnamemodify(cf,fnm)
 			endif
 
+			let cfname = fnamemodify(cf,':p:t')
+
 	 		let pat = get(ref,'pat','')
 			if strlen(pat)
-				"let pat = escape(pat,'\')
-				"if ( cf !~ "'".pat."'" )
-				if ( cf !~ pat )
+				if ( cfname !~ pat )
 					let add=0
 				endif
 			endif
@@ -2992,8 +2954,6 @@ function! base#info (...)
        call base#echovar({ 'var' : 'g:path', 'indent' : indentlev })
        call base#echovar({ 'var' : 'g:ext' , 'indent' : indentlev })
 
-"""info_plugins
-   elseif topic == 'plugins'
 
 """info_paths
    elseif topic == 'paths'
@@ -3101,6 +3061,21 @@ function! base#info (...)
    elseif topic == 'keymap'
        call base#echo({ 'text' : "KEYMAP: " } )
        call base#echo({ 'text' : "&keymap =>  " . &keymap,'indentlev' : indentlev })
+
+"""info_rtp
+   elseif topic == 'rtp'
+	   let rtp = "\t" . join(split(&rtp,","),"\n\t")
+
+       call base#echo({ 'text' : "RUNTIMEPATHS: " } )
+       call base#echo({ 'text' : "&rtp =>  " . rtp,'indentlev' : indentlev })
+
+"""info_plugins
+   elseif topic == 'plugins'
+	
+       call base#echo({ 'text' : "PLUGINS: " } )
+       call base#echo({ 'text' : "g:plugins =>  " 
+	   	\	. "\n\t" . join(g:plugins,"\n\t"),'indentlev' : indentlev })
+
 
 """info_make
    elseif topic == 'make'
@@ -3242,7 +3217,15 @@ function! base#plgdir ()
 	return base#var('plgdir')
 endf	
 
-function! base#datadir ()
+"" let dd = base#datadir()
+"" call base#datadir('aaa')
+
+function! base#datadir (...)
+	if a:0
+		let datadir = a:1
+		return base#var('datadir',datadir)
+	endif
+
 	return base#var('datadir')
 endf	
 
@@ -3282,6 +3265,10 @@ function! base#varecho (varname)
 endfunction
 
 function! base#varget (varname)
+
+	if ! exists("s:basevars")
+		let s:basevars={}
+	endif
 	
 	if exists("s:basevars[a:varname]")
 		let val = copy( s:basevars[a:varname] )
@@ -3298,6 +3285,10 @@ function! base#varget (varname)
 endfunction
 
 function! base#varset (varname, value)
+
+	if ! exists("s:basevars")
+		let s:basevars={}
+	endif
 
 	if exists("s:basevars[a:varname]")
 		unlet s:basevars[a:varname]
@@ -3348,21 +3339,32 @@ function! base#varsetfromdat (...)
 endfunction
 
 function! base#datafile (id)
-	let datadir = base#datadir()
-	let file = a:id . ".i.dat"
-	let file = base#file#catfile([ datadir, file ])
+	let files = base#datafiles(a:id)
+	let file = get(files,0,'')
 	return file
 endfunction
 
-function! base#initvars (...)
-	let s:basevars={}
-endf	
+function! base#datafiles (id)
+	let datadir = base#datadir()
+	let file = a:id . ".i.dat"
 
-function! base#init (...)
-	
+	let files = base#find({
+		\ "dirs"    : [ datadir ],
+		\ "subdirs" : 1,
+		\ "pat"     : '^'.file.'$',
+		\	})
+
+	return files
+endfunction
+
+function! base#initvars (...)
+	call base#echoprefix('(base#initvars)')
+
+	"" list
 	let datvars  =''
 	let datvars .=' opts info_topics '
 
+	"" dictionary
 	let dathashvars  =''
 	let dathashvars .=' datfiles '
 
@@ -3371,21 +3373,22 @@ function! base#init (...)
 		\	"varsfromdathash" : base#qw(dathashvars),
 		\	}
 
-	if exists("s:basevars")
-		call extend(s:basevars,e)
-	else
-		let s:basevars=e
-	endif
+	call extend(s:basevars,e)
 
-	for v in base#var('varsfromdatlist')
-		call base#varsetfromdat(v,"List")
+	let mp = { "list" : "List", "dict" : "Dictionary" }
+	for type in base#qw("list dict")
+		let dir = base#file#catfile([ base#datadir(), type ])
+		let vars= base#find({ 
+			\	"dirs" : [ dir ], 
+			\	"exts" : [ "i.dat" ], 	
+			\	"subdirs" : 1, 
+			\	"relpath" : 1,
+	   		\	"rmext"   : 1, })
+		let tp = mp[type]
+		for v in vars
+			call base#varsetfromdat(v,tp)
+		endfor
 	endfor
-
-	for v in base#var('varsfromdathash')
-		call base#varsetfromdat(v,"Dictionary")
-	endfor
-
-	call base#initpaths()
 
 	call base#var('vim_funcs_user',
 		\	base#fnamemodifysplitglob('funs','*.vim',':t:r'))
@@ -3396,6 +3399,31 @@ function! base#init (...)
 	let varlist = keys(s:basevars)
 
 	call base#var('varlist',varlist)
+
+	call base#echoprefixold()
+endf	
+
+function! base#varlist ()
+	let varlist = keys(s:basevars)
+	call base#var('varlist',varlist)
+	return varlist
+endfunction
+
+function! base#initplugins (...)
+
+	call base#varsetfromdat('plugins','List')
+	let g:plugins=base#var('plugins')
+
+endf	
+
+
+function! base#init (...)
+
+	call base#initpaths()
+	call base#initplugins()
+	call base#initvars()
+
+	call base#rtp#update()
 
     "call base#setstatuslines()
 	"

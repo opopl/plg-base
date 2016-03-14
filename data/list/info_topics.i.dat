@@ -8,6 +8,7 @@ opts
 paths
 plugins
 proj
+rtp
 tags
 vhooks
 vim

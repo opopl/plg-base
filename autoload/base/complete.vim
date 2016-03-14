@@ -25,6 +25,7 @@ function! base#complete#info (...)
 endfunction
 
 function! base#complete#varlist (...)
+  call base#varlist()
 
   return base#complete#vars([ 'varlist' ])
 	
