@@ -46,7 +46,7 @@ fun! base#viewvimfunc(...)
 
   let g:vimfun=fun
 
-  call base#statusline(fun)
+  call base#statusline('vimfun')
 endfun
 
 """base_viewvimcom
@@ -61,7 +61,7 @@ fun! base#viewvimcom(...)
 
   call base#fileopen(comfile)
 
-  call base#statusline(comfile)
+  call base#statusline('vimcom')
 endfun
 
 """base_vimfuncexists
@@ -627,6 +627,7 @@ fun! base#statusline(...)
 	let evs=''
     if exists('g:F_StatusLines')
         let sline  = get(g:F_StatusLines,opt)
+		echo "setting stl to : " . sline
         let evs    = "setlocal statusline=" . sline
         let g:F_StatusLine      = opt
         let g:F_StatusLineOrder = []
@@ -635,6 +636,7 @@ fun! base#statusline(...)
             let g:F_StatusLineOrder=g:F_StatusLineOrders[opt]
         endif
     endif
+	echo evs
 	if evs | exe evs | endif
 
 endfun
@@ -823,8 +825,8 @@ fun! base#setstatuslineparts()
     " modified / unmodified (purple)
     let g:stlparts['is_modified']="%6*%{&modified?'modified':''}"
 
-    let g:stlparts['projs_proj']= '%1*\ %{g:proj}\ %0*' 
-    let g:stlparts['projs_sec']= '%7*\ %{g:DC_Proj_SecName}\ %0*' 
+    let g:stlparts['projs_proj']= '%1*\ %{projs#proj#name()}\ %0*' 
+    let g:stlparts['projs_sec']= '%7*\  %{projs#proj#secname()}\ %0*' 
 
     let g:stlparts['vimfun']= '%1*\ %{g:vimfun}\ %0*' 
     let g:stlparts['vimcom']= '%1*\ %{g:vimcom}\ %0*' 
@@ -2964,7 +2966,6 @@ function! base#info (...)
        call base#echo({ 'text'   : "Statusline: " } )
        call base#echo({ 'text'   : "\t"."g:F_StatusLine =>  " . stl } )
        call base#echo({ 'text'   : "\t"."&stl =>  " . &stl } )
-
 
 """info_paths
    elseif topic == 'paths'

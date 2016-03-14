@@ -9,7 +9,7 @@ call base#datadir( ap#file#catfile([ dir, 'data' ]) )
 call base#init()
 
 call base#init#cmds()
-"call base#init#au()
+call base#init#au()
 
 command! -nargs=* -complete=custom,base#complete#CD 
 	\	CD call base#CD(<f-args>) 
