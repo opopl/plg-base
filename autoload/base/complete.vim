@@ -39,11 +39,17 @@ endfunction
 
 function! base#complete#statuslines (...)
  
-  call base#setstatuslines()
+  call base#stl#setlines()
   return join(sort(keys(g:F_StatusLines)),"\n")
  
 endfun
-	
+
+function! base#complete#keymap (...)
+
+  let comps = []
+  return join(sort(comps),"\n")
+
+endfun
 
 """base_complete_vimfuns
 function! base#complete#custom (...)
