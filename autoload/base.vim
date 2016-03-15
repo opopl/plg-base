@@ -3212,6 +3212,10 @@ endfunction
 
 function! base#mkdir (dir)
 
+  if isdirectory(a:dir)
+	return  1
+  endif
+
   try
    	call mkdir(a:dir,'p')
   catch
