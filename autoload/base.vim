@@ -61,6 +61,8 @@ fun! base#viewvimcom(...)
 
   call base#fileopen(comfile)
 
+  let g:vimcom=com
+
   call base#stl#set('vimcom')
 endfun
 
