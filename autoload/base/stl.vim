@@ -20,7 +20,11 @@ function! base#stl#set (...)
 
 	let evs=''
 	let sline = ''
-    if exists('g:F_StatusLines')
+
+	if opt == 'ap'
+		call ap#stl()
+        let sline  = &stl
+	elseif exists('g:F_StatusLines')
         let sline  = get(g:F_StatusLines,opt)
         let evs    = "setlocal statusline=" . sline
         let g:F_StatusLine      = opt
@@ -29,7 +33,7 @@ function! base#stl#set (...)
         if exists('g:F_StatusLineOrders[opt]')
             let g:F_StatusLineOrder=g:F_StatusLineOrders[opt]
         endif
-    endif
+	endif
 	if strlen(evs) | silent exe evs | endif
 
 	call base#var('stl',sline)

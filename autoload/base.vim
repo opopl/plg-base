@@ -32,6 +32,18 @@ fun! base#loadvimfunc(fun)
   
 endfun
 
+fun! base#augroups()
+
+	let g = ''
+	redir => {g}
+	augroup
+	redir END
+	
+	let groups = split(g,' ')
+	return groups
+
+endfun
+
 """base_viewvimfunc
 fun! base#viewvimfunc(...)
   let fun=a:1
@@ -2802,6 +2814,14 @@ function! base#info (...)
 	   let tags = join(split(&tags,","),"\n\t")
 	   call base#echo({ 'text' : "Tags: " } )
 	   call base#echo({ 'text' : "&tags => \n\t" . tags } )
+
+"""info_perl
+   elseif topic == 'perl'
+		let perllib = base#envvar('PERLLIB')
+		let perllib = join(split(perllib,";"),"\n\t")
+
+	   	call base#echo({ 'text' : "Perl-related: " } )
+	   	call base#echo({ 'text' : "$PERLLIB => \n\t" . perllib  } )
 
 """info_proj
    elseif topic == 'proj'

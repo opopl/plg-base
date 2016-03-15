@@ -40,7 +40,12 @@ endfunction
 function! base#complete#statuslines (...)
  
   call base#stl#setlines()
-  return join(sort(keys(g:F_StatusLines)),"\n")
+  let comps = keys(g:F_StatusLines)
+  call add(comps,'ap')
+
+  let comps = base#uniq(comps)
+
+  return join(sort(comps),"\n")
  
 endfun
 
