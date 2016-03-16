@@ -2545,13 +2545,17 @@ fun! base#getfileinfo(...)
 
  let g:ext = fnamemodify(g:path,':e')
 
- let g:fileinfo={
+ let fileinfo={
 	\	'path'          : g:path          ,
 	\	'ext'           : g:ext           ,
 	\	'filename'      : g:filename      ,
 	\	'dirname'       : g:dirname       ,
 	\	'filename_root' : g:filename_root ,
 	\	}
+ let g:fileinfo=fileinfo
+ let b:fileinfo=fileinfo
+
+ return fileinfo
 
 endfun
 
@@ -2569,8 +2573,10 @@ fun! base#sys(...)
  let cmds=[]
 
  let opts={
-	\	'custom_error_message': 0 ,
-	\	'show_output': 0          ,
+	\	'custom_error_message': 0   ,
+	\	'show_output'  : 0          ,
+	\	'prompt'       : 1          ,
+	\	'skip_errors'  : 0          ,
 	\	}
 
  if a:0 
@@ -2580,6 +2586,11 @@ fun! base#sys(...)
    	
    elseif base#type(a:1) == 'List'
  	let cmds=a:1
+
+   elseif base#type(a:1) == 'Dictionary'
+	let ref = a:1
+	let cmds = get(ref,'cmds',[])
+	call extend(opts,ref)
    	
    endif
 	
@@ -2597,30 +2608,37 @@ fun! base#sys(...)
 
  for cmd in cmds 
     let output = split(system(cmd),"\n")
+	if get(opts,'skip_errors',0)
+		continue
+	endif
     if v:shell_error
         echohl ErrorMsg
         echo errormsg
-				if opts.custom_error_message == 0
-						echo cmd
-				endif
+		if opts.custom_error_message == 0
+			echo cmd
+		endif
         echohl None
 
-				let show_output = input('Show the tail of the command output (y/n)? : ','y')
-				let nlines = len(output) < 10 ? len(output) : input('Number of lines to be shown from the bottom: ',10)
-				if show_output == 'y' 
-					let i = len(output) - nlines 
-					let i = ( i < 0 ) ? 0 : i
+		if get(opts,'prompt',0)
 
-					echo ' '
-					while i < len(output)
-        		echohl WildMenu
-						echo output[i]
+			let show_output = input('Show the tail of the command output (y/n)? : ','y')
+			let nlines = len(output) < 10 ? len(output) : input('Number of lines to be shown from the bottom: ',10)
+			if show_output == 'y' 
+				let i = len(output) - nlines 
+				let i = ( i < 0 ) ? 0 : i
+
+				echo ' '
+				while i < len(output)
+       		 		echohl WildMenu
+					echo output[i]
         		echohl None
-						let i += 1
-					endw
-				endif
+					let i += 1
+				endw
+			endif
 
-				let ok=0
+		endif
+
+		let ok=0
     endif
  endfor
 
