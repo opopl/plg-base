@@ -41,7 +41,6 @@ fun! base#init#cmds()
 
 endfun
 
-
 fun! base#init#au()
 
 	"au FileType * call ap#stl()

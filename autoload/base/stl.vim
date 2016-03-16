@@ -64,6 +64,8 @@ function!  base#stl#setparts ()
     " file path
   let g:stlparts['file_name']="%{expand('%:p:t')}" 
 
+  let g:stlparts['file_name']="%{ap#plg#name()}" 
+
   let g:stlparts['bush_name']="%{expand('%:p:t:r')}" 
 
   let g:stlparts['file_dir']="%{expand('%:p:h:')}" 
@@ -169,6 +171,9 @@ fun! base#stl#setlines(...)
 		        \   'file_name',
 		        \   'file_dir',
 		        \   'file_encoding',
+                \       ],
+        \   'plg'   :   [ 
+		        \   'plg_name',
                 \       ],
         \   'neat'   :   [ 
 		        \   'mode',
