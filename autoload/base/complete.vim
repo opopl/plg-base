@@ -24,6 +24,10 @@ function! base#complete#info (...)
 	
 endfunction
 
+function! base#complete#tagids (...)
+  return base#complete#vars([ 'tagids' ])
+endfunction
+
 function! base#complete#varlist (...)
   call base#varlist()
 

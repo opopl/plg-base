@@ -2,11 +2,11 @@
 
 fun! base#init#cmds()
 
-	command! -nargs=* -complete=custom,base#complete#vimcoms 
-		\ LCOM call base#loadvimcom(<f-args>)
+	command! -nargs=* -complete=custom,base#complete#vimcoms LCOM 
+		\	call base#loadvimcom(<f-args>)
 	
-	command! -nargs=* -complete=custom,base#complete#vimcoms 
-		\ VCOM call base#viewvimcom(<f-args>)
+	command! -nargs=* -complete=custom,base#complete#vimcoms VCOM 
+		\	call base#viewvimcom(<f-args>)
 	
 	command! -nargs=1 -complete=custom,base#complete#vimfuns LFUN 
 		\	call base#loadvimfunc(<f-args>)
@@ -19,9 +19,6 @@ fun! base#init#cmds()
 	
 	command! -nargs=* -complete=custom,base#complete#info
 	    \   INFO call base#info(<f-args>)
-	   
-	"command! -nargs=* -complete=custom,base#complete#datlist VDAT 
-		"\	call base#viewdat(<f-args>) 
 	
 	command! -nargs=* -complete=custom,base#complete#varlist
 	    \   BaseVarUpdate call base#varupdate(<f-args>) 
@@ -37,6 +34,12 @@ fun! base#init#cmds()
 	
 	command! -nargs=* -complete=custom,base#complete#statuslines
 	    \   StatusLine call base#stl#set(<f-args>) 
+
+	command! -nargs=* -complete=custom,base#complete#tagids  TgSet
+	    \   call base#tg#set(<f-args>) 
+
+	command! -nargs=* -complete=custom,base#complete#tagids  TgUpdate 
+		\	call base#tg#update(<f-args>) 
 	 
 
 endfun

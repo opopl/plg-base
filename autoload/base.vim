@@ -3248,6 +3248,8 @@ function! base#init (...)
 	call base#initplugins()
 	call base#initvars()
 
+	call base#init#cmds()
+
 	call base#rtp#update()
 
     call base#stl#setlines()
