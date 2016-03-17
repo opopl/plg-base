@@ -74,62 +74,65 @@ function!  base#stl#setparts ()
 
 """stl_neat_file_flags
     " read only, modified, modifiable flags in brackets
-  let g:stlparts['file_flags']='%([%R%M]%)' 
-    
-  " right-align everything past this point
-  let g:stlparts['right_align']= '%=' 
+	let g:stlparts['file_flags']='%([%R%M]%)' 
+	
+	" right-align everything past this point
+	let g:stlparts['right_align']= '%=' 
     
 """stl_neat_read_only
-  " readonly flag
-  let g:stlparts['read_only']="%{(&ro!=0?'(readonly)':'')}"
-        
-  " file type (eg. python, ruby, etc..)
-  let g:stlparts['file_type']= '%8*%{&filetype}%0*' 
-
-  let g:stlparts['keymap']= '%8*%{&keymap}' 
-
-  " file format (eg. unix, dos, etc..)
-  let g:stlparts['file_format']='%{&fileformat}'
+	" readonly flag
+	let g:stlparts['read_only']="%{(&ro!=0?'(readonly)':'')}"
+	
+	" file type (eg. python, ruby, etc..)
+	let g:stlparts['file_type']= '%8*%{&filetype}%0*' 
+	
+	let g:stlparts['keymap']= '%8*%{&keymap}' 
+	
+	" file format (eg. unix, dos, etc..)
+	let g:stlparts['file_format']='%{&fileformat}'
 
   " file encoding (eg. utf8, latin1, etc..)
-  let g:stlparts['file_encoding']= "%4*%{(&fenc!=''?&fenc:&enc)}%0*"
+	let g:stlparts['file_encoding']= "%4*%{(&fenc!=''?&fenc:&enc)}%0*"
 
-  let g:stlparts['encoding']= "%4*%{&enc}%0*"
+	let g:stlparts['encoding']= "%4*%{&enc}%0*"
+
 
   " buffer number
-  let g:stlparts['buffer_number']='#%n'
+	let g:stlparts['buffer_number']='#%n'
 
   "line number (pink) / total lines
-  let g:stlparts['line_number']='%4*\ %l%0*'
+	let g:stlparts['line_number']='%4*\ %l%0*'
 
   " column number (minimum width is 4)
-  let g:stlparts['column_number']='%3*\ %-3.c%0*'
+	let g:stlparts['column_number']='%3*\ %-3.c%0*'
+	
+	let g:stlparts['ignore_case']='%{F_IgnoreCase()}'
 
-  let g:stlparts['ignore_case']='%{F_IgnoreCase()}'
+	let g:stlparts['color_red']='%3*'
+	let g:stlparts['color_blue']='%8*'
+	let g:stlparts['color_white']='%0*'
+	
+	" percentage done
+	let g:stlparts['percentage_done']='(%-3.p%%)'
+	
+	" modified / unmodified (purple)
+	let g:stlparts['is_modified']="%6*%{&modified?'modified':''}"
 
-    let g:stlparts['color_red']='%3*'
-    let g:stlparts['color_blue']='%8*'
-    let g:stlparts['color_white']='%0*'
-
-    " percentage done
-    let g:stlparts['percentage_done']='(%-3.p%%)'
-
-    " modified / unmodified (purple)
-    let g:stlparts['is_modified']="%6*%{&modified?'modified':''}"
-
-    let g:stlparts['projs_proj'] = '%1*\ %{projs#proj#name()}\ %0*' 
-    let g:stlparts['projs_sec']  = '%7*\ %{projs#proj#secname()}\ %0*' 
-
-    let g:stlparts['vimfun']= '%1*\ %{g:vimfun}\ %0*' 
-    let g:stlparts['vimcom']= '%1*\ %{g:vimcom}\ %0*' 
-    let g:stlparts['vimproject']= '%1*\ %{g:vimproject}\ %0*' 
-
-    let g:stlparts['stlname']= '%2*\ %{g:F_StatusLine}\ %0*' 
-
-    let g:stlparts['tags']= '%{fnamemodify(&tags,' . "'" . ':~' . "'" . ')}' 
-
-    let g:stlparts['makeprg']='%1*\ %{&makeprg}' 
-
+	let g:stlparts['plg_name'] = '%1*\ %{ap#plg#name()}\ %0*' 
+	
+	let g:stlparts['projs_proj'] = '%1*\ %{projs#proj#name()}\ %0*' 
+	let g:stlparts['projs_sec']  = '%7*\ %{projs#proj#secname()}\ %0*' 
+	
+	let g:stlparts['vimfun']= '%1*\ %{g:vimfun}\ %0*' 
+	let g:stlparts['vimcom']= '%1*\ %{g:vimcom}\ %0*' 
+	let g:stlparts['vimproject']= '%1*\ %{g:vimproject}\ %0*' 
+	
+	let g:stlparts['stlname']= '%2*\ %{g:F_StatusLine}\ %0*' 
+	
+	let g:stlparts['tags']= '%{fnamemodify(&tags,' . "'" . ':~' . "'" . ')}' 
+	
+	let g:stlparts['makeprg']='%1*\ %{&makeprg}' 
+	
 	"call base#varupdate('PMOD_ModuleName')
     let g:stlparts['perl_module_name']='%5*\ %{g:PMOD_ModuleName}\ %0*' 
     let g:stlparts['path_relative_home']='%{expand(' . "'" . '%:~:t' . "'" . ')}'
