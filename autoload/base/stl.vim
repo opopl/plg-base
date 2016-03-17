@@ -103,13 +103,15 @@ function!  base#stl#setparts ()
   let g:stlparts['line_number']='%4*\ %l%0*'
 
   " column number (minimum width is 4)
-  let g:stlparts['column_number']='%3*\ %-3.c%0*'
+  let g:stlparts['column_number'] = '%3*\ %-3.c%0*'
 
-  let g:stlparts['ignore_case']='%{F_IgnoreCase()}'
+  let g:stlparts['ignore_case']   = '%{F_IgnoreCase()}'
 
-    let g:stlparts['color_red']='%3*'
-    let g:stlparts['color_blue']='%8*'
-    let g:stlparts['color_white']='%0*'
+    let g:stlparts['color_red']   = '%3*'
+    let g:stlparts['color_blue']  = '%8*'
+    let g:stlparts['color_white'] = '%0*'
+
+    let g:stlparts['plg_name'] = '%1*\ %{ap#plg#name()}\ %0*'
 
     " percentage done
     let g:stlparts['percentage_done']='(%-3.p%%)'

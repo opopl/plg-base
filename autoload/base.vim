@@ -8,9 +8,8 @@ fun! base#loadvimfunc(fun)
   let fun=substitute(fun,'\s*$','','g')
   let fun=substitute(fun,'^\s*','','g')
 
-  let fundir=g:dirs.funs
-
-  let funfile=fundir . '/' . fun . '.vim'
+  let fundir = base#path('funs')
+  let funfile= base#catpath('funs',fun . '.vim')
 
   if !exists("g:isloaded") | let g:isloaded={} | endif
 
@@ -31,6 +30,35 @@ fun! base#loadvimfunc(fun)
   endtry
   
 endfun
+
+""base_loadvimcommand
+fun! base#loadvimcom(com)
+
+  let com=a:com
+
+  let com=substitute(com,'\s*$','','g')
+  let com=substitute(com,'^\s*','','g')
+
+  let comdir = base#path('coms')
+  let comfile= base#catpath('coms',com . '.vim')
+
+  if !exists("g:isloaded") | let g:isloaded={} | endif
+
+  if !exists("g:isloaded.commands")
+     let g:isloaded.commands=[]
+  else
+     if index(g:isloaded.commands,com) >= 0
+        return
+     endif
+  endif
+
+  try
+     exe 'source ' . comfile
+     call add(g:isloaded.commands,com)
+  endtry
+ 
+endfun
+
 
 fun! base#augroups()
 
@@ -206,37 +234,7 @@ fun! base#runvimfunc(fun,...)
   
 endfun
 
-"""base_loadvimcommand
-fun! base#loadvimcom(com)
-
-  let com=a:com
-
-  let com=substitute(com,'\s*$','','g')
-  let com=substitute(com,'^\s*','','g')
-
-  call base#varcheckexist("dirs")
-
-  let comdir=g:dirs.coms
-
-  let comfile = comdir . '/' . com . '.vim'
-
-  if !exists("g:isloaded") | let g:isloaded={} | endif
-
-  if !exists("g:isloaded.commands")
-     let g:isloaded.commands=[]
-  else
-     if index(g:isloaded.commands,com) >= 0
-        return
-     endif
-  endif
-
-  try
-     exe 'source ' . comfile
-     call add(g:isloaded.commands,com)
-  endtry
- 
-endfun
-
+"
 "function! base#varupdate (varname)
 
   "call ap#Vars#set(a:varname)
@@ -486,16 +484,19 @@ endfun
 function! base#getfromchoosedialog (opts)
 
   if base#type(a:opts) != 'Dictionary'
-    call base#subwarn("wrong type of input argument 'opts' - should be Dictionary")
+    call base#warn({ 
+		\	"text" : "wrong type of input argument 'opts' - should be Dictionary"
+		\	})
 
     return
   endif
 
   let numcols  = 1
-  let startopt = ''
   let header   = 'Option Choose Dialog'
   let bottom   = 'Choose an option: '
   let selected = 'Selected: '
+
+  let startopt = get( a:opts,'startopt','' )
 
   let keystr= "list startopt numcols header bottom selected"
   for key in base#qw(keystr)
@@ -507,7 +508,9 @@ function! base#getfromchoosedialog (opts)
   try 
       let liststr=join(list,"\n")
   catch
-    call base#subwarn("input list of options was not provided")
+    call base#warn({ 
+		\	"text" : "input list of options was not provided"
+		\})
     return
   endtry
     
@@ -2672,10 +2675,15 @@ function! base#pathlist ()
 endfunction
 
 
-
 """base_path
+
+" base#path('funs')
 function! base#path (pathid)
 	let prefix='(base#path) '
+
+	if !exists("s:paths")
+		call base#initpaths()
+	endif
 
 	if exists("s:paths[a:pathid]")
 		let path = s:paths[a:pathid]
