@@ -2843,8 +2843,13 @@ function! base#info (...)
        "call base#echovar({ 'var' : 'g:tagdir', 'indent' : indentlev,  })
 	   "
 	   let tags = join(split(&tags,","),"\n\t")
+
+	   let tg = base#var('tg')
+
 	   call base#echo({ 'text' : "Tags: " } )
 	   call base#echo({ 'text' : "&tags => \n\t" . tags } )
+	   call base#echo({ 'text' : "Tag ID: " } )
+	   call base#echo({ 'text' : "tg => \n\t" . tg } )
 
 """info_perl
    elseif topic == 'perl'
