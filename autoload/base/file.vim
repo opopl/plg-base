@@ -9,7 +9,10 @@ function! base#file#catfile( ... )
 
 			let pieces = map(pieces,'base#file#catfile(v:val)')
 
-			return join(pieces,sep)
+			let path = join(pieces,sep)
+			let path = base#file#std(path)
+
+			return path 
 
 	elseif type(a:1) == type({})
 			let dirs=a:1
