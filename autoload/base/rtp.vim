@@ -42,10 +42,15 @@ function! base#rtp#update()
 		
 		if ( isdirectory(docdir) )
 
-			let ff = base#find({ "dirs" : [docdir]})
+			let ff = base#find({ "dirs" : [docdir] })
 
 			if len(ff)
-				exe 'helptags ' . docdir 
+				try
+					silent exe 'helptags ' . docdir 
+				catch /^Vim(execute):E151/
+					echo 'error E151'
+				endtry
+
 			endif
 		endif
 	endfor
