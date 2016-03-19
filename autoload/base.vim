@@ -3,10 +3,10 @@
 
 fun! base#loadvimfunc(fun)
  
-  let fun=a:fun
+  let fun = a:fun
 
-  let fun=substitute(fun,'\s*$','','g')
-  let fun=substitute(fun,'^\s*','','g')
+  let fun = substitute(fun,'\s*$','','g')
+  let fun = substitute(fun,'^\s*','','g')
 
   let fundir = base#path('funs')
   let funfile= base#catpath('funs',fun . '.vim')
@@ -34,13 +34,13 @@ endfun
 ""base_loadvimcommand
 fun! base#loadvimcom(com)
 
-  let com=a:com
+  let com = a:com
 
-  let com=substitute(com,'\s*$','','g')
-  let com=substitute(com,'^\s*','','g')
+  let com = substitute(com,'\s*$','','g')
+  let com = substitute(com,'^\s*','','g')
 
-  let comdir = base#path('coms')
-  let comfile= base#catpath('coms',com . '.vim')
+  let comdir  = base#path('coms')
+  let comfile = base#catpath('coms',com . '.vim')
 
   if !exists("g:isloaded") | let g:isloaded={} | endif
 
@@ -3253,7 +3253,7 @@ function! base#init (...)
 	call base#rtp#update()
 
     call base#stl#setlines()
-	"
+	
 	return 1
 
 endfunction
