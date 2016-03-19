@@ -411,24 +411,24 @@ fun! base#initpaths()
 	let projsdir  = base#envvar('PROJSDIR')
 
 	call base#pathset({ 
-			\ 'conf' : confdir ,
-			\ 'vrt'  : vrt,
-			\ 'vim'  : base#envvar('VIM'),
-			\	})
+		\ 'conf' : confdir ,
+		\ 'vrt'  : vrt,
+		\ 'vim'  : base#envvar('VIM'),
+		\	})
 
-	let mkvimrc = base#file#catfile([ base#path('conf'), 'mk', 'vimrc' ])
+	let mkvimrc  = base#file#catfile([ base#path('conf'), 'mk', 'vimrc' ])
 	let mkbashrc = base#file#catfile([ base#path('conf'), 'mk', 'bashrc' ])
 
 	call base#pathset({
-		\	'mkvimrc' : mkvimrc,
-		\	'pdfout' : base#envvar('PDFOUT'),
-		\	'mkbashrc' : mkbashrc,
-		\	'coms' : base#file#catfile([ mkvimrc, '_coms_' ]) ,
-		\	'funs' : base#file#catfile([ mkvimrc, '_fun_' ]) ,
-		\	'projs' : projsdir,
-		\	'perlmod' : base#file#catfile([ hm, base#qw("repos git perlmod") ]),
+		\	'mkvimrc'     : mkvimrc,
+		\	'pdfout'      : base#envvar('PDFOUT'),
+		\	'mkbashrc'    : mkbashrc,
+		\	'coms'        : base#file#catfile([ mkvimrc, '_coms_' ]) ,
+		\	'funs'        : base#file#catfile([ mkvimrc, '_fun_' ]) ,
+		\	'projs'       : projsdir,
+		\	'perlmod'     : base#file#catfile([ hm, base#qw("repos git perlmod") ]),
 		\	'perlscripts' : base#file#catfile([ hm, base#qw("scripts perl") ]),
-		\	'scripts' : base#file#catfile([ hm, base#qw("scripts") ]),
+		\	'scripts'     : base#file#catfile([ hm, base#qw("scripts") ]),
 		\	})
 
 	"" remove / from the end of the directory
@@ -1347,8 +1347,8 @@ function! base#varupdate(ref)
         let s:datfiles['pp_' . id]=base#catpath('p',id . '.i.dat')
       endfor
 
-	  call base#var('datfiles',s:datfiles)
-	  call base#var('datlist',base#varhash#keys('datfiles'))
+	  call base#var('datfiles_mkvimrc',s:datfiles)
+	  call base#var('datlist_mkvimrc',base#varhash#keys('datfiles_mkvimrc'))
 
 """varupdate_allmenus
       elseif varname == 'allmenus'
@@ -2261,7 +2261,12 @@ function! base#findwin(ref)
 			if strlen(ext) | let ext = '.'.ext | endif
 
 			let searchcmd  = 'dir *'.ext.searchopts 
-			let found .= ap#sys( searchcmd ) . "\n"
+			let res = ap#sys( searchcmd )
+
+			if ! ( res == 'File Not Found' )
+				let found .= res . "\n"
+			endif
+
 		endfor
 
 		let files=split(found,"\n")
@@ -2838,8 +2843,13 @@ function! base#info (...)
        "call base#echovar({ 'var' : 'g:tagdir', 'indent' : indentlev,  })
 	   "
 	   let tags = join(split(&tags,","),"\n\t")
+
+	   let tg = base#var('tg')
+
 	   call base#echo({ 'text' : "Tags: " } )
 	   call base#echo({ 'text' : "&tags => \n\t" . tags } )
+	   call base#echo({ 'text' : "Tag ID: " } )
+	   call base#echo({ 'text' : "tg => \n\t" . tg } )
 
 """info_perl
    elseif topic == 'perl'
@@ -3185,20 +3195,8 @@ endfunction
 function! base#initvars (...)
 	call base#echoprefix('(base#initvars)')
 
-	"" list
-	let datvars  =''
-	let datvars .=' opts info_topics '
-
-	"" dictionary
-	let dathashvars  =''
-	let dathashvars .=' datfiles '
-
-	let e={
-		\	"varsfromdatlist" : base#qw(datvars),
-		\	"varsfromdathash" : base#qw(dathashvars),
-		\	}
-
-	call extend(s:basevars,e)
+	let datfiles = {}
+	let datlist  = []
 
 	let mp = { "list" : "List", "dict" : "Dictionary" }
 	for type in base#qw("list dict")
@@ -3212,8 +3210,22 @@ function! base#initvars (...)
 		let tp = mp[type]
 		for v in vars
 			call base#varsetfromdat(v,tp)
+			let d = []
+
+			let dfs= base#find({ 
+				\	"dirs" : [ dir ], 
+				\	"exts" : [ "i.dat" ], 	
+				\	"subdirs" : 1, 
+				\	"pat"     : v, })
+			let df=get(dfs,0,'')
+
+			call add(datlist,v)
+			call extend(datfiles,{ v : df }) 
 		endfor
 	endfor
+
+	call base#var('datlist',datlist)
+	call base#var('datfiles',datfiles)
 
 	call base#var('vim_funcs_user',
 		\	base#fnamemodifysplitglob('funs','*.vim',':t:r'))

@@ -40,6 +40,9 @@ fun! base#init#cmds()
 
 	command! -nargs=* -complete=custom,base#complete#tagids  TgUpdate 
 		\	call base#tg#update(<f-args>) 
+
+	command! -nargs=* -complete=custom,base#complete#tagids  TgAdd 
+		\	call base#tg#add(<f-args>) 
 	 
 
 endfun
