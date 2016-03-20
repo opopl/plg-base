@@ -131,6 +131,8 @@ function!  base#stl#setparts ()
 
     let g:stlparts['tags']= '%{fnamemodify(&tags,' . "'" . ':~' . "'" . ')}' 
 
+    let g:stlparts['tgids'] = '%1*\ %{base#tg#ids_comma()}\ %0*' 
+
     let g:stlparts['makeprg']='%1*\ %{&makeprg}' 
 
 	let g:stlparts['column_number']='%3*\ %-3.c%0*'
@@ -208,20 +210,22 @@ fun! base#stl#setlines(...)
 		        \   'plg_name',
                 \       ],
         \   'neat'   :   [ 
-		        \   'mode',
-		        \   'session_name',
-		        \   'file_name',
-		        \   'file_flags',
-		        \   'right_align',
-		        \   'read_only',
-		        \   'file_type',
-		        \   'file_format',
-		        \   'file_encoding',
-		        \   'buffer_number',
-		        \   'is_modified',
+		        \   'tgids'          ,
+		        \   'mode'          ,
+		        \   'session_name'  ,
+		        \   'file_name'     ,
+		        \   'file_flags'    ,
+		        \   'right_align'   ,
+		        \   'read_only'     ,
+		        \   'file_type'     ,
+		        \   'file_format'   ,
+		        \   'file_encoding' ,
+		        \   'buffer_number' ,
+		        \   'is_modified'   ,
 		        \   ],
         \   'vimfun'   :   [ 
 		        \   'vimfun',
+		        \   'tgids'          ,
 		        \   ],
         \   'vimproject'   :   [ 
 		        \   'vimproject',
@@ -229,6 +233,7 @@ fun! base#stl#setlines(...)
         \   'vim'   :   [ 
 		        \   'file_name',
 		        \   'file_dir',
+		        \   'tgids'          ,
 		        \   ],
         \   'dat'   :   [ 
 		        \   'file_name',
@@ -242,7 +247,8 @@ fun! base#stl#setlines(...)
 		        \   'bush_name',
 		        \   ],
         \   'vimcom'   :   [ 
-		        \   'vimcom',
+		        \   'vimcom' ,
+		        \   'tgids'  ,
 		        \   ],
         \   'projs'   :   [ 
 		        \   'projs_proj'    ,
@@ -251,6 +257,7 @@ fun! base#stl#setlines(...)
 		        \   'file_encoding' ,
 		        \   'encoding'      ,
 		        \   'keymap'        ,
+		        \   'tgids'         ,
 		        \   ],
         \   }
 

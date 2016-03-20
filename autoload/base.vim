@@ -398,11 +398,59 @@ fun! base#catpath(key,file,...)
 
 endf
 
-"""base_setpaths
-fun! base#initpaths()
+fun! base#initfiles(...)
+	call base#echoprefix('(base#initfiles)')
+
+	let ref = {}
+	if a:0 | let ref = a:1 | endif
+
+	let anew = 0
+	if ! exists("s:files") 
+		let anew = 1 
+	else
+		if get(ref,'anew',0) 
+			let anew = 1 
+		endif
+   	endif
+		
+	if anew
+		call base#echo({ 
+			\	"text" : 'Settings "files" hash anew...',
+			\	})
+    	let s:files={}
+	endif
+
+	call base#echoprefixold()
+endf
+
+"""base_initpaths
+
+"call base#initpaths()
+"call base#initpaths({ "anew": 1 })
+
+fun! base#initpaths(...)
+	call base#echoprefix('(base#initpaths)')
+
+	let ref = {}
+	if a:0 | let ref = a:1 | endif
  
 """define_paths
-    let s:paths={}
+
+	let anew = 0
+	if ! exists("s:paths") 
+		let anew = 1 
+	else
+		if get(ref,'anew',0) 
+			let anew = 1 
+		endif
+   	endif
+		
+	if anew
+		call base#echo({ 
+			\	"text" : 'Settings paths anew...' 
+			\	});
+    	let s:paths={}
+	endif
 
 	let confdir   = base#envvar('CONFDIR')
 	let vrt       = base#envvar('VIMRUNTIME')
@@ -444,6 +492,7 @@ fun! base#initpaths()
     let pathlist= sort(keys(s:paths))
 	call base#var('pathlist',pathlist)
 
+	call base#echoprefixold()
 endf
  
 """base_fileopen
@@ -2654,6 +2703,19 @@ fun! base#sys(...)
 
 endfun
 
+function! base#fileset (ref)
+
+	for [ pathid, path ] in items(a:ref) 
+		let e = { pathid : path }
+		if ! exists("s:files")
+			let s:files=e
+		else
+			call extend(s:files,e)
+		endif
+	endfor
+
+endfun
+
 function! base#pathset (ref)
 
 	for [ pathid, path ] in items(a:ref) 
@@ -2833,23 +2895,14 @@ function! base#info (...)
 
 """info_tags
    elseif topic == 'tags'
-"       call base#echo({ 'text' : "Tags: " } )
-       "call base#echovar({ 'var' : 'g:CTAGS_CurrentTagID', 'indent' : indentlev })
-       "call base#echovar({ 'var' : '&tags', 'indent' : indentlev, 'spliton' : ',' })
-       "call base#echovar({ 'var' : 'g:ctagscmd', 'indent' : indentlev, 'spliton' : ',' })
-       "call base#echovar({ 'var' : 'g:ctagsexe', 'indent' : indentlev,  })
-       "call base#echovar({ 'var' : 'g:tagfile', 'indent' : indentlev, })
-       "call base#echovar({ 'var' : 'g:tagfiles', 'indent' : indentlev, })
-       "call base#echovar({ 'var' : 'g:tagdir', 'indent' : indentlev,  })
-	   "
 	   let tags = join(split(&tags,","),"\n\t")
 
-	   let tg = base#var('tg')
+	   let tgs = base#tg#ids_comma()
 
 	   call base#echo({ 'text' : "Tags: " } )
-	   call base#echo({ 'text' : "&tags => \n\t" . tags } )
+	   call base#echo({ 'text' : " &tags => \n\t" . tags } )
 	   call base#echo({ 'text' : "Tag ID: " } )
-	   call base#echo({ 'text' : "tg => \n\t" . tg } )
+	   call base#echo({ 'text' : " tgids => \n\t\t" . tgs } )
 
 """info_perl
    elseif topic == 'perl'
@@ -3256,9 +3309,15 @@ endf
 
 function! base#init (...)
 
+	" initialize data using base#pathset(...)
 	call base#initpaths()
+
 	call base#initplugins()
+
 	call base#initvars()
+
+	" initialize data using base#fileset(...)
+	call base#initfiles()
 
 	call base#init#cmds()
 
