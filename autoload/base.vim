@@ -2280,11 +2280,13 @@ function! base#findwin(ref)
 	let ref = a:ref
 
 	let dirs = []
-	let exts = [ '' ] 
-	
-	if exists("ref.exts") | let exts = ref.exts | endif
-	if exists("ref.dirs") | let dirs = ref.dirs | endif
+	let exts_def = [ '' ] 
 
+	let exts = get(ref,'exts',exts_def)
+	if ! len(exts) | let exts=exts_def | endif
+
+	let dirs = get(ref,'dirs',dirs)
+	
 	let searchopts = ' /b/a:-d '
 
 	if get(ref,'cwd')
@@ -2827,6 +2829,21 @@ function! base#info (...)
        call base#echovar({ 'var' : 'g:path', 'indent' : indentlev })
        call base#echovar({ 'var' : 'g:ext' , 'indent' : indentlev })
 
+"""info_tagbar
+   elseif topic == 'plg_tagbar'
+       call base#echo({ 'text' : "Tagbar variables: " } )
+
+		let vars = base#var('tagbar_vars')
+		for v in vars
+			let val = ''
+			let gv  = "g:tagbar_" . v 
+			if exists(gv)
+				exe 'let val = ' . gv
+			endif
+
+			call base#echo({ 'text' : "\t" . v . " =>" . val } )
+		endfor
+
 """info_statusline
    elseif topic == 'statusline'
 	let stl=''
@@ -3312,6 +3329,8 @@ function! base#init (...)
 	" initialize data using base#pathset(...)
 	call base#initpaths()
 
+	call base#tg#init()
+
 	call base#initplugins()
 
 	call base#initvars()
@@ -3319,6 +3338,7 @@ function! base#init (...)
 	" initialize data using base#fileset(...)
 	call base#initfiles()
 
+	call base#init#au()
 	call base#init#cmds()
 
 	call base#rtp#update()

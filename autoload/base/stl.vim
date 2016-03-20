@@ -165,8 +165,8 @@ function!  base#stl#setparts ()
 	let g:stlparts['makeprg']='%1*\ %{&makeprg}' 
 	
 	"call base#varupdate('PMOD_ModuleName')
-    let g:stlparts['perl_module_name']='%5*\ %{g:PMOD_ModuleName}\ %0*' 
-    let g:stlparts['path_relative_home']='%{expand(' . "'" . '%:~:t' . "'" . ')}'
+    let g:stlparts['perl_module_name']   ='%5*\ %{perlmy#modname()}\ %0*' 
+    let g:stlparts['path_relative_home'] ='%{expand(' . "'" . '%:~:t' . "'" . ')}'
 
 endfun
 

@@ -1,0 +1,103 @@
+[1;33mdiff --git a/autoload/base.vim b/autoload/base.vim[m
+[1;33mindex 74845c1..0108ca6 100644[m
+[1;33m--- a/autoload/base.vim[m
+[1;33m+++ b/autoload/base.vim[m
+[1;35m@@ -32,6 +32,18 @@[m [mfun! base#loadvimfunc(fun)[m
+   [m
+ endfun[m
+ [m
+[1;32m+[m[1;32mfun! base#augroups()[m
+[1;32m+[m
+[1;32m+[m	[1;32mlet g = ''[m
+[1;32m+[m	[1;32mredir => {g}[m
+[1;32m+[m	[1;32maugroup[m
+[1;32m+[m	[1;32mredir END[m
+[1;32m+[m[7;31m	[m
+[1;32m+[m	[1;32mlet groups = split(g,' ')[m
+[1;32m+[m	[1;32mreturn groups[m
+[1;32m+[m
+[1;32m+[m[1;32mendfun[m
+[1;32m+[m
+ """base_viewvimfunc[m
+ fun! base#viewvimfunc(...)[m
+   let fun=a:1[m
+[1;35m@@ -2803,6 +2815,14 @@[m [mfunction! base#info (...)[m
+ 	   call base#echo({ 'text' : "Tags: " } )[m
+ 	   call base#echo({ 'text' : "&tags => \n\t" . tags } )[m
+ [m
+[1;32m+[m[1;32m"""info_perl[m
+[1;32m+[m[1;32m   elseif topic == 'perl'[m
+[1;32m+[m		[1;32mlet perllib = base#envvar('PERLLIB')[m
+[1;32m+[m		[1;32mlet perllib = join(split(perllib,";"),"\n\t")[m
+[1;32m+[m
+[1;32m+[m	[7;31m   [m	[1;32mcall base#echo({ 'text' : "Perl-related: " } )[m
+[1;32m+[m	[7;31m   [m	[1;32mcall base#echo({ 'text' : "$PERLLIB => \n\t" . perllib  } )[m
+[1;32m+[m
+ """info_proj[m
+    elseif topic == 'proj'[m
+ 	    call projs#info()[m
+[1;33mdiff --git a/autoload/base/complete.vim b/autoload/base/complete.vim[m
+[1;33mindex 456a63d..9968169 100644[m
+[1;33m--- a/autoload/base/complete.vim[m
+[1;33m+++ b/autoload/base/complete.vim[m
+[1;35m@@ -40,7 +40,12 @@[m [mendfunction[m
+ function! base#complete#statuslines (...)[m
+  [m
+   call base#stl#setlines()[m
+[1;31m-  return join(sort(keys(g:F_StatusLines)),"\n")[m
+[1;32m+[m[1;32m  let comps = keys(g:F_StatusLines)[m
+[1;32m+[m[1;32m  call add(comps,'ap')[m
+[1;32m+[m
+[1;32m+[m[1;32m  let comps = base#uniq(comps)[m
+[1;32m+[m
+[1;32m+[m[1;32m  return join(sort(comps),"\n")[m
+  [m
+ endfun[m
+ [m
+[1;33mdiff --git a/autoload/base/stl.vim b/autoload/base/stl.vim[m
+[1;33mindex 28554af..a49b827 100644[m
+[1;33m--- a/autoload/base/stl.vim[m
+[1;33m+++ b/autoload/base/stl.vim[m
+[1;35m@@ -20,7 +20,11 @@[m [mfunction! base#stl#set (...)[m
+ [m
+ 	let evs=''[m
+ 	let sline = ''[m
+[1;31m-    if exists('g:F_StatusLines')[m
+[1;32m+[m
+[1;32m+[m	[1;32mif opt == 'ap'[m
+[1;32m+[m		[1;32mcall ap#stl()[m
+[1;32m+[m[1;32m        let sline  = &stl[m
+[1;32m+[m	[1;32melseif exists('g:F_StatusLines')[m
+         let sline  = get(g:F_StatusLines,opt)[m
+         let evs    = "setlocal statusline=" . sline[m
+         let g:F_StatusLine      = opt[m
+[1;35m@@ -29,7 +33,7 @@[m [mfunction! base#stl#set (...)[m
+         if exists('g:F_StatusLineOrders[opt]')[m
+             let g:F_StatusLineOrder=g:F_StatusLineOrders[opt][m
+         endif[m
+[1;31m-    endif[m
+[1;32m+[m	[1;32mendif[m
+ 	if strlen(evs) | silent exe evs | endif[m
+ [m
+ 	call base#var('stl',sline)[m
+[1;33mdiff --git a/data/list/info_topics.i.dat b/data/list/info_topics.i.dat[m
+[1;33mindex 531f7e4..f1ad34b 100644[m
+[1;33m--- a/data/list/info_topics.i.dat[m
+[1;33m+++ b/data/list/info_topics.i.dat[m
+[1;35m@@ -7,6 +7,7 @@[m [mkeymap[m
+ make[m
+ opts[m
+ paths[m
+[1;32m+[m[1;32mperl[m
+ plugins[m
+ proj[m
+ rtp[m
+[1;33mdiff --git a/data/list/plugins.i.dat b/data/list/plugins.i.dat[m
+[1;33mindex 55f10e4..4d515b1 100644[m
+[1;33m--- a/data/list/plugins.i.dat[m
+[1;33m+++ b/data/list/plugins.i.dat[m
+[1;35m@@ -23,3 +23,4 @@[m [mprojs[m
+ make[m
+ paps[m
+ ctags[m
+[1;32m+[m[1;32mpl[m

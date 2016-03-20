@@ -49,6 +49,18 @@ endfun
 
 fun! base#init#au()
 
+	let plgdir = base#plgdir()
+
+	let datfiles = base#var('datfiles')
+
+	exe 'augroup base_au_datfiles'
+	exe '   au!'
+	for [dat,datfile] in items(datfiles)
+		exe '   autocmd BufWritePost ' 
+			\	. datfile . ' call base#initvars()'
+	endfor
+	exe 'augroup end'
+
 	"au FileType * call ap#stl()
     "au FileType * call ap#tags#set()
 

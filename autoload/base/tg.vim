@@ -10,6 +10,7 @@ function! base#tg#set (...)
 
 	if tgid     == 'ipte_ao'
 	elseif tgid == 'ipte_client'
+	elseif tgid == 'this'
 	endif
 
 	exe 'set tags=' . tfile
@@ -32,6 +33,12 @@ function! base#tg#add (...)
 
 endf
 
+function! base#tg#init (...)
+	let tgids = []
+	call base#var('tgids',tgids)
+
+endf
+
 function! base#tg#ids (...)
 	let tgids = base#var('tgids')
 
@@ -42,7 +49,10 @@ endf
 function! base#tg#ids_comma (...)
 	let tgids = base#tg#ids()
 
-	return join(tgids,',')
+	if ( (type(tgids) == type([])) && len(tgids) )
+		return join(tgids,',')
+	endif
+	return ''
 
 endf
 
@@ -54,7 +64,18 @@ function! base#tg#tfile (...)
 	let tdir  = base#file#catfile([ hm, 'tags' ])
 	call base#mkdir(tdir)
 
-	let tfile = base#file#catfile([ tdir, tgid . '.tags' ])
+	if tgid == 'thisfile'
+		let finfo    = base#getfileinfo()
+		let dirname  = get(finfo,'dirname','')
+		let basename = get(finfo,'filename','')
+		let tfile    = base#file#catfile([ dirname, basename . '.tags' ])
+	elseif tgid == 'projs_this'
+		let proj = projs#proj#name()
+		let tfile = projs#path([ proj . '.tags' ])
+	else
+		let tfile = base#file#catfile([ tdir, tgid . '.tags' ])
+	endif
+
 
 	return tfile
 endf
@@ -62,9 +83,13 @@ endf
 
 
 function! base#tg#update (...)
-	if a:0 | let tg = a:1 | endif
+	if a:0 | let tgid = a:1 | endif
 
 	let tfile = base#tg#tfile(tgid)
+	let libs = ''
+	let files = ''
+
+	let libs_as = join(base#qw("C:/Perl/site/lib C:/Perl/lib" ),' ')
 
 	if tgid  == 'ipte_ao'
 		call base#CD(tgid)
@@ -73,7 +98,17 @@ function! base#tg#update (...)
 			\	ap#file#win( base#catpath(tgid,'iPTE') ), 
 			\	] ," ")
 
-		let libs.=' ' . join( base#qw("C:/Perl/site/lib  C:/Perl/lib" ), " ")
+		let libs.=' ' . libs_as
+
+	elseif tgid == 'projs_this'
+		let proj  = projs#proj#name()
+		let files_arr = projs#proj#files({ "exts" : ["tex"] })
+
+		let files = join(files_arr,' ')
+
+		let tfile = projs#path([ proj . '.tags' ])
+
+		call projs#rootcd()
 
 	elseif tgid == 'ipte_client'
 		let id = 'ipte_lib_client'
@@ -84,7 +119,7 @@ function! base#tg#update (...)
 			\	ap#file#win( base#catpath(id,'iPTE') ), 
 			\	] ," ")
 
-		let libs.=' ' . join( base#qw("C:/Perl/site/lib  C:/Perl/lib" ), " ")
+		let libs.=' ' . libs_as
 
 	elseif tgid == 'ipte_wt'
 		let id = 'ipte_lib_client'
@@ -95,17 +130,24 @@ function! base#tg#update (...)
 			\	ap#file#win( base#catpath(id,'iPTE\Base') ), 
 			\	] ," ")
 
-		let libs.=' ' . join( base#qw("C:/Perl/site/lib  C:/Perl/lib" ), " ")
+		let libs.=' ' . libs_as
 
 	elseif tgid == 'perlmod'
+		let id = tgid
+
+		call base#CD(id)
+
+		let libs=join( [ 
+			\	ap#file#win( base#catpath(id,'lib') ), 
+			\	] ," ")
+
+		let libs.=' ' . libs_as
 
 	endif
 
-
-	let cmd = 'ctags -R -o ' . ap#file#win( tfile ) . ' ' . libs
+	let cmd = 'ctags -R -o ' . ap#file#win( tfile ) . ' ' . libs . ' ' . files
 
 	echo "Calling: " . cmd
-
 	let ok = base#sys( cmd )
 
 	if ok
