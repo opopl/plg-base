@@ -2282,6 +2282,8 @@ function! base#findwin(ref)
 	let dirs = []
 	let exts_def = [ '' ] 
 
+	let do_subdirs = get(ref,'subdirs',1)
+
 	let exts = get(ref,'exts',exts_def)
 	if ! len(exts) | let exts=exts_def | endif
 
@@ -2293,7 +2295,7 @@ function! base#findwin(ref)
 		call add(dirs,getcwd())
 	endif
 
-	if get(ref,'subdirs')
+	if do_subdirs 
 		let searchopts .= ' /s '
 	endif
 
@@ -2311,6 +2313,7 @@ function! base#findwin(ref)
 		for ext in exts 
 			if strlen(ext) | let ext = '.'.ext | endif
 
+			"let searchcmd  = 'dir ' .dir.'\*'.ext.searchopts 
 			let searchcmd  = 'dir *'.ext.searchopts 
 			let res = ap#sys( searchcmd )
 
@@ -2322,8 +2325,13 @@ function! base#findwin(ref)
 
 		let files=split(found,"\n")
 
+		if ! do_subdirs
+			call map(files,'base#file#catfile([dir, v:val])')
+		endif
+
 		let diru = base#file#win2unix(dir)
 		let newfiles=[]
+
 
 		for file in files
 			let add=1
@@ -2365,7 +2373,6 @@ function! base#findwin(ref)
 		let map = get(ref,'map','')
 		if strlen(map)
 			call filter(newfiles,"'" . map . "'")
-			"call filter(newfiles,map)
 		endif
 
 		let files = newfiles
