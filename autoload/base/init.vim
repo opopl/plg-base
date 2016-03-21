@@ -43,6 +43,12 @@ fun! base#init#cmds()
 
 	command! -nargs=* -complete=custom,base#complete#tagids  TgAdd 
 		\	call base#tg#add(<f-args>) 
+
+	command! -nargs=*  BuffersList
+		\	call base#buffers#list(<f-args>) 
+
+	command! -nargs=*  BuffersWipeAll
+		\	call base#buffers#wipeall(<f-args>) 
 	 
 
 endfun
