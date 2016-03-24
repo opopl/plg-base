@@ -3157,6 +3157,8 @@ function! base#datadir (...)
 	return base#var('datadir')
 endf	
 
+" go to base plugin root directory
+
 function! base#plgcd ()
 	let dir = base#plgdir()
 	exe 'cd ' . dir
@@ -3454,6 +3456,6 @@ fun! base#listnew(...)
   return a
  
 endfun
- 
+
  
 

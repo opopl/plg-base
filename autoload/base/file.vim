@@ -56,6 +56,8 @@ function! base#file#std( filename,... )
 	endif
 
 	let pc = split(fname,sep)
+	call filter(pc,'v:val != ""')
+
 	let rpc = reverse(copy(pc))
 
 	let rm = 0
@@ -68,7 +70,9 @@ function! base#file#std( filename,... )
 			if ( rm > 0 )
 				let rm-=1
 			else
-				call add(npc,p)
+				if strlen(p)
+					call add(npc,p)
+				endif
 			endif
 		endif
 	endw
@@ -100,6 +104,8 @@ function! base#file#ossep( filename )
 		return base#file#win2unix(fname) 
 	endif
 
+	return base#file#std(fname)
+
 endf
 
 function! base#file#win2unix( filename )
@@ -111,5 +117,90 @@ function! base#file#win2unix( filename )
 	return a:filename
 
 endf
- 
 
+function! base#file#ossplit( filename )
+	let fname = a:filename
+
+	let sep = base#file#sep()
+	let spt = split(fname,sep)
+
+	return spt
+
+endf
+
+
+" check if dirs or files share a common root with out
+" a  => a/b/c
+" b => a/b/c/d
+"
+"call base#dirs#commonroot ([ dir1, dir2 ])
+"
+function! base#file#commonroot (...)
+	let dirs = a:1
+
+	let root = ''
+
+	let splitdirs = {}
+	let i  = 0
+
+	for dir in dirs
+		let dir          = base#file#std(dir)
+		let dir          = base#file#ossep(dir)
+		let splitdirs[i] = base#file#ossplit(dir)
+
+		let i+=1
+	endfor
+	let ilast = i-1
+
+	let s = copy(splitdirs[0])
+	let list = base#listnewinc(1,ilast,1)
+
+	let si = 0
+	let fin = 0
+	
+	let r = []
+
+	while len(s)
+
+		let c = remove(s,0)
+		for i in list
+			let other = splitdirs[i]
+			if ! exists('other[si]') 
+				let fin = 1 
+				break
+			endif
+
+			if ( c != other[si] )
+				let fin = 1
+				break
+			endif
+
+			if fin | break | endif
+		endfor
+
+		if fin | break | endif
+
+		let si+=1
+		call add(r,c)
+	endw
+
+	let root =base#file#catfile(r)
+
+	return root
+	
+endfunction
+
+function! base#file#removeroot (dir,root)
+	let dir  = base#file#std(a:dir)
+	let root = base#file#std(a:root)
+	let sep  = base#file#sep()
+
+	let sep  = escape(sep,'\')
+	let root = escape(root,'\')
+
+	let pat = '^'.root.sep.'\(.*\)'
+
+	let rm = substitute(dir,pat,'\1','g')
+	return rm
+
+endfunction

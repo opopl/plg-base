@@ -11,6 +11,12 @@ function! base#tg#set (...)
 	if tgid     == 'ipte_ao'
 	elseif tgid == 'ipte_client'
 	elseif tgid == 'this'
+	elseif tgid == 'thisfile'
+	endif
+
+
+	if !filereadable(tfile)
+		call base#tg#update(tgid)
 	endif
 
 	exe 'set tags=' . tfile
@@ -22,6 +28,7 @@ function! base#tg#add (...)
 	if a:0 | let tgid = a:1 | endif
 
 	let tfile = base#tg#tfile(tgid)
+
 
 	exe 'set tags+=' . tfile
 	let tgs = base#tg#ids() 
@@ -143,6 +150,9 @@ function! base#tg#update (...)
 
 		let libs.=' ' . libs_as
 
+"""thisfile
+	elseif tgid == 'thisfile'
+		let files.= ' ' . expand('%:p')
 	endif
 
 	let cmd = 'ctags -R -o ' . ap#file#win( tfile ) . ' ' . libs . ' ' . files
