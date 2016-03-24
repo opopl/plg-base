@@ -462,6 +462,7 @@ fun! base#initpaths(...)
 		\ 'conf' : confdir ,
 		\ 'vrt'  : vrt,
 		\ 'vim'  : base#envvar('VIM'),
+		\ 'texdocs'  : base#envvar('TEXDOCS'),
 		\	})
 
 	let mkvimrc  = base#file#catfile([ base#path('conf'), 'mk', 'vimrc' ])
@@ -2315,9 +2316,15 @@ function! base#findwin(ref)
 
 			"let searchcmd  = 'dir ' .dir.'\*'.ext.searchopts 
 			let searchcmd  = 'dir *'.ext.searchopts 
-			let res = ap#sys( searchcmd )
 
-			if ! ( res == 'File Not Found' )
+			let ok  = base#sys( { "cmds" : [ searchcmd ], "skip_errors"  : 1 } )
+			let res = base#var('sysoutstr')
+
+			"if ! ( res == 'File Not Found' )
+				"let found .= res . "\n"
+			"endif
+			"
+			if ok 
 				let found .= res . "\n"
 			endif
 
@@ -2671,9 +2678,15 @@ fun! base#sys(...)
  let ok=1
 
  let output=[]
+ let outputstr=''
 
  for cmd in cmds 
-    let output = split(system(cmd),"\n")
+    let outstr = system(cmd)
+	let out    = split(outstr,"\n")
+
+	call extend(output,out)
+	let outputstr .= outstr
+
 	if get(opts,'skip_errors',0)
 		continue
 	endif
@@ -2707,6 +2720,9 @@ fun! base#sys(...)
 		let ok=0
     endif
  endfor
+
+ call base#var('sysout',output)
+ call base#var('sysoutstr',outputstr)
 
  return ok
 

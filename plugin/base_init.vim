@@ -11,8 +11,8 @@ call base#init()
 call base#init#cmds()
 call base#init#au()
 
-command! -nargs=* -complete=custom,base#complete#CD 
-	\	CD call base#CD(<f-args>) 
+"command! -nargs=* -complete=custom,base#complete#CD 
+	"\	CD call base#CD(<f-args>) 
 
 "command! -nargs=1 -complete=custom,base#complete#vimfuns LFUN 
   "\	call base#loadvimfunc(<f-args>)
