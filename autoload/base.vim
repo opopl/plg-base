@@ -467,10 +467,11 @@ fun! base#initpaths(...)
 	let projsdir  = base#envvar('PROJSDIR')
 
 	call base#pathset({ 
-		\ 'conf' : confdir ,
-		\ 'vrt'  : vrt,
-		\ 'vim'  : base#envvar('VIM'),
-		\ 'texdocs'  : base#envvar('TEXDOCS'),
+		\ 'conf'    : confdir ,
+		\ 'vrt'     : vrt,
+		\ 'vim'     : base#envvar('VIM'),
+		\ 'texdocs' : base#envvar('TEXDOCS'),
+		\ 'p'       : base#envvar('TexPapersRoot'),
 		\	})
 
 	let mkvimrc  = base#file#catfile([ base#path('conf'), 'mk', 'vimrc' ])
@@ -2328,11 +2329,7 @@ function! base#findwin(ref)
 			let ok  = base#sys( { "cmds" : [ searchcmd ], "skip_errors"  : 1 } )
 			let res = base#var('sysoutstr')
 
-			"if ! ( res == 'File Not Found' )
-				"let found .= res . "\n"
-			"endif
-			"
-			if ok 
+			if ( ok && ( res != 'File Not Found' ) )
 				let found .= res . "\n"
 			endif
 

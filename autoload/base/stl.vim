@@ -253,6 +253,7 @@ fun! base#stl#setlines(...)
 		        \   'tgids'  ,
 		        \   ],
         \   'projs'   :   [ 
+		        \   'buffer_number'    ,
 		        \   'projs_proj'    ,
 		        \   'projs_sec'     ,
 		        \   'fold_level'    ,
