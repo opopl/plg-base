@@ -208,6 +208,8 @@ fun! base#stl#setlines(...)
                 \       ],
         \   'plg'   :   [ 
 		        \   'plg_name',
+		        \   'buffer_number',
+		        \   'file_name',
                 \       ],
         \   'neat'   :   [ 
 		        \   'tgids'          ,

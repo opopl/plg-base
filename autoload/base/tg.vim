@@ -131,7 +131,10 @@ function! base#tg#update (...)
 
 	elseif tgid == 'projs_this'
 		let proj  = projs#proj#name()
-		let files_arr = projs#proj#files({ "exts" : ["tex"] })
+		let files_arr = projs#proj#files({ 
+			\	"exts" : ["tex"] ,
+			\	"exclude_dirs" : [ 'joins', 'builds' ],
+			\	})
 
 		let files = join(files_arr,' ')
 

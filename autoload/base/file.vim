@@ -36,6 +36,15 @@ function! base#file#catfile( ... )
 
 endf
 
+function! base#file#front(file)
+
+	let spt = base#file#ossplit( a:file )
+	let front = spt[0]
+
+	return front
+
+endf
+
 function! base#file#sep ()
 	if has('win32')
 		let sep = '\'
