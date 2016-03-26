@@ -52,6 +52,9 @@ fun! base#init#cmds()
 
 	command! -nargs=*  BuffersWipeAll
 		\	call base#buffers#wipeall(<f-args>) 
+
+	command! -nargs=*  PP
+		\	call base#pp(<f-args>) 
 	 
 
 endfun

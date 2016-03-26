@@ -3467,5 +3467,61 @@ fun! base#listnew(...)
  
 endfun
 
+function! base#pp ()
+
+	call projs#rootcd()
+
+	let pkey = 'GoossensLATEXWEB'
+	let proj = pkey
+	call projs#proj#name(pkey)
+
+	let files = base#find({ 
+		\ "dirs" : [base#path('projs')], 
+	    \ "exts" : [], 
+	    \ 'pat' : '^p\.'.pkey, 
+		\ 'relpath' : 1,
+		\ "cwd" : 0 })
+
+	let newfiles=[]
+	let pats = {
+		\ 'sec' : '^sec\.\(.*\)\.i',
+		\ 'fig' : '^fig\.\(.*\)',
+		\ 'tab' : '^tab\.\(.*\)',
+		\ 'word' : '^\(\w\+\)',
+		\	}
+	for f in files
+		let newf=''
+
+		let oldf = projs#path([f])
+
+		let t = substitute(f,'^p\.\(\w\+\)\.\(.*\)\.tex','\2','g')
+
+		if t =~ pats.sec
+			let sec  = substitute(t,pats.sec,'\1','g')
+			let newf = projs#secfile(sec)
+
+		elseif t =~ pats.fig
+			let fig  = substitute(t,pats.fig,'\1','g')
+			let newf = projs#secfile('fig.'.fig)
+
+		elseif t =~ pats.tab
+			let tab  = substitute(t,pats.tab,'\1','g')
+			let newf = projs#secfile('tab.'.tab)
+		elseif t =~ pats.word
+			let sec  = substitute(t,pats.word,'\1','g')
+			let newf = projs#secfile(sec)
+		else
+		endif
+
+		"echo newf
+
+		if strlen(newf)
+			call rename(oldf,newf)
+		endif
+			
+	endfor
+	
+endfunction
+
  
 
