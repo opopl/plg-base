@@ -77,7 +77,7 @@ function! base#tg#tfile (...)
 		let basename = get(finfo,'filename','')
 		let tfile    = base#file#catfile([ dirname, basename . '.tags' ])
 	elseif tgid == 'projs_this'
-		let proj = projs#proj#name()
+		let proj  = projs#proj#name()
 		let tfile = projs#path([ proj . '.tags' ])
 	else
 		let tfile = base#file#catfile([ tdir, tgid . '.tags' ])
@@ -87,10 +87,19 @@ function! base#tg#tfile (...)
 	return tfile
 endf
 
-
+"call base#tg#update (tgid)
+"call base#tg#update ()
 
 function! base#tg#update (...)
-	if a:0 | let tgid = a:1 | endif
+	if a:0 
+		let tgid = a:1
+	else
+		let tgs = base#var('tgids')
+		for tgid in tgs
+			call base#tg#update(tgid)
+		endfor
+		return
+	endif
 
 	let tfile = base#tg#tfile(tgid)
 	let libs = ''
@@ -106,6 +115,19 @@ function! base#tg#update (...)
 			\	] ," ")
 
 		let libs.=' ' . libs_as
+
+"""base_tg_update_plg_
+	elseif tgid =~ '^plg_'
+		let pat = '^plg_\(\w\+\)$'
+		let plg = substitute(tgid,pat,'\1','g')
+
+		let plgdir = base#catpath('plg',plg)
+
+		let files_arr = base#find({ 
+			\	"dirs" : [ plgdir ], 
+			\	"exts" : [ "vim"  ], 
+			\ })
+		let files = join(files_arr,' ')
 
 	elseif tgid == 'projs_this'
 		let proj  = projs#proj#name()
@@ -160,12 +182,34 @@ function! base#tg#update (...)
 	echo "Calling: " . cmd
 	let ok = base#sys( cmd )
 
+	let okref = { "cmd" : cmd, "tgid" : tgid, "ok" : ok }
+	call base#tg#ok(okref)
+
+	return  ok
+endfunction
+
+function! base#tg#ok (...)
+	let okref = {}
+	if a:0 | let okref = a:1 | endif
+
+	let cmd   = get(okref,'cmd','')
+	let ok    = get(okref,'ok','')
+	let tgid = get(okref,'tgid','')
+
 	if ok
 		redraw!
 		echohl MoreMsg
-		echo "CTAGS OK: " .  cmd
+		echo "CTAGS UPDATE OK: " .  tgid
 		echohl None
 
 		call base#tg#set (tgid)
+	else
+		redraw!
+		echohl Error
+		echo "CTAGS UPDATE FAIL: " .  tgid
+		echohl None
 	endif
+
+	return ok
+	
 endfunction

@@ -5,3 +5,8 @@ perl_inc
 perlmod
 thisfile
 projs_this
+##########
+plg
+plg_base
+plg_projs
+plg_ap

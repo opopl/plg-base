@@ -1,4 +1,3 @@
-
 "see LFUN in base/plugin/base_init.vim
 
 fun! base#loadvimfunc(fun)
@@ -360,18 +359,27 @@ fun! base#type(var)
 
 endf
 
-function! base#cd(dir)
-	exe 'cd ' . a:dir
-	echohl MoreMsg
-	echo 'Changed to: ' . a:dir
-	echohl None
+function! base#cd(dir,...)
+	let ref = {}
+	if a:0 | let ref = a:1 | endif
+
+	let ech = get(ref,'echo',1)
+
+	if ech
+		exe 'cd ' . a:dir
+		echohl MoreMsg
+		echo 'Changed to: ' . a:dir
+		echohl None
+	endif
 endf
 
-function! base#CD(dirid)
+function! base#CD(dirid,...)
+	let ref = {}
+	if a:0 | let ref = a:1 | endif
 
 	let dir = base#path(a:dirid)
 	if isdirectory(dir)
-		call ap#cd(dir)
+		call base#cd(dir,ref)
 	else
 		call base#warn({ "text" : "Is NOT a directory: " . dir })
 	endif
@@ -2331,6 +2339,7 @@ function! base#findwin(ref)
 		endfor
 
 		let files=split(found,"\n")
+		call filter(files,'v:val != ""')
 
 		if ! do_subdirs
 			call map(files,'base#file#catfile([dir, v:val])')
@@ -2866,6 +2875,10 @@ function! base#info (...)
 
 			call base#echo({ 'text' : "\t" . v . " =>" . val } )
 		endfor
+
+"""info_latex
+   elseif topic == 'latex'
+       call base#echo({ 'text' : "LaTeX configuration: " } )
 
 """info_statusline
    elseif topic == 'statusline'
