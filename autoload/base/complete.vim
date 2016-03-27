@@ -104,7 +104,10 @@ function! base#complete#vars (...)
  endif
 
   for varname in vars
-    call extend(comps,base#var(varname))
+	let val = base#var(varname)
+	if base#type(val) == 'List'
+    	call extend(comps,val)
+	endif
   endfor
 
  let comps=base#uniq(sort(comps))
