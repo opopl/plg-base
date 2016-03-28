@@ -119,9 +119,12 @@ function! base#tg#update (...)
 	elseif tgid =~ 'mkvimrc'
 
 		let dir = base#path('mkvimrc')
+		let cwd = getcwd()
+
 		let files_arr = base#find({ 
 			\	"dirs" : [ dir ], 
 			\	"exts" : [ "vim"  ], 
+			\	"relpath" : 0, 
 			\ })
 
 		let files = join(files_arr,' ')
