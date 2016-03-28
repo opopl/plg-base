@@ -2915,8 +2915,8 @@ function! base#info (...)
 
 	 call base#sys({ "cmds" : [ 'env' ]})
 
-	 echo base#var('sysout')
-
+	 let evlist = base#envvarlist()
+	 echo evlist
 
 
 """info_encodings
@@ -3534,5 +3534,40 @@ function! base#pp ()
 	
 endfunction
 
+function! base#envvarlist ()
+	call base#envvars()
+	let evlist = base#var('evlist')
+
+	return evlist
+
+endfunction
+
+
+function! base#envvars ()
+
+	 if has('win32')
+		 call base#sys({ "cmds" : [ 'env' ]})
+		 let sysout = base#var('sysout')
+	
+		 let ev={}
+		 let pats = {
+		 	\ 'ev' : '\(\w\+\)=\(.*\)$',
+			\ }
+		 for l in sysout
+			if l =~ pats.ev
+				let vname = substitute(l,pats.ev,'\1','g')
+				let val   = substitute(l,pats.ev,'\2','g')
+				call extend(ev,{ vname : val })
+			endif
+		 endfor
+	 endif
+
+	 let evlist = sort(keys(ev))
+	 call base#var('ev',ev)
+	 call base#var('evlist',evlist)
+
+	 return ev
+
+endfunction
  
 

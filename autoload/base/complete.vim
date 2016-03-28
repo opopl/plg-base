@@ -83,10 +83,17 @@ function! base#complete#custom (...)
 
   endfor
 
- let comps=base#uniq(sort(comps))
+ let comps = base#uniq(sort(comps))
 
  return join(comps,"\n")
  
+endfunction
+
+function! base#complete#envvarlist (...)
+  call base#envvars()
+
+  return base#complete#vars([ 'envvarlist' ])
+
 endfunction
 
 function! base#complete#vars (...)

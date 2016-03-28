@@ -139,10 +139,10 @@ endf
 
 
 " check if dirs or files share a common root with out
-" a  => a/b/c
-" b => a/b/c/d
+" 	a  => a/b/c
+" 	b  => a/b/c/d
 "
-"call base#dirs#commonroot ([ dir1, dir2 ])
+" call base#dirs#commonroot ([ dir1, dir2 ])
 "
 function! base#file#commonroot (...)
 	let dirs = a:1
@@ -161,7 +161,7 @@ function! base#file#commonroot (...)
 	endfor
 	let ilast = i-1
 
-	let s = copy(splitdirs[0])
+	let s    = copy(splitdirs[0])
 	let list = base#listnewinc(1,ilast,1)
 
 	let si = 0
@@ -193,7 +193,7 @@ function! base#file#commonroot (...)
 		call add(r,c)
 	endw
 
-	let root =base#file#catfile(r)
+	let root = base#file#catfile(r)
 
 	return root
 	

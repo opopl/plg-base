@@ -13,14 +13,20 @@ let b:dirname = expand('%:p:h')
 
 let b:finfo   = base#getfileinfo()
 
+let plgdir = base#path('plg')
+
 " if we are dealing with a vim file inside plg dir
-let cr = base#file#commonroot([ b:dirname, base#path('plg')] )
+let cr = base#file#commonroot([ b:dirname, plgdir ] )
+
+let relpath = base#file#removeroot(b:dirname,plgdir)
+
+let b:plg = base#file#front(relpath)
 
 if strlen(cr)
 
 	let aucmds = [ 
 			\	'StatusLine plg'                        ,
-			\	'TgSet thisfile'                        ,
+			\	'call base#tg#set("plg_'.b:plg.'")'         ,
 			\	] 
 
 	let fr = '  autocmd BufWinEnter,BufRead,BufEnter,BufWritePost '
