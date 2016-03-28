@@ -41,6 +41,9 @@ fun! base#init#cmds()
 	command! -nargs=* -complete=custom,base#complete#tagids  TgSet
 	    \   call base#tg#set(<f-args>) 
 
+	command! -nargs=* -complete=custom,base#complete#tagids  TgView
+	    \   call base#tg#view(<f-args>) 
+
 	command! -nargs=* -complete=custom,base#complete#tagids  TgUpdate 
 		\	call base#tg#update(<f-args>) 
 

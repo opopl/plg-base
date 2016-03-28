@@ -14,7 +14,6 @@ function! base#tg#set (...)
 	elseif tgid == 'thisfile'
 	endif
 
-
 	if !filereadable(tfile)
 		call base#tg#update(tgid)
 	endif
@@ -116,6 +115,17 @@ function! base#tg#update (...)
 
 		let libs.=' ' . libs_as
 
+"""base_tg_update_mkvimrc
+	elseif tgid =~ 'mkvimrc'
+
+		let dir = base#path('mkvimrc')
+		let files_arr = base#find({ 
+			\	"dirs" : [ dir ], 
+			\	"exts" : [ "vim"  ], 
+			\ })
+
+		let files = join(files_arr,' ')
+
 """base_tg_update_plg_
 	elseif tgid =~ '^plg_'
 		let pat = '^plg_\(\w\+\)$'
@@ -214,5 +224,27 @@ function! base#tg#ok (...)
 	endif
 
 	return ok
+	
+endfunction
+
+function! base#tg#view (...)
+
+	if a:0 
+		let tgid = a:1
+	else
+		let tgs = base#var('tgids')
+		for tgid in tgs
+			call base#tg#view(tgid)
+		endfor
+		return
+	endif
+
+	let tfile = base#tg#tfile(tgid)
+
+	if !filereadable(tfile)
+		call base#tg#update(tgid)
+	endif
+
+	call base#fileopen(tfile)
 	
 endfunction
