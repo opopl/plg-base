@@ -487,6 +487,7 @@ fun! base#initpaths(...)
 		\	'perlmod'     : base#file#catfile([ hm, base#qw("repos git perlmod") ]),
 		\	'perlscripts' : base#file#catfile([ hm, base#qw("scripts perl") ]),
 		\	'scripts'     : base#file#catfile([ hm, base#qw("scripts") ]),
+		\	'projs_da'    : base#file#catfile([ base#qw("Z: ap projs_da") ]),
 		\	})
 
 	"" remove / from the end of the directory
@@ -2647,6 +2648,8 @@ endfun
 " specify a custom error message 
 "" base#sys(ref, error_message)
 
+"" base#sys({ "cmds" : [ ... ]}, error_message)
+
 fun! base#sys(...)
 
  let cmds=[]
@@ -2905,6 +2908,14 @@ function! base#info (...)
 
        call base#echo({ 'text'   : "Directory-related variables: " } )
        call base#echovar({ 'var' : 'g:dirs', 'indent' : indentlev })
+
+"""info_env
+   elseif topic == 'env'
+     call base#echo({ 'text' : "ENVIRONMENT ", 'hl' : 'Title' } )
+
+	 call base#sys({ "cmds" : [ 'env' ]})
+
+	 echo base#var('sysout')
 
 
 

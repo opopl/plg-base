@@ -2,6 +2,7 @@ bufs
 completions
 dirs
 encodings
+env
 file
 keymap
 latex
