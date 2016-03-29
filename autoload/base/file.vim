@@ -1,4 +1,19 @@
 
+
+"
+function! base#file#qw(...)
+	let str = a:1
+	let qw = base#qw(str)
+
+	let f = base#file#catfile(qw)
+
+	return f
+endfunction
+
+
+" base#file#catfile([ 'a', 'b'])
+" base#file#catfile({ 'a' : [ 'a', 'b' ]})
+
 function! base#file#catfile( ... )
 	
 	if ! a:0 | return '' | endif

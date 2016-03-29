@@ -11,4 +11,6 @@ plg_base
 plg_projs
 plg_ap
 plg_make
+plg_findstr
+##########
 mkvimrc

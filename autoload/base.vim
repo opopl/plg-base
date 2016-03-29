@@ -585,6 +585,20 @@ function! base#getfromchoosedialog (opts)
     
 endfunction
 
+function! base#qwsort (...)
+
+ if a:0
+   let str=a:1
+ else
+   let str=''
+ endif
+
+ let a = base#qw(str)
+ let a = sort(a)
+ return a
+
+endfunction
+
 function! base#qw (...)
 
  if a:0
@@ -2827,6 +2841,8 @@ endfunction
 
 function! base#info (...)
 
+ call base#echoprefix('(base#info)')
+
  let topic='all'
  if a:0
    let topic=a:1
@@ -2860,6 +2876,17 @@ function! base#info (...)
        call base#echovar({ 'var' : 'g:filename', 'indent' : indentlev })
        call base#echovar({ 'var' : 'g:path', 'indent' : indentlev })
        call base#echovar({ 'var' : 'g:ext' , 'indent' : indentlev })
+
+"""info_grep
+   elseif topic == 'grep'
+       call base#echo({ 'text' : "Grep configuration: " } )
+
+       call base#echo({ 'text' : " "  } )
+       call base#echo({ 'text' : " &grepformat    => " . &grepformat } )
+       call base#echo({ 'text' : " &grepprg       => " . &grepprg } )
+       call base#echo({ 'text' : " "  } )
+       call base#echo({ 'text' : " base#grepopt   => " . base#grepopt() } )
+       call base#echo({ 'text' : " "  } )
 
 """info_tagbar
    elseif topic == 'plg_tagbar'
@@ -3041,6 +3068,8 @@ function! base#info (...)
 
    endif
  endif
+
+ call base#echoprefixold()
  
 endfun
 
@@ -3568,6 +3597,53 @@ function! base#envvars ()
 
 	 return ev
 
+endfunction
+
+"call base#grep({ "pat" : pat, "files" : [ ... ]  })
+"call base#grep({ "pat" : pat, "files" : files })
+"
+"call base#grep({ "pat" : pat, "files" : files, "opt" : 'plg_findstr' })
+"call base#grep({ "pat" : pat, "files" : files, "opt" : 'grep' }) - todo 
+"call base#grep({ "pat" : pat, "files" : files, "opt" : 'vimgrep' }) -todo
+
+function! base#grep (...)
+	let ref = {}
+	if a:0 | let ref = a:1 | endif
+
+	let opt = base#grepopt()
+
+	let pat   = get(ref,'pat','')
+	let files = get(ref,'files',[])
+	let opt   = get(ref,'opt',opt)
+
+	if opt == 'plg_findstr'
+		"let cmd = 'Rfindpattern '.pat.' '. join(files,' ') 
+		"let cmd = 'findstr#run("Rfindpattern",""'.pat.'")'
+		let cmd = "Rfindpattern"
+	elseif opt == 'vimgrep'
+		let cmd = 'vimgrep /'.pat.'/ '. join(files,' ') 
+	endif
+
+	echo cmd
+	"exe cmd
+	
+endfunction
+
+function! base#grepopt (...)
+	if ! base#varexists('grepopt')
+		if has('win32')
+			let opt = 'plg_findstr'
+		else
+			let opt = 'grep'
+		endif
+	else
+		let opt = base#var('grepopt')
+	endif
+
+	if a:0 | let opt = a:1 | endif
+	call base#var('grepopt',opt)
+
+	return base#var('grepopt')
 endfunction
  
 

@@ -76,12 +76,13 @@ fun! base#init#au()
 	endfor
 	exe 'augroup end'
 
+	au BufWritePost,BufRead,BufWinEnter *.i.dat setf conf
+
 	"au FileType * call ap#stl()
     "au FileType * call ap#tags#set()
 
     "au FileType * call base#statusline('neat')
 
-	"au BufWritePost,BufRead,BufWinEnter *.tex setf tex
 
   "LFUN F_OnLoad_perl
   "LFUN F_OnLoad_dat
