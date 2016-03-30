@@ -487,8 +487,11 @@ fun! base#initpaths(...)
 		\	'perlmod'     : base#file#catfile([ hm, base#qw("repos git perlmod") ]),
 		\	'perlscripts' : base#file#catfile([ hm, base#qw("scripts perl") ]),
 		\	'scripts'     : base#file#catfile([ hm, base#qw("scripts") ]),
-		\	'projs_da'    : base#file#catfile([ base#qw("Z: ap projs_da") ]),
+		\	'projs_my'    : base#file#catfile([ hm, base#qw("repos git projs_my") ]),
+		\	'projs_da'    : base#file#catfile([ hm, base#qw("repos git projs_da") ]),
 		\	})
+
+		"\	'projs_da'    : base#file#catfile([ base#qw("Z: ap projs_da") ]),
 
 	"" remove / from the end of the directory
     for k in keys(s:paths)
@@ -3616,16 +3619,30 @@ function! base#grep (...)
 	let files = get(ref,'files',[])
 	let opt   = get(ref,'opt',opt)
 
+	let rootdir = get(ref,'rootdir','')
+
+	if strlen(rootdir)
+		call map(files,'base#file#catfile([ rootdir, v:val ])')
+	endif
+
 	if opt == 'plg_findstr'
-		"let cmd = 'Rfindpattern '.pat.' '. join(files,' ') 
-		"let cmd = 'findstr#run("Rfindpattern",""'.pat.'")'
-		let cmd = "Rfindpattern"
+
+		let gref = {
+			\  "files"       : files,
+			\  "pat"         : pat,
+			\  "cmd_name"    : 'Rfindpattern',
+			\  "findstr_opt" : '/i',
+			\  "cmd_opt"     : '/R /S',
+			\  "use_startdir"  : 0,
+			\}
+
+		let cmd = 'call findstr#ap#run(gref)'
+
 	elseif opt == 'vimgrep'
 		let cmd = 'vimgrep /'.pat.'/ '. join(files,' ') 
 	endif
 
-	echo cmd
-	"exe cmd
+	exe cmd
 	
 endfunction
 
