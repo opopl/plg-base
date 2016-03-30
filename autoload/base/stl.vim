@@ -119,7 +119,7 @@ function!  base#stl#setparts ()
     let g:stlparts['is_modified']="%6*%{&modified?'modified':''}"
 
     let g:stlparts['projs_rootbasename'] = '%1*\ %{projs#rootbasename()}\ %0*' 
-    let g:stlparts['projs_proj'] = '%1*\ %{projs#proj#name()}\ %0*' 
+    let g:stlparts['projs_proj'] = '%2*\ %{projs#proj#name()}\ %0*' 
     let g:stlparts['projs_sec']  = '%7*\ %{projs#proj#secname()}\ %0*' 
 
     let g:stlparts['vimfun']= '%1*\ %{g:vimfun}\ %0*' 
@@ -252,6 +252,7 @@ fun! base#stl#setlines(...)
         \   'projs'   :   [ 
 		        \   'buffer_number'    ,
 		        \   'projs_rootbasename'    ,
+		        \   'projs_proj'    ,
 		        \   'projs_sec'     ,
 		        \   'fold_level'    ,
 		        \   'file_encoding' ,
