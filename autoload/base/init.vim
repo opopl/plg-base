@@ -54,10 +54,10 @@ fun! base#init#cmds()
 		\	call base#buffers#list(<f-args>) 
 
 	command! -nargs=*  BuffersWipeAll
-		\	call base#buffers#wipeall(<f-args>) 
+		\	call base#buffers#wipeall(<f-args>)
 
-	command! -nargs=*  PP
-		\	call base#pp(<f-args>) 
+	command! -nargs=* -complete=custom,base#complete#paplist PP
+		\	call base#pap#import(<f-args>)
 	 
 
 endfun

@@ -143,9 +143,12 @@ function! base#tg#update (...)
 		let files = join(files_arr,' ')
 
 	elseif tgid == 'projs_this'
+
 		let proj  = projs#proj#name()
+		let exts  = base#qw('tex vim bib')
+
 		let files_arr = projs#proj#files({ 
-			\	"exts" : ["tex"] ,
+			\	"exts" : exts,
 			\	"exclude_dirs" : [ 'joins', 'builds' ],
 			\	})
 

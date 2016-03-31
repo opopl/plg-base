@@ -13,9 +13,11 @@ function! base#complete#vimcoms (...)
 endfun
 
 function! base#complete#CD (...)
-
   return base#complete#vars([ 'pathlist' ])
-	
+endfunction
+
+function! base#complete#paplist (...)
+  return base#complete#vars([ 'paplist' ])
 endfunction
 
 function! base#complete#info (...)

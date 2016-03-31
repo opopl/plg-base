@@ -10,6 +10,33 @@ function! base#file#qw(...)
 	return f
 endfunction
 
+function! base#file#exists(file)
+
+endfunction
+
+function! base#file#copy(old,new)
+	if !filereadable(a:old)
+		call base#warn({ 'text' : 'Old file does not exist:'."\n\t" . a:old })
+		return 
+	endif
+	let cmd = ''
+	if has('win32')
+		let cmd = 'copy ' . '"'.a:old.'"' . ' ' . '"'.a:new.'"'
+	else
+		let cmd = 'cp ' . '"'.a:old.'"' . ' ' . '"'.a:new.'"'
+	endif
+
+	if !strlen(cmd)
+		return 
+	endif
+
+	let ok = base#sys({ "cmds" : [cmd]})
+
+	return ok
+
+endfunction
+
+
 
 " base#file#catfile([ 'a', 'b'])
 " base#file#catfile({ 'a' : [ 'a', 'b' ]})
