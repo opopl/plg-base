@@ -387,6 +387,7 @@ function! base#CD(dirid,...)
 endf
 
 
+
 """base_catpath
 fun! base#catpath(key,...)
  
@@ -2360,7 +2361,7 @@ function! base#findwin(ref)
 			let ok  = base#sys( { "cmds" : [ searchcmd ], "skip_errors"  : 1 } )
 			let res = base#var('sysoutstr')
 
-			if ( ok && ( res != 'File Not Found' ) )
+			if ( ok && ( res !~ '^File Not Found' ) )
 				let found .= res . "\n"
 			endif
 
