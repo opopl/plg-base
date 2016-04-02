@@ -182,6 +182,7 @@ fun! base#stl#setlines(...)
 
   call base#stl#setparts()
 
+"""base_stl_plg
   let g:F_StatusLineOrders={
         \   'enc'   :   [ 
                 \   'file_name',
@@ -204,9 +205,10 @@ fun! base#stl#setlines(...)
 		        \   'encoding'      ,
                 \       ],
         \   'plg'   :   [ 
-		        \   'plg_name',
-		        \   'buffer_number',
-		        \   'file_name',
+		        \   'plg_name'      ,
+		        \   'buffer_number' ,
+		        \   'file_name'     ,
+		        \   'tgids'         ,
                 \       ],
         \   'neat'   :   [ 
 		        \   'tgids'          ,

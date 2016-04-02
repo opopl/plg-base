@@ -22,6 +22,9 @@ fun! base#init#cmds()
 	
 	command! -nargs=* -complete=custom,base#complete#info    INFO
 		\	call base#info(<f-args>)
+
+	command! -nargs=* -complete=custom,base#complete#omnioptions OMNIFUNC
+  		\ call base#omni#selectcompletion(<f-args>)
 	
 	command! -nargs=* -complete=custom,base#complete#varlist BaseVarUpdate 
 		\	call base#varupdate(<f-args>) 

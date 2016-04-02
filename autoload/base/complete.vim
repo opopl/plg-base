@@ -124,4 +124,8 @@ function! base#complete#vars (...)
  return join(comps,"\n")
  
 endfunction
- 
+
+function! base#complete#omnioptions (...)
+  return base#complete#vars([ 'omni_compoptions_list' ])
+endfunction
+

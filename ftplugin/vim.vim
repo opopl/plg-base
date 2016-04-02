@@ -20,25 +20,31 @@ let b:cr      = base#file#commonroot([ b:dirname, plgdir ] )
 
 let b:is_plgvim = ( b:cr == plgdir )
 
-if !b:is_plgvim
-	finish
+let b:is_mkvimrc_com=0
+let b:is_mkvimrc_fun=0
+
+if b:is_plgvim
+
+	let b:relpath = base#file#removeroot(b:dirname,plgdir)
+	let b:plg     = base#file#front(b:relpath)
+	
+	let b:aucmds = [ 
+		\	'StatusLine plg'                            ,
+		\	'call base#tg#set("plg_'.b:plg.'")'         ,
+		\	] 
+	
+	let fr = '  autocmd BufWinEnter,BufRead,BufEnter,BufWritePost '
+	
+	let b:ufile = base#file#win2unix(b:file)
+	
+	exe 'augroup base_plg_'.b:plg
+	exe '  au!'
+	for cmd in b:aucmds
+		exe join([ fr,b:ufile,cmd ],' ')
+	endfor
+	exe 'augroup end'
+
+elseif b:is_mkvimrc_com
+elseif b:is_mkvimrc_fun
+
 endif
-
-let b:relpath = base#file#removeroot(b:dirname,plgdir)
-let b:plg     = base#file#front(b:relpath)
-
-let b:aucmds = [ 
-	\	'StatusLine plg'                        ,
-	\	'call base#tg#set("plg_'.b:plg.'")'         ,
-	\	] 
-
-let fr = '  autocmd BufWinEnter,BufRead,BufEnter,BufWritePost '
-
-let b:ufile = base#file#win2unix(b:file)
-
-exe 'augroup base_plg_vim'
-exe '  au!'
-for cmd in b:aucmds
-	exe join([ fr,b:ufile,cmd ],' ')
-endfor
-exe 'augroup end'
