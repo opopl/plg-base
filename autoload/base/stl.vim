@@ -194,6 +194,10 @@ fun! base#stl#setlines(...)
                 \       ],
         \   'perl_pm'   :   [ 
 		        \   'perl_module_name',
+		        \   'buffer_number' ,
+		        \   'file_encoding' ,
+		        \   'encoding'      ,
+		        \   'pathid'        ,
                 \           ],
         \   'perl_pl'   :   [ 
 		        \   'file_name',

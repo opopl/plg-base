@@ -37,7 +37,6 @@ function! base#file#copy(old,new)
 endfunction
 
 
-
 " base#file#catfile([ 'a', 'b'])
 " base#file#catfile({ 'a' : [ 'a', 'b' ]})
 
@@ -239,6 +238,22 @@ function! base#file#commonroot (...)
 
 	return root
 	
+endfunction
+
+function! base#file#reldir (dir,root)
+	let dir = a:dir
+	let root = a:root
+
+	let root = base#file#std(root)
+	let dir = base#file#std(dir)
+
+	let reldir = base#file#removeroot (dir,root)
+
+	if reldir == dir
+		return ''
+	endif
+	return reldir
+
 endfunction
 
 function! base#file#removeroot (dir,root)

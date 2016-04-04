@@ -2806,6 +2806,18 @@ function! base#pathlist ()
 	
 endfunction
 
+function! base#pathids (path)
+	let path = a:path
+	let ids =[]
+	for id in base#pathlist()
+		let rdir = base#file#reldir(path,base#path(id))
+		if strlen(rdir)
+			call add(ids,id)
+		endif
+	endfor
+
+	return ids
+endfunction
 
 """base_path
 
@@ -2904,6 +2916,33 @@ function! base#info (...)
        call base#echo({ 'text' : " "  } )
        call base#echo({ 'text' : " base#grepopt   => " . base#grepopt() } )
        call base#echo({ 'text' : " "  } )
+
+"""info_bufs
+   elseif topic == 'bufs'
+
+       call base#echo({ 'text' : "Buffer-related stuff: " } )
+       call base#echo({ 'text' : " "  } )
+       call base#echo({ 'text' : " BuffersList     - list buffers"  } )
+       call base#echo({ 'text' : " BuffersWipeAll  - wipe out all buffers except the current one"  } )
+       call base#echo({ 'text' : " "  } )
+       call base#echo({ 'text' : " --- current buffer --- "  } )
+       call base#echo({ 'text' : " "  } )
+
+	   let ex_finfo = exists('b:finfo')
+	   let ex_bbs   = exists('b:base_buf_started')
+
+       call base#echo({ 'text' : " b:finfo exists => " . ex_finfo  } )
+       call base#echo({ 'text' : " b:base_buf_started exists => " . ex_bbs  } )
+
+	   if ex_finfo
+       		call base#echo({ 'text' : " b:finfo  => "  } )
+			echo b:finfo
+	   endif
+
+       call base#echo({ 'text' : " "  } )
+
+	   let pathids =  base#buf#pathids ()
+       call base#echo({ 'text' : " pathids => " . join(pathids,' ')  } )
 
 """info_tagbar
    elseif topic == 'plg_tagbar'

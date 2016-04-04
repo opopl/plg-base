@@ -81,10 +81,11 @@ fun! base#init#au()
 
 	au BufWritePost,BufRead,BufWinEnter *.i.dat setf conf
 
-	"au FileType * call ap#stl()
-    "au FileType * call ap#tags#set()
+    au FileType  * call base#buf#start() 
+     
+endfun
 
-    "au FileType * call base#statusline('neat')
+"au FileType * call base#statusline('neat')
 
 
   "LFUN F_OnLoad_perl
@@ -160,5 +161,4 @@ fun! base#init#au()
 
   "augroup end
 
- 
-endfun
+
