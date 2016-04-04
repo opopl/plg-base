@@ -2350,7 +2350,13 @@ function! base#findwin(ref)
 		let found = ''
 		let dir = substitute(dir,'/','\','g')
 
-		exe 'cd ' . dir
+		let dir = base#file#std(dir)
+
+		if !isdirectory(dir)
+			continue
+		else
+			exe 'cd ' . dir
+		endif
 
 		for ext in exts 
 			if strlen(ext) | let ext = '.'.ext | endif

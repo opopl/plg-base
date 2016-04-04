@@ -55,6 +55,8 @@ function!  base#stl#setparts ()
     " mode (changes color)
   let g:stlparts['mode']= '%1*\ %{NeatStatusLine_Mode()}\ %0*' 
 
+  let g:stlparts['pathids']= '%3*\ %{base#buf#pathids_str()}\ %0*' 
+
   let g:stlparts['fold_level']="%5*%{foldlevel(line('.'))}%0*"
 
 """stl_neat_session_name
@@ -193,11 +195,12 @@ fun! base#stl#setlines(...)
                 \   'file_encoding',
                 \       ],
         \   'perl_pm'   :   [ 
-		        \   'perl_module_name',
-		        \   'buffer_number' ,
-		        \   'file_encoding' ,
-		        \   'encoding'      ,
-		        \   'pathid'        ,
+		        \   'perl_module_name' ,
+		        \   'buffer_number'    ,
+		        \   'file_type'        ,
+		        \   'file_encoding'    ,
+		        \   'encoding'         ,
+		        \   'pathids'          ,
                 \           ],
         \   'perl_pl'   :   [ 
 		        \   'file_name',

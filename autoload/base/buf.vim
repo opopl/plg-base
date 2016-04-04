@@ -27,8 +27,19 @@ function! base#buf#in(...)
 
 endfunction
 
+function! base#buf#pathids_str ()
+	let ids = base#buf#pathids()
+	return join(ids,' ')
+
+endfunction
+
 function! base#buf#pathids ()
+	let fi = 'home hm vim vrt'
+	let fis = base#qw(fi)
+
 	let ids = base#pathids(b:file)
+
+	call filter(ids,"! base#inlist(v:val,fis)")
 
 	return ids
 endfunction
