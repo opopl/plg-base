@@ -37,6 +37,7 @@ function! base#stl#set (...)
 	if strlen(evs) | silent exe evs | endif
 
 	call base#var('stl',sline)
+	call base#var('stlopt',opt)
 
 endfun
 

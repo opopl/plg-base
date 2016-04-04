@@ -13,5 +13,7 @@ plg_ap
 plg_make
 plg_findstr
 plg_ipte
+plg_lasu
+plg_txt
 ##########
 mkvimrc

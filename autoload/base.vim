@@ -2931,12 +2931,17 @@ function! base#info (...)
   		let stl = g:F_StatusLine
 	endif
 
-	let stl = base#var('stl')
+	let stl    = base#var('stl')
+	let stlopt = base#var('stlopt')
 
        call base#echo({ 'text'   : "Statusline: " } )
-       call base#echo({ 'text'   : "\t"."g:F_StatusLine =>  " . stl } )
-       call base#echo({ 'text'   : "\t"."&stl =>  " . &stl } )
+       call base#echo({ 'text'   : " " } )
+       call base#echo({ 'text'   : "\t"."stlopt               =>  " .stlopt } )
+       call base#echo({ 'text'   : " " } )
+       call base#echo({ 'text'   : "\t"."g:F_StatusLine       =>  " . stl } )
+       call base#echo({ 'text'   : "\t"."&stl                 =>  " . &stl } )
        call base#echo({ 'text'   : "\t"."stl (StatusLine cmd) =>  " . stl } )
+       call base#echo({ 'text'   : " " } )
 
 """info_paths
    elseif topic == 'paths'
@@ -3355,8 +3360,7 @@ function! base#datafiles (id)
 	return files
 endfunction
 
-function! base#initvars (...)
-	call base#echoprefix('(base#initvars)')
+function! base#initvarsfromdat ()
 
 	let datfiles = {}
 	let datlist  = []
@@ -3389,6 +3393,14 @@ function! base#initvars (...)
 
 	call base#var('datlist',datlist)
 	call base#var('datfiles',datfiles)
+	
+endfunction
+
+function! base#initvars (...)
+	call base#echoprefix('(base#initvars)')
+
+
+	call base#initvarsfromdat()
 
 	call base#var('vim_funcs_user',
 		\	base#fnamemodifysplitglob('funs','*.vim',':t:r'))
