@@ -4,7 +4,9 @@ ipte_wt
 perl_inc
 perlmod
 thisfile
+##########
 projs_this
+projs_tex
 ##########
 plg
 plg_ap

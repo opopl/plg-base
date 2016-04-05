@@ -6,6 +6,9 @@
 function! base#tg#set (...)
 	if a:0 | let tgid = a:1 | endif
 
+	let ref = {}
+	if a:0 > 1 | let ref = a:2 | endif
+
 	let tfile = base#tg#tfile(tgid)
 
 	if tgid     == 'ipte_ao'
@@ -14,8 +17,10 @@ function! base#tg#set (...)
 	elseif tgid == 'thisfile'
 	endif
 
-	if !filereadable(tfile)
-		call base#tg#update(tgid)
+	if get(ref,'update_ifabsent',1)
+		if !filereadable(tfile)
+			call base#tg#update(tgid)
+		endif
 	endif
 
 	exe 'set tags=' . tfile
@@ -27,7 +32,6 @@ function! base#tg#add (...)
 	if a:0 | let tgid = a:1 | endif
 
 	let tfile = base#tg#tfile(tgid)
-
 
 	exe 'set tags+=' . tfile
 	let tgs = base#tg#ids() 
@@ -100,6 +104,9 @@ function! base#tg#update (...)
 		return
 	endif
 
+	"" stored in the corresponding dat-file
+	let tgs_all = base#var('tagids')
+
 	let tfile = base#tg#tfile(tgid)
 	let libs = ''
 	let files = ''
@@ -129,6 +136,29 @@ function! base#tg#update (...)
 
 		let files = join(files_arr,' ')
 
+"""base_tg_update_plg
+	elseif tgid == 'plg'
+		let lines = []
+		for tg in tgs_all
+			if tg !~ '^plg_' | continue | endif
+
+			let tf = base#tg#tfile(tg)
+			if !filereadable(tf)
+				call base#tg#update(tg)
+			endif
+			let l = readfile(tf)
+			call extend(lines,l)
+		endfor
+		let lines = sort(lines)
+
+		call writefile(lines,tfile)
+		unlet lines
+
+		call base#tg#set(tgid)
+
+		"call base#tg#ok({ "ok" : 1, "tgid" : tgid })
+		return 1
+
 """base_tg_update_plg_
 	elseif tgid =~ '^plg_'
 		let pat = '^plg_\(\w\+\)$'
@@ -141,6 +171,19 @@ function! base#tg#update (...)
 			\	"exts" : [ "vim"  ], 
 			\ })
 		let files = join(files_arr,' ')
+
+"""base_tg_update_projs_tex
+	""" all tex files in current projs directory
+	elseif tgid == 'projs_tex'
+		let root = projs#root()
+
+	   " let files_tex = base#find({ 
+			"\	"dirs" : [ root ], 
+			"\	"exts" : [ "tex"  ], 
+			"\ })
+		"let files = join(files_tex,' ')
+		"echo files
+		let files = base#file#catfile([ root,'*.tex' ])
 
 	elseif tgid == 'projs_this'
 
@@ -198,7 +241,8 @@ function! base#tg#update (...)
 
 	let cmd = 'ctags -R -o ' . ap#file#win( tfile ) . ' ' . libs . ' ' . files
 
-	echo "Calling: " . cmd
+	"echo "Calling: " . cmd
+	echo "Calling ctags command for: " . tgid 
 	let ok = base#sys( cmd )
 
 	let okref = { "cmd" : cmd, "tgid" : tgid, "ok" : ok }
@@ -221,7 +265,7 @@ function! base#tg#ok (...)
 		echo "CTAGS UPDATE OK: " .  tgid
 		echohl None
 
-		call base#tg#set (tgid)
+		call base#tg#set (tgid,{ "update_ifabsent" : 0 })
 	else
 		redraw!
 		echohl Error
