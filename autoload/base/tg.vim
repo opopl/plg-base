@@ -172,15 +172,18 @@ function! base#tg#update (...)
 			\ })
 		let files = join(files_arr,' ')
 
+"""base_tg_update_projs_tex
 	""" all tex files in current projs directory
 	elseif tgid == 'projs_tex'
 		let root = projs#root()
 
-		let files_tex = base#find({ 
-			\	"dirs" : [ root ], 
-			\	"exts" : [ "tex"  ], 
-			\ })
-		let files = join(files_tex,' ')
+	   " let files_tex = base#find({ 
+			"\	"dirs" : [ root ], 
+			"\	"exts" : [ "tex"  ], 
+			"\ })
+		"let files = join(files_tex,' ')
+		"echo files
+		let files = base#file#catfile([ root,'*.tex' ])
 
 	elseif tgid == 'projs_this'
 
@@ -239,7 +242,7 @@ function! base#tg#update (...)
 	let cmd = 'ctags -R -o ' . ap#file#win( tfile ) . ' ' . libs . ' ' . files
 
 	"echo "Calling: " . cmd
-	echo "Calling ctags command... " 
+	echo "Calling ctags command for: " . tgid 
 	let ok = base#sys( cmd )
 
 	let okref = { "cmd" : cmd, "tgid" : tgid, "ok" : ok }
