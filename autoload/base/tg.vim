@@ -6,6 +6,9 @@
 function! base#tg#set (...)
 	if a:0 | let tgid = a:1 | endif
 
+	let ref = {}
+	if a:0 > 1 | let ref = a:2 | endif
+
 	let tfile = base#tg#tfile(tgid)
 
 	if tgid     == 'ipte_ao'
@@ -14,8 +17,10 @@ function! base#tg#set (...)
 	elseif tgid == 'thisfile'
 	endif
 
-	if !filereadable(tfile)
-		call base#tg#update(tgid)
+	if get(ref,'update_ifabsent',1)
+		if !filereadable(tfile)
+			call base#tg#update(tgid)
+		endif
 	endif
 
 	exe 'set tags=' . tfile
@@ -167,6 +172,16 @@ function! base#tg#update (...)
 			\ })
 		let files = join(files_arr,' ')
 
+	""" all tex files in current projs directory
+	elseif tgid == 'projs_tex'
+		let root = projs#root()
+
+		let files_tex = base#find({ 
+			\	"dirs" : [ root ], 
+			\	"exts" : [ "tex"  ], 
+			\ })
+		let files = join(files_tex,' ')
+
 	elseif tgid == 'projs_this'
 
 		let proj  = projs#proj#name()
@@ -223,7 +238,8 @@ function! base#tg#update (...)
 
 	let cmd = 'ctags -R -o ' . ap#file#win( tfile ) . ' ' . libs . ' ' . files
 
-	echo "Calling: " . cmd
+	"echo "Calling: " . cmd
+	echo "Calling ctags command... " 
 	let ok = base#sys( cmd )
 
 	let okref = { "cmd" : cmd, "tgid" : tgid, "ok" : ok }
@@ -246,7 +262,7 @@ function! base#tg#ok (...)
 		echo "CTAGS UPDATE OK: " .  tgid
 		echohl None
 
-		call base#tg#set (tgid)
+		call base#tg#set (tgid,{ "update_ifabsent" : 0 })
 	else
 		redraw!
 		echohl Error
