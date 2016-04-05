@@ -81,6 +81,8 @@ fun! base#init#au()
 
 	au BufWritePost,BufRead,BufWinEnter *.i.dat setf conf
 
+	au BufRead,BufWinEnter * call base#buf#onload()
+
     au FileType  * call base#buf#start() 
      
 endfun

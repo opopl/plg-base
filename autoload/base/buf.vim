@@ -44,6 +44,15 @@ function! base#buf#pathids ()
 	return ids
 endfunction
 
+function! base#buf#onload ()
+	call base#buf#start()
+
+	if b:ext == 'tags'
+		setf tags
+	endif
+	
+endfunction
+
 function! base#buf#start ()
 
 	"if exists("b:base_buf_started") | return | endif
@@ -54,6 +63,9 @@ function! base#buf#start ()
 	
 	let b:dirname = expand('%:p:h')
 	
+	if exists('b:finfo')
+		unlet b:finfo
+	endif
 	let b:finfo   = base#getfileinfo()
 
 	let b:base_buf_started=1

@@ -28,7 +28,6 @@ function! base#tg#add (...)
 
 	let tfile = base#tg#tfile(tgid)
 
-
 	exe 'set tags+=' . tfile
 	let tgs = base#tg#ids() 
 	call add(tgs,tgid)
@@ -100,6 +99,9 @@ function! base#tg#update (...)
 		return
 	endif
 
+	"" stored in the corresponding dat-file
+	let tgs_all = base#var('tagids')
+
 	let tfile = base#tg#tfile(tgid)
 	let libs = ''
 	let files = ''
@@ -128,6 +130,29 @@ function! base#tg#update (...)
 			\ })
 
 		let files = join(files_arr,' ')
+
+"""base_tg_update_plg
+	elseif tgid == 'plg'
+		let lines = []
+		for tg in tgs_all
+			if tg !~ '^plg_' | continue | endif
+
+			let tf = base#tg#tfile(tg)
+			if !filereadable(tf)
+				call base#tg#update(tg)
+			endif
+			let l = readfile(tf)
+			call extend(lines,l)
+		endfor
+		let lines = sort(lines)
+
+		call writefile(lines,tfile)
+		unlet lines
+
+		call base#tg#set(tgid)
+
+		"call base#tg#ok({ "ok" : 1, "tgid" : tgid })
+		return 1
 
 """base_tg_update_plg_
 	elseif tgid =~ '^plg_'
