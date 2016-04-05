@@ -49,6 +49,8 @@ function! base#buf#onload ()
 
 	if b:ext == 'tags'
 		setf tags
+	elseif b:ext == 'nsh'
+		setf nsis
 	endif
 	
 endfunction
