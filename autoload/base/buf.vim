@@ -34,7 +34,7 @@ function! base#buf#pathids_str ()
 endfunction
 
 function! base#buf#pathids ()
-	let fi = 'home hm vim vrt'
+	let fi = 'home hm vim vrt ipte_clients'
 	let fis = base#qw(fi)
 
 	let ids = base#pathids(b:file)
