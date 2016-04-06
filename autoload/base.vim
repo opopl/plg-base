@@ -383,10 +383,9 @@ function! base#CD(dirid,...)
 	else
 		call base#warn({ "text" : "Is NOT a directory: " . dir })
 	endif
-
 endf
 
-
+"call base#catpath(key,[a,b,c])
 
 """base_catpath
 fun! base#catpath(key,...)
