@@ -237,6 +237,9 @@ function! base#tg#update (...)
 """thisfile
 	elseif tgid == 'thisfile'
 		let files.= ' ' . expand('%:p')
+	else 
+		call base#warn({"text" : "unknown tagid!"})
+		return 0
 	endif
 
 	let cmd = 'ctags -R -o ' . ap#file#win( tfile ) . ' ' . libs . ' ' . files
