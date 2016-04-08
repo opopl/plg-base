@@ -1,10 +1,10 @@
 
-let dir = ap#file#catfile( [ expand('<sfile>:p:r'), '..', '..' ])
+let dir = base#file#catfile( [ expand('<sfile>:p:r'), '..', '..' ])
 
 let dir = base#file#std(dir)
 
 call base#var('plgdir',dir)
-call base#datadir( ap#file#catfile([ dir, 'data' ]) )
+call base#datadir( base#file#catfile([ dir, 'data' ]) )
 
 call base#init()
 

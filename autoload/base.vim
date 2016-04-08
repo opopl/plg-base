@@ -3468,6 +3468,8 @@ endfunction
 function! base#initplugins (...)
 
 	call base#varsetfromdat('plugins','List')
+
+	if exists('g:plugins') | unlet g:plugins | endif
 	let g:plugins=base#var('plugins')
 
 endf	
