@@ -6,6 +6,12 @@ fun! base#qw#catpath(key,s)
 
 endf
 
+fun! base#qw#catfile(s)
+	let pa = base#qw(a:s)
+	let p = base#file#catfile(pa)
+	return p
+endf
+
 fun! base#qw#rf(key,s)
 	let p = base#qw#catpath(a:key,a:s)
 
