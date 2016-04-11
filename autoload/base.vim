@@ -3681,7 +3681,22 @@ function! base#envvars ()
 
 endfunction
 
+function! base#keymap (...)
 
+	if a:0
+		let keymap=a:1
+	else 
+		return
+ 	endif
+
+ 	exe 'setlocal keymap=' . keymap
+
+	redraw!
+	echohl MoreMsg
+	echo "Keymap reset (locally) in buffer to : " . keymap
+	echohl None
+
+endfunction
  
 
 
