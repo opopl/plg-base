@@ -1,7 +1,10 @@
 
 
 function! base#pap#list()
-	let pdir = base#path('phd_p')
+	let pdir = base#path('p')
+
+	let paplist=[]
+	if !isdirectory(pdir) | return paplist | endif
 
 	let files = base#find({ 
 		\ "dirs" : [pdir], 
@@ -10,7 +13,6 @@ function! base#pap#list()
 		\ 'relpath' : 1,
 		\ "cwd" : 0 })
 
-	let paplist=[]
 	let done={}
 	for f in files
 		let f = substitute(f,'^p\.\(\w\+\)\..*','\1','g')
@@ -39,7 +41,7 @@ function! base#pap#import (...)
 	let proj = pkey
 	call projs#proj#name(pkey)
 
-	let pdir = base#path('phd_p')
+	let pdir = base#path('p')
 
 	let files = base#find({ 
 		\ "dirs" : [pdir], 
@@ -59,7 +61,7 @@ function! base#pap#import (...)
 		let newf=''
 
 		"let oldf = projs#path([f])
-		let oldf = base#catpath('phd_p',f)
+		let oldf = base#catpath('p',f)
 
 		let t = substitute(f,'^p\.\(\w\+\)\.\(.*\)\.tex$','\2','g')
 

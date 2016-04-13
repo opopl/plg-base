@@ -485,6 +485,7 @@ fun! base#initpaths(...)
 		\ 'vim'     : base#envvar('VIM'),
 		\ 'texdocs' : base#envvar('TEXDOCS'),
 		\ 'p'       : base#envvar('TexPapersRoot'),
+		\ 'phd_p'   : base#envvar('TexPapersRoot'),
 		\	})
 
 	let mkvimrc  = base#file#catfile([ base#path('conf'), 'mk', 'vimrc' ])
