@@ -469,7 +469,7 @@ fun! base#initpaths(...)
 	if anew
 		call base#echo({ 
 			\	"text" : 'Settings paths anew...' 
-			\	});
+			\	})
     	let s:paths={}
 	endif
 
