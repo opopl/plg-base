@@ -1,0 +1,18 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+base#complete#CD	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base\complete.vim	/^function! base#complete#CD (...)$/;"	f
+base#complete#custom	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base\complete.vim	/^function! base#complete#custom (...)$/;"	f
+base#complete#datlist	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base\complete.vim	/^function! base#complete#datlist (...)$/;"	f
+base#complete#info	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base\complete.vim	/^function! base#complete#info (...)$/;"	f
+base#complete#keymap	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base\complete.vim	/^function! base#complete#keymap (...)$/;"	f
+base#complete#statuslines	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base\complete.vim	/^function! base#complete#statuslines (...)$/;"	f
+base#complete#tagids	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base\complete.vim	/^function! base#complete#tagids (...)$/;"	f
+base#complete#varlist	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base\complete.vim	/^function! base#complete#varlist (...)$/;"	f
+base#complete#vars	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base\complete.vim	/^function! base#complete#vars (...)$/;"	f
+base#complete#vimcoms	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base\complete.vim	/^function! base#complete#vimcoms (...)$/;"	f
+base#complete#vimfuns	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base\complete.vim	/^function! base#complete#vimfuns (...)$/;"	f
+base_complete_vimfuns	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base\complete.vim	/^"""base_complete_vimfuns$/;"	z

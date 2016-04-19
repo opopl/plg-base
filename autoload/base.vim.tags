@@ -1,0 +1,183 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+DC_FilledProjs	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""DC_FilledProjs$/;"	z
+DC_Proj_SecNames	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""DC_Proj_SecNames$/;"	z
+DC_Proj_SecNamesBase	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""DC_Proj_SecNamesBase$/;"	z
+DC_VimHelpFiles	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""DC_VimHelpFiles$/;"	z
+DC_pdf_docs	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""DC_pdf_docs$/;"	z
+DICT_dicts	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""DICT_dicts$/;"	z
+F_Bushes	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""F_Bushes$/;"	z
+LASU_FoldedCommands	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""LASU_FoldedCommands$/;"	z
+LASU_FoldedEnvironments	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""LASU_FoldedEnvironments$/;"	z
+LASU_FoldedMisc	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""LASU_FoldedMisc$/;"	z
+LASU_FoldedSectionEnds	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""LASU_FoldedSectionEnds$/;"	z
+LASU_FoldedSections	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""LASU_FoldedSections$/;"	z
+PAP_allowed_psecs	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""PAP_allowed_psecs$/;"	z
+PAP_bibkeys	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""PAP_bibkeys$/;"	z
+PAP_texpkeys	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""PAP_texpkeys$/;"	z
+RE	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""RE$/;"	z
+TEX	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""TEX$/;"	z
+TEXHT	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""TEXHT$/;"	z
+TEX_TexPackages	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""TEX_TexPackages$/;"	z
+TXT	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""TXT$/;"	z
+VVP_all_vimrcpieces	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""VVP_all_vimrcpieces$/;"	z
+VimSnips	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""VimSnips$/;"	z
+_pdf_docs	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""_pdf_docs$/;"	z
+allmenus_PERL	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""allmenus_PERL$/;"	z
+base#CD	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#CD(dirid,...)$/;"	f
+base#augroups	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#augroups()$/;"	f
+base#basenamesplitglob	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#basenamesplitglob(pathkey,pat)$/;"	f
+base#catpath	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#catpath(key,file,...)$/;"	f
+base#cd	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#cd(dir,...)$/;"	f
+base#choosefromprompt	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#choosefromprompt(dialog, list, sep, ...)$/;"	f
+base#createprompt	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#createprompt (promptList, cols, sep)$/;"	f
+base#datadir	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#datadir (...)$/;"	f
+base#datafile	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#datafile (id)$/;"	f
+base#datafiles	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#datafiles (id)$/;"	f
+base#datupdate	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#datupdate(...)$/;"	f
+base#echo	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#echo(opts)$/;"	f
+base#echoprefix	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#echoprefix(...)$/;"	f
+base#echoprefixold	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#echoprefixold(...)$/;"	f
+base#echoredraw	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#echoredraw(text,...)$/;"	f
+base#echotab	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#echotab(head,msg)$/;"	f
+base#echovar	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#echovar(ref)$/;"	f
+base#envvar	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#envvar (varname)$/;"	f
+base#fileopen	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#fileopen(ref)$/;"	f
+base#fileset	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#fileset (ref)$/;"	f
+base#find	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#find(ref)$/;"	f
+base#findunix	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#findunix(ref)$/;"	f
+base#findwin	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#findwin(ref)$/;"	f
+base#fnamemodifysplitglob	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#fnamemodifysplitglob(...)$/;"	f
+base#getfileinfo	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#getfileinfo(...)$/;"	f
+base#getfromchoosedialog	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#getfromchoosedialog (opts)$/;"	f
+base#getlistcount	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#getlistcount( array )$/;"	f
+base#info	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#info (...)$/;"	f
+base#init	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#init (...)$/;"	f
+base#initfiles	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#initfiles(...)$/;"	f
+base#initpaths	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#initpaths(...)$/;"	f
+base#initplugins	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#initplugins (...)$/;"	f
+base#initvars	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#initvars (...)$/;"	f
+base#inlist	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#inlist(element,list)$/;"	f
+base#listnew	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#listnew(...)$/;"	f
+base#listnewinc	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#listnewinc(start,end,inc)$/;"	f
+base#loadvimcom	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#loadvimcom(com)$/;"	f
+base#loadvimfunc	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#loadvimfunc(fun)$/;"	f
+base#mapsub	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#mapsub(array,pat,subpat,subopts)$/;"	f
+base#mkdir	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#mkdir (dir)$/;"	f
+base#opttrue	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#opttrue(opt)$/;"	f
+base#path	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#path (pathid)$/;"	f
+base#pathlist	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#pathlist ()$/;"	f
+base#pathset	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#pathset (ref)$/;"	f
+base#plgcd	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#plgcd ()$/;"	f
+base#plgdir	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#plgdir ()$/;"	f
+base#qw	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#qw (...)$/;"	f
+base#readarr	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#readarr(file,...)$/;"	f
+base#readdatalist	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#readdatalist(id)$/;"	f
+base#readdatfile	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#readdatfile(ref,...)$/;"	f
+base#readdatpaths	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#readdatpaths(ref)$/;"	f
+base#readdict	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#readdict(ref)$/;"	f
+base#readdictdat	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#readdictdat(ref)$/;"	f
+base#rmendssplitglob	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#rmendssplitglob(pathkey,pat)$/;"	f
+base#rmprefix	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#rmprefix(files)$/;"	f
+base#rmwh	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#rmwh(ivar)$/;"	f
+base#runvimfunc	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#runvimfunc(fun,...)$/;"	f
+base#setglobalvarfromdat	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#setglobalvarfromdat(ref,...)$/;"	f
+base#splitglob	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#splitglob(...)$/;"	f
+base#splitsystem	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#splitsystem (cmd)$/;"	f
+base#strntok	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#strntok(s, tok, n)$/;"	f
+base#subwarn	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#subwarn(msg)$/;"	f
+base#sys	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#sys(...)$/;"	f
+base#type	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#type(var)$/;"	f
+base#uniq	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#uniq(...)$/;"	f
+base#var	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#var (...)$/;"	f
+base#varcheckexist	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#varcheckexist(ref)$/;"	f
+base#varecho	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#varecho (varname)$/;"	f
+base#varexists	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#varexists (varname)$/;"	f
+base#varget	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#varget (varname)$/;"	f
+base#varlist	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#varlist ()$/;"	f
+base#varreset	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#varreset(varname,new)$/;"	f
+base#varset	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#varset (varname, value)$/;"	f
+base#varsetfromdat	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#varsetfromdat (...)$/;"	f
+base#varupdate	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#varupdate(ref)$/;"	f
+base#viewdat	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#viewdat (...)$/;"	f
+base#viewvimcom	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#viewvimcom(...)$/;"	f
+base#viewvimfunc	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#viewvimfunc(...)$/;"	f
+base#vimfuncexists	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#vimfuncexists(fun,...)$/;"	f
+base#vimfuncnew	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^fun! base#vimfuncnew(...)$/;"	f
+base#warn	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^function! base#warn (ref)$/;"	f
+base_catpath	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_catpath$/;"	z
+base_choosefromprompt	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_choosefromprompt$/;"	z
+base_createprompt	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_createprompt$/;"	z
+base_datupdate	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_datupdate$/;"	z
+base_echotab	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_echotab$/;"	z
+base_fileopen	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_fileopen$/;"	z
+base_find	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_find$/;"	z
+base_findunix	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_findunix$/;"	z
+base_findwin	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_findwin $/;"	z
+base_getfromchoosedialog	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_getfromchoosedialog$/;"	z
+base_getlistcount	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_getlistcount$/;"	z
+base_initpaths	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_initpaths$/;"	z
+base_inlist	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_inlist$/;"	z
+base_path	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_path$/;"	z
+base_runvimfunc	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_runvimfunc$/;"	z
+base_strntok	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_strntok$/;"	z
+base_subwarn	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_subwarn$/;"	z
+base_type	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_type$/;"	z
+base_uniq	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_uniq$/;"	z
+base_varcheckexist	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_varcheckexist$/;"	z
+base_varecho	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_varecho$/;"	z
+base_varupdate	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_varupdate$/;"	z
+base_viewvimcom	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_viewvimcom$/;"	z
+base_viewvimfunc	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_viewvimfunc$/;"	z
+base_vimfuncexists	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_vimfuncexists$/;"	z
+base_vimfuncnew	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_vimfuncnew$/;"	z
+base_warn	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""base_warn$/;"	z
+comment_char	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""comment_char$/;"	z
+datfiles_pp	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""datfiles_pp$/;"	z
+datupdate_ctags_mkvimrc	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""datupdate_ctags_mkvimrc$/;"	z
+datupdate_list_tex_papers	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""datupdate_list_tex_papers$/;"	z
+datupdate_perl_installed_modules	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""datupdate_perl_installed_modules$/;"	z
+datupdate_perl_local_modules	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""datupdate_perl_local_modules$/;"	z
+datupdate_perl_used_modules	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""datupdate_perl_used_modules$/;"	z
+define_paths	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""define_paths$/;"	z
+info_completions	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""info_completions$/;"	z
+info_dirs	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""info_dirs$/;"	z
+info_encodings	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""info_encodings$/;"	z
+info_file	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""info_file$/;"	z
+info_keymap	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""info_keymap$/;"	z
+info_latex	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""info_latex$/;"	z
+info_make	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""info_make$/;"	z
+info_opts	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""info_opts$/;"	z
+info_paths	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""info_paths$/;"	z
+info_perl	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""info_perl$/;"	z
+info_plugins	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""info_plugins$/;"	z
+info_proj	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""info_proj$/;"	z
+info_rtp	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""info_rtp$/;"	z
+info_statusline	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""info_statusline$/;"	z
+info_tagbar	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""info_tagbar$/;"	z
+info_tags	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""info_tags$/;"	z
+pdf_perldoc	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""pdf_perldoc$/;"	z
+perl_installed_modules	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""perl_installed_modules$/;"	z
+perl_loaded_modules	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""perl_loaded_modules$/;"	z
+perl_local_modules	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""perl_local_modules$/;"	z
+perl_used_modules	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""perl_used_modules$/;"	z
+proj	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""proj$/;"	z
+varupdate_DC_Proj_Name	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""varupdate_DC_Proj_Name$/;"	z
+varupdate_PAP_bibkeys	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""varupdate_PAP_bibkeys$/;"	z
+varupdate__dat__	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""varupdate__dat__$/;"	z
+varupdate_allmenus	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""varupdate_allmenus$/;"	z
+varupdate_ctagsexe	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""varupdate_ctagsexe$/;"	z
+varupdate_datfiles	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""varupdate_datfiles$/;"	z
+varupdate_files	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""varupdate_files$/;"	z
+varupdate_opts	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""varupdate_opts$/;"	z
+varupdate_paths	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""varupdate_paths$/;"	z
+varupdate_pkey	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""varupdate_pkey$/;"	z
+varupdate_pluginfiles	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""varupdate_pluginfiles$/;"	z
+varupdate_plugins	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""varupdate_plugins$/;"	z
+varupdate_rtp	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""varupdate_rtp$/;"	z
+varupdate_texinputs	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""varupdate_texinputs$/;"	z
+vhook	C:\Users\op\programs\Vim\Vim74\plg\base\autoload\base.vim	/^"""vhook$/;"	z

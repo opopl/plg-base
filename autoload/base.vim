@@ -3450,6 +3450,7 @@ function! base#initvars (...)
 
 	call base#initvarsfromdat()
 
+
 	call base#var('vim_funcs_user',
 		\	base#fnamemodifysplitglob('funs','*.vim',':t:r'))
 
@@ -3489,6 +3490,7 @@ function! base#init (...)
 	call base#initplugins()
 
 	call base#initvars()
+	call base#omni#init()
 
 	call base#pap#list()
 
@@ -3615,12 +3617,12 @@ function! base#grep (...)
 	if opt == 'plg_findstr'
 
 		let gref = {
-			\  "files"       : files,
-			\  "pat"         : pat,
-			\  "cmd_name"    : 'Rfindpattern',
-			\  "findstr_opt" : '/i',
-			\  "cmd_opt"     : '/R /S',
-			\  "use_startdir"  : 0,
+			\  "files"       : files          ,
+			\  "pat"         : pat            ,
+			\  "cmd_name"    : 'Rfindpattern' ,
+			\  "findstr_opt" : '/i'           ,
+			\  "cmd_opt"     : '/R /S'        ,
+			\  "use_startdir"  : 0            ,
 			\}
 
 		let cmd = 'call findstr#ap#run(gref)'
