@@ -113,12 +113,9 @@ function! base#tg#update (...)
 
 	let libs_as = join(base#qw("C:/Perl/site/lib C:/Perl/lib" ),' ')
 
-	if tgid  == 'ipte_ao'
-		call base#CD(tgid)
+	if tgid  == ''
 
-		let libs=join( [ 
-			\	ap#file#win( base#catpath(tgid,'iPTE') ), 
-			\	] ," ")
+	elseif tgid == 'perl_as'
 
 		let libs.=' ' . libs_as
 
@@ -201,6 +198,13 @@ function! base#tg#update (...)
 
 		call projs#rootcd()
 
+	elseif tgid == 'ipte_ao'
+		call base#CD(tgid)
+
+		let libs=join( [ 
+			\	ap#file#win( base#catpath(tgid,'iPTE') ), 
+			\	] ," ")
+
 	elseif tgid == 'ipte_client'
 		let id = 'ipte_lib_client'
 
@@ -210,7 +214,6 @@ function! base#tg#update (...)
 			\	ap#file#win( base#catpath(id,'iPTE') ), 
 			\	] ," ")
 
-		let libs.=' ' . libs_as
 
 	elseif tgid == 'ipte_wt'
 		let id = 'ipte_lib_client'
@@ -221,7 +224,7 @@ function! base#tg#update (...)
 			\	ap#file#win( base#catpath(id,'iPTE\Base') ), 
 			\	] ," ")
 
-		let libs.=' ' . libs_as
+		"let libs.=' ' . libs_as
 
 	elseif tgid == 'perlmod'
 		let id = tgid
@@ -232,7 +235,7 @@ function! base#tg#update (...)
 			\	ap#file#win( base#catpath(id,'lib') ), 
 			\	] ," ")
 
-		let libs.=' ' . libs_as
+		"let libs.=' ' . libs_as
 
 """thisfile
 	elseif tgid == 'thisfile'
