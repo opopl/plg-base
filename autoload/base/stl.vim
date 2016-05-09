@@ -201,6 +201,7 @@ fun! base#stl#setlines(...)
 		        \   'file_encoding'    ,
 		        \   'encoding'         ,
 		        \   'pathids'          ,
+		        \   'line_number'      ,
                 \           ],
         \   'perl_pl'   :   [ 
 		        \   'file_name',
