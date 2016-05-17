@@ -1,0 +1,10 @@
+
+Base Plugin Reference
+
+			*base#qw#catpath*
+
+echo base#qw#catpath('projs','a')
+echo base#qw#catpath('projs','a b')
+echo base#qw#catpath('plg','projs data')
+
+ vim:tw=78:ts=8:ft=help:norl:
