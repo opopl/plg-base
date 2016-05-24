@@ -38,39 +38,51 @@ fun! base#init#cmds()
 command! -nargs=* -complete=custom,base#complete#omnioptions
   \ OMNIFUNCADD call base#omni#selectcompletion(<f-args>,'add')
 	
+"""BaseVarUpdate
 	command! -nargs=* -complete=custom,base#complete#varlist BaseVarUpdate 
 		\	call base#varupdate(<f-args>) 
 	
+"""BaseVarEcho
 	command! -nargs=* -complete=custom,base#complete#varlist
 	    \   BaseVarEcho call base#varecho(<f-args>) 
 	
+"""BaseInit
 	command! -nargs=* 
 	    \   BaseInit call base#init() 
 	
+"""BaseDatView
 	command! -nargs=* -complete=custom,base#complete#datlist
 	    \   BaseDatView call base#viewdat(<f-args>) 
 	
+"""StatusLine
 	command! -nargs=* -complete=custom,base#complete#statuslines
 	    \   StatusLine call base#stl#set(<f-args>) 
 
+"""TgSet
 	command! -nargs=* -complete=custom,base#complete#tagids  TgSet
 	    \   call base#tg#set(<f-args>) 
 
+"""TgView
 	command! -nargs=* -complete=custom,base#complete#tagids  TgView
 	    \   call base#tg#view(<f-args>) 
 
+"""TgUpdate
 	command! -nargs=* -complete=custom,base#complete#tagids  TgUpdate 
 		\	call base#tg#update(<f-args>) 
 
+"""TgAdd
 	command! -nargs=* -complete=custom,base#complete#tagids  TgAdd 
 		\	call base#tg#add(<f-args>) 
 
+"""BuffersList
 	command! -nargs=*  BuffersList
 		\	call base#buffers#list(<f-args>) 
 
+"""BuffersWipeAll
 	command! -nargs=*  BuffersWipeAll
 		\	call base#buffers#wipeall(<f-args>)
 
+"""PP
 	command! -nargs=* -complete=custom,base#complete#paplist PP
 		\	call base#pap#import(<f-args>)
 	 
