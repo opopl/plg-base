@@ -2401,7 +2401,7 @@ function! base#findwin(ref)
 
 	 		if get(ref,'rmext')
 				for ext in exts
-					let cf = substitute(cf,'.'.ext.'$','','g') 
+					let cf = substitute(cf,'\.'.ext.'$','','g') 
 				endfor
 			endif
 
