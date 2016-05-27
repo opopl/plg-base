@@ -19,6 +19,6 @@ plg_make
 plg_perlmy
 plg_projs
 plg_tex
-plg_txt
+plg_txtmy
 ##########
 mkvimrc
