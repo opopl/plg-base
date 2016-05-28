@@ -2102,6 +2102,62 @@ EOF
  
 endfunction
 
+function! base#gitcmds (...)
+	return base#var('gitcmds')
+
+endfunction
+
+
+function! base#git (...)
+
+	call ap#GoToFileLocation()
+
+	if a:0
+		let cmd = a:1
+	else
+		let cmd = base#getfromchoosedialog({ 
+		 	\ 'list'        : base#gitcmds(),
+		 	\ 'startopt'    : 'regular',
+		 	\ 'header'      : "Available git cmds are: ",
+		 	\ 'numcols'     : 1,
+		 	\ 'bottom'      : "Choose git cmd by number: ",
+		 	\ })
+	endif
+
+	let tmp     = tempname()
+	let cmdopts = base#git#cmdopts()
+
+	let opts = get(cmdopts,cmd,'')
+
+	let opts = input('Options for '.cmd.' command:',opts)
+	let cmd  = cmd .' '.opts
+
+	let so=[]
+
+	if base#inlist(cmd,base#qw('rm add'))
+
+		let fp = expand('%:p')
+		let gitcmd = 'git ' . cmd . ' ' . fp
+		let files=[fp]
+	
+		for f  in files
+			call base#sys({ "cmds" : [gitcmd]})
+			call extend(so,base#var('sysout'))
+		endfor
+
+	else
+		let gitcmd = 'git ' . cmd
+		call base#sys({ "cmds" : [gitcmd]})
+		call extend(so,base#var('sysout'))
+	endif
+
+	call writefile(so,tmp)
+	call base#fileopen({ "files" : [ tmp ], "action" : "split" })
+	setf gitcommit
+
+	
+endfunction
+
 function! base#splitsystem (cmd)
 
   let lines = system(a:cmd)

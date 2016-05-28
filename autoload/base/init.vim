@@ -25,6 +25,10 @@ fun! base#init#cmds()
 """VFUN
 	command! -nargs=1 -complete=custom,base#complete#vimfuns VFUN 
 		\	call base#viewvimfunc(<f-args>)
+
+"""GitCmd
+	command! -nargs=1 -complete=custom,base#complete#gitcmds GitCmd 
+		\	call base#git(<f-args>)
 	
 """INFO
 	command! -nargs=* -complete=custom,base#complete#info    INFO

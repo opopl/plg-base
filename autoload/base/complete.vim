@@ -1,9 +1,11 @@
 
 """base_complete_vimfuns
 function! base#complete#vimfuns (...)
-  
   return base#complete#vars([ 'vim_funcs_user' ])
- 
+endfun
+
+function! base#complete#gitcmds (...)
+  return base#complete#vars([ 'gitcmds' ])
 endfun
 
 function! base#complete#vimcoms (...)
