@@ -30,6 +30,14 @@ fun! base#loadvimfunc(fun)
   
 endfun
 
+fun! base#pdfviewer()
+	let v=''
+	if $COMPUTERNAME == 'OPPC'
+		let v='C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe'
+	endif
+	return v
+endfun
+
 ""base_loadvimcommand
 fun! base#loadvimcom(com)
 
