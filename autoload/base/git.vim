@@ -6,6 +6,7 @@ function! base#git#cmdopts (...)
 		\ 'commit' : '-a -m "u"'   ,
 		\ 'remote' : '-v'          ,
 		\ 'rm'     : '--cached'    ,
+		\ 'submodule' : 'update'   ,
 		\ }
 	return cmdopts
 endfunction
