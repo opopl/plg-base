@@ -2132,14 +2132,13 @@ function! base#git (...)
 		 	\ })
 	endif
 
-	let tmp     = tempname()
-	let cmdopts = base#git#cmdopts()
-
-	let opts = get(cmdopts,cmd,'')
-
 	let notnative=base#qw('send_to_origin get_from_origin')
 	if base#inlist(cmd,notnative)
 	else
+		let tmp     = tempname()
+		let cmdopts = base#git#cmdopts()
+		let opts = get(cmdopts,cmd,'')
+
 		let opts = input('Options for '.cmd.' command:',opts)
 		let cmd  = cmd .' '.opts
 	endif
