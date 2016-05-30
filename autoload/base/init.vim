@@ -26,6 +26,14 @@ fun! base#init#cmds()
 	command! -nargs=1 -complete=custom,base#complete#vimfuns VFUN 
 		\	call base#viewvimfunc(<f-args>)
 
+"""PowerShell
+	command! -nargs=1 -complete=custom,base#complete#gitcmds PowerShell
+		\	call base#powershell(<f-args>)
+
+"""EnvCmd
+	command! -nargs=1 -complete=custom,base#complete#envcmd     EnvCmd
+		\	call base#envcmd(<f-args>)
+
 """GitCmd
 	command! -nargs=1 -complete=custom,base#complete#gitcmds GitCmd 
 		\	call base#git(<f-args>)

@@ -2166,16 +2166,27 @@ function! base#git (...)
 
 	else
 		let gitcmd = 'git ' . cmd
-		call base#sys({ "cmds" : [gitcmd]})
-		call extend(so,base#var('sysout'))
+		call base#sys({ "cmds" : [gitcmd], "split_output" : 1 })
+		setf gitcommit
 	endif
-
-	call writefile(so,tmp)
-	call base#fileopen({ "files" : [ tmp ], "action" : "split" })
-	setf gitcommit
 
 	return 
 	
+endfunction
+
+function! base#envcmd (...)
+
+	if a:0
+		let cmd = a:1
+	endif
+	call base#sys({ "cmds" : [cmd], "split_output" : 1 })
+
+endfunction
+
+function! base#powershell (...)
+	let cmd = 'powershell ' . cmd
+	call base#sys({ "cmds" : [gitcmd], "split_output" : 1 })
+
 endfunction
 
 function! base#splitsystem (cmd)

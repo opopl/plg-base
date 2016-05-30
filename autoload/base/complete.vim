@@ -8,6 +8,10 @@ function! base#complete#gitcmds (...)
   return base#complete#vars([ 'gitcmds' ])
 endfun
 
+function! base#complete#envcmd (...)
+  return base#complete#vars([ 'envcmds' ])
+endfun
+
 function! base#complete#vimcoms (...)
   
   return base#complete#vars([ 'vim_coms' ])
