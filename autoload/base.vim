@@ -2118,8 +2118,6 @@ endfunction
 
 function! base#git (...)
 
-	call ap#GoToFileLocation()
-
 	if a:0
 		let cmd = a:1
 	else
@@ -2135,6 +2133,8 @@ function! base#git (...)
 	let notnative=base#qw('send_to_origin get_from_origin')
 	if base#inlist(cmd,notnative)
 	else
+		call ap#GoToFileLocation()
+
 		let tmp     = tempname()
 		let cmdopts = base#git#cmdopts()
 		let opts = get(cmdopts,cmd,'')
