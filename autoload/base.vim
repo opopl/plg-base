@@ -2137,8 +2137,12 @@ function! base#git (...)
 
 	let opts = get(cmdopts,cmd,'')
 
-	let opts = input('Options for '.cmd.' command:',opts)
-	let cmd  = cmd .' '.opts
+	let notnative=base#qw('send_to_origin get_from_origin')
+	if base#inlist(cmd,notnative)
+	else
+		let opts = input('Options for '.cmd.' command:',opts)
+		let cmd  = cmd .' '.opts
+	endif
 
 	let so=[]
 
@@ -2153,6 +2157,14 @@ function! base#git (...)
 			call extend(so,base#var('sysout'))
 		endfor
 
+	elseif base#inlist(cmd,base#qw('send_to_origin'))
+		let cmds=base#qw('commit push')
+		for cmd in cmds
+			call base#git(cmd)
+		endfor
+		return 
+	elseif base#inlist(cmd,base#qw('get_from_origin'))
+
 	else
 		let gitcmd = 'git ' . cmd
 		call base#sys({ "cmds" : [gitcmd]})
@@ -2163,6 +2175,7 @@ function! base#git (...)
 	call base#fileopen({ "files" : [ tmp ], "action" : "split" })
 	setf gitcommit
 
+	return 
 	
 endfunction
 

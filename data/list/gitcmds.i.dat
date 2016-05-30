@@ -9,3 +9,5 @@ log
 lg
 remote
 submodule
+send_to_origin
+get_from_origin
