@@ -2775,6 +2775,7 @@ fun! base#sys(...)
 	\	'show_output'  : 0          ,
 	\	'prompt'       : 1          ,
 	\	'skip_errors'  : 0          ,
+	\	'split_output'  : 0         ,
 	\	}
 
  if a:0 
@@ -2848,6 +2849,12 @@ fun! base#sys(...)
 
  call base#var('sysout',output)
  call base#var('sysoutstr',outputstr)
+
+ if get(opts,'split_output',0)
+ 	let tmp     = tempname()
+	call writefile(output,tmp)
+	call base#fileopen({ "files" : [ tmp ], "action" : "split" })
+ endif
 
  return ok
 
