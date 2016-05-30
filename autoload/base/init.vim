@@ -27,7 +27,7 @@ fun! base#init#cmds()
 		\	call base#viewvimfunc(<f-args>)
 
 """PowerShell
-	command! -nargs=1 -complete=custom,base#complete#gitcmds PowerShell
+	command! -nargs=1 -complete=custom,base#complete#powershell PowerShell
 		\	call base#powershell(<f-args>)
 
 """EnvCmd

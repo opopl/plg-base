@@ -2184,8 +2184,11 @@ function! base#envcmd (...)
 endfunction
 
 function! base#powershell (...)
+
+	if a:0 | let cmd = a:1 | endif
+
 	let cmd = 'powershell ' . cmd
-	call base#sys({ "cmds" : [gitcmd], "split_output" : 1 })
+	call base#envcmd(cmd)
 
 endfunction
 

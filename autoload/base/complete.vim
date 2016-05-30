@@ -12,6 +12,10 @@ function! base#complete#envcmd (...)
   return base#complete#vars([ 'envcmds' ])
 endfun
 
+function! base#complete#powershell (...)
+  return base#complete#vars([ 'cmds_powershell' ])
+endfun
+
 function! base#complete#vimcoms (...)
   
   return base#complete#vars([ 'vim_coms' ])
