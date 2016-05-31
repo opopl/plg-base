@@ -4,7 +4,9 @@ dirs
 encodings
 env
 file
+grep
 keymap
+lasu
 latex
 make
 opts
@@ -18,4 +20,3 @@ statusline
 tags
 vhooks
 vim
-grep
