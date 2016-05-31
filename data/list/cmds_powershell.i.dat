@@ -2,7 +2,11 @@ Get-Location
 Get-Alias
 Where-Object
 Format-Table
+# NetAdapterRss
 Get-NetAdapterRss
 Set-NetAdapterRss
 Enable-NetAdapterRss
 Disable-NetAdapterRss
+##
+Get-Help
+Out-File
