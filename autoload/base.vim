@@ -3434,9 +3434,18 @@ endfunction
 
 function! base#dump (...)
     let val = a:1
+    let dump =''
+
+    if exists("*PrettyPrint")
+        let dump = PrettyPrint(val)
+    endif
     if base#type(a:1) == 'Dictionary'
+    elseif base#type(a:1) == 'String'
+    elseif base#type(a:1) == 'List'
           
     endif
+
+    return dump
 endfunction
 
 function! base#varget (varname)
