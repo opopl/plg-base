@@ -2140,7 +2140,8 @@ function! base#git (...)
             \ })
     endif
 
-    let notnative=base#qw('send_to_origin get_from_origin')
+    let notnative=base#var('gitcmds_notnative')
+
     if base#inlist(cmd,notnative)
     else
         call ap#GoToFileLocation()
@@ -3440,7 +3441,7 @@ endfunction
 function! base#varecho (varname,...)
     let val =  base#var(a:varname)
 
-    let ref = { 'text' : base#dump(val) }
+    let ref = { 'text' : a:varname .' => '. base#dump(val),'prefix':'' }
     if a:0
         if base#type(a:1) == 'Dictionary'
             call extend(ref,a:1)
@@ -3457,9 +3458,10 @@ function! base#dump (...)
     if exists("*PrettyPrint")
         let dump = PrettyPrint(val)
     endif
-    if base#type(a:1) == 'Dictionary'
-    elseif base#type(a:1) == 'String'
-    elseif base#type(a:1) == 'List'
+
+    if base#type(val) == 'Dictionary'
+    elseif base#type(val) == 'String'
+    elseif base#type(val) == 'List'
           
     endif
 
