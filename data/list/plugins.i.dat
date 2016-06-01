@@ -1,6 +1,6 @@
 ap
 base
-dbext
+#dbext
 ipte
 findstr
 nerdcommenter
@@ -11,7 +11,7 @@ snipmate
 tabular
 tagbar
 #viewdoc
-vim-fugitive
+#vim-fugitive
 vim-git
 vim-perl
 vim-latex

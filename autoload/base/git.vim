@@ -1,4 +1,6 @@
 
+function! base#git#update (...)
+endfunction
 
 function! base#git#cmdopts (...)
 	let cmdopts = {

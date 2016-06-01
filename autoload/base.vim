@@ -3468,7 +3468,7 @@ function! base#dump (...)
     return dump
 endfunction
 
-function! base#varget (varname)
+function! base#varget (varname,...)
 
     if ! exists("s:basevars")
         let s:basevars={}
@@ -3477,11 +3477,10 @@ function! base#varget (varname)
     if exists("s:basevars[a:varname]")
         let val = copy( s:basevars[a:varname] )
     else
-        call base#warn({ 
-            \   "text" : "Undefined variable: " . a:varname,
-            \   "prefix" : "(base#varget) ",
-            \   })
         let val = ''
+		if a:0
+			unlet val | let val = a:1
+		endif
     endif
 
     return val
