@@ -2118,8 +2118,18 @@ endfunction
 
 function! base#git (...)
 
+	let cmd = ''
     if a:0
-        let cmd = a:1
+        let ref = a:1
+		if base#type(ref) == 'String'
+			let cmd = ref
+		elseif base#type(ref) == 'Dictionary'
+			let cmds = get(ref,'cmds',[])
+			for cmd in cmds
+				call base#git(cmd)
+				return
+			endfor
+		endif
     else
         let cmd = base#getfromchoosedialog({ 
             \ 'list'        : base#gitcmds(),
@@ -2164,6 +2174,14 @@ function! base#git (...)
         return 
     elseif base#inlist(cmd,base#qw('get_from_origin'))
 
+    elseif base#inlist(cmd,base#qw('submodule_foreach_git_pull'))
+        let cmds=['git submodule foreach git pull']
+        call base#git({ "cmds" : cmds })
+        return 
+    elseif base#inlist(cmd,base#qw('submodule_foreach_git_co_master'))
+        let cmds=['git submodule foreach git co master']
+        call base#git({ "cmds" : cmds })
+        return 
     else
         let gitcmd = 'git ' . cmd
         call base#sys({ "cmds" : [gitcmd], "split_output" : 1 })
