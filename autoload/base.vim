@@ -271,15 +271,20 @@ fun! base#varcheckexist(ref)
  
 endfun
 
+" string width
+function! base#sw (s)
+	let a=a:s
+	let v = (exists('*strwidth')) ? strwidth(a) : len(a)
+	return v
+endfunction
+
 fun! base#opttrue(opt)
   let opt=a:opt
 
-  if !exists("g:opts")
-    let g:opts={}
-  endif
+  let opts=base#varget('opts',{})
 
-  if has_key(g:opts,opt) 
-    if g:opts[opt] 
+  if has_key(opts,opt) 
+    if get(opts,opt,0)
       let res=1
     else
       let res=0

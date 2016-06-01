@@ -1,0 +1,7 @@
+fullname       :p
+path           :p:h
+pathtail       :p:h:t
+relativename   :~:.
+relativepath   :~:.:h
+shortname      :t
+ext            :e
