@@ -3677,6 +3677,8 @@ function! base#init (...)
     		call base#initvars()
 		elseif opt == 'plugins'
     		call base#initplugins()
+		elseif opt == 'omni'
+    		call base#omni#init()
 		endif
 		return
 	endif
