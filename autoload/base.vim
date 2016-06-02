@@ -2185,7 +2185,9 @@ function! base#git (...)
         	let opts = get(cmdopts,cmd,'')
 		endif
 
-        let opts = input('Options for '.cmd.' command:',opts)
+		if base#opttrue('git_prompt')
+        	let opts = input('Options for '.cmd.' command:',opts)
+		endif
         let cmd  = cmd .' '.opts
     endif
 
@@ -2209,6 +2211,10 @@ function! base#git (...)
         endfor
         return 
     elseif base#inlist(cmd,base#qw('get_from_origin'))
+    elseif base#inlist(cmd,base#qw('add_thisfile'))
+		let fpath=expand('%:p')
+		call base#git('add',fpath)
+		return
 
     elseif base#inlist(cmd,base#qw('submodule_foreach_git_pull'))
         let cmds=['git submodule foreach git pull']

@@ -1,8 +1,9 @@
-UsePerl 0 
-warn 1
-debug 1
-#FileOpen_action tabnew
-fileopen_action edit
-use_F_OnLoad_perl 1
-use_F_OnLoad_vim 1
-buf_showdirs 1
+UsePerl             0
+warn                1
+debug               1
+#FileOpen_action    tabnew
+fileopen_action     edit
+use_F_OnLoad_perl   1
+use_F_OnLoad_vim    1
+buf_showdirs        1
+git_prompt          1
