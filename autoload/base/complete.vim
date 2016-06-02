@@ -30,10 +30,12 @@ function! base#complete#paplist (...)
   return base#complete#vars([ 'paplist' ])
 endfunction
 
-function! base#complete#info (...)
+function! base#complete#init (...)
+  return base#complete#vars([ 'base_init_cmds' ])
+endfunction
 
+function! base#complete#info (...)
   return base#complete#vars([ 'info_topics' ])
-	
 endfunction
 
 function! base#complete#tagids (...)

@@ -2120,18 +2120,42 @@ function! base#gitcmds (...)
 
 endfunction
 
+"call base#git (command,command-line options, path)
+
+"call base#git ('add')
+"call base#git ('add',options,path)
+"
+function! A (...)
+	let a=a:000
+	if a:0
+		echo get(a,0,'')
+		echo get(a,1,'')
+		echo get(a,2,'')
+	else
+		
+	endif
+	
+endfunction
 
 function! base#git (...)
+	let aa=a:000
+	echo aa
 
 	let cmd = ''
+	let inopts = ''
+
     if a:0
-        let ref = a:1
+        let ref     = get(aa,0,'')
+        let inopts  = get(aa,1,'')
+        let path    = get(aa,2,'')
+
 		if base#type(ref) == 'String'
 			let cmd = ref
+
 		elseif base#type(ref) == 'Dictionary'
 			let cmds = get(ref,'cmds',[])
 			for cmd in cmds
-				call base#git(cmd)
+				call base#git(cmd,inopts,path)
 				return
 			endfor
 		endif
@@ -2152,8 +2176,14 @@ function! base#git (...)
         call ap#GoToFileLocation()
 
         let tmp     = tempname()
+
         let cmdopts = base#git#cmdopts()
-        let opts = get(cmdopts,cmd,'')
+
+		if strlen(inopts)
+			let opts = inopts
+		else
+        	let opts = get(cmdopts,cmd,'')
+		endif
 
         let opts = input('Options for '.cmd.' command:',opts)
         let cmd  = cmd .' '.opts
@@ -3638,6 +3668,18 @@ endf
 
 
 function! base#init (...)
+
+	if a:0
+		let opt = a:1
+		if opt == 'cmds'
+    		call base#init#cmds()
+		elseif opt == 'vars'
+    		call base#initvars()
+		elseif opt == 'plugins'
+    		call base#initplugins()
+		endif
+		return
+	endif
 
     " initialize data using base#pathset(...)
     call base#initpaths()

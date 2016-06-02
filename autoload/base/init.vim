@@ -27,15 +27,15 @@ fun! base#init#cmds()
 		\	call base#viewvimfunc(<f-args>)
 
 """PowerShell
-	command! -nargs=1 -complete=custom,base#complete#powershell PowerShell
+	command! -nargs=* -complete=custom,base#complete#powershell PowerShell
 		\	call base#powershell(<f-args>)
 
 """EnvCmd
-	command! -nargs=1 -complete=custom,base#complete#envcmd     EnvCmd
+	command! -nargs=* -complete=custom,base#complete#envcmd     EnvCmd
 		\	call base#envcmd(<f-args>)
 
 """GitCmd
-	command! -nargs=1 -complete=custom,base#complete#gitcmds GitCmd 
+	command! -nargs=* -complete=custom,base#complete#gitcmds GitCmd 
 		\	call base#git(<f-args>)
 
 """GitUpdate
@@ -63,8 +63,8 @@ command! -nargs=* -complete=custom,base#complete#omnioptions
 	    \   BaseVarEcho call base#varecho(<f-args>) 
 	
 """BaseInit
-	command! -nargs=* 
-	    \   BaseInit call base#init() 
+	command! -nargs=* -complete=custom,base#complete#init
+	    \   BaseInit call base#init(<f-args>) 
 	
 """BaseDatView
 	command! -nargs=* -complete=custom,base#complete#datlist
