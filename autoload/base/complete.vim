@@ -34,6 +34,10 @@ function! base#complete#init (...)
   return base#complete#vars([ 'base_init_cmds' ])
 endfunction
 
+function! base#complete#opts (...)
+  return base#complete#vars([ 'opts_keys' ])
+endfunction
+
 function! base#complete#info (...)
   return base#complete#vars([ 'info_topics' ])
 endfunction

@@ -57,6 +57,22 @@ command! -nargs=* -complete=custom,base#complete#omnioptions
 """BaseVarUpdate
 	command! -nargs=* -complete=custom,base#complete#varlist BaseVarUpdate 
 		\	call base#varupdate(<f-args>) 
+
+"""OptEcho
+	command! -nargs=* -complete=custom,base#complete#opts
+	    \   OptEcho call base#opt#echo(<f-args>) 
+
+"""OptSave
+	command! -nargs=* -complete=custom,base#complete#opts
+	    \   OptSave call base#opt#save(<f-args>) 
+
+"""OptRestore
+	command! -nargs=* -complete=custom,base#complete#opts
+	    \   OptRestore call base#opt#restore(<f-args>) 
+
+"""OptReset
+	command! -nargs=* -complete=custom,base#complete#opts
+	    \   OptReset call base#opt#reset(<f-args>) 
 	
 """BaseVarEcho
 	command! -nargs=* -complete=custom,base#complete#varlist

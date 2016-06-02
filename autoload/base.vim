@@ -2127,13 +2127,9 @@ endfunction
 "
 function! A (...)
 	let a=a:000
-	if a:0
-		echo get(a,0,'')
-		echo get(a,1,'')
-		echo get(a,2,'')
-	else
-		
-	endif
+	echo get(a,0,'')
+	echo get(a,1,'')
+	echo get(a,2,'')
 	
 endfunction
 
@@ -3305,7 +3301,9 @@ function! base#info (...)
    elseif topic == 'opts'
        call base#echo({ 'text' : "OPTIONS: " } )
        call base#varcheckexist('opts')
-       echo base#var('opts')
+
+       call base#varecho('opts')
+       call base#varecho('opts_saved')
 
    endif
  endif
@@ -3642,9 +3640,9 @@ endfunction
 function! base#initvars (...)
     call base#echoprefix('(base#initvars)')
 
-
     call base#initvarsfromdat()
 
+	call base#var('opts_keys',sort( keys( base#var('opts') )  ) )
 
     call base#var('vim_funcs_user',
         \   base#fnamemodifysplitglob('funs','*.vim',':t:r'))
