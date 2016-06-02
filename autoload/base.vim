@@ -2137,9 +2137,11 @@ function! A (...)
 	
 endfunction
 
+"call base#git(cmd,inopts,path)
+"call base#git({ "cmds" : [ cmd ]})
+
 function! base#git (...)
 	let aa=a:000
-	echo aa
 
 	let cmd = ''
 	let inopts = ''
