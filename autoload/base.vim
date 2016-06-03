@@ -30,12 +30,8 @@ fun! base#loadvimfunc(fun)
   
 endfun
 
-fun! base#pdfviewer()
-    let v=''
-    if $COMPUTERNAME == 'OPPC'
-        let v='C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe'
-    endif
-    return v
+fun! base#pdfview(file)
+	let v = base#var('pdfviewer')
 endfun
 
 ""base_loadvimcommand
@@ -3653,6 +3649,11 @@ function! base#initvars (...)
     let varlist = keys(s:basevars)
 
     call base#var('varlist',varlist)
+
+    if $COMPUTERNAME == 'OPPC'
+        let v='C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe'
+		call base#varset('pdfviewer',v)
+    endif
 
     call base#echoprefixold()
 endf    
