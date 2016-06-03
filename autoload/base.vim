@@ -31,7 +31,14 @@ fun! base#loadvimfunc(fun)
 endfun
 
 fun! base#pdfview(file)
+	let file = a:file
+
 	let v = base#var('pdfviewer')
+
+	if !filereadable(v) | return  | endif
+
+	let cmd= v .' '.file
+	call system(cmd)
 endfun
 
 ""base_loadvimcommand
