@@ -30,6 +30,8 @@ fun! base#loadvimfunc(fun)
   
 endfun
 
+"C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe
+
 fun! base#pdfview(file)
 	let file = a:file
 
@@ -494,6 +496,11 @@ fun! base#initpaths(...)
     let hm        = base#envvar('hm')
     let mrc       = base#envvar('MYVIMRC')
     let projsdir  = base#envvar('PROJSDIR')
+
+	if $COMPUTERNAME == 'OPPC'
+		let evbin = 'C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin'
+    	call base#pathset({  'evince_bin' : evbin })
+	endif
 
     call base#pathset({ 
         \ 'conf'    : confdir ,
@@ -3691,6 +3698,8 @@ function! base#init (...)
     		call base#initvars()
 		elseif opt == 'plugins'
     		call base#initplugins()
+		elseif opt == 'paths'
+    		call base#initpaths()
 		elseif opt == 'omni'
     		call base#omni#init()
 		endif
