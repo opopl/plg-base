@@ -2252,10 +2252,28 @@ function! base#envcmd (...)
 endfunction
 
 function! base#powershell (...)
+	let aa = a:000
+	let pscmd = get(aa,0,'')
 
-    if a:0 | let cmd = a:1 | endif
+	if !len(pscmd)
+		let pscmd = input('Powershell command:','','custom,base#complete#powershell')
+		if !len(pscmd) | return | endif
+	endif
 
-    let cmd = 'powershell ' . cmd
+    let cmd = 'powershell ' . pscmd
+
+	let psopts_h={
+			\	'Get-NetTCPSetting' : base#qw('-Setting InternetCustom')
+			\	,
+			\	}
+	let psopts=get(psopts_h,pscmd,[])
+	call base#var('psopts',psopts)
+
+	let opts = input('Further options for powershell:','','custom,base#complete#psopts')
+	while len(opts)
+		let cmd.=' '.opts
+		let opts = input('Further options for powershell:','','custom,base#complete#psopts')
+	endw
     call base#envcmd(cmd)
 
 endfunction

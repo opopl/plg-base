@@ -16,6 +16,10 @@ function! base#complete#powershell (...)
   return base#complete#vars([ 'cmds_powershell' ])
 endfun
 
+function! base#complete#psopts (...)
+  return base#complete#vars([ 'psopts' ])
+endfun
+
 function! base#complete#vimcoms (...)
   
   return base#complete#vars([ 'vim_coms' ])

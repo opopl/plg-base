@@ -10,3 +10,6 @@ Disable-NetAdapterRss
 ##
 Get-Help
 Out-File
+##
+Get-NetTCPSetting
+Set-NetTCPSetting
