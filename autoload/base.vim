@@ -459,6 +459,23 @@ fun! base#initfiles(...)
         let s:files={}
     endif
 
+	if $COMPUTERNAME == 'OPPC'
+		let evince = 'C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe'
+    	call base#fileset({  'evince' : evince })
+
+		let exefiles={}
+		for fileid in base#var('exefileids')
+			let  ok = base#sys({ "cmds" : [ 'where '.fileid ], "skip_errors" : 1 })
+
+			if ok
+				call extend(exefiles,{ fileid : base#var('sysout') } )
+			endif
+
+		endfor
+		call base#varset('exefiles',exefiles)
+	endif
+
+
     call base#echoprefixold()
 endf
 
@@ -2962,26 +2979,22 @@ endfun
 
 function! base#fileset (ref)
 
-    for [ pathid, path ] in items(a:ref) 
-        let e = { pathid : path }
-        if ! exists("s:files")
-            let s:files=e
-        else
-            call extend(s:files,e)
-        endif
+	if ! exists("s:files") | let s:files={} | endif
+
+    for [ fileid, file ] in items(a:ref) 
+        let e = { fileid : file }
+        call extend(s:files,e)
     endfor
 
 endfun
 
 function! base#pathset (ref)
 
+	if ! exists("s:paths") | let s:paths={} | endif
+
     for [ pathid, path ] in items(a:ref) 
         let e = { pathid : path }
-        if ! exists("s:paths")
-            let s:paths=e
-        else
-            call extend(s:paths,e)
-        endif
+        call extend(s:paths,e)
     endfor
 
 endfun
@@ -3714,6 +3727,8 @@ function! base#init (...)
     		call base#init#cmds()
 		elseif opt == 'vars'
     		call base#initvars()
+		elseif opt == 'files'
+    		call base#initfiles()
 		elseif opt == 'plugins'
     		call base#initplugins()
 		elseif opt == 'paths'
