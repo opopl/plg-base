@@ -79,9 +79,11 @@ function! base#tg#tfile (...)
 		let dirname  = get(finfo,'dirname','')
 		let basename = get(finfo,'filename','')
 		let tfile    = base#file#catfile([ dirname, basename . '.tags' ])
+
 	elseif tgid == 'projs_this'
 		let proj  = projs#proj#name()
 		let tfile = projs#path([ proj . '.tags' ])
+
 	else
 		let tfile = base#file#catfile([ tdir, tgid . '.tags' ])
 	endif
