@@ -473,6 +473,9 @@ fun! base#initfiles(...)
 
 		endfor
 		call base#varset('exefiles',exefiles)
+	elseif $COMPUTERNAME == 'APOPLAVSKIYNB'
+		let evince =   'C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe'
+    	call base#fileset({  'evince' : evince })
 	endif
 
     call base#echoprefixold()
@@ -514,6 +517,9 @@ fun! base#initpaths(...)
     let projsdir  = base#envvar('PROJSDIR')
 
 	if $COMPUTERNAME == 'OPPC'
+		let evbin = 'C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin'
+    	call base#pathset({  'evince_bin' : evbin })
+	elseif $COMPUTERNAME == 'APOPLAVSKIYNB'
 		let evbin = 'C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin'
     	call base#pathset({  'evince_bin' : evbin })
 	endif
