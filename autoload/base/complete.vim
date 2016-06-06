@@ -21,9 +21,11 @@ function! base#complete#psopts (...)
 endfun
 
 function! base#complete#vimcoms (...)
-  
   return base#complete#vars([ 'vim_coms' ])
- 
+endfun
+
+function! base#complete#fileids (...)
+  return base#complete#vars([ 'fileids' ])
 endfun
 
 function! base#complete#CD (...)

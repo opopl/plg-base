@@ -6,6 +6,10 @@ fun! base#init#cmds()
 	command! -nargs=* -complete=custom,base#complete#CD      CD
 		\	call base#CD(<f-args>) 
 
+"""FileEcho
+	command! -nargs=1 -complete=custom,base#complete#fileids FileEcho
+		\	call base#fecho(<f-args>)
+
 """LCOM
 	command! -nargs=* -complete=custom,base#complete#vimcoms LCOM 
 		\	call base#loadvimcom(<f-args>)

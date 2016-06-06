@@ -437,6 +437,24 @@ fun! base#catpath(key,...)
 
 endf
 
+fun! base#fecho(...)
+	let aa=a:000
+	let fileid = get(aa,0,'')
+	let fpath  = base#fpath(fileid)
+	echo fpath
+endf
+
+fun! base#fpath(...)
+	let aa=a:000
+
+	if ! exists("s:files") | let s:files={} | endif
+
+	let fileid = get(aa,0,'')
+	let fpath  = get(s:files,fileid,'')
+
+	return fpath
+endf
+
 fun! base#initfiles(...)
     call base#echoprefix('(base#initfiles)')
 
