@@ -475,7 +475,6 @@ fun! base#initfiles(...)
 		call base#varset('exefiles',exefiles)
 	endif
 
-
     call base#echoprefixold()
 endf
 
