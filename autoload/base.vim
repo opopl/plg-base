@@ -438,11 +438,15 @@ fun! base#catpath(key,...)
 endf
 
 fun! base#fecho(...)
-	let aa=a:000
+	let aa     = a:000
 	let fileid = get(aa,0,'')
 	let fpath  = base#fpath(fileid)
 	echo fpath
 endf
+
+"echo base#fpath('perl')
+"echo base#fpath('perl',0)
+"echo base#fpath('perl',1)
 
 fun! base#fpath(...)
 	let aa=a:000
@@ -450,7 +454,17 @@ fun! base#fpath(...)
 	if ! exists("s:files") | let s:files={} | endif
 
 	let fileid = get(aa,0,'')
+	let index = get(aa,1,'')
+
 	let fpath  = get(s:files,fileid,'')
+
+    if type(fpath) == type([])
+        if len(index)
+	        let p = get(fpath,index,'')
+	        return p
+        endif
+
+    endif
 
 	return fpath
 endf
@@ -477,24 +491,33 @@ fun! base#initfiles(...)
         let s:files={}
     endif
 
-	if $COMPUTERNAME == 'OPPC'
-		let evince = 'C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe'
-    	call base#fileset({  'evince' : evince })
+	let evince =  base#file#catfile([ base#path('home'),'\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe' ])
+    if filereadable(evince)
+        call base#fileset({  'evince' : evince })
+    endif
 
-		let exefiles={}
-		for fileid in base#var('exefileids')
-			let  ok = base#sys({ "cmds" : [ 'where '.fileid ], "skip_errors" : 1 })
+	let exefiles={}
+	for fileid in base#var('exefileids')
+		let  ok = base#sys({ "cmds" : [ 'where '.fileid ], "skip_errors" : 1 })
 
-			if ok
-				call extend(exefiles,{ fileid : base#var('sysout') } )
-			endif
+		if ok
+            let found =  base#var('sysout')
+            let add={}
+            for f in  found
+                if filereadable(f)
+                    let add[f]=1
+                endif
+            endfor
+            let k = keys(add)
+            if len(k)
+			    call extend(exefiles,{ fileid : k } )
+            endif
+		endif
 
-		endfor
-		call base#varset('exefiles',exefiles)
-	elseif $COMPUTERNAME == 'APOPLAVSKIYNB'
-		let evince =   'C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe'
-    	call base#fileset({  'evince' : evince })
-	endif
+	endfor
+
+	call base#varset('exefiles',exefiles)
+    call base#fileset(exefiles)
 
     call base#echoprefixold()
 endf
