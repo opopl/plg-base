@@ -23,7 +23,7 @@ function! base#tg#set (...)
 		endif
 	endif
 
-	exe 'set tags=' . tfile
+	exe 'setlocal tags=' . tfile
 	call base#var('tgids',[ tgid ])
 	
 endfunction
@@ -33,7 +33,7 @@ function! base#tg#add (...)
 
 	let tfile = base#tg#tfile(tgid)
 
-	exe 'set tags+=' . tfile
+	exe 'setlocal tags+=' . tfile
 	let tgs = base#tg#ids() 
 	call add(tgs,tgid)
 
