@@ -24,7 +24,7 @@ function! base#tg#set (...)
 	endif
 
 	exe 'setlocal tags=' . tfile
-	call base#var('tgids',[ tgid ])
+	let b:tgids=[tgid]
 	
 endfunction
 
@@ -37,20 +37,20 @@ function! base#tg#add (...)
 	let tgs = base#tg#ids() 
 	call add(tgs,tgid)
 
-	let tgs = base#uniq(tgs)
-
-	call base#var('tgids',tgs)
+	let tgs     = base#uniq(tgs)
+	let b:tgids = tgs
 
 endf
 
 function! base#tg#init (...)
-	let tgids = []
-	call base#var('tgids',tgids)
-
 endf
 
 function! base#tg#ids (...)
-	let tgids = base#var('tgids')
+	if exists("b:tgids")
+		let tgids=b:tgids
+	else
+		let tgids=[]
+	endif
 
 	return tgids
 
@@ -99,7 +99,7 @@ function! base#tg#update (...)
 	if a:0 
 		let tgid = a:1
 	else
-		let tgs = base#var('tgids')
+		let tgs = base#tg#ids()
 		for tgid in tgs
 			call base#tg#update(tgid)
 		endfor
@@ -290,7 +290,7 @@ function! base#tg#view (...)
 	if a:0 
 		let tgid = a:1
 	else
-		let tgs = base#var('tgids')
+		let tgs = base#tg#ids()
 		for tgid in tgs
 			call base#tg#view(tgid)
 		endfor
