@@ -47,6 +47,7 @@ function! base#opt#reset (...)
 	let oldval = base#opt#get(opt)
 	call base#echo({ 'text' : 'Old option value: '.oldval  })
 
+	let oldval = base#opt#set(opt,val)
 	call base#echo({ 'text' : 'Option reset: '.opt. ' => ' . val  })
 
 	call base#echoprefixold()
@@ -80,8 +81,14 @@ function! base#opt#set (opt,val)
 	call base#varset('opts',opts)
 endfunction
 
-function! base#opt#save (opt)
-	let opt = a:opt
+function! base#opt#save (...)
+	let aa=a:000
+	let opt = get(aa,0,'')
+
+	if !len(opt)
+		let opt = input('Option:','','custom,base#complete#opts')
+		if !len(opt) | redraw! | echo '' | return | endif 
+	endif
 
 	let val = base#opt#get(opt)
 
@@ -91,8 +98,14 @@ function! base#opt#save (opt)
 	call base#varset('opts_saved',saved)
 endfunction
 
-function! base#opt#restore (opt)
-	let opt = a:opt
+function! base#opt#restore (...)
+	let aa  = a:000
+	let opt = get(aa,0,'')
+
+	if !len(opt)
+		let opt = input('Option:','','custom,base#complete#opts')
+		if !len(opt) | redraw! | echo '' | return | endif 
+	endif
 
 	let saved = base#varget('opts_saved',{})
 	let sv    = get(saved,opt,'')
