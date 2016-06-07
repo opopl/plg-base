@@ -35,12 +35,12 @@ endfun
 fun! base#pdfview(file)
 	let file = a:file
 
-	let v = base#var('pdfviewer')
+	let viewer = base#fpath('evince')
 
-	if !filereadable(v) | return  | endif
-
-	let cmd= v .' '.file
-	call system(cmd)
+  if filereadable(file)
+     let ec= 'silent! !start '.viewer.' '.file
+     exe ec
+	endif
 endfun
 
 ""base_loadvimcommand
