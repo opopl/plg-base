@@ -2244,7 +2244,9 @@ function! base#git (...)
 
     if base#inlist(cmd,notnative)
     else
-        call ap#GoToFileLocation()
+		if base#opttrue('git_CD')
+        	call ap#GoToFileLocation()
+		endif
 
         let tmp     = tempname()
 
@@ -2297,7 +2299,12 @@ function! base#git (...)
         return 
     else
         let gitcmd = 'git ' . cmd
-        call base#sys({ "cmds" : [gitcmd], "split_output" : 1 })
+	let refsys = { "cmds" : [gitcmd] }
+
+	if base#opttrue('git_split_output')
+		call extend(refsys,{ "split_output" : 1 })
+	endif
+        call base#sys(refsys)
         setf gitcommit
     endif
 

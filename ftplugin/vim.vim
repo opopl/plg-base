@@ -29,6 +29,8 @@ if b:is_plgvim
 	let b:relpath = base#file#removeroot(b:dirname,plgdir)
 	let b:plg     = base#file#front(b:relpath)
 
+	set ts=2
+
 	call base#tg#set("plg_".b:plg)
 	StatusLine plg
 	
