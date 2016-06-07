@@ -2314,11 +2314,16 @@ function! base#git (...)
     else
         let gitcmd = 'git ' . cmd
 
-		call base#var('stl_gitcmd_dir',getcwd())
+		let fulldir = getcwd()
+		let dirname = fnamemodify(fulldir,':p:h:t')
+
+		call base#var('stl_gitcmd_fulldir',fulldir)
+		call base#var('stl_gitcmd_dirname',dirname)
 		call base#var('stl_gitcmd_cmd',gitcmd)
+
 		let exec = [ 
 			\ 'call base#buf#type("base#sys")',
-			\ 'set nomodifiable',
+			\ 'setlocal nomodifiable',
 			\ 'StatusLine gitcmd',
 			\	]
 
@@ -3809,6 +3814,8 @@ function! base#init (...)
     		call base#init#cmds()
 		elseif opt == 'vars'
     		call base#initvars()
+		elseif opt == 'stl'
+    		call base#stl#setparts()
 		elseif opt == 'files'
     		call base#initfiles()
 		elseif opt == 'plugins'

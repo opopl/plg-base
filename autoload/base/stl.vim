@@ -98,6 +98,9 @@ function!  base#stl#setparts ()
 	let g:stlparts['encoding']= "%4*%{&enc}%0*"
 	let g:stlparts['base_buftype']= "%4*%{base#buf#type()}%0*"
 
+	let g:stlparts['gitdir'] = "%4*Dir[%{base#varget('stl_gitcmd_dirname')}]%0*"
+	let g:stlparts['gitcmd'] = "%3*%{base#varget('stl_gitcmd_cmd')}%0*"
+
   " buffer number
 	let g:stlparts['buffer_number']='#%n'
 
@@ -246,7 +249,8 @@ fun! base#stl#setlines(...)
 		        \   'tgids'          ,
 		        \   ],
         \   'gitcmd'   :   [ 
-		        \   'base_buftype'          ,
+		        \   'gitdir'          ,
+		        \   'gitcmd'          ,
 		        \   ],
         \   'dat'   :   [ 
 		        \   'file_name',
