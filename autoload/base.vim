@@ -40,6 +40,7 @@ fun! base#pdfview(file)
   if filereadable(file)
      let ec= 'silent! !start '.viewer.' '.file
      exe ec
+		 redraw!
 	endif
 endfun
 
