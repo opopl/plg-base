@@ -630,9 +630,19 @@ fun! base#fileopen(ref)
 
  if strlen(a) | let action = a | endif
 
-
  for file in files
     exe action . ' ' . file
+	let exec = get(a:ref,'exec','')
+	if len(exec)
+		if type(exec) == type([])
+			for e in exec
+				exe e
+			endfor
+			" code
+		elseif type(exec) == type('')
+			exe exec
+		endif
+	endif
  endfor
  
 endfun
@@ -2245,7 +2255,9 @@ function! base#git (...)
     if base#inlist(cmd,notnative)
     else
 		if base#opttrue('git_CD')
-        	call ap#GoToFileLocation()
+			if base#buf#type() != 'base#sys' 
+        		call ap#GoToFileLocation()
+			endif
 		endif
 
         let tmp     = tempname()
@@ -2301,9 +2313,9 @@ function! base#git (...)
         let gitcmd = 'git ' . cmd
 	let refsys = { "cmds" : [gitcmd] }
 
-	if base#opttrue('git_split_output')
-		call extend(refsys,{ "split_output" : 1 })
-	endif
+		if base#opttrue('git_split_output')
+			call extend(refsys,{ "split_output" : 1 })
+		endif
         call base#sys(refsys)
         setf gitcommit
     endif
@@ -3023,7 +3035,15 @@ fun! base#sys(...)
  if get(opts,'split_output',0)
     let tmp     = tempname()
     call writefile(output,tmp)
-    call base#fileopen({ "files" : [ tmp ], "action" : "split" })
+	let exec= [ 
+		\ 'let b:base_buftype="base#sys"',
+		\ 'set nomodifiable',
+		\	]
+    call base#fileopen({ 
+		\	"files"  : [ tmp ],
+		\	"action" : "split",
+		\	"exec"   : exec
+		\	})
  endif
 
  return ok

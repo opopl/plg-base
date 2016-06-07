@@ -8,3 +8,4 @@ use_F_OnLoad_vim    1
 buf_showdirs        1
 git_prompt          1
 git_split_output    1
+git_CD              0
