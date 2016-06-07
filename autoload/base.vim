@@ -2302,7 +2302,9 @@ function! base#git (...)
 		return
 
     elseif base#inlist(cmd,base#qw('submodule_foreach_git_pull'))
-        let cmds=['git submodule foreach git pull']
+        let cmds=[
+			\	'git submodule foreach git pull'
+			\	]
         call base#git({ "cmds" : cmds })
         return 
     elseif base#inlist(cmd,base#qw('submodule_foreach_git_co_master'))
@@ -2311,7 +2313,16 @@ function! base#git (...)
         return 
     else
         let gitcmd = 'git ' . cmd
-	let refsys = { "cmds" : [gitcmd] }
+
+		call base#var('stl_gitcmd_dir',getcwd())
+		call base#var('stl_gitcmd_cmd',gitcmd)
+		let exec = [ 
+			\ 'call base#buf#type("base#sys")',
+			\ 'set nomodifiable',
+			\ 'StatusLine gitcmd',
+			\	]
+
+		let refsys = { "cmds" : [gitcmd], "exec" : exec }
 
 		if base#opttrue('git_split_output')
 			call extend(refsys,{ "split_output" : 1 })
@@ -3035,10 +3046,8 @@ fun! base#sys(...)
  if get(opts,'split_output',0)
     let tmp     = tempname()
     call writefile(output,tmp)
-	let exec= [ 
-		\ 'let b:base_buftype="base#sys"',
-		\ 'set nomodifiable',
-		\	]
+
+	let exec=get(opts,'exec','')
     call base#fileopen({ 
 		\	"files"  : [ tmp ],
 		\	"action" : "split",

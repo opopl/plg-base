@@ -96,7 +96,7 @@ function!  base#stl#setparts ()
 	let g:stlparts['file_encoding']= "%4*%{(&fenc!=''?&fenc:&enc)}%0*"
 
 	let g:stlparts['encoding']= "%4*%{&enc}%0*"
-	let g:stlparts['base_buftype']= "%1*\ %{base#buf#type()}\ %0*"
+	let g:stlparts['base_buftype']= "%4*%{base#buf#type()}%0*"
 
   " buffer number
 	let g:stlparts['buffer_number']='#%n'
