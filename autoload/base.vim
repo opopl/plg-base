@@ -617,6 +617,8 @@ fun! base#fileopen(ref)
  let action = 'edit'
  let a      = base#var('fileopen_action')
 
+ let opts={}
+
  if base#type(a:ref) == 'String'
    let files=[ a:ref ] 
    
@@ -626,20 +628,21 @@ fun! base#fileopen(ref)
  elseif base#type(a:ref) == 'Dictionary'
    let files=a:ref.files  
    let a = get(a:ref,'action',a)
+
+	 call extend(opts,a:ref)
    
  endif
 
  if strlen(a) | let action = a | endif
 
  for file in files
-    exe action . ' ' . file
-	let exec = get(a:ref,'exec','')
+  exe action . ' ' . file
+	let exec=get(opts,'exec','')
 	if len(exec)
 		if type(exec) == type([])
 			for e in exec
 				exe e
 			endfor
-			" code
 		elseif type(exec) == type('')
 			exe exec
 		endif
