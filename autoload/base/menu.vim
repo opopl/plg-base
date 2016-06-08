@@ -3,7 +3,6 @@ function! base#menu#add(...)
  RFUN SubNameStart F_AddMenus
 
  LFUN F_FileOpen
- LFUN F_InList
  LFUN F_ListAdd
  LFUN F_MenuAddAlphabet
  LFUN F_MenuItemAdd
@@ -74,7 +73,7 @@ function! base#menu#add(...)
 
 """_menuopt
  let menusbefore= [ 'menus', 'omni', 'buffers' ]
- if ! F_InList(menuopt,menusbefore)
+ if ! base#inlist(menuopt,menusbefore)
    for opt in menusbefore
      call F_MenuAdd(opt)
    endfor
@@ -264,7 +263,7 @@ function! base#menu#add(...)
          for topic in topics
              let menu={}
 
-             if F_InList(module,F_ReadDatFile('perl_modules_' . topic ))
+             if base#inlist(module,F_ReadDatFile('perl_modules_' . topic ))
                  let menu={
                     \   'item'  : '&LOCAL_MODS' . '.&' . topic . '.&' . module,
                     \   'cmd'   : 'PMOD ' . module,
