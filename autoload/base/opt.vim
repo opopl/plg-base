@@ -3,12 +3,27 @@ function! base#opt#true ()
 	
 endfunction
 
-function! base#opt#get (opt)
-	let opt = a:opt
+"function! base#opt#get (opt)
+"function! base#opt#get ([ opt ])
+"function! base#opt#get ([ opt1,opt2 ])
+
+function! base#opt#get (...)
+  let aa   = a:000
+	let optnames = get(aa,0,'')
 
 	let opts=base#varget('opts',{})
-	let val = get(opts,opt,'')
-	return val
+
+  if type(optnames)==type('')
+      let opt = optnames
+	    let val = get(opts,opt,'')
+	    return val
+  elseif type(optnames)==type([])
+      let optvals={}
+      for opt in optnames
+         call extend(optvals,{ opt : base#opt#get(opt) })
+      endfor
+      return optvals
+  endif
 	
 endfunction
 

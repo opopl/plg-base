@@ -2211,17 +2211,17 @@ endfunction
 
 "call base#git ('add')
 "call base#git ('add',options,path)
-"
-function! A (...)
-	let a=a:000
-	echo get(a,0,'')
-	echo get(a,1,'')
-	echo get(a,2,'')
-	
-endfunction
 
 "call base#git(cmd,inopts,path)
 "call base#git({ "cmds" : [ cmd ]})
+"call base#git({ "cmds" : [ cmd ], "inopts" : inopts, "path" : path})
+
+"call base#git({ 
+	"\ "cmds" : [ cmd ], 
+	"\ "inopts" : inopts, 
+	"\ "gitopts" : { "git_prompt" : 0},
+	"\ "path" : path
+"\ })
 
 function! base#git (...)
 	let aa=a:000
@@ -2231,18 +2231,36 @@ function! base#git (...)
 
     if a:0
         let ref     = get(aa,0,'')
-        let inopts  = get(aa,1,'')
-        let path    = get(aa,2,'')
 
 		if base#type(ref) == 'String'
 			let cmd = ref
+      let inopts  = get(aa,1,'')
+      let path    = get(aa,2,'')
 
 		elseif base#type(ref) == 'Dictionary'
 			let cmds = get(ref,'cmds',[])
+
+      let inopts  = get(ref,'inopts','')
+      let path    = get(ref,'path','')
+
+      let gitopts = get(ref,'gitopts',{})
+
+      " Backup used git options
+      let kept={}
+      if len(gitopts)
+        let kept = base#opt#get(keys(gitopts))
+        call base#opt#set(gitopts)
+      endif
+
 			for cmd in cmds
 				call base#git(cmd,inopts,path)
-				return
 			endfor
+
+      " Restore used git options
+      if len(kept)
+        call base#opt#set(kept)
+      endif
+			return
 		endif
     else
         let cmd = base#getfromchoosedialog({ 
@@ -2293,16 +2311,26 @@ function! base#git (...)
             call extend(so,base#var('sysout'))
         endfor
 
+"""git_save
     elseif base#inlist(cmd,base#qw('save'))
         let cmds=base#qw('commit push')
 
+        let gitopts=base#qw('git_prompt git_split_output git_CD')
         let ref = { 
             \ 'git_prompt'       : 0,
             \ 'git_split_output' : 0,
             \ 'git_CD'           : 0,
             \ }
+        let kept=base#opt#get(gitopts)
         call base#opt#set(ref)
 
+        for cmd in cmds
+            call base#git(cmd)
+        endfor
+
+        call base#opt#set(kept)
+
+        return 
     elseif base#inlist(cmd,base#qw('send_to_origin'))
         let cmds=base#qw('commit push')
         for cmd in cmds
