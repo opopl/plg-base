@@ -2289,13 +2289,13 @@ function! base#git (...)
     if strlen(inopts)
       let opts = inopts
     else
-          let opts = get(cmdopts,cmd,'')
+      let opts = get(cmdopts,cmd,'')
     endif
 
     if base#opttrue('git_prompt')
-          let opts = input('Options for '.cmd.' command:',opts)
+        let opts = input('Options for '.cmd.' command:',opts)
     endif
-        let cmd  = cmd .' '.opts
+        let cmd_o  = cmd .' '.opts
     endif
 
     let so=[]
@@ -2303,7 +2303,7 @@ function! base#git (...)
     if base#inlist(cmd,base#qw('rm add'))
 
         let fp     = expand('%:p')
-        let gitcmd = 'git ' . cmd . ' ' . fp
+        let gitcmd = 'git ' . cmd_o . ' ' . fp
         let files  = [fp]
     
         for f  in files
@@ -2355,7 +2355,7 @@ function! base#git (...)
         return 
 
     else
-        let gitcmd = 'git ' . cmd
+        let gitcmd = 'git ' . cmd_o
 
         if  base#inlist(cmd,base#qw('commit'))
           if !base#git#modified() | return | endif
