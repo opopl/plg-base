@@ -8,7 +8,6 @@ function! base#list#add (ref,...)
 
  let ref=a:ref
 
-
  let opts={
         \ 'uniq' : 0,
         \ 'sort' : 0,

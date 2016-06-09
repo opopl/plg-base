@@ -2370,13 +2370,23 @@ function! base#git (...)
               \ ]
 
         let refsys = { "cmds" : [gitcmd], "exec" : exec }
-    
+
         if base#opttrue('git_split_output')
-          call extend(refsys,{ "split_output" : 1 })
+            let refsp={ 
+              \ "split_output" : 1,
+              \ "split_output_cmds" : [ 
+              \   'setf gitcommit' ,
+              \   'StatusLine gitcmd' ,
+              \ ],
+              \   }
+            call extend(refsys,refsp)
         endif
-           
+
         call base#sys(refsys)
-        setf gitcommit
+        call base#varset('gitcmd_out',base#varget('sysout',[]))
+
+        call base#git#process_out({ 'cmd' : gitcmd })
+           
     endif
 
     return 
@@ -3092,21 +3102,23 @@ fun! base#sys(...)
  call base#var('sysoutstr',outputstr)
 
  if get(opts,'split_output',0)
-    let tmp     = tempname()
-    call writefile(output,tmp)
+    let so_cmds=get(opts,'split_output_cmds',[])
 
-    let exec=get(opts,'exec','')
-    let e=[]
-    if type
-            " code
+    split
+    enew
+
+    call append(0,output)
+
+    if len(so_cmds)
+       for cmd in so_cmds
+           exe cmd
+       endfor
     endif
-    call extend(e,exec)
 
-    call base#fileopen({ 
-    \ "files"  : [ tmp ],
-    \ "action" : "split",
-    \ "exec"   : exec
-    \ })
+    setlocal buftype=nofile
+    setlocal nobuflisted
+    setlocal nomodifiable
+
  endif
 
  return ok
@@ -3246,6 +3258,12 @@ function! base#info (...)
        call base#echovar({ 'var' : 'g:filename', 'indent' : indentlev })
        call base#echovar({ 'var' : 'g:path', 'indent' : indentlev })
        call base#echovar({ 'var' : 'g:ext' , 'indent' : indentlev })
+
+"""info_git
+   elseif topic == 'git'
+       call base#echo({ 'text' : "Git: " } )
+
+       call base#varecho('gitinfo')
 
 """info_grep
    elseif topic == 'grep'
