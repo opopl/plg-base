@@ -16,6 +16,13 @@ function! base#git#info(...)
    return val
 endfunction
 
+function! base#git#save ()
+
+  let ref = { 'cmds' : [ 'save'], 'gitopts' : { 'git_prompt' : 0}  }
+  call base#git(ref)
+        
+endfunction
+
 function! base#git#modified()
 
    call base#git({ 
