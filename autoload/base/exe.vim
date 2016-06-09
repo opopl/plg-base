@@ -4,6 +4,7 @@
 "
 "function! base#exe#run ({ 'exename' : 'perl', 'cmd' : cmd })
 
+
 function! base#exe#run (...)
   let aa  = a:000
 
@@ -38,6 +39,19 @@ function! base#exe#run (...)
     return
   endif
 
+  let exe = base#exe#select({ "exename" : exename })
+
+  let cmd = join( [ '"'.exe.'"', cmd ],' ')
+  call base#envcmd(cmd)
+
+endfunction
+
+function! base#exe#select (...)
+	let ref = {}
+	if a:0 | let ref = a:1 | endif
+
+  let exename = get(ref,'exename','')
+	
   let exe = exename
   let exes = []
   let fpath = base#fpath(exename)
@@ -59,7 +73,7 @@ function! base#exe#run (...)
              \ 'bottom'      : "Choose exe by number: ",
              \ })
   endif
-  let cmd = join( [ '"'.exe.'"', cmd ],' ')
-  call base#envcmd(cmd)
 
-endfunction
+  return exe
+
+endf	

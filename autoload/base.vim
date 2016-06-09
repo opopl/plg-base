@@ -398,6 +398,7 @@ function! base#isdict(var)
   endif
   return 0
 endf
+
 function! base#islist(var)
   if type(a:var)==type([])
     return 1
