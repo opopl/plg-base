@@ -492,7 +492,11 @@ fun! base#initfiles(...)
         let s:files={}
     endif
 
-  let evince =  base#file#catfile([ base#path('home'),'\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe' ])
+  let evince =  base#file#catfile([ 
+      \ base#path('home'),
+      \ '\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe' 
+      \ ])
+
     if filereadable(evince)
         call base#fileset({  'evince' : evince })
     endif
@@ -3442,6 +3446,10 @@ function! base#info (...)
 
         call base#echo({ 'text' : "Perl-related: " } )
         call base#echo({ 'text' : "$PERLLIB => \n\t" . perllib  } )
+
+        let perlexes=join(base#fpath('perl'),"\n\t")
+        call base#echo({ 'text' : "Perl Executables:"   } )
+        call base#echo({ 'text' : "  perlexes => \n\t" . perlexes } )
 
 """info_proj
    elseif topic == 'proj'
