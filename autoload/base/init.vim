@@ -42,6 +42,10 @@ fun! base#init#cmds()
 	command! -nargs=* -complete=custom,base#complete#gitcmds GitCmd 
 		\	call base#git(<f-args>)
 
+"""GitSave
+	command! -nargs=* -complete=custom,base#complete#gitcmds GitSave
+		\	call base#git('save')
+
 """GitUpdate
 	command! -nargs=1 -complete=custom,base#complete#gitupdate GitUpdate
 		\	call base#git#update(<f-args>)

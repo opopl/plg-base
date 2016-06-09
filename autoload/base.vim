@@ -2293,6 +2293,16 @@ function! base#git (...)
             call extend(so,base#var('sysout'))
         endfor
 
+    elseif base#inlist(cmd,base#qw('save'))
+        let cmds=base#qw('commit push')
+
+        let ref = { 
+            \ 'git_prompt'       : 0,
+            \ 'git_split_output' : 0,
+            \ 'git_CD'           : 0,
+            \ }
+        call base#opt#set(ref)
+
     elseif base#inlist(cmd,base#qw('send_to_origin'))
         let cmds=base#qw('commit push')
         for cmd in cmds

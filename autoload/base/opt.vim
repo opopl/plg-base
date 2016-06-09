@@ -71,12 +71,23 @@ function! base#opt#echo (...)
 
 endfunction
 
-function! base#opt#set (opt,val)
-	let opt = a:opt
-	let val = a:val
+"function! base#opt#set (opt,val)
+"function! base#opt#set ({ opt : val })
+function! base#opt#set (...)
+  let aa=a:000
 
-	let opts=base#varget('opts',{})
-	call extend(opts,{ opt : val })
+  let opt = get(aa,0,'')
+  let val = get(aa,1,'')
+
+  let ref={}
+  if type(opt) == type('')
+     let ref={ opt : val }
+  elseif type(opt) == type({})
+     call extend(ref,opt)
+  endif
+
+	let opts = base#varget('opts',{})
+	call extend(opts,ref)
 
 	call base#varset('opts',opts)
 endfunction
