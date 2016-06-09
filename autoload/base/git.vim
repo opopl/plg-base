@@ -76,6 +76,9 @@ function! base#git#process_out(ref,...)
      if ( lin =~ 'modified:' ) && base#inlist(cmd,cmds.st)
        let gitinfo['modified']=1
      endif
+     if ( lin =~ 'new file:' ) && base#inlist(cmd,cmds.st)
+       let gitinfo['modified']=1
+     endif
    endfor
 
    call base#var('gitinfo',gitinfo)
