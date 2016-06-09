@@ -2292,6 +2292,13 @@ function! base#git (...)
       let opts = get(cmdopts,cmd,'')
     endif
 
+    if  base#inlist(cmd,base#qw('commit'))
+      if !base#git#modified() 
+         call base#warn({ 'text' : 'Not Modified!'})
+         return 
+      endif
+    endif
+
     if base#opttrue('git_prompt')
         let opts = input('Options for '.cmd.' command:',opts)
     endif
@@ -2357,10 +2364,7 @@ function! base#git (...)
     else
         let gitcmd = 'git ' . cmd_o
 
-        if  base#inlist(cmd,base#qw('commit'))
-          if !base#git#modified() | return | endif
-        endif
-
+        
         let fulldir = getcwd()
         let dirname = fnamemodify(fulldir,':p:h:t')
     
