@@ -52,15 +52,15 @@ function! base#exe#select (...)
 
   let exename = get(ref,'exename','')
 	
-  let exe = exename
-  let exes = []
+  let exe   = exename
+  let exes  = []
   let fpath = base#fpath(exename)
 
   if type(fpath)==type([])
-     let exes=fpath
-     let exe = get(fpath,-1,'')
+     let exes = fpath
+     let exe  = get(fpath,-1,'')
   elseif type(fpath)==type('')
-     let exe = fpath
+     let exe  = fpath
      let exes = [ fpath ]
   endif
 
