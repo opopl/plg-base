@@ -14,3 +14,4 @@ get_from_origin
 submodule_foreach_git_pull
 submodule_foreach_git_co_master
 add_thisfile
+save
