@@ -2321,7 +2321,7 @@ function! base#git (...)
 
 """git_save
     elseif base#inlist(cmd,base#qw('save'))
-        let cmds=base#qw('commit push')
+        let cmds=base#qw('commit pull push')
 
         let gitopts=base#qw('git_prompt git_split_output git_CD')
         if exists("ref") | unlet ref | endif
