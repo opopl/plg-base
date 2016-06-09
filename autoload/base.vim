@@ -2244,6 +2244,7 @@ function! base#git (...)
       let path    = get(ref,'path','')
 
       let gitopts = get(ref,'gitopts',{})
+      unlet ref
 
       " Backup used git options
       let kept={}
