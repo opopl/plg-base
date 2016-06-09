@@ -3288,6 +3288,11 @@ function! base#info (...)
        call base#echovar({ 'var' : 'g:path', 'indent' : indentlev })
        call base#echovar({ 'var' : 'g:ext' , 'indent' : indentlev })
 
+"""info_perlapp
+   elseif topic == 'perlapp'
+       call base#echo({ 'text' : "PerlApp options: " } )
+       call base#varecho('perlmy_perlapp_opts')
+
 """info_git
    elseif topic == 'git'
        call base#echo({ 'text' : "Git: " } )
