@@ -464,7 +464,6 @@ fun! base#fpath(...)
           let p = get(fpath,index,'')
           return p
         endif
-
     endif
 
   return fpath
