@@ -2324,6 +2324,7 @@ function! base#git (...)
         let cmds=base#qw('commit push')
 
         let gitopts=base#qw('git_prompt git_split_output git_CD')
+        if exists("ref") | unlet ref | endif
         let ref = { 
             \ 'git_prompt'       : 0,
             \ 'git_split_output' : 0,
