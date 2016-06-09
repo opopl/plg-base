@@ -1,15 +1,36 @@
 
 "function! base#exe#run (exename,cmd)
 "function! base#exe#run ('perl',cmd)
+"
+"function! base#exe#run ({ 'exename' : 'perl', 'cmd' : cmd })
 
 function! base#exe#run (...)
   let aa  = a:000
 
+  let ref = {}
+  if a:0 && base#isdict(a:1)
+    let ref = a:1
+  endif
+
   let exename = get(aa,0,'')
   let cmd     = get(aa,1,'')
 
+  let comp_cmd = ''
+
+  if len(ref)
+	  if type(ref) == type({}) 
+	     let exename = get(ref,'exename','')
+	     let cmd     = get(ref,'cmd','')
+	     let comp_cmd     = get(ref,'comp_cmd','')
+	  endif
+  endif
+
   if !len(cmd)
-     let cmd = input('Command for '.exename.':','--help')
+     if len(comp_cmd)
+        let cmd = input('Command for '.exename.':','--help',comp_cmd)
+     else
+        let cmd = input('Command for '.exename.':','--help')
+     endif
   endif
 
   if !len(cmd) 

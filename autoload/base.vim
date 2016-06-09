@@ -392,6 +392,19 @@ function! base#cd(dir,...)
     endif
 endf
 
+function! base#isdict(var)
+  if type(a:var)==type({})
+    return 1
+  endif
+  return 0
+endf
+function! base#islist(var)
+  if type(a:var)==type([])
+    return 1
+  endif
+  return 0
+endf
+
 function! base#CD(dirid,...)
     let ref = {}
     if a:0 | let ref = a:1 | endif
