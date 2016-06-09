@@ -2294,7 +2294,7 @@ function! base#git (...)
 
     if  base#inlist(cmd,base#qw('commit'))
       if !base#git#modified() 
-         call base#warn({ 'text' : 'Not Modified!'})
+         call base#warn({ 'text' : 'Repo Not Modified!'})
          return 
       endif
     endif
