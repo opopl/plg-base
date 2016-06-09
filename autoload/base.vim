@@ -33,15 +33,15 @@ endfun
 "C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe
 
 fun! base#pdfview(file)
-	let file = a:file
+  let file = a:file
 
-	let viewer = base#fpath('evince')
+  let viewer = base#fpath('evince')
 
   if filereadable(file)
      let ec= 'silent! !start '.viewer.' '.file
      exe ec
-		 redraw!
-	endif
+     redraw!
+  endif
 endfun
 
 ""base_loadvimcommand
@@ -279,9 +279,9 @@ endfun
 
 " string width
 function! base#sw (s)
-	let a=a:s
-	let v = (exists('*strwidth')) ? strwidth(a) : len(a)
-	return v
+  let a=a:s
+  let v = (exists('*strwidth')) ? strwidth(a) : len(a)
+  return v
 endfunction
 
 fun! base#opttrue(opt)
@@ -439,10 +439,10 @@ fun! base#catpath(key,...)
 endf
 
 fun! base#fecho(...)
-	let aa     = a:000
-	let fileid = get(aa,0,'')
-	let fpath  = base#fpath(fileid)
-	echo fpath
+  let aa     = a:000
+  let fileid = get(aa,0,'')
+  let fpath  = base#fpath(fileid)
+  echo fpath
 endf
 
 "echo base#fpath('perl')
@@ -450,24 +450,24 @@ endf
 "echo base#fpath('perl',1)
 
 fun! base#fpath(...)
-	let aa=a:000
+  let aa=a:000
 
-	if ! exists("s:files") | let s:files={} | endif
+  if ! exists("s:files") | let s:files={} | endif
 
-	let fileid = get(aa,0,'')
-	let index = get(aa,1,'')
+  let fileid = get(aa,0,'')
+  let index = get(aa,1,'')
 
-	let fpath  = get(s:files,fileid,'')
+  let fpath  = get(s:files,fileid,'')
 
     if type(fpath) == type([])
         if len(index)
-	        let p = get(fpath,index,'')
-	        return p
+          let p = get(fpath,index,'')
+          return p
         endif
 
     endif
 
-	return fpath
+  return fpath
 endf
 
 fun! base#initfiles(...)
@@ -492,16 +492,16 @@ fun! base#initfiles(...)
         let s:files={}
     endif
 
-	let evince =  base#file#catfile([ base#path('home'),'\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe' ])
+  let evince =  base#file#catfile([ base#path('home'),'\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe' ])
     if filereadable(evince)
         call base#fileset({  'evince' : evince })
     endif
 
-	let exefiles={}
-	for fileid in base#var('exefileids')
-		let  ok = base#sys({ "cmds" : [ 'where '.fileid ], "skip_errors" : 1 })
+  let exefiles={}
+  for fileid in base#var('exefileids')
+    let  ok = base#sys({ "cmds" : [ 'where '.fileid ], "skip_errors" : 1 })
 
-		if ok
+    if ok
             let found =  base#var('sysout')
             let add={}
             for f in  found
@@ -511,13 +511,13 @@ fun! base#initfiles(...)
             endfor
             let k = keys(add)
             if len(k)
-			    call extend(exefiles,{ fileid : k } )
+          call extend(exefiles,{ fileid : k } )
             endif
-		endif
+    endif
 
-	endfor
+  endfor
 
-	call base#varset('exefiles',exefiles)
+  call base#varset('exefiles',exefiles)
     call base#fileset(exefiles)
 
     call base#echoprefixold()
@@ -558,13 +558,13 @@ fun! base#initpaths(...)
     let mrc       = base#envvar('MYVIMRC')
     let projsdir  = base#envvar('PROJSDIR')
 
-	if $COMPUTERNAME == 'OPPC'
-		let evbin = 'C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin'
-    	call base#pathset({  'evince_bin' : evbin })
-	elseif $COMPUTERNAME == 'APOPLAVSKIYNB'
-		let evbin = 'C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin'
-    	call base#pathset({  'evince_bin' : evbin })
-	endif
+  if $COMPUTERNAME == 'OPPC'
+    let evbin = 'C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin'
+      call base#pathset({  'evince_bin' : evbin })
+  elseif $COMPUTERNAME == 'APOPLAVSKIYNB'
+    let evbin = 'C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin'
+      call base#pathset({  'evince_bin' : evbin })
+  endif
 
     call base#pathset({ 
         \ 'conf'    : confdir ,
@@ -629,7 +629,7 @@ fun! base#fileopen(ref)
    let files=a:ref.files  
    let a = get(a:ref,'action',a)
 
-	 call extend(opts,a:ref)
+   call extend(opts,a:ref)
    
  endif
 
@@ -637,16 +637,16 @@ fun! base#fileopen(ref)
 
  for file in files
   exe action . ' ' . file
-	let exec=get(opts,'exec','')
-	if len(exec)
-		if type(exec) == type([])
-			for e in exec
-				exe e
-			endfor
-		elseif type(exec) == type('')
-			exe exec
-		endif
-	endif
+  let exec=get(opts,'exec','')
+  if len(exec)
+    if type(exec) == type([])
+      for e in exec
+        exe e
+      endfor
+    elseif type(exec) == type('')
+      exe exec
+    endif
+  endif
  endfor
  
 endfun
@@ -2217,28 +2217,28 @@ endfunction
 "call base#git({ "cmds" : [ cmd ], "inopts" : inopts, "path" : path})
 
 "call base#git({ 
-	"\ "cmds" : [ cmd ], 
-	"\ "inopts" : inopts, 
-	"\ "gitopts" : { "git_prompt" : 0},
-	"\ "path" : path
+  "\ "cmds" : [ cmd ], 
+  "\ "inopts" : inopts, 
+  "\ "gitopts" : { "git_prompt" : 0},
+  "\ "path" : path
 "\ })
 
 function! base#git (...)
-	let aa=a:000
+  let aa=a:000
 
-	let cmd = ''
-	let inopts = ''
+  let cmd = ''
+  let inopts = ''
 
     if a:0
         let ref     = get(aa,0,'')
 
-		if base#type(ref) == 'String'
-			let cmd = ref
+    if base#type(ref) == 'String'
+      let cmd = ref
       let inopts  = get(aa,1,'')
       let path    = get(aa,2,'')
 
-		elseif base#type(ref) == 'Dictionary'
-			let cmds = get(ref,'cmds',[])
+    elseif base#type(ref) == 'Dictionary'
+      let cmds = get(ref,'cmds',[])
 
       let inopts  = get(ref,'inopts','')
       let path    = get(ref,'path','')
@@ -2252,16 +2252,16 @@ function! base#git (...)
         call base#opt#set(gitopts)
       endif
 
-			for cmd in cmds
-				call base#git(cmd,inopts,path)
-			endfor
+      for cmd in cmds
+        call base#git(cmd,inopts,path)
+      endfor
 
       " Restore used git options
       if len(kept)
         call base#opt#set(kept)
       endif
-			return
-		endif
+      return
+    endif
     else
         let cmd = base#getfromchoosedialog({ 
             \ 'list'        : base#gitcmds(),
@@ -2276,25 +2276,25 @@ function! base#git (...)
 
     if base#inlist(cmd,notnative)
     else
-		if base#opttrue('git_CD')
-			if base#buf#type() != 'base#sys' 
-        		call ap#GoToFileLocation()
-			endif
-		endif
+    if base#opttrue('git_CD')
+      if base#buf#type() != 'base#sys' 
+            call ap#GoToFileLocation()
+      endif
+    endif
 
         let tmp     = tempname()
 
         let cmdopts = base#git#cmdopts()
 
-		if strlen(inopts)
-			let opts = inopts
-		else
-        	let opts = get(cmdopts,cmd,'')
-		endif
+    if strlen(inopts)
+      let opts = inopts
+    else
+          let opts = get(cmdopts,cmd,'')
+    endif
 
-		if base#opttrue('git_prompt')
-        	let opts = input('Options for '.cmd.' command:',opts)
-		endif
+    if base#opttrue('git_prompt')
+          let opts = input('Options for '.cmd.' command:',opts)
+    endif
         let cmd  = cmd .' '.opts
     endif
 
@@ -2302,9 +2302,9 @@ function! base#git (...)
 
     if base#inlist(cmd,base#qw('rm add'))
 
-        let fp = expand('%:p')
+        let fp     = expand('%:p')
         let gitcmd = 'git ' . cmd . ' ' . fp
-        let files=[fp]
+        let files  = [fp]
     
         for f  in files
             call base#sys({ "cmds" : [gitcmd]})
@@ -2339,14 +2339,14 @@ function! base#git (...)
         return 
     elseif base#inlist(cmd,base#qw('get_from_origin'))
     elseif base#inlist(cmd,base#qw('add_thisfile'))
-		let fpath=expand('%:p')
-		call base#git('add',fpath)
-		return
+        let fpath=expand('%:p')
+        call base#git('add',fpath)
+    return
 
     elseif base#inlist(cmd,base#qw('submodule_foreach_git_pull'))
         let cmds=[
-			\	'git submodule foreach git pull'
-			\	]
+            \ 'git submodule foreach git pull'
+            \ ]
         call base#git({ "cmds" : cmds })
         return 
     elseif base#inlist(cmd,base#qw('submodule_foreach_git_co_master'))
@@ -2356,24 +2356,25 @@ function! base#git (...)
     else
         let gitcmd = 'git ' . cmd
 
-		let fulldir = getcwd()
-		let dirname = fnamemodify(fulldir,':p:h:t')
+        let fulldir = getcwd()
+        let dirname = fnamemodify(fulldir,':p:h:t')
+    
+        call base#var('stl_gitcmd_fulldir',fulldir)
+        call base#var('stl_gitcmd_dirname',dirname)
+        call base#var('stl_gitcmd_cmd',gitcmd)
 
-		call base#var('stl_gitcmd_fulldir',fulldir)
-		call base#var('stl_gitcmd_dirname',dirname)
-		call base#var('stl_gitcmd_cmd',gitcmd)
+        let exec = [ 
+              \ 'call base#buf#type("base#sys")',
+              \ 'setlocal nomodifiable',
+              \ 'StatusLine gitcmd',
+              \ ]
 
-		let exec = [ 
-			\ 'call base#buf#type("base#sys")',
-			\ 'setlocal nomodifiable',
-			\ 'StatusLine gitcmd',
-			\	]
-
-		let refsys = { "cmds" : [gitcmd], "exec" : exec }
-
-		if base#opttrue('git_split_output')
-			call extend(refsys,{ "split_output" : 1 })
-		endif
+        let refsys = { "cmds" : [gitcmd], "exec" : exec }
+    
+        if base#opttrue('git_split_output')
+          call extend(refsys,{ "split_output" : 1 })
+        endif
+           
         call base#sys(refsys)
         setf gitcommit
     endif
@@ -2392,28 +2393,28 @@ function! base#envcmd (...)
 endfunction
 
 function! base#powershell (...)
-	let aa = a:000
-	let pscmd = get(aa,0,'')
+  let aa = a:000
+  let pscmd = get(aa,0,'')
 
-	if !len(pscmd)
-		let pscmd = input('Powershell command:','','custom,base#complete#powershell')
-		if !len(pscmd) | return | endif
-	endif
+  if !len(pscmd)
+    let pscmd = input('Powershell command:','','custom,base#complete#powershell')
+    if !len(pscmd) | return | endif
+  endif
 
     let cmd = 'powershell ' . pscmd
 
-	let psopts_h={
-			\	'Get-NetTCPSetting' : base#qw('-Setting InternetCustom')
-			\	,
-			\	}
-	let psopts=get(psopts_h,pscmd,[])
-	call base#var('psopts',psopts)
+  let psopts_h={
+      \ 'Get-NetTCPSetting' : base#qw('-Setting InternetCustom')
+      \ ,
+      \ }
+  let psopts=get(psopts_h,pscmd,[])
+  call base#var('psopts',psopts)
 
-	let opts = input('Further options for powershell:','','custom,base#complete#psopts')
-	while len(opts)
-		let cmd.=' '.opts
-		let opts = input('Further options for powershell:','','custom,base#complete#psopts')
-	endw
+  let opts = input('Further options for powershell:','','custom,base#complete#psopts')
+  while len(opts)
+    let cmd.=' '.opts
+    let opts = input('Further options for powershell:','','custom,base#complete#psopts')
+  endw
     call base#envcmd(cmd)
 
 endfunction
@@ -3094,12 +3095,18 @@ fun! base#sys(...)
     let tmp     = tempname()
     call writefile(output,tmp)
 
-	let exec=get(opts,'exec','')
+    let exec=get(opts,'exec','')
+    let e=[]
+    if type
+            " code
+    endif
+    call extend(e,exec)
+
     call base#fileopen({ 
-		\	"files"  : [ tmp ],
-		\	"action" : "split",
-		\	"exec"   : exec
-		\	})
+    \ "files"  : [ tmp ],
+    \ "action" : "split",
+    \ "exec"   : exec
+    \ })
  endif
 
  return ok
@@ -3108,7 +3115,7 @@ endfun
 
 function! base#fileset (ref)
 
-	if ! exists("s:files") | let s:files={} | endif
+  if ! exists("s:files") | let s:files={} | endif
 
     for [ fileid, file ] in items(a:ref) 
         let e = { fileid : file }
@@ -3119,7 +3126,7 @@ endfun
 
 function! base#pathset (ref)
 
-	if ! exists("s:paths") | let s:paths={} | endif
+  if ! exists("s:paths") | let s:paths={} | endif
 
     for [ pathid, path ] in items(a:ref) 
         let e = { pathid : path }
@@ -3689,9 +3696,9 @@ function! base#varget (varname,...)
         let val = copy( s:basevars[a:varname] )
     else
         let val = ''
-		if a:0
-			unlet val | let val = a:1
-		endif
+    if a:0
+      unlet val | let val = a:1
+    endif
     endif
 
     return val
@@ -3812,7 +3819,7 @@ function! base#initvars (...)
 
     call base#initvarsfromdat()
 
-	call base#var('opts_keys',sort( keys( base#var('opts') )  ) )
+  call base#var('opts_keys',sort( keys( base#var('opts') )  ) )
 
     call base#var('vim_funcs_user',
         \   base#fnamemodifysplitglob('funs','*.vim',':t:r'))
@@ -3826,7 +3833,7 @@ function! base#initvars (...)
 
     if $COMPUTERNAME == 'OPPC'
         let v='C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe'
-		call base#varset('pdfviewer',v)
+    call base#varset('pdfviewer',v)
     endif
 
     call base#echoprefixold()
@@ -3850,25 +3857,25 @@ endf
 
 function! base#init (...)
 
-	if a:0
-		let opt = a:1
-		if opt == 'cmds'
-    		call base#init#cmds()
-		elseif opt == 'vars'
-    		call base#initvars()
-		elseif opt == 'stl'
-    		call base#stl#setparts()
-		elseif opt == 'files'
-    		call base#initfiles()
-		elseif opt == 'plugins'
-    		call base#initplugins()
-		elseif opt == 'paths'
-    		call base#initpaths()
-		elseif opt == 'omni'
-    		call base#omni#init()
-		endif
-		return
-	endif
+  if a:0
+    let opt = a:1
+    if opt == 'cmds'
+        call base#init#cmds()
+    elseif opt == 'vars'
+        call base#initvars()
+    elseif opt == 'stl'
+        call base#stl#setparts()
+    elseif opt == 'files'
+        call base#initfiles()
+    elseif opt == 'plugins'
+        call base#initplugins()
+    elseif opt == 'paths'
+        call base#initpaths()
+    elseif opt == 'omni'
+        call base#omni#init()
+    endif
+    return
+  endif
 
     " initialize data using base#pathset(...)
     call base#initpaths()
