@@ -17,6 +17,15 @@ function! base#git#info(...)
 endfunction
 
 function! base#git#modified()
+
+   call base#git({ 
+      \ 'cmds' : [ 'status' ],
+      \ 'gitopts' : {
+          \ "git_prompt"       : 0,
+          \ "git_split_output" : 0,
+          \ }
+      \ })
+
    let m = base#git#info('modified',0)
 
    return m

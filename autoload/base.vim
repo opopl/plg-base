@@ -2353,8 +2353,13 @@ function! base#git (...)
         let cmds=['git submodule foreach git co master']
         call base#git({ "cmds" : cmds })
         return 
+
     else
         let gitcmd = 'git ' . cmd
+
+        if  base#inlist(cmd,base#qw('commit'))
+          if !base#git#modified() | return | endif
+        endif
 
         let fulldir = getcwd()
         let dirname = fnamemodify(fulldir,':p:h:t')
