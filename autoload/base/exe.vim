@@ -9,11 +9,11 @@ function! base#exe#run (...)
   let cmd     = get(aa,1,'')
 
   if !len(cmd)
-     let cmd = input('Command for exe:','--help')
+     let cmd = input('Command for '.exename.':','--help')
   endif
 
   if !len(cmd) 
-    call base#warn({ 'text' : 'No command for exe, aborted'})
+    call base#warn({ 'text' : 'No command for '.exename.', aborted'})
     return
   endif
 
@@ -33,7 +33,7 @@ function! base#exe#run (...)
      let exe =base#getfromchoosedialog({ 
              \ 'list'        : exes,
              \ 'startopt'    : exe,
-             \ 'header'      : "Available exes are: ",
+             \ 'header'      : "Available ".exename." exes are: ",
              \ 'numcols'     : 1,
              \ 'bottom'      : "Choose exe by number: ",
              \ })
