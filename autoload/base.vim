@@ -2411,7 +2411,7 @@ function! base#powershell (...)
     if !len(pscmd) | return | endif
   endif
 
-    let cmd = 'powershell ' . pscmd
+  let cmd = 'powershell ' . pscmd
 
   let psopts_h={
       \ 'Get-NetTCPSetting' : base#qw('-Setting InternetCustom')
@@ -2425,7 +2425,8 @@ function! base#powershell (...)
     let cmd.=' '.opts
     let opts = input('Further options for powershell:','','custom,base#complete#psopts')
   endw
-    call base#envcmd(cmd)
+    
+  call base#envcmd(cmd)
 
 endfunction
 
