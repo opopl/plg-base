@@ -535,9 +535,9 @@ fun! base#initfiles(...)
   endfor
 
   call base#varset('exefiles',exefiles)
-    call base#fileset(exefiles)
+  call base#fileset(exefiles)
 
-    call base#echoprefixold()
+  call base#echoprefixold()
 endf
 
 """base_initpaths
@@ -2426,7 +2426,9 @@ function! base#envcmd (...)
     if a:0
         let cmd = a:1
     endif
-    call base#sys({ "cmds" : [cmd], "split_output" : 1 })
+    let ok = base#sys({ "cmds" : [cmd], "split_output" : 1 })
+
+		return ok
 
 endfunction
 

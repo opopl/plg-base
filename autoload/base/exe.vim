@@ -51,6 +51,7 @@ function! base#exe#select (...)
 	if a:0 | let ref = a:1 | endif
 
   let exename = get(ref,'exename','')
+  let choice  = get(ref,'choice','')
 	
   let exe   = exename
   let exes  = []
@@ -64,14 +65,26 @@ function! base#exe#select (...)
      let exes = [ fpath ]
   endif
 
+
   if len(exes)
-     let exe =base#getfromchoosedialog({ 
-             \ 'list'        : exes,
-             \ 'startopt'    : exe,
-             \ 'header'      : "Available ".exename." exes are: ",
-             \ 'numcols'     : 1,
-             \ 'bottom'      : "Choose exe by number: ",
-             \ })
+		 if len(choice)
+			if choice == 'last'
+					let exe = get(exes,-1,'')
+			elseif choice == 'by_id'
+					let id = get(ref,'id','')
+					if len(id)
+						let exe = get(pa_exes,id,'')
+					endif
+		 	endif
+		 else
+	    let exe =base#getfromchoosedialog({ 
+	             \ 'list'        : exes,
+	             \ 'startopt'    : exe,
+	             \ 'header'      : "Available ".exename." exes are: ",
+	             \ 'numcols'     : 1,
+	             \ 'bottom'      : "Choose exe by number: ",
+	            \ })
+  	 endif
   endif
 
   return exe
