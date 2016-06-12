@@ -3,12 +3,12 @@ function! base#menus#init ()
 
      let allmenus={}
 
-          for i in base#listnewinc(1,10,1)
-            let g:{varname}[ 'ToolBar.sep' . i ]=  {
-                  \ 'item'    : '-sep' . i .'-',  
-                  \ 'fullcmd' : 'an ToolBar.-sep' . i . '- <Nop>',  
-                  \ }
-          endfor
+     for i in base#listnewinc(1,10,1)
+        let allmenus[ 'ToolBar.sep' . i ]=  {
+             \ 'item'    : '-sep' . i .'-',  
+             \ 'fullcmd' : 'an ToolBar.-sep' . i . '- <Nop>',  
+             \ }
+     endfor
 
           let menus={
             \ 'ToolBar.PlainTexRun' : {
@@ -112,8 +112,8 @@ function! base#menus#init ()
                   \ },
             \ }
 
-          call extend(g:{varname},menus)
+		call extend(allmenus,menus)
+		call base#var('allmenus',allmenus)
 
-	
 endfunction
 

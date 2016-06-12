@@ -6,7 +6,6 @@ function! base#menu#add(...)
  LFUN F_FileOpen
  LFUN F_ListAdd
  LFUN F_MenuAddAlphabet
- LFUN F_MenuItemAdd
  LFUN F_MenusAdd
  LFUN F_ReadDatFile
  LFUN F_VarCheckExist
@@ -19,13 +18,6 @@ function! base#menu#add(...)
 
  LCOM MenuAdd
  LCOM VarUpdate
-
- let vars=[
-            \   'allmenus',
-            \   'F_menus',
-            \   ]
-
- call F_VarUpdate(vars)
 
  let opts={ 'action' : 'add' }
 
@@ -48,15 +40,15 @@ function! base#menu#add(...)
 
   let menus_rm=[]
 
-  call extend(menus_rm,F_ReadDatFile('menus_remove'))
+  call extend(menus_rm,base#varget('menus_remove',[]))
 
   call extend(menus_rm,
-    \   F_map_sub(F_ReadDatFile('menus_toolbar_remove_items'),
+    \   base#mapsub(base#varget('menus_toolbar_remove_items',[]),
     \   '^','ToolBar.','g'))
 
-  call extend(menus_rm,keys(g:allmenus))
+  call extend(menus_rm,keys(base#varget('allmenus',{}) ))
 
-  let menus_rm=F_uniq(menus_rm)
+  let menus_rm=base#uniq(menus_rm)
 
   for m in menus_rm
     try
@@ -68,7 +60,7 @@ function! base#menu#add(...)
   let g:isloaded.menus=[ menuopt ] 
 
  elseif opts.action == 'add'
- 	 call F_ListAdd('g:isloaded.menus',menuopt)
+ 	 call base#list#add('g:isloaded.menus',menuopt)
 
  endif
 
@@ -76,7 +68,7 @@ function! base#menu#add(...)
  let menusbefore= [ 'menus', 'omni', 'buffers' ]
  if ! base#inlist(menuopt,menusbefore)
    for opt in menusbefore
-     call F_MenuAdd(opt)
+     call base#menu#add(opt)
    endfor
  endif
 
@@ -97,7 +89,7 @@ function! base#menu#add(...)
                     \       'ext'   : 'mk',
                     \    })
     
-     call add(makefiles,F_CatPath('projs','makefile'))
+     call add(makefiles,base#catpath('projs','makefile'))
      call add(makefiles,F_CatFile('scripts','mk maketex.defs.mk'))
      call add(makefiles,F_CatFile('scripts','mk maketex.targets.mk'))
     
@@ -105,7 +97,7 @@ function! base#menu#add(...)
          let mfname=substitute(fnamemodify(mf,':p:t'),'\.','\\.','g')
          let mfdir=fnamemodify(mf,':p:r')
             
-         call F_MenuItemAdd({
+         call base#menu#additem({
                         \   'item'  : '&MAKEFILES.&' . mfname,
                         \   'tab'       :   mfname,
                         \   'cmd'       :   'call F_FileOpen("' . mf . '")',
@@ -132,7 +124,7 @@ function! base#menu#add(...)
 
    for [root,dats] in items(datroots)
      for dat in dats
-       call F_MenuItemAdd({
+       call base#menu#additem({
             \   'item'  : '&DAT.&' . root . '.&' . dat,
             \   'tab'   : dat,
             \   'cmd'   : 'call F_ViewDAT("' . dat . '")',
@@ -144,7 +136,7 @@ function! base#menu#add(...)
  elseif menuopt == 'omni'
 
    for [id,menuitem] in items(g:menus_omni)
-      call F_MenuItemAdd(menuitem)
+      call base#menu#additem(menuitem)
    endfor
 
 """menuopt_pod
@@ -168,7 +160,7 @@ function! base#menu#add(...)
 
    for key in podmenu
 	 let item=podmenuitems[key]
-   	 call F_MenuItemAdd(item)
+   	 call base#menu#additem(item)
    endfor
 
 
@@ -180,7 +172,7 @@ function! base#menu#add(...)
 
    if exists("g:moduleinfo.subnames")
        for sub in g:moduleinfo.subnames
-         call F_MenuItemAdd({
+         call base#menu#additem({
                 \   'item'  :   '&PERL.&SUBS.&' . sub,
                 \   'tab'   :   'sub',
                 \   'cmd'   :   'call Prl_module_sub_open(' . "'" . sub . "'" ,
@@ -195,12 +187,12 @@ function! base#menu#add(...)
         \   ]
 
    for fun in funcs
-        call F_MenuItemAdd({
+        call base#menu#additem({
             \   'item'  :   '&PERL.&VimFuncsEcho.&' . fun,
             \   'tab'   :   'sub',
             \   'cmd'   :   'echo ' . fun . '()',
             \   })
-        call F_MenuItemAdd({
+        call base#menu#additem({
             \   'item'  :   '&PERL.&VimFuncsCall.&' . fun,
             \   'tab'   :   'sub',
             \   'cmd'   :   'call ' . fun . '()',
@@ -246,7 +238,7 @@ function! base#menu#add(...)
             \   'lev'   :    lev,
             \   }
 
-      "call F_MenuItemAdd(menu)
+      "call base#menu#additem(menu)
 
             let lev+=10
     endfor
@@ -273,7 +265,7 @@ function! base#menu#add(...)
              endif
 
              if len(menu)
-                 call F_MenuItemAdd(menu)
+                 call base#menu#additem(menu)
              endif
          endfor
 
@@ -300,7 +292,6 @@ function! base#menu#add(...)
 
 """menuopt_buffers
  elseif menuopt == 'buffers'
-   LFUN F_BuffersGet
 
      try
         silent exe 'aunmenu BUFFERS'
@@ -381,14 +372,11 @@ function! base#menu#add(...)
 
    for mn in sort(keys(bufmenus))
      let menu=bufmenus[mn]
-     call F_MenuItemAdd(menu)
+     call base#menu#additem(menu)
    endfor
 
 """menuopt_paps
  elseif menuopt == 'paps'
-   LFUN LOP
-
-   call F_VarCheckExist('PAP_texpkeys')
 
    call F_MenuAddAlphabet({
             \   'name'  : 'TEXPAPS',
@@ -397,14 +385,14 @@ function! base#menu#add(...)
             \   })
 
 
-   call F_MenuItemAdd({
+   call base#menu#additem({
             \ 'item' : '&ToolBar.&PMAKE_LATEX',
             \ 'icon' : 'PMAKE_latex',
             \ 'cmd'  : 'PMAKE latex',
             \ 'tmenu'  : 'Run LaTeX',
             \ })
 
-   call F_MenuItemAdd({
+   call base#menu#additem({
             \ 'item' : '&ToolBar.&PMAKE_TEX_GENERATE',
             \ 'icon' : 'PMAKE_tex_generate',
             \ 'cmd'  : 'PMAKE tex_generate',
@@ -413,14 +401,13 @@ function! base#menu#add(...)
 
 """menuopt_menus
  elseif menuopt == 'menus'
-   call F_VarCheckExist('F_menus')
 
-   for mn in g:F_menus
-      call F_MenuItemAdd({
+   for mn in base#var('menus',[])
+      call base#menu#additem({
             \ 'item' : '&MENUS.&ADD.&' . mn,
             \ 'cmd'  : 'MenuAdd ' . mn,
             \ })
-      call F_MenuItemAdd({
+      call base#menu#additem({
             \ 'item' : '&MENUS.&RESET.&' . mn,
             \ 'cmd'  : 'MenuReset ' . mn,
             \ })
@@ -429,8 +416,8 @@ function! base#menu#add(...)
 """menuopt_latex
  elseif menuopt == 'latex'
 
-      for entry in g:TEX_InsertEntries
-        call F_MenuItemAdd({
+      for entry in base#varget('tex_insert_entries',[]) 
+        call base#menu#additem({
             \ 'item' : '&TEX.&INSERT.&' . entry,
             \ 'cmd'  : 'TEXINSERT ' . entry,
             \ })
@@ -445,20 +432,79 @@ function! base#menu#add(...)
       for id in texinputs
 
         let fname=substitute(id,'\.','\\.','g')
-        let file=F_CatPath('texinputs',fname)
-        call F_MenuItemAdd({
+        let file=base#catpath('texinputs',fname)
+        call base#menu#additem({
               \ 'item' : '&TEX.&TEXINPUTS.&' . fname,
               \ 'cmd'  : 'call F_FileOpen(' . "'" . file . "'" . ')',
               \ })
       endfor
 
-      call F_MenuItemAdd({
+      call base#menu#additem({
             \ 'item' : '&TEX.&RUN.&pdfTeX' ,
             \ 'cmd'  : 'PlainTexRun',
             \ })
 
  endif
  
- RFUN SubNameEnd 
+endfunction
+
+function! base#menu#additem (ref)
+
+ let cmd='an '
+ let cmds=[]
+
+ let ref={
+			 	\	'icon'    : '',
+			 	\	'item'    : '',
+			 	\	'cmd'     : '',
+			 	\	'fullcmd' : '',
+			 	\	'tab'     : '',
+			 	\	'tmenu'   : '',
+		 		\	}
+
+ call extend(ref,a:ref)
+
+ if len(ref.icon)
+	 let iconfile=base#catpath('menuicons',ref.icon . '.png')
+	 if filereadable(iconfile)
+	 		let cmd.='icon=' . iconfile . ' '
+	 else
+		 	call base#warn({ 'text' : 'icon file not readable:' . iconfile })
+	 endif
+ endif
+
+ if ! len(ref.item)
+	 call base#warn({ 'text' : 'menu item not defined!' })
+	 return
+ else
+	 let cmd.=ref.item . ' '
+ endif
+
+ if ref.tab
+	 let cmd.='<Tab>' . ref.tab . ' '
+ endif
+
+ if ! len(ref.cmd)
+	 if ! len(ref.fullcmd)
+		 call base#warn('menu command not defined!')
+		 return
+	 else
+		 let cmd=ref.fullcmd
+ 	 endif
+ else
+	 let cmd.=':' . ref.cmd . '<CR>'
+ endif
+ call add(cmds,cmd)
+
+ if ref.tmenu
+ 		call add(cmds,'tmenu ' . ref.item . ' ' . ref.tmenu)
+ endif
+
+ for cmd in cmds
+	exe cmd
+ endfor
+
+ call add(g:isloaded.menuitems,ref.item)
+
 endfunction
  

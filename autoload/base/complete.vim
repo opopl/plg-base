@@ -36,6 +36,10 @@ function! base#complete#paplist (...)
   return base#complete#vars([ 'paplist' ])
 endfunction
 
+function! base#complete#menus (...)
+  return base#complete#vars([ 'menus' ])
+endfunction
+
 function! base#complete#init (...)
   return base#complete#vars([ 'base_init_cmds' ])
 endfunction

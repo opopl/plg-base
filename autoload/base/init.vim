@@ -47,6 +47,19 @@ fun! base#init#cmds()
 		\	call base#git#save()
 
 
+LFUN F_CompleteMenus
+LFUN F_MenuAdd
+
+
+"""MenuReset
+command!-nargs=* -complete=custom,base#complete#menus
+	\	MenuReset call base#menu#add(<f-args>,{ 'action' : 'reset' })
+
+
+"""MenuAdd
+command! -nargs=* -complete=custom,base#complete#menus
+	\	MenuAdd call base#menu#add(<f-args>,{ 'action' : 'add' })
+
 """GitUpdate
 	command! -nargs=1 -complete=custom,base#complete#gitupdate GitUpdate
 		\	call base#git#update(<f-args>)
