@@ -508,3 +508,25 @@ function! base#menu#additem (ref)
 
 endfunction
  
+
+ 
+function! base#menu#add_alphabet(ref)
+
+ let ref=a:ref
+
+ let lev=10
+
+ for id in g:{ref.arr}
+        let lett=toupper(matchstr(id,'^\zs\w\ze'))
+
+	    call base#menu#additem({
+				\	'item' 	: '&' . ref.name . '.&' . lett . '.&' . id,
+	 			\	'cmd'	: ref.cmd . ' ' . id,
+	 			\	'lev'	: lev,
+	 			\	})
+
+	    let lev+=10
+ endfor
+
+endfunction
+
