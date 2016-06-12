@@ -3921,6 +3921,8 @@ function! base#init (...)
         call base#init#cmds()
     elseif opt == 'vars'
         call base#initvars()
+    elseif opt == 'menus'
+        call base#menus#init()
     elseif opt == 'stl'
         call base#stl#setparts()
     elseif opt == 'files'
