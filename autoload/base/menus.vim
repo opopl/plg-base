@@ -1,4 +1,14 @@
 
+function! base#menus#add (menulist)
+	let allmenus = base#varget('allmenus',{})
+
+ for mn in a:menulist
+		call base#menu#additem(get(allmenus,mn,{}))
+ endfor
+	
+endfunction
+
+
 function! base#menus#init ()
 
      let allmenus={}
