@@ -3955,6 +3955,9 @@ function! base#init (...)
     call base#init#au()
     call base#init#cmds()
 
+		"" initialize allmenus
+    call base#menus#init()
+
     call base#rtp#update()
 
     call base#stl#setlines()

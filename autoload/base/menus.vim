@@ -1,13 +1,10 @@
 
 function! base#menus#add (menulist)
 	let allmenus = base#varget('allmenus',{})
-
- for mn in a:menulist
+	for mn in a:menulist
 		call base#menu#additem(get(allmenus,mn,{}))
- endfor
-	
+	endfor
 endfunction
-
 
 function! base#menus#init ()
 
@@ -83,7 +80,7 @@ function! base#menus#init ()
             \ 'TOOLS.VIEWPDF' : {
                   \ 'item' : '&TOOLS.&VIEWPDF', 
                   \ 'tab' : 'View\ compiled\ PDF',  
-                  \ 'cmd' : 'call DC_PrjView("pdf")', 
+                  \ 'cmd' : 'PrjPdfView', 
                   \ },
             \ 'TOOLS.VIEWLOG' : {
                   \ 'item' : '&TOOLS.&VIEWLOG', 

@@ -1,23 +1,6 @@
 
 
 function! base#menu#add(...)
- RFUN SubNameStart F_AddMenus
-
- LFUN F_FileOpen
- LFUN F_ListAdd
- LFUN F_MenuAddAlphabet
- LFUN F_MenusAdd
- LFUN F_ReadDatFile
- LFUN F_VarCheckExist
- LFUN F_VarUpdate
- LFUN F_EqualPaths
- LFUN F_map_sub
- LFUN F_uniq
- LFUN F_rmwh
- LFUN F_CatFile
-
- LCOM MenuAdd
- LCOM VarUpdate
 
  let opts={ 'action' : 'add' }
 
@@ -139,31 +122,6 @@ function! base#menu#add(...)
       call base#menu#additem(menuitem)
    endfor
 
-"""menuopt_pod
- elseif menuopt == 'pod'
-   let podmenuitems={
-   		\	'PrlPodViewHtml' 	: {
-            \   'item'  : '&POD.&ViewHtml',
-            \   'tab'   : 'View\ Html',
-            \   'cmd'   : 'PrlPodViewHtml',
-   			\	},
-   		\	'PrlPodViewTxt' 	: {
-            \   'item'  : '&POD.&ViewTxt',
-            \   'tab'   : 'View\ Txt',
-            \   'cmd'   : 'PrlPodViewTxt',
-   			\	},
-   		\	}
-   let podmenu=[
-   		\	'PrlPodViewHtml',
-   		\	'PrlPodViewTxt',
-   		\	]
-
-   for key in podmenu
-	 let item=podmenuitems[key]
-   	 call base#menu#additem(item)
-   endfor
-
-
 """menuopt_perl
  elseif menuopt == 'perl'
    LFUN Prl_module_sub_open
@@ -199,96 +157,13 @@ function! base#menu#add(...)
             \   })
    endfor
 
-
-"""menuopt_perl_modules
- elseif menuopt == 'perl_modules'
-
-   let menus_add=[
-            \   'OMNI.perl_local_modules' ,
-            \   'OMNI.perl_installed_modules' ,
-            \   ]
-
-   call F_MenusAdd(menus_add)
-
-   let vars=[
-    \   'perl_installed_modules',
-    \   'perl_local_modules',
-    \   'perl_used_modules',
-    \   ]
-
-   call F_VarCheckExist(vars)
-
-"""_perl_modules_INSTALLED
-    let lev=10
-    let i=0
-    for module in g:perl_installed_modules
-      if i==0
-        break
-      endif
-      
-      let lett=toupper(matchstr(module,'^\zs\w\ze'))
-
-      let mparts=
-            \   matchstr(module,'^\zs\w\+\ze::') . '.&' . 
-            \   matchstr(module,'^\w\+::\zs.*\ze$')
-
-      let menu={
-            \   'item'  : '&INSTALLED_MODS' . '.&' . lett . '.&' . mparts,
-            \   'cmd'   : 'PMODI ' . module,
-            \   'lev'   :    lev,
-            \   }
-
-      "call base#menu#additem(menu)
-
-            let lev+=10
-    endfor
-
-"""_perl_modules_ready
-
-
-"""_perl_modules_LOCAL
-     let topics=filter(F_ReadDatFile('datfiles'),
-        \   "v:val =~ '^perl_modules_'")
-     call map(topics,"matchstr(v:val,'^perl_modules_\\zs.*\\ze$')")
-
-     let lev=10
-     for module in g:perl_local_modules
-         for topic in topics
-             let menu={}
-
-             if base#inlist(module,F_ReadDatFile('perl_modules_' . topic ))
-                 let menu={
-                    \   'item'  : '&LOCAL_MODS' . '.&' . topic . '.&' . module,
-                    \   'cmd'   : 'PMOD ' . module,
-                    \   'lev'   :    lev,
-                    \   }
-             endif
-
-             if len(menu)
-                 call base#menu#additem(menu)
-             endif
-         endfor
-
-         let lev+=1
-     endfor
-
-"""_perl_modules_USED
-   call F_MenuAddAlphabet({
-            \   'name'  : 'USED_MODS',
-            \   'arr'   : 'perl_used_modules',
-            \   'cmd'   : 'PMODI',
-            \   })
-  
-"""menuopt_snippets
- elseif menuopt == 'snippets'
-
 """menuopt_plaintex
  elseif menuopt == 'plaintex'
    let menus_add=[
       \ 'ToolBar.PlainTexRun',
       \ ]
 
-   call F_MenusAdd(menus_add)
+   call base#menus#add(menus_add)
 
 """menuopt_buffers
  elseif menuopt == 'buffers'
@@ -374,30 +249,6 @@ function! base#menu#add(...)
      let menu=bufmenus[mn]
      call base#menu#additem(menu)
    endfor
-
-"""menuopt_paps
- elseif menuopt == 'paps'
-
-   call F_MenuAddAlphabet({
-            \   'name'  : 'TEXPAPS',
-            \   'arr'   : 'PAP_texpkeys',
-            \   'cmd'   : 'LOP',
-            \   })
-
-
-   call base#menu#additem({
-            \ 'item' : '&ToolBar.&PMAKE_LATEX',
-            \ 'icon' : 'PMAKE_latex',
-            \ 'cmd'  : 'PMAKE latex',
-            \ 'tmenu'  : 'Run LaTeX',
-            \ })
-
-   call base#menu#additem({
-            \ 'item' : '&ToolBar.&PMAKE_TEX_GENERATE',
-            \ 'icon' : 'PMAKE_tex_generate',
-            \ 'cmd'  : 'PMAKE tex_generate',
-            \ 'tmenu'  : 'Generate TeX files',
-            \ })
 
 """menuopt_menus
  elseif menuopt == 'menus'
@@ -504,7 +355,13 @@ function! base#menu#additem (ref)
 	exe cmd
  endfor
 
- call add(g:isloaded.menuitems,ref.item)
+ let isloaded=base#varget('isloaded',{})
+ let mni=get(isloaded,'menuitems',[])
+
+ call add(mni,ref.item)
+ call extend(isloaded,mni)
+
+ call base#varset('isloaded',isloaded)
 
 endfunction
  
