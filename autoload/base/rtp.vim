@@ -47,8 +47,10 @@ function! base#rtp#update()
 			if len(ff)
 				try
 					silent exe 'helptags ' . docdir 
-				catch /^Vim(execute):E151/
-					echo 'error E151'
+				"catch /^Vim(execute):E151/
+					"echo 'error E151'
+				catch /.*/
+					echo 'Errors while running helptags'
 				endtry
 
 			endif
