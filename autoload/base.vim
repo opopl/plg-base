@@ -634,6 +634,7 @@ fun! base#fileopen(ref)
  let action = 'edit'
  let a      = base#var('fileopen_action')
 
+
  let opts={}
 
  if base#type(a:ref) == 'String'

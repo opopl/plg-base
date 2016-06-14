@@ -38,3 +38,29 @@ function! base#plg#loadvars (...)
 	endfor
 
 endfunction
+
+function! base#plg#opendat (...)
+		let plg	= get(a:000,0,'')
+
+		let type = input('Type:','list','custom,base#complete#dattypes')
+
+		let dir = base#qw#catpath('plg',plg . ' data ' . type)
+
+		let files = base#find({ 
+				\	"dirs" : [ dir ], 
+				\	"exts" : ['i.dat'], 
+				\	"relpath" : 1, 
+				\	"cwd"  : 0 })
+
+		let df=base#getfromchoosedialog({ 
+				\ 'list'        : files,
+				\ 'startopt'    : get(files,0,''),
+				\ 'header'      : "Available dat files are: ",
+				\ 'numcols'     : 1,
+				\ 'bottom'      : "Choose dat files by number: ",
+				\ })
+		let df = base#file#catfile([ dir, df ])
+
+		call base#fileopen({ "files": [ df ], 'action' : 'split' })
+	
+endfunction
