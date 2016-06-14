@@ -62,5 +62,8 @@ function! base#plg#opendat (...)
 		let df = base#file#catfile([ dir, df ])
 
 		call base#fileopen({ "files": [ df ], 'action' : 'split' })
+
+		call base#tg#add('plg_'.plg)
+		call base#stl#set('plg')
 	
 endfunction
