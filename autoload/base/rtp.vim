@@ -50,7 +50,10 @@ function! base#rtp#update()
 				"catch /^Vim(execute):E151/
 					"echo 'error E151'
 				catch /.*/
-					echo 'Errors while running helptags'
+					echohl WarningMsg
+					echo 'Errors while running helptags for doc dir:'
+					echo '   ' .docdir
+					echohl None
 				endtry
 
 			endif
