@@ -212,12 +212,14 @@ fun! base#stl#setlines(...)
                 \       ],
         \   'simple'   :   [ 
 		        \   'buffer_number' ,
+		        \   'line_number'    ,
 		        \   'file_name'     ,
 		        \   'file_encoding' ,
 		        \   'encoding'      ,
                 \       ],
         \   'plg'   :   [ 
 		        \   'plg_name'      ,
+		        \   'line_number'      ,
 		        \   'buffer_number' ,
 		        \   'file_name'     ,
 		        \   'tgids'         ,
@@ -247,6 +249,7 @@ fun! base#stl#setlines(...)
 		        \   'file_name',
 		        \   'file_dir',
 		        \   'tgids'          ,
+		        \   'line_number'    ,
 		        \   ],
         \   'gitcmd'   :   [ 
 		        \   'gitdir'          ,
@@ -269,6 +272,7 @@ fun! base#stl#setlines(...)
 		        \   ],
         \   'projs'   :   [ 
 		        \   'buffer_number'    ,
+		        \   'line_number'    ,
 		        \   'projs_rootbasename'    ,
 		        \   'projs_proj'    ,
 		        \   'projs_sec'     ,
