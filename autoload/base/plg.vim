@@ -38,9 +38,11 @@ function! base#plg#loadvars (...)
 	endfor
 
 	let vars = base#varget(plg.'_vars',{})
-	for [k,v] in items(vars)
-			call base#varset(plg.'_'.k,v)
-	endfor
+	if type(vars) == type({})
+		for [k,v] in items(vars)
+				call base#varset(plg.'_'.k,v)
+		endfor
+	endif
 
 endfunction
 
