@@ -124,6 +124,12 @@ function! base#complete#envvarlist (...)
 
 endfunction
 
+function! base#complete#dattypes (...)
+ let comps = base#qwsort('list dict')
+
+ return join(comps,"\n")
+endfunction
+
 function! base#complete#vars (...)
 
  let comps=[]
