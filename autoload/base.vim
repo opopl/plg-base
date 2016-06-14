@@ -31,13 +31,21 @@ fun! base#loadvimfunc(fun)
 endfun
 
 "C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe
+"
+"fun! base#pdfview(file,opts)
+"fun! base#pdfview(file)
 
-fun! base#pdfview(file)
-  let file = a:file
+fun! base#pdfview(...)
+	let file = get(a:000,0,'')
+	let opts = get(a:000,1,{})
 
   let viewer = base#fpath('evince')
 
   if filereadable(file)
+		 if get(opts,'cdfile',0)
+				call base#cdfile(file)
+		 endif
+
      let ec= 'silent! !start '.viewer.' '.file
      exe ec
      redraw!
@@ -376,6 +384,14 @@ fun! base#type(var)
 
   return type
 
+endf
+
+
+function! base#cdfile(...)
+	let file = get(a:000,0,expand('%:p'))
+	let dir  = fnamemodify(file,':p:h')
+
+	exe 'cd ' . dir
 endf
 
 function! base#cd(dir,...)

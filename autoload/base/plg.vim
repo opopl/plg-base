@@ -24,7 +24,7 @@ function! base#plg#loadvars (...)
 	
 		for fname in fnames
 			let vname = plg.'_'.fname
-			let df = base#file#catfile([ typedir, fname .'.'.ext ])
+			let df    = base#file#catfile([ typedir, fname .'.'.ext ])
 
 			if type == 'list'
 				let vv = base#readarr(df)
@@ -35,6 +35,11 @@ function! base#plg#loadvars (...)
 			call base#var(vname,vv)
 			if exists("vv") | unlet vv | endif 
 		endfor
+	endfor
+
+	let vars = base#varget(plg.'_vars',{})
+	for [k,v] in items(vars)
+			call base#varset(plg.'_'.k,v)
 	endfor
 
 endfunction
