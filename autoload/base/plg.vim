@@ -47,10 +47,10 @@ function! base#plg#opendat (...)
 		let dir = base#qw#catpath('plg',plg . ' data ' . type)
 
 		let files = base#find({ 
-				\	"dirs" : [ dir ], 
-				\	"exts" : ['i.dat'], 
-				\	"relpath" : 1, 
-				\	"cwd"  : 0 })
+				\	"dirs"    : [ dir ],
+				\	"exts"    : ['i.dat'],
+				\	"relpath" : 1,
+				\	"cwd"     : 0 })
 
 		let df=base#getfromchoosedialog({ 
 				\ 'list'        : files,
