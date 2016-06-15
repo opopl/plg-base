@@ -73,12 +73,9 @@ function! base#buf#start ()
 	let b:file     = expand('%:p')
 	let b:basename = expand('%:p:t')
 	let b:ext      = expand('%:p:e')
-	
 	let b:dirname = expand('%:p:h')
 	
-	if exists('b:finfo')
-		unlet b:finfo
-	endif
+	if exists('b:finfo') | unlet b:finfo | endif
 	let b:finfo   = base#getfileinfo()
 
 	let b:base_buf_started=1

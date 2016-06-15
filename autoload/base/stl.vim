@@ -282,6 +282,16 @@ fun! base#stl#setlines(...)
 		        \   'keymap'        ,
 		        \   'tgids'         ,
 		        \   ],
+        \   'tex'   :   [ 
+		        \   'file_name'     ,
+		        \   'file_dir'      ,
+		        \   'buffer_number' ,
+		        \   'line_number'   ,
+		        \   'file_encoding' ,
+		        \   'encoding'      ,
+		        \   'keymap'        ,
+		        \   'tgids'         ,
+		        \   ],
         \   }
 
   let g:F_StatusLineKeys=sort(keys(g:F_StatusLineOrders))
