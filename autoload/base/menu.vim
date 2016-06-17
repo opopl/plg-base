@@ -66,18 +66,19 @@ function! base#menu#add(...)
 
      let lev=15
      let makefiles=[]
-     let makefiles=F_find({ 
-                    \       'path'  : 'projs',
-                    \       'ext'   : 'mk',
+     let makefiles=base#find({ 
+                    \       'qw_dirids'  : 'projs',
+                    \       'qw_exts'    : 'mk',
                     \    })
     
      call add(makefiles,base#catpath('projs','makefile'))
-     call add(makefiles,F_CatFile('scripts','mk maketex.defs.mk'))
-     call add(makefiles,F_CatFile('scripts','mk maketex.targets.mk'))
+
+     call add(makefiles,base#qw#catpath('scripts','mk maketex.defs.mk'))
+     call add(makefiles,base#qw#catpath('scripts','mk maketex.targets.mk'))
     
      for mf in makefiles
-         let mfname=substitute(fnamemodify(mf,':p:t'),'\.','\\.','g')
-         let mfdir=fnamemodify(mf,':p:r')
+         let mfname = substitute(fnamemodify(mf,':p:t'),'\.','\\.','g')
+         let mfdir  = fnamemodify(mf,':p:r')
             
          call base#menu#additem({
                         \   'item'  : '&MAKEFILES.&' . mfname,
@@ -274,9 +275,9 @@ function! base#menu#add(...)
             \ })
       endfor
 
-      let texinputs=F_find({
-            \ 'path' : 'texinputs',
-            \ 'ext'  : 'tex',
+      let texinputs=base#find({
+            \ 'qw_dirids'    : 'texinputs',
+            \ 'qw_exts'      : 'tex',
             \ 'fnamemodify'  : ':p:t',
             \ })
 
@@ -360,7 +361,7 @@ function! base#menu#additem (ref)
  let mni      = get(isloaded,'menuitems',[])
 
  call add(mni,ref.item)
- call extend(isloaded,mni)
+ call extend(isloaded, { 'menuitems' : mni })
 
  call base#varset('isloaded',isloaded)
 

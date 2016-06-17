@@ -2707,6 +2707,11 @@ function! base#findwin(ref)
     let exts = get(ref,'exts',exts_def)
     if ! len(exts) | let exts=exts_def | endif
 
+		let qw_exts = get(ref,'qw_exts','')
+		if len(qw_exts)
+			let exts = base#qw(qw_exts)
+		endif
+
     let dirs = get(ref,'dirs',dirs)
     
     let searchopts = ' /b/a:-d '
@@ -2714,6 +2719,20 @@ function! base#findwin(ref)
     if get(ref,'cwd')
         call add(dirs,getcwd())
     endif
+
+		let dirids = []
+		let qw_dirids = get(ref,'qw_dirids','')
+		if len(qw_dirids)
+			let dirids = base#qw(qw_dirids)
+		endif
+
+		let dirids = get(ref,'dirids',dirids)
+		for id in dirids
+				let dir = base#path(id)
+				if len(dir)
+        	call add(dirs,dir)
+				endif
+		endfor
 
     if do_subdirs 
         let searchopts .= ' /s '
@@ -3772,7 +3791,7 @@ function! base#varget (varname,...)
     else
         let val = ''
     if a:0
-      unlet val | let val = a:1
+      	unlet val | let val = a:1
     endif
     endif
 
