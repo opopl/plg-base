@@ -60,7 +60,6 @@ function! base#menu#add(...)
 		call projs#menus#set()
 
     MenuAdd latex
-    MenuAdd snippets
 
 """menuopt_makefiles
  elseif menuopt == 'makefiles'
@@ -83,7 +82,7 @@ function! base#menu#add(...)
          call base#menu#additem({
                         \   'item'  : '&MAKEFILES.&' . mfname,
                         \   'tab'       :   mfname,
-                        \   'cmd'       :   'call F_FileOpen("' . mf . '")',
+                        \   'cmd'       :   'call base#fileopen("' . mf . '")',
                         \   'lev'       :   lev,
                         \   })
     
@@ -268,7 +267,7 @@ function! base#menu#add(...)
  elseif menuopt == 'latex'
 
       for entry in base#varget('tex_insert_entries',[]) 
-        call base#menu#additem({
+        	call base#menu#additem({
             \ 'item' : '&TEX.&INSERT.&' . entry,
             \ 'cmd'  : 'TEXINSERT ' . entry,
             \ })
@@ -282,11 +281,12 @@ function! base#menu#add(...)
 
       for id in texinputs
 
-        let fname=substitute(id,'\.','\\.','g')
-        let file=base#catpath('texinputs',fname)
+        let fname = substitute(id,'\.','\\.','g')
+        let file  = base#catpath('texinputs',fname)
+
         call base#menu#additem({
               \ 'item' : '&TEX.&TEXINPUTS.&' . fname,
-              \ 'cmd'  : 'call F_FileOpen(' . "'" . file . "'" . ')',
+              \ 'cmd'  : 'call base#fileopen(' . "'" . file . "'" . ')',
               \ })
       endfor
 
@@ -355,8 +355,8 @@ function! base#menu#additem (ref)
 	exe cmd
  endfor
 
- let isloaded=base#varget('isloaded',{})
- let mni=get(isloaded,'menuitems',[])
+ let isloaded = base#varget('isloaded',{})
+ let mni      = get(isloaded,'menuitems',[])
 
  call add(mni,ref.item)
  call extend(isloaded,mni)
