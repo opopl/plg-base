@@ -209,7 +209,7 @@ function! base#menu#add(...)
 
        let dat=matchstr(basename,'^\zs.*\ze\.i\.dat$')
        
-       if F_EqualPaths(dirname,base#path('mkvimrc'))
+       if base#equalpaths(dirname,base#path('mkvimrc'))
             let mn='&BUFFERS.&DAT_VIM.&' . dat
        else
             let mn='&BUFFERS.&DAT.&' . dat
@@ -217,15 +217,15 @@ function! base#menu#add(...)
 
      elseif path =~ '\.tex$' 
 
-       if F_EqualPaths(dirname,base#path('projs'))
+       if base#equalpaths(dirname,base#path('projs'))
             
             let mn='&BUFFERS.&TEX.&PROJS.&' . basename_escape
 
        endif
 
      else 
-            let width=70
-            let sepwidth=width-strlen(basename_escape)-strlen(dirname_escape)
+            let width    = 70
+            let sepwidth = width-strlen(basename_escape)-strlen(dirname_escape)
 
             let mn='&BUFFERS.&OTHER.&' . basename_escape 
             let tab=dirname_escape
