@@ -96,12 +96,13 @@ endf
 "call base#tg#update ()
 
 function! base#tg#update (...)
+	let opts = get(a:000,1,{})
 	if a:0 
 		let tgid = a:1
 	else
 		let tgs = base#tg#ids()
 		for tgid in tgs
-			call base#tg#update(tgid)
+			call base#tg#update(tgid,{ "add" : 1 })
 		endfor
 		return
 	endif
@@ -153,7 +154,13 @@ function! base#tg#update (...)
 		call writefile(lines,tfile)
 		unlet lines
 
-		call base#tg#set(tgid)
+		if get(opts,'add',0)
+			call base#tg#add(tgid)
+
+		else
+			call base#tg#set(tgid)
+
+		endif
 
 		"call base#tg#ok({ "ok" : 1, "tgid" : tgid })
 		return 1
@@ -253,7 +260,7 @@ function! base#tg#update (...)
 	echo "Calling ctags command for: " . tgid 
 	let ok = base#sys( cmd )
 
-	let okref = { "cmd" : cmd, "tgid" : tgid, "ok" : ok }
+	let okref = { "cmd" : cmd, "tgid" : tgid, "ok" : ok, "add" : add }
 	call base#tg#ok(okref)
 
 	return  ok
@@ -263,9 +270,10 @@ function! base#tg#ok (...)
 	let okref = {}
 	if a:0 | let okref = a:1 | endif
 
-	let cmd   = get(okref,'cmd','')
-	let ok    = get(okref,'ok','')
+	let cmd  = get(okref,'cmd','')
+	let ok   = get(okref,'ok','')
 	let tgid = get(okref,'tgid','')
+	let act  = get(okref,'act','set')
 
 	if ok
 		redraw!
@@ -273,7 +281,12 @@ function! base#tg#ok (...)
 		echo "CTAGS UPDATE OK: " .  tgid
 		echohl None
 
-		call base#tg#set (tgid,{ "update_ifabsent" : 0 })
+		if act == 'set'
+			call base#tg#set (tgid,{ "update_ifabsent" : 0 })
+		elseif  act == 'add'
+			call base#tg#add (tgid,{ "update_ifabsent" : 0 })
+		endif
+
 	else
 		redraw!
 		echohl Error
