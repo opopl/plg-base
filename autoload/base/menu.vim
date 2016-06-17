@@ -172,26 +172,27 @@ function! base#menu#add(...)
      catch
      endtry
 
-   call F_BuffersGet()
+   call base#buffers#get()
    let bufmenus={}
 
-   for buf in g:bufs
-     let path=buf[-3]
+   for buf in base#varget('bufs',[])
+		 let path = get(buf,'fullname','')
+
      let mn=''
      let tab=''
 
-     let path=matchstr(path,'^"\zs.*\ze"$')
+     let path     = matchstr(path,'^"\zs.*\ze"$')
 
-     let basename=fnamemodify(path,':p:t')
-     let dirname=fnamemodify(path,':p:h')
+     let basename = fnamemodify(path,':p:t')
+     let dirname  = fnamemodify(path,':p:h')
 
-     let basename_escape=substitute(basename,'\.','\\.','g')
-     let dirname_escape=substitute(dirname,'\.','\\.','g')
+     let basename_escape = substitute(basename,'\.','\\.','g')
+     let dirname_escape  = substitute(dirname,'\.','\\.','g')
 
      if path =~ '\.pm$'
-        let module=
-            \   F_sss("get_perl_package_name.pl --ifile " . path)
-
+        "let module=
+            "\   F_sss("get_perl_package_name.pl --ifile " . path)
+				let module = ''
         let mn='&BUFFERS.&PERL_MODULES.&' . module
        
      elseif path =~ '_fun_/\w\+\.vim$'
@@ -208,7 +209,7 @@ function! base#menu#add(...)
 
        let dat=matchstr(basename,'^\zs.*\ze\.i\.dat$')
        
-       if F_EqualPaths(dirname,g:paths['mkvimrc'])
+       if F_EqualPaths(dirname,base#path('mkvimrc'))
             let mn='&BUFFERS.&DAT_VIM.&' . dat
        else
             let mn='&BUFFERS.&DAT.&' . dat
@@ -216,7 +217,7 @@ function! base#menu#add(...)
 
      elseif path =~ '\.tex$' 
 
-       if F_EqualPaths(dirname,g:paths['projs'])
+       if F_EqualPaths(dirname,base#path('projs'))
             
             let mn='&BUFFERS.&TEX.&PROJS.&' . basename_escape
 
