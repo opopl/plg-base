@@ -57,7 +57,7 @@ function! base#menu#add(...)
 
 """menuopt_projs
  if menuopt == 'projs'
-    RFUN DC_Proj_SetMenus
+		call projs#menus#set()
 
     MenuAdd latex
     MenuAdd snippets
