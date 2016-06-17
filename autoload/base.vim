@@ -4178,6 +4178,32 @@ function! base#keymap (...)
     echohl None
 
 endfunction
+
+function! base#equalpaths (p1,p2)
+
+ let sep='/'
+
+ let a1=filter(split(a:p1,sep),"v:val != ''")
+ let a2=filter(split(a:p2,sep),"v:val != ''")
+
+ if len(a1) != len(a2)
+     return 0
+ endif
+
+ while len(a1) > 0
+
+    let e1=remove(a1,-1)
+    let e2=remove(a2,-1)
+
+    if e1 != e2 
+	    return 0
+    endif
+ endw
+ return 1
+ 
+endfun
+	
+endfunction
  
 
 
