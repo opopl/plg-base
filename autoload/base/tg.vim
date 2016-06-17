@@ -256,11 +256,14 @@ function! base#tg#update (...)
 
 	let cmd = 'ctags -R -o ' . ap#file#win( tfile ) . ' ' . libs . ' ' . files
 
-	"echo "Calling: " . cmd
 	echo "Calling ctags command for: " . tgid 
 	let ok = base#sys( cmd )
 
-	let okref = { "cmd" : cmd, "tgid" : tgid, "ok" : ok, "add" : add }
+	let okref = { 
+			\	"cmd"  : cmd,
+			\	"tgid" : tgid,
+			\	"ok"   : ok,
+			\	"add"  : add }
 	call base#tg#ok(okref)
 
 	return  ok
