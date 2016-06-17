@@ -4201,8 +4201,6 @@ function! base#equalpaths (p1,p2)
  endw
  return 1
  
-endfun
-	
 endfunction
  
 
