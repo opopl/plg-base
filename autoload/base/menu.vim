@@ -117,7 +117,7 @@ function! base#menu#add(...)
 """menuopt_omni
  elseif menuopt == 'omni'
 
-   for [id,menuitem] in items(g:menus_omni)
+   for [id,menuitem] in items(base#varget('menus_omni',{}))
       call base#menu#additem(menuitem)
    endfor
 
@@ -252,7 +252,7 @@ function! base#menu#add(...)
 """menuopt_menus
  elseif menuopt == 'menus'
 
-   for mn in base#var('menus',[])
+   for mn in base#varget('menus',[])
       call base#menu#additem({
             \ 'item' : '&MENUS.&ADD.&' . mn,
             \ 'cmd'  : 'MenuAdd ' . mn,
