@@ -8,8 +8,9 @@
 #perl_subs_traveltek         TRV_subs
 #proj_secs                   DC_Proj_SecNames
 #proj_defs                   DC_Proj_Defs
-projs                       projs#list()
-proj_secs                   projs#proj#secnames()
+projs                        projs#list()
+proj_secs                    projs#proj#secnames()
+proj_pics                    projs#piclist()
 #snippets                    SNI_CurrentSnippets
 #tex_latex_environments      TEX_latex_environments
 #tex_plaintex_commands       TEX_plaintex_commands
