@@ -591,13 +591,14 @@ fun! base#initpaths(...)
     let mrc       = base#envvar('MYVIMRC')
     let projsdir  = base#envvar('PROJSDIR')
 
-  if $COMPUTERNAME == 'OPPC'
-    let evbin = 'C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin'
+    let home      = base#envvar('USERPROFILE')
+
+		let pc = $COMPUTERNAME
+
+    let evbin = home.'\AppData\Local\Apps\Evince-2.32.0.145\bin'
+		if isdirectory(evbin)
       call base#pathset({  'evince_bin' : evbin })
-  elseif $COMPUTERNAME == 'APOPLAVSKIYNB'
-    let evbin = 'C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin'
-      call base#pathset({  'evince_bin' : evbin })
-  endif
+		endif
 
     call base#pathset({ 
         \ 'conf'    : confdir ,
