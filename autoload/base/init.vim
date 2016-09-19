@@ -105,6 +105,9 @@ command! -nargs=* -complete=custom,base#complete#omnioptions
 """BaseVarEcho
 	command! -nargs=* -complete=custom,base#complete#varlist
 	    \   BaseVarEcho call base#varecho(<f-args>) 
+
+	command! -nargs=* -complete=custom,base#complete#CD
+	    \   BasePathEcho call base#path#echo(<f-args>) 
 	
 """BaseInit
 	command! -nargs=* -complete=custom,base#complete#init
