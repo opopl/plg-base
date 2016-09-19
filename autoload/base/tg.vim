@@ -23,6 +23,7 @@ function! base#tg#set (...)
 		endif
 	endif
 
+	let tfile=escape(tfile,' \')
 	exe 'setlocal tags=' . tfile
 	let b:tgids=[tgid]
 	
@@ -33,6 +34,7 @@ function! base#tg#add (...)
 
 	let tfile = base#tg#tfile(tgid)
 
+	let tfile=escape(tfile,' \')
 	exe 'setlocal tags+=' . tfile
 	let tgs = base#tg#ids() 
 	call add(tgs,tgid)
@@ -252,7 +254,7 @@ function! base#tg#update (...)
 		return 0
 	endif
 
-	let cmd = 'ctags -R -o ' . ap#file#win( tfile ) . ' ' . libs . ' ' . files
+	let cmd = 'ctags -R -o "' . ap#file#win( tfile ) . '" ' . libs . ' ' . files
 
 	echo "Calling ctags command for: " . tgid 
 	let ok = base#sys( cmd )
