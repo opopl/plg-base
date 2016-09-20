@@ -36,6 +36,26 @@ function! base#file#copy(old,new)
 
 endfunction
 
+function! base#file#delete( ... )
+	let def = {
+		\	'echo' : 0,
+		\	}
+	let ref  = get(a:000,0,def)
+
+	let file = get(ref,'file','')
+	let ech  = get(ref,'echo',0)
+
+	if !filereadable(file) 
+			if ech
+					call base#echo({'text': 'file does not exist'})
+			endif
+			return
+	endif
+
+	call delete(file)
+
+endfunction
+
 
 " base#file#catfile([ 'a', 'b'])
 " base#file#catfile({ 'a' : [ 'a', 'b' ]})
