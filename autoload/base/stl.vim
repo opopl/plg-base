@@ -210,20 +210,20 @@ function! base#stl#setorders ()
                 \       ],
         \   'simple'   :   [ 
 		        \   'buffer_number' ,
-		        \   'line_number'    ,
+		        \   'line_number'   ,
 		        \   'file_name'     ,
 		        \   'file_encoding' ,
 		        \   'encoding'      ,
                 \       ],
         \   'plg'   :   [ 
 		        \   'plg_name'      ,
-		        \   'line_number'      ,
+		        \   'line_number'   ,
 		        \   'buffer_number' ,
 		        \   'file_name'     ,
 		        \   'tgids'         ,
                 \       ],
         \   'neat'   :   [ 
-		        \   'tgids'          ,
+		        \   'tgids'         ,
 		        \   'mode'          ,
 		        \   'session_name'  ,
 		        \   'file_name'     ,
@@ -304,7 +304,6 @@ fun! base#stl#setlines(...)
                 \   . '\ %{expand(' . "'" . '%:~:t:r' . "'" . ')}' ,
     \   }
 	call base#varset('statuslines',statuslines)
-
 
   call base#stl#setparts()
   call base#stl#setorders()
