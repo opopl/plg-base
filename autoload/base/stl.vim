@@ -6,7 +6,8 @@ function! base#stl#set (...)
     else
       let opt='neat'
 
-      let listcomps=g:F_StatusLineKeys
+      let listcomps=base#varget('stlkeys')
+      let listcomps=base#var('stlkeys')
   
       let liststr = join(listcomps,"\n")
       let dialog  = "Available status line keys  are: " . "\n"
@@ -23,16 +24,16 @@ function! base#stl#set (...)
 
 	if opt == 'ap'
 		call ap#stl()
-        let sline  = &stl
+    let sline  = &stl
 	elseif exists('g:F_StatusLines')
-        let sline  = get(g:F_StatusLines,opt)
-        let evs    = "setlocal statusline=" . sline
-        let g:F_StatusLine      = opt
-        let g:F_StatusLineOrder = []
+    let sline  = get(g:F_StatusLines,opt)
+    let evs    = "setlocal statusline=" . sline
+    let g:F_StatusLine      = opt
+    let g:F_StatusLineOrder = []
 
-        if exists('g:F_StatusLineOrders[opt]')
-            let g:F_StatusLineOrder=g:F_StatusLineOrders[opt]
-        endif
+    if exists('g:F_StatusLineOrders[opt]')
+        let g:F_StatusLineOrder=g:F_StatusLineOrders[opt]
+    endif
 	endif
 	if strlen(evs) | silent exe evs | endif
 
@@ -174,22 +175,23 @@ endfun
 
 fun! base#stl#setlines(...)
 
-  let g:F_StatusLineOrders={}
 
-  let g:F_StatusLines={
+  let statuslines={
     \  'enc' : '%<%f%h%m%r%=format=%{&fileformat}\ file=%{&fileencoding}\ enc=%{&encoding}\ %b\ 0x%B\ %l,%c%V\ %P',
         \  'vim_COM' :   ''
                 \   . '\ %{expand(' . "'" . '%:~:t:r' . "'" . ')}' ,
     \   }
+	call base#varset('statuslines',statuslines)
 
-  for key in keys(g:F_StatusLines)
-    let g:F_StatusLineOrders[key]=[]
+  let stlorders={}
+  for key in bas#varhash#keys('statuslines')
+    let stlorders[key]=[]
   endfor
 
   call base#stl#setparts()
 
 """base_stl_plg
-  let g:F_StatusLineOrders={
+  let stlorders={
         \   'enc'   :   [ 
                 \   'file_name',
                 \   'file_format',
@@ -294,17 +296,21 @@ fun! base#stl#setlines(...)
 		        \   ],
         \   }
 
-  let g:F_StatusLineKeys=sort(keys(g:F_StatusLineOrders))
+	call base#varset('stlorders',stlorders)
+
+	let stlkeys=base#varhash#keys(stlorders)
+	call base#varset('stlkeys',stlkeys)
 
   for var in [ 'F_StatusLineBefore', 'F_StatusLineAfter' ]
- 	call base#setglobalvarfromdat(var, { 'splitlines': 1 } )
+ 		call base#setglobalvarfromdat(var, { 'splitlines': 1 } )
   endfor
 
-  for key in g:F_StatusLineKeys
+  for key in base#varget('stlkeys')
        let stl=''
 
        let idlist=[]
        let idlist=copy(g:F_StatusLineBefore)
+
        call extend(idlist,g:F_StatusLineOrders[key])
        call extend(idlist,g:F_StatusLineAfter)
 
