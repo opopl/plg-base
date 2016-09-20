@@ -874,7 +874,7 @@ fun! base#readdatfile(ref,...)
 
  if base#type(a:ref) == 'String'
    if base#varhash#haskey('datfiles',a:ref)
-      let file = base#varhash#get('datfiles',a:ref)
+      let file = base#varhash#get('datfiles',a:ref,'')
    else 
       return []
    endif

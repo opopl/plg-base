@@ -70,15 +70,8 @@ function! base#complete#datlist (...)
 endfunction
 
 function! base#complete#statuslines (...)
- 
   call base#stl#setlines()
-  let comps = keys(g:F_StatusLines)
-  call add(comps,'ap')
-
-  let comps = base#uniq(comps)
-
-  return join(sort(comps),"\n")
- 
+  return base#complete#vars([ 'stlkeys' ])
 endfun
 
 function! base#complete#keymap (...)
