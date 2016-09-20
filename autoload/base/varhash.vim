@@ -27,7 +27,7 @@ function! base#varhash#get (...)
 	endif
 
 	let val = base#var(hashname)
-	if base#type(val) == "List"
+	if base#type(val) == "Dictionary"
 		let hash = val
 		if key
 			return hash[key]
