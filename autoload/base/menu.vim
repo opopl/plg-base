@@ -44,7 +44,6 @@ function! base#menu#add(...)
 
  elseif opts.action == 'add'
  	 call base#list#add('g:isloaded.menus',menuopt)
-
  endif
 
 """_menuopt

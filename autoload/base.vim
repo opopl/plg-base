@@ -3510,6 +3510,9 @@ function! base#info (...)
 """info_proj
    elseif topic == 'proj'
         call projs#info()
+
+   elseif topic == 'proj_usedpacks'
+        call projs#info#usedpacks()
        
    elseif topic == 'perl'
        call base#echo({ 'text' : "PERL ", 'hl' : 'Title' } )
