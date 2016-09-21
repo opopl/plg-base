@@ -36,15 +36,15 @@ endfun
 "fun! base#pdfview(file)
 
 fun! base#pdfview(...)
-	let file = get(a:000,0,'')
-	let opts = get(a:000,1,{})
+  let file = get(a:000,0,'')
+  let opts = get(a:000,1,{})
 
   let viewer = base#fpath('evince')
 
   if filereadable(file)
-		 if get(opts,'cdfile',0)
-				call base#cdfile(file)
-		 endif
+     if get(opts,'cdfile',0)
+        call base#cdfile(file)
+     endif
 
      let ec= 'silent! !start '.viewer.' '.file
      exe ec
@@ -255,13 +255,6 @@ fun! base#runvimfunc(fun,...)
   
 endfun
 
-"
-"function! base#varupdate (varname)
-
-  "call ap#Vars#set(a:varname)
-  
-"endfunction
- 
 """base_varcheckexist
 fun! base#varcheckexist(ref)
 
@@ -388,10 +381,10 @@ endf
 
 
 function! base#cdfile(...)
-	let file = get(a:000,0,expand('%:p'))
-	let dir  = fnamemodify(file,':p:h')
+  let file = get(a:000,0,expand('%:p'))
+  let dir  = fnamemodify(file,':p:h')
 
-	exe 'cd ' . dir
+  exe 'cd ' . dir
 endf
 
 function! base#cd(dir,...)
@@ -535,17 +528,17 @@ fun! base#initfiles(...)
     let  ok = base#sys({ "cmds" : [ 'where '.fileid ], "skip_errors" : 1 })
 
     if ok
-            let found =  base#var('sysout')
-            let add={}
-            for f in  found
-                if filereadable(f)
-                    let add[f]=1
-                endif
-            endfor
-            let k = keys(add)
-            if len(k)
-          call extend(exefiles,{ fileid : k } )
+        let found =  base#var('sysout')
+        let add={}
+        for f in  found
+            if filereadable(f)
+                let add[f]=1
             endif
+        endfor
+        let k = keys(add)
+        if len(k)
+          call extend(exefiles,{ fileid : k } )
+        endif
     endif
 
   endfor
@@ -1046,21 +1039,21 @@ fun! base#rmwh(ivar)
 endf
 
 fun! base#prompt(msg,default,...)
-	let [msg,default] = [ a:msg,a:default ]
+  let [msg,default] = [ a:msg,a:default ]
 
-	if !base#opttrue('prompt')
-		return default
-	endif
+  if !base#opttrue('prompt')
+    return default
+  endif
 
-	let complete=get(a:000,0,'')
+  let complete=get(a:000,0,'')
 
-	if strlen(complete)
-		let v = input(msg,default,complete)
-	else
-		let v = input(msg,default)
-	endif
+  if strlen(complete)
+    let v = input(msg,default,complete)
+  else
+    let v = input(msg,default)
+  endif
 
-	return v
+  return v
 endf
 
 fun! base#rmendssplitglob(pathkey,pat)
@@ -1298,7 +1291,7 @@ function! base#envcmd (...)
     endif
     let ok = base#sys({ "cmds" : [cmd], "split_output" : 1 })
 
-		return ok
+    return ok
 
 endfunction
 
@@ -1434,71 +1427,6 @@ function! base#varreset(varname,new)
 endfunction
 
  
-"""base_datupdate
-fun! base#datupdate(...)
-
- call base#varcheckexist("datfiles")
-
- if a:0
-    let dat=a:1
- else
-    let dat=base#getfromchoosedialog({ 
-       \ 'list'        : sort(keys(s:datfiles)),
-       \ 'startopt'    : 'datfiles',
-       \ 'header'      : "Available datfiles are: ",
-       \ 'numcols'     : 1,
-       \ 'bottom'      : "Choose datfile by number: ",
-       \ })
- endif
-
- if ! exists("s:datfiles[dat]")
-   return
- endif
-
- let datfile=get(s:datfiles,dat)
-
- let lines=[]
-
-"""datupdate_ctags_mkvimrc
- if dat == 'ctags_mkvimrc'
-   let ids=[ 'mkvimrc', 'vimcom', 'vimfun' ]
-   for id in ids
-     call extend(lines,base#splitglob(id,'*.vim'))
-   endfor
-
-   for subdir in [ 'plugin', 'autoload', 'ftplugin', 'syntax' ]
-        call extend(lines,split(globpath(&rtp,subdir . '/*.vim'),"\n"))
-   endfor
-
-"""datupdate_list_tex_papers
- elseif dat == 'list_tex_papers'
-
-     call extend(lines,
-        \ base#uniq(map(base#fnamemodifysplitglob('p','p.*.tex',':p:t:r'),
-        \   "matchstr(v:val,'^p\\.\\zs\\w\\+\\ze')")))
-
-"""datupdate_perl_installed_modules
- elseif dat == 'perl_installed_modules'
-   call extend(lines,base#splitsystem('pmi ^' ) )
-
-"""datupdate_perl_used_modules
- elseif dat == 'perl_used_modules'
-   call extend(lines,base#splitsystem('pmi --searchdirs ' 
-    \   . base#catpath('traveltek_modules','') . ' ^ready::ODTDMS::' ))
-
-"""datupdate_perl_local_modules
- elseif dat == 'perl_local_modules'
-   call extend(lines,base#splitsystem('pmi --searchdirs ' . $PERLMODDIR . '/lib ^' ))
-
- elseif dat == ''
-   " code
- endif
-
- call writefile(lines,datfile)
-
-endfun
-"" end base#datupdate
- 
 fun! base#readdictdat(ref)
  
  let ref=a:ref
@@ -1560,10 +1488,10 @@ function! base#findwin(ref)
     let exts = get(ref,'exts',exts_def)
     if ! len(exts) | let exts=exts_def | endif
 
-		let qw_exts = get(ref,'qw_exts','')
-		if len(qw_exts)
-			let exts = base#qw(qw_exts)
-		endif
+    let qw_exts = get(ref,'qw_exts','')
+    if len(qw_exts)
+      let exts = base#qw(qw_exts)
+    endif
 
     let dirs = get(ref,'dirs',dirs)
     
@@ -1573,19 +1501,19 @@ function! base#findwin(ref)
         call add(dirs,getcwd())
     endif
 
-		let dirids = []
-		let qw_dirids = get(ref,'qw_dirids','')
-		if len(qw_dirids)
-			let dirids = base#qw(qw_dirids)
-		endif
+    let dirids = []
+    let qw_dirids = get(ref,'qw_dirids','')
+    if len(qw_dirids)
+      let dirids = base#qw(qw_dirids)
+    endif
 
-		let dirids = get(ref,'dirids',dirids)
-		for id in dirids
-				let dir = base#path(id)
-				if len(dir)
-        	call add(dirs,dir)
-				endif
-		endfor
+    let dirids = get(ref,'dirids',dirids)
+    for id in dirids
+        let dir = base#path(id)
+        if len(dir)
+          call add(dirs,dir)
+        endif
+    endfor
 
     if do_subdirs 
         let searchopts .= ' /s '
@@ -2647,7 +2575,7 @@ function! base#varget (varname,...)
     else
         let val = ''
     if a:0
-      	unlet val | let val = a:1
+        unlet val | let val = a:1
     endif
     endif
 
@@ -2847,7 +2775,7 @@ function! base#init (...)
     call base#init#au()
     call base#init#cmds()
 
-		"" initialize allmenus
+    "" initialize allmenus
     call base#menus#init()
 
     call base#rtp#update()
@@ -3071,7 +2999,7 @@ function! base#equalpaths (p1,p2)
     let e2=remove(a2,-1)
 
     if e1 != e2 
-	    return 0
+      return 0
     endif
  endw
  return 1
