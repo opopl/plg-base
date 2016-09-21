@@ -2657,9 +2657,17 @@ function! base#datafiles (id)
 endfunction
 
 function! base#initvarsfromdat ()
+		let refdef = {}
+		let ref    = refdef
+		let refa   = get(a:000,0,{})
+
+    call extend(ref,refa)
 
     let datfiles = {}
     let datlist  = []
+
+    let dir = base#datadir()
+    let dir = get(ref,'dir',dir)
 
     let mp = { "list" : "List", "dict" : "Dictionary" }
     for type in base#qw("list dict")
@@ -2687,8 +2695,8 @@ function! base#initvarsfromdat ()
         endfor
     endfor
 
-    call base#var('datlist',datlist)
-    call base#var('datfiles',datfiles)
+    call base#varset('datlist',datlist)
+    call base#varset('datfiles',datfiles)
     
 endfunction
 
