@@ -1045,6 +1045,24 @@ fun! base#rmwh(ivar)
 
 endf
 
+fun! base#prompt(msg,default,...)
+	let [msg,default] = [ a:msg,a:default ]
+
+	if !base#opttrue('prompt')
+		return default
+	endif
+
+	let complete=get(a:000,0,'')
+
+	if strlen(complete)
+		let v = input(msg,default,complete)
+	else
+		let v = input(msg,default)
+	endif
+
+	return v
+endf
+
 fun! base#rmendssplitglob(pathkey,pat)
 
  let files=[]
