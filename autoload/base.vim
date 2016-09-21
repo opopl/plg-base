@@ -2811,28 +2811,24 @@ endf
 
 function! base#viewdat (...)
             
-  LFUN OMNI_Select_Completion
-
   if a:0
     let dat=a:1
   else
     let dat=base#getfromchoosedialog({ 
         \ 'list'        : base#varhash#keys('datfiles'),
-        \ 'startopt'    : 'perl_local_modules_to_install',
+        \ 'startopt'    : '',
         \ 'header'      : "Available DAT files are: ",
         \ 'numcols'     : 1,
         \ 'bottom'      : "Choose DAT file by number: ",
         \ })
   endif
 
-  if has_key(s:datfiles,dat)
-    let datfile=s:datfiles[dat]
+  let datfiles=base#varget('datfiles')
+
+  if has_key(datfiles,dat)
+    let datfile=datfiles[dat]
   else
     call base#subwarn("Given dat file does not exist in s:datfiles dictionary")
-  endif
-
-  if dat == '_vimrc_console_funcs_to_load_'
-    call OMNI_Select_Completion('vimfuncs')
   endif
 
   call base#fileopen(datfile)
