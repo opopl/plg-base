@@ -2663,8 +2663,8 @@ function! base#initvarsfromdat ()
 
     call extend(ref,refa)
 
-    let datfiles = {}
-    let datlist  = []
+    let datfiles = base#varget('datfiles',{})
+    let datlist  = base#varget('datlist',[])
 
     let dir = base#datadir()
     let dir = get(ref,'dir',dir)
@@ -2683,12 +2683,13 @@ function! base#initvarsfromdat ()
             call base#varsetfromdat(v,tp)
             let d = []
 
-            let dfs= base#find({ 
+            let dfs = base#find({ 
                 \   "dirs" : [ dir ], 
                 \   "exts" : [ "i.dat" ],   
                 \   "subdirs" : 1, 
                 \   "pat"     : v, })
-            let df=get(dfs,0,'')
+
+            let df = get(dfs,0,'')
 
             call add(datlist,v)
             call extend(datfiles,{ v : df }) 

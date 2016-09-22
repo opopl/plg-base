@@ -9,12 +9,12 @@ function! base#plg#loadvars (...)
 	
 	let rpath = plg.' '.'data'
 
-  let plg_datfiles=base#varget('plg_datfiles',{})
+  let datfiles = base#varget('datfiles',{})
 
 	for type in types
 		let typedir = base#qw#catpath('plg',rpath.' '.type)
 	
-		let ext = "i.dat"
+		let ext  = "i.dat"
 		let exts = [ ext ]
 
 		let fnames = base#find({ 
@@ -29,6 +29,8 @@ function! base#plg#loadvars (...)
 
       "" full path to the datfile
 			let df    = base#file#catfile([ typedir, fname .'.'.ext ])
+
+      call extend(datfiles,{ vname : df })
 
 			if type == 'list'
 				let vv = base#readarr(df)
@@ -47,6 +49,11 @@ function! base#plg#loadvars (...)
 				call base#varset(plg.'_'.k,v)
 		endfor
 	endif
+
+  call base#varset('datfiles',datfiles)
+
+  let datlist=base#varhash#keys('datfiles')
+  call base#varset('datlist',datlist)
 
 endfunction
 

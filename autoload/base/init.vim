@@ -65,6 +65,9 @@ command!-nargs=* -complete=custom,base#complete#menus
 command! -nargs=* -complete=custom,base#complete#menus
 	\	MenuAdd call base#menu#add(<f-args>,{ 'action' : 'add' })
 
+command! -nargs=* -complete=custom,base#complete#menus
+	\	MenuRemove call base#menu#remove(<f-args>)
+
 """GitUpdate
 	command! -nargs=1 -complete=custom,base#complete#gitupdate GitUpdate
 		\	call base#git#update(<f-args>)
