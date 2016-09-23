@@ -5,7 +5,9 @@ function! base#text#bufsee (...)
 	let refa   = get(a:000,0,{})
 		
 	call extend(ref,refa)
+
 	let lines = get(ref,'lines',[])
+	let cmds  = get(ref,'cmds',[])
 
 	split | enew
 
@@ -14,5 +16,9 @@ function! base#text#bufsee (...)
 	setlocal nomodifiable
 	setlocal bufhidden
 	setlocal buftype=nofile
+
+	for cmd in cmds
+		exe cmd
+	endfor
 
 endfunction

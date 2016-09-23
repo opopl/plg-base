@@ -13,7 +13,13 @@ function! base#vim#showfun (...)
 	call extend(hist,{ k : ch })
 
 	call base#varset('hist_cmds',hist)
-	call base#text#bufsee({ 'lines' : lines })
+	call base#text#bufsee({ 
+		\ 'lines' : lines,
+		\ 'cmds' : [ 
+			\	'setf vim',
+			\	'TgAdd plg',
+			\	],
+		\ })
 
 endfunction
 
@@ -31,7 +37,13 @@ function! base#vim#showcom (...)
 	call extend(hist,{ k : ch })
 
 	call base#varset('hist_cmds',hist)
-	call base#text#bufsee({ 'lines' : lines })
+	call base#text#bufsee({ 
+		\ 'lines' : lines,
+		\ 'cmds' : [ 
+			\	'setf vim',
+			\	'TgAdd plg',
+			\	],
+		\ })
 	
 endfunction
 
