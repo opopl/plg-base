@@ -197,7 +197,7 @@ function! base#tg#update (...)
 		let exts  = base#qw('tex vim bib')
 
 		let files_arr = projs#proj#files({ 
-			\	"exts" : exts,
+			\	"exts"         : exts,
 			\	"exclude_dirs" : [ 'joins', 'builds' ],
 			\	})
 
