@@ -1,6 +1,35 @@
 
 function! base#f#add (...)
   if ! exists("s:files") | let s:files={} | endif
+
+	let opt = get(a:000,0,'')
+
+	if opt == 'thisfile'
+		let filepath     = expand('%:p')
+		let bname        = expand('%:p:t')
+
+		let fileid = substitute(bname,'\.','_','g')
+
+		let fileid = input('Suggested fileid:',fileid,'custom,base#complete#fileids')
+
+		let lines=[]
+
+		call add(lines,		'-----------------------')
+		call add(lines,		 'File data to be added:')
+		call add(lines,		 '   '.fileid)
+		call add(lines,		 '   '.filepath)
+		call add(lines,		 '-----------------------')
+
+		let text = join(lines,"\n")."\n"
+
+		call base#echo({ 'text' : text, 'prefix' : '' })
+
+		let cnt = input('Continue? (1/0):',1)
+
+		if cnt
+			call base#f#set({ fileid, filepath })
+		endif
+	endif
 	
 endfunction
 
