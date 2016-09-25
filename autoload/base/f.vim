@@ -27,10 +27,15 @@ function! base#f#add (...)
 		let cnt = input('Continue? (1/0):',1)
 
 		if cnt
-			call base#f#set({ fileid, filepath })
+			call base#f#set({ fileid : filepath })
 		endif
 	endif
 	
+endfunction
+
+function! base#f#files ()
+  if ! exists("s:files") | let s:files={} | endif
+	return s:files
 endfunction
 
 function! base#f#set (ref)

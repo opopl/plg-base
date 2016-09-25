@@ -90,7 +90,7 @@ command! -nargs=* -complete=custom,base#complete#omnioptions
 	
 """BaseVarUpdate
 	command! -nargs=* -complete=custom,base#complete#varlist BaseVarUpdate 
-		\	call base#varupdate(<f-args>) 
+		\	call base#var#update(<f-args>) 
 
 """OptEcho
 	command! -nargs=* -complete=custom,base#complete#opts
