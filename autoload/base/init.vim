@@ -13,6 +13,10 @@ fun! base#init#cmds()
 	command! -nargs=* -complete=custom,base#complete#fileadd
 	    \   FileAdd call base#f#add(<f-args>) 
 
+"""FileAdd
+	command! -nargs=* -complete=custom,base#complete#fileids
+	    \   FileView call base#f#view(<f-args>) 
+
 	command! -nargs=* -complete=custom,base#complete#hist#BaseVimFun BaseVimFun
 		\	call base#vim#showfun(<f-args>)
 

@@ -1,4 +1,26 @@
 
+
+function! base#f#view (...)
+	let fileid = get(a:000,0,'')
+
+	if !strlen(fileid)
+		let fileid = input('Fileid:','','custom,base#complete#fileids')
+	endif
+
+	let fp = base#f#path(fileid)
+
+	if base#type(fp)=='List'
+		let files = fp
+
+	elseif base#type(fp)=='String'
+		let files = [ fp ]
+
+	endif
+
+	call base#fileopen({ 'files' : files })
+
+endfunction
+
 function! base#f#add (...)
   if ! exists("s:files") | let s:files={} | endif
 
@@ -42,10 +64,12 @@ function! base#f#set (ref)
 
   if ! exists("s:files") | let s:files={} | endif
 
-    for [ fileid, file ] in items(a:ref) 
-        let e = { fileid : file }
-        call extend(s:files,e)
-    endfor
+  for [ fileid, file ] in items(a:ref) 
+     let e = { fileid : file }
+     call extend(s:files,e)
+  endfor
+
+	call base#var#update('fileids')
 
 endfun
 
@@ -81,12 +105,12 @@ fun! base#f#path(...)
 
   let fpath  = get(s:files,fileid,'')
 
-    if type(fpath) == type([])
-        if len(index)
-          let p = get(fpath,index,'')
-          return p
-        endif
-    endif
+  if type(fpath) == type([])
+     if len(index)
+       let p = get(fpath,index,'')
+       return p
+     endif
+  endif
 
   return fpath
 endf
