@@ -39,7 +39,7 @@ fun! base#pdfview(...)
   let file = get(a:000,0,'')
   let opts = get(a:000,1,{})
 
-  let viewer = base#fpath('evince')
+  let viewer = base#f#path('evince')
 
   if filereadable(file)
      if get(opts,'cdfile',0)
@@ -461,37 +461,6 @@ fun! base#catpath(key,...)
 
 endf
 
-fun! base#fecho(...)
-  let aa     = a:000
-  let fileid = get(aa,0,'')
-  let fpath  = base#fpath(fileid)
-  echo fpath
-endf
-
-"echo base#fpath('perl')
-"echo base#fpath('perl',0)
-"echo base#fpath('perl',1)
-
-fun! base#fpath(...)
-  let aa=a:000
-
-  if ! exists("s:files") | let s:files={} | endif
-
-  let fileid = get(aa,0,'')
-  let index = get(aa,1,'')
-
-  let fpath  = get(s:files,fileid,'')
-
-    if type(fpath) == type([])
-        if len(index)
-          let p = get(fpath,index,'')
-          return p
-        endif
-    endif
-
-  return fpath
-endf
-
 fun! base#initfiles(...)
     call base#echoprefix('(base#initfiles)')
 
@@ -520,7 +489,7 @@ fun! base#initfiles(...)
       \ ])
 
     if filereadable(evince)
-        call base#fileset({  'evince' : evince })
+        call base#f#set({  'evince' : evince })
     endif
 
   let exefiles={}
@@ -544,7 +513,7 @@ fun! base#initfiles(...)
   endfor
 
   call base#varset('exefiles',exefiles)
-  call base#fileset(exefiles)
+  call base#f#set(exefiles)
 
   call base#echoprefixold()
 endf
@@ -1973,17 +1942,6 @@ fun! base#sys(...)
 
 endfun
 
-function! base#fileset (ref)
-
-  if ! exists("s:files") | let s:files={} | endif
-
-    for [ fileid, file ] in items(a:ref) 
-        let e = { fileid : file }
-        call extend(s:files,e)
-    endfor
-
-endfun
-
 function! base#pathset (ref)
 
   if ! exists("s:paths") | let s:paths={} | endif
@@ -2284,7 +2242,7 @@ function! base#info (...)
         call base#echo({ 'text' : "Perl-related: " } )
         call base#echo({ 'text' : "$PERLLIB => \n\t" . perllib  } )
 
-        let perlexes=join(base#fpath('perl'),"\n\t")
+        let perlexes=join(base#f#path('perl'),"\n\t")
         call base#echo({ 'text' : "Perl Executables:"   } )
         call base#echo({ 'text' : "  perlexes => \n\t" . perlexes } )
 
@@ -2778,7 +2736,7 @@ function! base#init (...)
 
     call base#pap#list()
 
-    " initialize data using base#fileset(...)
+    " initialize data using base#f#set(...)
     call base#initfiles()
 
     call base#init#au()

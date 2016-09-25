@@ -7,7 +7,11 @@ fun! base#init#cmds()
 
 """FileEcho
 	command! -nargs=1 -complete=custom,base#complete#fileids FileEcho
-		\	call base#fecho(<f-args>)
+		\	call base#f#echo(<f-args>)
+
+"""FileAdd
+	command! -nargs=* -complete=custom,base#complete#fileadd
+	    \   FileAdd call base#f#add(<f-args>) 
 
 	command! -nargs=* -complete=custom,base#complete#hist#BaseVimFun BaseVimFun
 		\	call base#vim#showfun(<f-args>)
@@ -107,6 +111,7 @@ command! -nargs=* -complete=custom,base#complete#omnioptions
 """BaseVarEcho
 	command! -nargs=* -complete=custom,base#complete#varlist
 	    \   BaseVarEcho call base#varecho(<f-args>) 
+
 
 	command! -nargs=* -complete=custom,base#complete#CD
 	    \   BasePathEcho call base#path#echo(<f-args>) 
