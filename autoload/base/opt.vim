@@ -108,7 +108,7 @@ function! base#opt#set (...)
 endfunction
 
 function! base#opt#save (...)
-	let aa=a:000
+	let aa  = a:000
 	let opt = get(aa,0,'')
 
 	if !len(opt)
@@ -137,8 +137,8 @@ function! base#opt#restore (...)
 	let sv    = get(saved,opt,'')
 
 	if len(sv)
-		call base#varset(opt,sv)
-		if exists("saved['".opt."']")
+		call base#opt#set(opt,sv)
+		if has_key(saved,opt)
 			call remove(saved,opt)
 		endif
 		call base#varset('opts_saved',saved)

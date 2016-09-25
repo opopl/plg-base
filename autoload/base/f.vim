@@ -1,8 +1,8 @@
 
 function! base#f#add (...)
+  if ! exists("s:files") | let s:files={} | endif
 	
 endfunction
-
 
 function! base#f#set (ref)
 
