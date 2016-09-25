@@ -97,6 +97,12 @@ function! base#file#catfile( ... )
 
 endf
 
+function! base#file#basename(file)
+	let file = a:file
+	let bname=fnamemodify(file,':p:t')
+	return bname
+endf
+
 function! base#file#front(file)
 
 	let spt = base#file#ossplit( a:file )

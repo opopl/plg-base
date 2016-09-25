@@ -22,3 +22,20 @@ function! base#text#bufsee (...)
 	endfor
 
 endfunction
+
+function! base#text#append (...)
+	let refdef = {}
+	let ref    = refdef
+	let refa   = get(a:000,0,{})
+		
+	call extend(ref,refa)
+
+	let lines = get(ref,'lines',[])
+
+	call append(line('.'),lines)
+
+	for cmd in cmds
+		exe cmd
+	endfor
+
+endfunction
