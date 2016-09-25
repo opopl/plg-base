@@ -6,7 +6,7 @@ fun! base#init#cmds()
 		\	call base#CD(<f-args>) 
 
 """FileEcho
-	command! -nargs=1 -complete=custom,base#complete#fileids FileEcho
+	command! -nargs=* -complete=custom,base#complete#fileids FileEcho
 		\	call base#f#echo(<f-args>)
 
 """FileAdd

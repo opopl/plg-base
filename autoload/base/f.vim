@@ -15,10 +15,20 @@ function! base#f#set (ref)
 
 endfun
 
+fun! base#f#showfiles(...)
+  if ! exists("s:files") | let s:files={} | endif
+
+	echo s:files
+endfun
 
 fun! base#f#echo(...)
   let aa     = a:000
   let fileid = get(aa,0,'')
+
+	if !strlen(fileid)
+		call base#f#showfiles()
+	endif
+
   let fpath  = base#f#path(fileid)
   echo fpath
 endf
