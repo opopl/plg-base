@@ -1183,7 +1183,8 @@ function! base#git (...)
         call base#opt#set(ref)
 
 				call base#echo({ 
-					\ 'text' : 'Saving to Git repo...'
+					\ 'text'   : 'Saving to Git repo...',
+					\ 'prefix' : '',
 					\	})
 
         for cmd in cmds
