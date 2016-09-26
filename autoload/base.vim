@@ -1182,6 +1182,10 @@ function! base#git (...)
         let kept=base#opt#get(gitopts)
         call base#opt#set(ref)
 
+				call base#echo({ 
+					\ 'text' : 'Saving to Git repo...'
+					\	})
+
         for cmd in cmds
             call base#git(cmd)
         endfor
