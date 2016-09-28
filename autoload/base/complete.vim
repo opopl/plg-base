@@ -36,6 +36,10 @@ function! base#complete#CD (...)
   return base#complete#vars([ 'pathlist' ])
 endfunction
 
+function! base#complete#sync (...)
+  return base#complete#vars([ 'opts_Sync' ])
+endfunction
+
 
 function! base#complete#paplist (...)
   return base#complete#vars([ 'paplist' ])
