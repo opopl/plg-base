@@ -79,6 +79,9 @@ command! -nargs=* -complete=custom,base#complete#menus
 """GitUpdate
 	command! -nargs=1 -complete=custom,base#complete#gitupdate GitUpdate
 		\	call base#git#update(<f-args>)
+
+	command! -nargs=1 -complete=custom,base#complete#sync Sync
+		\	call base#sync#run(<f-args>)
 	
 """INFO
 	command! -nargs=* -complete=custom,base#complete#info    INFO
