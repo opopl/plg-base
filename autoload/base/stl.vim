@@ -6,7 +6,7 @@ function! base#stl#set (...)
     else
       let opt='neat'
 
-      let listcomps=g:F_StatusLineKeys
+      let listcomps=base#varget('stlkeys')
   
       let liststr = join(listcomps,"\n")
       let dialog  = "Available status line keys  are: " . "\n"
@@ -23,16 +23,19 @@ function! base#stl#set (...)
 
 	if opt == 'ap'
 		call ap#stl()
-        let sline  = &stl
-	elseif exists('g:F_StatusLines')
-        let sline  = get(g:F_StatusLines,opt)
-        let evs    = "setlocal statusline=" . sline
-        let g:F_StatusLine      = opt
-        let g:F_StatusLineOrder = []
+    let sline  = &stl
 
-        if exists('g:F_StatusLineOrders[opt]')
-            let g:F_StatusLineOrder=g:F_StatusLineOrders[opt]
-        endif
+	elseif base#varexists('statuslines')
+    let sline  = base#varhash#get('statuslines',opt,'')
+    let evs    = "setlocal statusline=" . sline
+
+    call base#varset('statusline',opt)
+    call base#varset('statuslineorder',[])
+
+    if base#varhash#haskey('stlorders',opt)
+        let stlorder=base#varhash#get('stlorders',opt)
+				call base#varset('statuslineorder',stlorder)
+    endif
 	endif
 	if strlen(evs) | silent exe evs | endif
 
@@ -50,146 +53,141 @@ function!  base#stl#setparts ()
  call F_SoPiece("NeatStatusLine.vim")
 
 """stl_neat
-  let g:stlparts={}
+  let stlparts={}
 
     " mode (changes color)
-  let g:stlparts['mode']= '%1*\ %{NeatStatusLine_Mode()}\ %0*' 
+  let stlparts['mode']= '%1*\ %{NeatStatusLine_Mode()}\ %0*' 
 
-  let g:stlparts['pathids']= '%3*\ %{base#buf#pathids_str()}\ %0*' 
+  let stlparts['pathids']= '%3*\ %{base#buf#pathids_str()}\ %0*' 
 
-  let g:stlparts['fold_level']="%5*%{foldlevel(line('.'))}%0*"
+  let stlparts['fold_level']="%5*%{foldlevel(line('.'))}%0*"
 
 """stl_neat_session_name
     " session name
-  let g:stlparts['session_name']='%5*\ %{g:neatstatus_session}\ %0*' 
+  let stlparts['session_name']='%5*\ %{g:neatstatus_session}\ %0*' 
 
 """stl_neat_file_path
     " file path
-  let g:stlparts['file_name']="%{expand('%:p:t')}" 
+  let stlparts['file_name']="%{expand('%:p:t')}" 
 
-  let g:stlparts['bush_name']="%{expand('%:p:t:r')}" 
+  let stlparts['bush_name']="%{expand('%:p:t:r')}" 
 
-  let g:stlparts['file_dir']="%{expand('%:p:h:')}" 
+  let stlparts['file_dir']="%{expand('%:p:h:')}" 
 
-  let g:stlparts['full_file_path']="%{expand('%:p')}" 
+  let stlparts['full_file_path']="%{expand('%:p')}" 
 
 """stl_neat_file_flags
     " read only, modified, modifiable flags in brackets
-	let g:stlparts['file_flags']='%([%R%M]%)' 
+	let stlparts['file_flags']='%([%R%M]%)' 
 	
 	" right-align everything past this point
-	let g:stlparts['right_align']= '%=' 
+	let stlparts['right_align']= '%=' 
     
 """stl_neat_read_only
 	" readonly flag
-	let g:stlparts['read_only']="%{(&ro!=0?'(readonly)':'')}"
+	let stlparts['read_only']="%{(&ro!=0?'(readonly)':'')}"
 	
 	" file type (eg. python, ruby, etc..)
-	let g:stlparts['file_type']= '%8*%{&filetype}%0*' 
+	let stlparts['file_type']= '%8*%{&filetype}%0*' 
 	
-	let g:stlparts['keymap']= '%8*%{&keymap}' 
+	let stlparts['keymap']= '%8*%{&keymap}' 
 	
 	" file format (eg. unix, dos, etc..)
-	let g:stlparts['file_format']='%{&fileformat}'
+	let stlparts['file_format']='%{&fileformat}'
 
   " file encoding (eg. utf8, latin1, etc..)
-	let g:stlparts['file_encoding']= "%4*%{(&fenc!=''?&fenc:&enc)}%0*"
+	let stlparts['file_encoding']= "%4*%{(&fenc!=''?&fenc:&enc)}%0*"
 
-	let g:stlparts['encoding']= "%4*%{&enc}%0*"
-	let g:stlparts['base_buftype']= "%4*%{base#buf#type()}%0*"
+	let stlparts['encoding']= "%4*%{&enc}%0*"
+	let stlparts['base_buftype']= "%4*%{base#buf#type()}%0*"
 
-	let g:stlparts['gitdir'] = "%4*Dir[%{base#varget('stl_gitcmd_dirname')}]%0*"
-	let g:stlparts['gitcmd'] = "%3*%{base#varget('stl_gitcmd_cmd')}%0*"
+	let stlparts['gitdir'] = "%4*Dir[%{base#varget('stl_gitcmd_dirname')}]%0*"
+	let stlparts['gitcmd'] = "%3*%{base#varget('stl_gitcmd_cmd')}%0*"
 
   " buffer number
-	let g:stlparts['buffer_number']='#%n'
+	let stlparts['buffer_number']='#%n'
 
   "line number (pink) / total lines
-	let g:stlparts['line_number']='%4*\ %l%0*'
+	let stlparts['line_number']='%4*\ %l%0*'
 
   " column number (minimum width is 4)
-  let g:stlparts['column_number'] = '%3*\ %-3.c%0*'
+  let stlparts['column_number'] = '%3*\ %-3.c%0*'
 
-  let g:stlparts['ignore_case']   = '%{F_IgnoreCase()}'
+  let stlparts['ignore_case']   = '%{F_IgnoreCase()}'
 
-    let g:stlparts['color_red']   = '%3*'
-    let g:stlparts['color_blue']  = '%8*'
-    let g:stlparts['color_white'] = '%0*'
+  let stlparts['color_red']   = '%3*'
+  let stlparts['color_blue']  = '%8*'
+  let stlparts['color_white'] = '%0*'
 
-    let g:stlparts['plg_name'] = '%1*\ %{ap#plg#name()}\ %0*'
+  let stlparts['plg_name'] = '%1*\ %{ap#plg#name()}\ %0*'
 
-    " percentage done
-    let g:stlparts['percentage_done']='(%-3.p%%)'
+  " percentage done
+  let stlparts['percentage_done']='(%-3.p%%)'
 
-    " modified / unmodified (purple)
-    let g:stlparts['is_modified']="%6*%{&modified?'modified':''}"
+  " modified / unmodified (purple)
+  let stlparts['is_modified']="%6*%{&modified?'modified':''}"
 
-    let g:stlparts['projs_rootbasename'] = '%1*\ %{projs#rootbasename()}\ %0*' 
-    let g:stlparts['projs_proj'] = '%2*\ %{projs#proj#name()}\ %0*' 
-    let g:stlparts['projs_sec']  = '%7*\ %{projs#proj#secname()}\ %0*' 
+  let stlparts['projs_rootbasename'] = '%1*\ %{projs#rootbasename()}\ %0*' 
+  let stlparts['projs_proj'] = '%2*\ %{projs#proj#name()}\ %0*' 
+  let stlparts['projs_sec']  = '%7*\ %{projs#proj#secname()}\ %0*' 
 
-    let g:stlparts['vimfun']= '%1*\ %{g:vimfun}\ %0*' 
-    let g:stlparts['vimcom']= '%1*\ %{g:vimcom}\ %0*' 
-    let g:stlparts['vimproject']= '%1*\ %{g:vimproject}\ %0*' 
+  let stlparts['vimfun']= '%1*\ %{g:vimfun}\ %0*' 
+  let stlparts['vimcom']= '%1*\ %{g:vimcom}\ %0*' 
+  let stlparts['vimproject']= '%1*\ %{g:vimproject}\ %0*' 
 
-    let g:stlparts['stlname']= '%2*\ %{g:F_StatusLine}\ %0*' 
+  let stlparts['stlname']= '%2*\ %{g:F_StatusLine}\ %0*' 
 
-    let g:stlparts['tags']= '%{fnamemodify(&tags,' . "'" . ':~' . "'" . ')}' 
+  let stlparts['tags']= '%{fnamemodify(&tags,' . "'" . ':~' . "'" . ')}' 
 
-    let g:stlparts['tgids'] = '%1*\ %{base#tg#ids_comma()}\ %0*' 
+  let stlparts['tgids'] = '%1*\ %{base#tg#ids_comma()}\ %0*' 
 
-    let g:stlparts['makeprg']='%1*\ %{&makeprg}' 
+  let stlparts['makeprg']='%1*\ %{&makeprg}' 
 
-	let g:stlparts['column_number']='%3*\ %-3.c%0*'
+	let stlparts['column_number']='%3*\ %-3.c%0*'
 	
-	let g:stlparts['ignore_case']='%{F_IgnoreCase()}'
+	let stlparts['ignore_case']='%{F_IgnoreCase()}'
 
-	let g:stlparts['color_red']='%3*'
-	let g:stlparts['color_blue']='%8*'
-	let g:stlparts['color_white']='%0*'
+	let stlparts['color_red']='%3*'
+	let stlparts['color_blue']='%8*'
+	let stlparts['color_white']='%0*'
 	
 	" percentage done
-	let g:stlparts['percentage_done']='(%-3.p%%)'
+	let stlparts['percentage_done']='(%-3.p%%)'
 	
 	" modified / unmodified (purple)
-	let g:stlparts['is_modified']="%6*%{&modified?'modified':''}"
+	let stlparts['is_modified']="%6*%{&modified?'modified':''}"
 
-	let g:stlparts['plg_name'] = '%1*\ %{ap#plg#name()}\ %0*' 
+	let stlparts['plg_name'] = '%1*\ %{ap#plg#name()}\ %0*' 
 	
-	let g:stlparts['vimfun']= '%1*\ %{g:vimfun}\ %0*' 
-	let g:stlparts['vimcom']= '%1*\ %{g:vimcom}\ %0*' 
-	let g:stlparts['vimproject']= '%1*\ %{g:vimproject}\ %0*' 
+	let stlparts['vimfun']= '%1*\ %{g:vimfun}\ %0*' 
+	let stlparts['vimcom']= '%1*\ %{g:vimcom}\ %0*' 
+	let stlparts['vimproject']= '%1*\ %{g:vimproject}\ %0*' 
 	
-	let g:stlparts['stlname']= '%2*\ %{g:F_StatusLine}\ %0*' 
+	let stlparts['stlname']= '%2*\ %{g:F_StatusLine}\ %0*' 
 	
-	let g:stlparts['tags']= '%{fnamemodify(&tags,' . "'" . ':~' . "'" . ')}' 
+	let stlparts['tags']= '%{fnamemodify(&tags,' . "'" . ':~' . "'" . ')}' 
 	
-	let g:stlparts['makeprg']='%1*\ %{&makeprg}' 
+	let stlparts['makeprg']='%1*\ %{&makeprg}' 
 	
 	"call base#varupdate('PMOD_ModuleName')
-    let g:stlparts['perl_module_name']   ='%5*\ %{perlmy#modname()}\ %0*' 
-    let g:stlparts['path_relative_home'] ='%{expand(' . "'" . '%:~:t' . "'" . ')}'
+  let stlparts['perl_module_name']   ='%5*\ %{perlmy#modname()}\ %0*' 
+  let stlparts['path_relative_home'] ='%{expand(' . "'" . '%:~:t' . "'" . ')}'
+
+	call base#varset('stlparts',stlparts)
 
 endfun
 
-fun! base#stl#setlines(...)
+function! base#stl#setorders ()
 
-  let g:F_StatusLineOrders={}
+	call base#echo({ 'text' : 'base#stl#setorders()'})
 
-  let g:F_StatusLines={
-    \  'enc' : '%<%f%h%m%r%=format=%{&fileformat}\ file=%{&fileencoding}\ enc=%{&encoding}\ %b\ 0x%B\ %l,%c%V\ %P',
-        \  'vim_COM' :   ''
-                \   . '\ %{expand(' . "'" . '%:~:t:r' . "'" . ')}' ,
-    \   }
-
-  for key in keys(g:F_StatusLines)
-    let g:F_StatusLineOrders[key]=[]
+	let stlorders={}
+  for key in base#varhash#keys('statuslines')
+    let stlorders[key]=[]
   endfor
 
-  call base#stl#setparts()
-
 """base_stl_plg
-  let g:F_StatusLineOrders={
+  call extend(stlorders,{
         \   'enc'   :   [ 
                 \   'file_name',
                 \   'file_format',
@@ -212,20 +210,20 @@ fun! base#stl#setlines(...)
                 \       ],
         \   'simple'   :   [ 
 		        \   'buffer_number' ,
-		        \   'line_number'    ,
+		        \   'line_number'   ,
 		        \   'file_name'     ,
 		        \   'file_encoding' ,
 		        \   'encoding'      ,
                 \       ],
         \   'plg'   :   [ 
 		        \   'plg_name'      ,
-		        \   'line_number'      ,
+		        \   'line_number'   ,
 		        \   'buffer_number' ,
 		        \   'file_name'     ,
 		        \   'tgids'         ,
                 \       ],
         \   'neat'   :   [ 
-		        \   'tgids'          ,
+		        \   'tgids'         ,
 		        \   'mode'          ,
 		        \   'session_name'  ,
 		        \   'file_name'     ,
@@ -292,31 +290,48 @@ fun! base#stl#setlines(...)
 		        \   'keymap'        ,
 		        \   'tgids'         ,
 		        \   ],
-        \   }
+        		\ })
 
-  let g:F_StatusLineKeys=sort(keys(g:F_StatusLineOrders))
+	call base#varset('stlorders',stlorders)
+	
+endfunction
 
-  for var in [ 'F_StatusLineBefore', 'F_StatusLineAfter' ]
- 	call base#setglobalvarfromdat(var, { 'splitlines': 1 } )
-  endfor
+fun! base#stl#setlines(...)
 
-  for key in g:F_StatusLineKeys
+  let statuslines={
+    \  'enc' : '%<%f%h%m%r%=format=%{&fileformat}\ file=%{&fileencoding}\ enc=%{&encoding}\ %b\ 0x%B\ %l,%c%V\ %P',
+        \  'vim_COM' :   ''
+                \   . '\ %{expand(' . "'" . '%:~:t:r' . "'" . ')}' ,
+    \   }
+	call base#varset('statuslines',statuslines)
+
+  call base#stl#setparts()
+  call base#stl#setorders()
+
+	let stlorders = base#varget('stlorders',{})
+	let stlkeys   = base#varhash#keys('stlorders')
+
+	call base#varset('stlkeys',stlkeys)
+
+  for key in base#varget('stlkeys')
        let stl=''
 
        let idlist=[]
-       let idlist=copy(g:F_StatusLineBefore)
-       call extend(idlist,g:F_StatusLineOrders[key])
-       call extend(idlist,g:F_StatusLineAfter)
+			 "
+			 let sto=base#varhash#get('stlorders',key,[])
+
+       call extend(idlist,sto)
 
        for id in idlist
-         let stl.='\ ' . g:stlparts[id]
+         let stl.='\ ' . base#varhash#get('stlparts',id,'')
        endfor
 
-       let g:F_StatusLines[key]=stl
+       let statuslines[key]=stl
   endfor
 
-""========================================================
-  let g:F_StatusLines['perl_']=g:F_StatusLines['perl_pl']
+  let statuslines['perl_']=get(statuslines,'perl_pl','')
+
+	call base#varset('statuslines',statuslines)
 
 endfun
 

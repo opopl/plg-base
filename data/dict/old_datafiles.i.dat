@@ -1,0 +1,157 @@
+#Name                       RootdirID               subdirs
+MKPROJS                   _projs_
+PROJS                     _projs_
+PaperConf_subsyms                   _perlmod_ /mods/OP-PaperConf
+module_subs                         _perlmod_ inc
+modules_all                         _perlmod_ inc
+modules_to_install                  _perlmod_ inc
+TRV_subs                            _traveltek_filer_
+installvim_actions                  _scripts_  inc
+installvim_builds                   _scripts_  inc
+lastcommits                         _conf_ inc
+keys.done_cbib2cite                 _p_
+list_bibkeys                        _p_
+list_tex_papers                     _p_
+pap.parts                           _p_
+hperl_targets                       _docperltex_
+#################
+varupdate_pieces_papers
+#################
+complete_perl_traveltek
+#################
+DICT_dicts
+INFO_topics
+F_menus
+F_StatusLineAfter
+F_StatusLineBefore
+LASU_FoldedEnvironments
+LASU_FoldedMisc
+LASU_FoldedSectionEnds
+LASU_FoldedSections
+LASU_IgnoredWarnings
+OMNI_COMP_ARRAYS
+PAP_allowed_psecs
+PAP_GitCmds
+PerlImport
+PerlTopics
+PerlTopics_AUTOLOAD
+PerlTopics__DATA__
+PerlTopics_attributes
+PerlTopics_statements
+SqlCommands
+###TEX
+TEX_InsertEntries
+TEX_InsertCommands
+TEX_TexDocEntries
+TEX_TexPackages
+TEX_EscapeSymbols
+TEX_latex_environments
+TEX_latex_counters
+TEX_latex_pagestyles
+TEX_latex_commands_graphics
+TEX_latex_commands_text
+TEX_latex_commands_core
+TEX_TEXHT_actions
+#
+TEX_venclose_leftright
+TEX_venclose_isecs
+#
+TEX_plaintex_commands
+TEX_TEXHT_commands
+#####
+_vimrc_console_coms_to_load
+_vimrc_console_funcs_to_load
+_vimrc_console_pieces_to_load
+bushes _mkbashrc_
+datfiles
+load_coms
+load_coms_apache
+load_coms_papers
+load_coms_mkvimrc
+load_coms_funcs
+load_coms_docs
+load_coms_perl
+load_coms_tex
+load_coms_txt
+load_funcs
+load_funcs_perl
+load_pieces
+load_pieces_simple
+makeprgs
+errorformats
+opts
+vars
+perl_core_modules
+perl_used_modules
+perl_core_subs
+perl_installed_modules
+perl_ptags_dirs
+used_keymaps
+plugins
+plugin_acts
+vimtest
+RE
+nice_projs_subwords
+###ctags
+CTAGS_TagIDs
+# lists of files to be run through ctags or other 
+# tags-generating program
+#   functions involved:
+#     F_PTAGS - for ptags
+#     CTAGS_RunCtags
+ctags_mkvimrc
+# 
+rtp
+# 
+snippetdirs
+#
+VH_acts
+#
+VarUpdateOptions
+VarUpdateDat
+#
+TXT_InsertCmds_perl
+TXT_InsertCmds_vim
+TXT_InsertCmds_tex
+TXT_InsertCmds_html
+#
+modelines
+###projs
+DC_Proj_SecNamesBase
+DC_ProjTypes
+DC_ProjStructures
+DC_PrjMakeSteps
+###vim
+vim_funcs_core
+vim_funcs_onload
+###SIMPLE
+SIMPLE_MakeSteps
+#
+menus_toolbar_remove_items
+menus_remove
+###perl_modules
+perl_modules_BASE
+perl_modules_CGI
+perl_modules_GIT
+perl_modules_GOPS
+perl_modules_PAPS
+perl_modules_PERL
+perl_modules_POD
+perl_modules_PROJS
+perl_modules_TEX
+perl_modules_VIM
+perl_modules_HTML
+APACHE_Files
+perldoc2tex_topics
+PAP_TexNiceOptions
+PAP_bibfiles
+PAP_MakeSteps
+DatUpdateOptions
+vimprojects
+docperltex_makefile_targets
+#
+cdpath_opdesk
+extensions_tex
+grepprgs
+F_INFO_topics
+F_INSERT_types

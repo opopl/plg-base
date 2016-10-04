@@ -18,7 +18,12 @@ endfunction
 
 function! base#git#save ()
 
-  let ref = { 'cmds' : [ 'save'], 'gitopts' : { 'git_prompt' : 0}  }
+  let ref = { 
+		\ 'cmds' : [ 'save'], 
+		\ 'gitopts' : { 
+			\ 'git_prompt' : 0
+		  \ }  
+	\	}
   call base#git(ref)
         
 endfunction

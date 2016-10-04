@@ -55,7 +55,7 @@ function! base#exe#select (...)
 	
   let exe   = exename
   let exes  = []
-  let fpath = base#fpath(exename)
+  let fpath = base#f#path(exename)
 
   if type(fpath)==type([])
      let exes = fpath

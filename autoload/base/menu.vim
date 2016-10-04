@@ -1,4 +1,23 @@
 
+function! base#menu#remove(...)
+
+	if a:0
+    let menuopt=a:1
+ else
+    let menuopt=base#getfromchoosedialog({ 
+        \ 'list'        : base#varget('menus',[]),
+        \ 'startopt'    : 'projs',
+        \ 'header'      : "Available menu options are: ",
+        \ 'numcols'     : 1,
+        \ 'bottom'      : "Choose menu option by number: ",
+        \ })
+ endif
+
+ if menuopt == 'projs'
+		call projs#menus#remove()
+ endif
+
+endfunction
 
 function! base#menu#add(...)
 
@@ -44,7 +63,6 @@ function! base#menu#add(...)
 
  elseif opts.action == 'add'
  	 call base#list#add('g:isloaded.menus',menuopt)
-
  endif
 
 """_menuopt

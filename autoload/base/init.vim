@@ -1,5 +1,4 @@
 
-
 fun! base#init#cmds()
 
 """CD
@@ -7,13 +6,21 @@ fun! base#init#cmds()
 		\	call base#CD(<f-args>) 
 
 """FileEcho
-	command! -nargs=1 -complete=custom,base#complete#fileids FileEcho
-		\	call base#fecho(<f-args>)
+	command! -nargs=* -complete=custom,base#complete#fileids FileEcho
+		\	call base#f#echo(<f-args>)
 
-	command! -nargs=* BaseVimFun
+"""FileAdd
+	command! -nargs=* -complete=custom,base#complete#fileadd
+	    \   FileAdd call base#f#add(<f-args>) 
+
+"""FileAdd
+	command! -nargs=* -complete=custom,base#complete#fileids
+	    \   FileView call base#f#view(<f-args>) 
+
+	command! -nargs=* -complete=custom,base#complete#hist#BaseVimFun BaseVimFun
 		\	call base#vim#showfun(<f-args>)
 
-	command! -nargs=* BaseVimCom
+	command! -nargs=* -complete=custom,base#complete#hist#BaseVimCom BaseVimCom
 		\	call base#vim#showcom(<f-args>)
 
 """LCOM
@@ -66,9 +73,15 @@ command!-nargs=* -complete=custom,base#complete#menus
 command! -nargs=* -complete=custom,base#complete#menus
 	\	MenuAdd call base#menu#add(<f-args>,{ 'action' : 'add' })
 
+command! -nargs=* -complete=custom,base#complete#menus
+	\	MenuRemove call base#menu#remove(<f-args>)
+
 """GitUpdate
 	command! -nargs=1 -complete=custom,base#complete#gitupdate GitUpdate
 		\	call base#git#update(<f-args>)
+
+	command! -nargs=1 -complete=custom,base#complete#sync Sync
+		\	call base#sync#run(<f-args>)
 	
 """INFO
 	command! -nargs=* -complete=custom,base#complete#info    INFO
@@ -84,7 +97,7 @@ command! -nargs=* -complete=custom,base#complete#omnioptions
 	
 """BaseVarUpdate
 	command! -nargs=* -complete=custom,base#complete#varlist BaseVarUpdate 
-		\	call base#varupdate(<f-args>) 
+		\	call base#var#update(<f-args>) 
 
 """OptEcho
 	command! -nargs=* -complete=custom,base#complete#opts
@@ -105,6 +118,10 @@ command! -nargs=* -complete=custom,base#complete#omnioptions
 """BaseVarEcho
 	command! -nargs=* -complete=custom,base#complete#varlist
 	    \   BaseVarEcho call base#varecho(<f-args>) 
+
+
+	command! -nargs=* -complete=custom,base#complete#CD
+	    \   BasePathEcho call base#path#echo(<f-args>) 
 	
 """BaseInit
 	command! -nargs=* -complete=custom,base#complete#init

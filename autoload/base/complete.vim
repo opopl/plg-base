@@ -28,9 +28,18 @@ function! base#complete#fileids (...)
   return base#complete#vars([ 'fileids' ])
 endfun
 
+function! base#complete#fileadd(...)
+  return base#complete#vars([ 'opts_FileAdd' ])
+endfun
+
 function! base#complete#CD (...)
   return base#complete#vars([ 'pathlist' ])
 endfunction
+
+function! base#complete#sync (...)
+  return base#complete#vars([ 'opts_Sync' ])
+endfunction
+
 
 function! base#complete#paplist (...)
   return base#complete#vars([ 'paplist' ])
@@ -70,15 +79,8 @@ function! base#complete#datlist (...)
 endfunction
 
 function! base#complete#statuslines (...)
- 
   call base#stl#setlines()
-  let comps = keys(g:F_StatusLines)
-  call add(comps,'ap')
-
-  let comps = base#uniq(comps)
-
-  return join(sort(comps),"\n")
- 
+  return base#complete#vars([ 'stlkeys' ])
 endfun
 
 function! base#complete#keymap (...)

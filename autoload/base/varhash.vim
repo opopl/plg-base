@@ -1,6 +1,6 @@
 
 function! base#varhash#keys (var)
-	let val = base#var(a:var)
+	let val = base#varget(a:var)
 
 	let keys=[]
 	if base#type(val) == 'Dictionary'
@@ -17,26 +17,25 @@ function! base#varhash#keys (var)
 endfunction
 
 function! base#varhash#get (...)
-	let hash={}
-	let key=''
-	if a:0
-		let hashname = a:1
-		if a:0 == 2
-			let key = a:2
-		endif
-	endif
 
-	let val = base#var(hashname)
-	if base#type(val) == "List"
+	let hashname = get(a:000,0,'')
+	let key      = get(a:000,1,'')
+	let default  = get(a:000,2,{})
+
+	if !strlen(hashname) | return default | endif
+
+	let val = base#varget(hashname)
+
+	if base#type(val) == "Dictionary"
 		let hash = val
-		if key
-			return hash[key]
+		if strlen(key)
+			return get(hash,key,default)
 		else 
-			return hash
+			return default
 		endif
 	endif
 
-	return hash
+	return default
 
 endfunction
 

@@ -9,10 +9,12 @@ function! base#plg#loadvars (...)
 	
 	let rpath = plg.' '.'data'
 
+  let datfiles = base#varget('datfiles',{})
+
 	for type in types
 		let typedir = base#qw#catpath('plg',rpath.' '.type)
 	
-		let ext = "i.dat"
+		let ext  = "i.dat"
 		let exts = [ ext ]
 
 		let fnames = base#find({ 
@@ -24,7 +26,11 @@ function! base#plg#loadvars (...)
 	
 		for fname in fnames
 			let vname = plg.'_'.fname
+
+      "" full path to the datfile
 			let df    = base#file#catfile([ typedir, fname .'.'.ext ])
+
+      call extend(datfiles,{ vname : df })
 
 			if type == 'list'
 				let vv = base#readarr(df)
@@ -32,7 +38,7 @@ function! base#plg#loadvars (...)
 				let vv = base#readdict(df)
 			endif
 	
-			call base#var(vname,vv)
+			call base#varset(vname,vv)
 			if exists("vv") | unlet vv | endif 
 		endfor
 	endfor
@@ -43,6 +49,11 @@ function! base#plg#loadvars (...)
 				call base#varset(plg.'_'.k,v)
 		endfor
 	endif
+
+  call base#varset('datfiles',datfiles)
+
+  let datlist=base#varhash#keys('datfiles')
+  call base#varset('datlist',datlist)
 
 endfunction
 
@@ -68,7 +79,10 @@ function! base#plg#opendat (...)
 				\ })
 		let df = base#file#catfile([ dir, df ])
 
-		call base#fileopen({ "files": [ df ], 'action' : 'split' })
+		call base#fileopen({ 
+      \ "files"  : [ df ],
+      \ 'action' : 'split'
+      \ })
 
 		call base#tg#add('plg_'.plg)
 		call base#stl#set('plg')

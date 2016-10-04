@@ -4,6 +4,7 @@ dirs
 encodings
 env
 file
+git
 grep
 keymap
 lasu
@@ -12,13 +13,13 @@ make
 opts
 paths
 perl
+perlapp
 plg_tagbar
 plugins
 proj
+proj_usedpacks
 rtp
 statusline
 tags
 vhooks
 vim
-git
-perlapp
