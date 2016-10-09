@@ -1,4 +1,6 @@
 
+"function! base#plg#loadfun(...)
+"endf
 
 function! base#plg#loadvars (...)
 	if a:0
