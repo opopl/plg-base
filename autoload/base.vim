@@ -617,14 +617,14 @@ fun! base#fileopen(ref)
  let opts={}
 
  if base#type(a:ref) == 'String'
-   let files=[ a:ref ] 
+   let files = [ a:ref ] 
    
  elseif base#type(a:ref) == 'List'
-   let files=a:ref  
+   let files = a:ref  
    
  elseif base#type(a:ref) == 'Dictionary'
-   let files=a:ref.files  
-   let a = get(a:ref,'action',a)
+   let files = a:ref.files
+   let a     = get(a:ref,'action',a)
 
    call extend(opts,a:ref)
    
