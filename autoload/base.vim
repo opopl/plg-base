@@ -566,7 +566,7 @@ fun! base#initpaths(...)
         \ 'conf'    : confdir ,
         \ 'vrt'     : vrt,
         \ 'vim'     : base#envvar('VIM'),
-        \ 'texdocs' : base#envvar('TEXDOCS'),
+        \ 'texdocs' : projsdir,
         \ 'p'       : base#envvar('TexPapersRoot'),
         \ 'phd_p'   : base#envvar('TexPapersRoot'),
         \   })
