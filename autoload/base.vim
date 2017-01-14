@@ -1921,8 +1921,8 @@ fun! base#sys(...)
     endif
  endfor
 
- call base#var('sysout',output)
- call base#var('sysoutstr',outputstr)
+ call base#varset('sysout',output)
+ call base#varset('sysoutstr',outputstr)
 
  if get(opts,'split_output',0)
     let so_cmds=get(opts,'split_output_cmds',[])

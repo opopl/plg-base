@@ -20,10 +20,10 @@ function! base#plg#loadvars (...)
 		let exts = [ ext ]
 
 		let fnames = base#find({ 
-			\	"dirs" : [typedir], 
-			\	"exts" : exts,
+			\	"dirs"    : [typedir],
+			\	"exts"    : exts,
 			\	"relpath" : 1,
-			\	"rmext" : 1,
+			\	"rmext"   : 1,
 			\	})
 	
 		for fname in fnames
