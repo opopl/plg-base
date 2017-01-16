@@ -563,6 +563,8 @@ fun! base#initpaths(...)
 		endif
 
     call base#pathset({ 
+        \ 'home'    : home ,
+        \ 'hm'    : hm ,
         \ 'conf'    : confdir ,
         \ 'vrt'     : vrt,
         \ 'vim'     : base#envvar('VIM'),
@@ -575,6 +577,7 @@ fun! base#initpaths(...)
     let mkbashrc = base#file#catfile([ base#path('conf'), 'mk', 'bashrc' ])
 
     call base#pathset({
+				\   'desktop'     : base#file#catfile([ hm, base#qw("Desktop") ]),
         \   'mkvimrc'     : mkvimrc,
         \   'pdfout'      : base#envvar('PDFOUT'),
         \   'mkbashrc'    : mkbashrc,

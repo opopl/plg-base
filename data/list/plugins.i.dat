@@ -5,6 +5,7 @@ ap
 base
 bufexplorer
 ctags
+emmet
 fileutils
 findstr
 genutils
