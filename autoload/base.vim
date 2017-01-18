@@ -577,9 +577,13 @@ fun! base#initpaths(...)
     let mkbashrc = base#file#catfile([ base#path('conf'), 'mk', 'bashrc' ])
 
     call base#pathset({
+        \   'pdfout'      : base#envvar('PDFOUT'),
+        \   'htmlout'     : base#envvar('HTMLOUT'),
+				\	})
+
+    call base#pathset({
 				\   'desktop'     : base#file#catfile([ hm, base#qw("Desktop") ]),
         \   'mkvimrc'     : mkvimrc,
-        \   'pdfout'      : base#envvar('PDFOUT'),
         \   'mkbashrc'    : mkbashrc,
         \   'coms'        : base#file#catfile([ mkvimrc, '_coms_' ]) ,
         \   'funs'        : base#file#catfile([ mkvimrc, '_fun_' ]) ,
@@ -604,9 +608,15 @@ fun! base#initpaths(...)
     let g:dirs = s:paths
 
     let pathlist= sort(keys(s:paths))
-    call base#var('pathlist',pathlist)
+    call base#varset('pathlist',pathlist)
+
+		echo '--- base#initpaths ( paths initialization ) --- '
+		echo 'Have set the value of g:dirs'
+		echo 'Have set the value of base variable "pathlist" (check it via BaseVarEcho)'
+		echo '--------------------------------------------------- '
 
     call base#echoprefixold()
+
 endf
  
 """base_fileopen
@@ -2704,7 +2714,12 @@ function! base#initplugins (...)
     call base#varsetfromdat('plugins','List')
 
     if exists('g:plugins') | unlet g:plugins | endif
-    let g:plugins=base#var('plugins')
+    let g:plugins=base#varget('plugins',[])
+
+		echo '--- base#initplugins ( plugins initialization ) --- '
+		echo 'Have set the value of g:plugins'
+		echo 'Have set the value of base variable "plugins" (check it via BaseVarEcho plugins)'
+		echo '--------------------------------------------------- '
 
 endf    
 

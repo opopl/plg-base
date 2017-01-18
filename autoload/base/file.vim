@@ -97,6 +97,18 @@ function! base#file#catfile( ... )
 
 endf
 
+function! base#file#lines(file)
+	let file = a:file
+	let lines=[]
+
+	if !filereadable(file)
+		return lines
+	endif
+
+	let lines = readfile(file)
+	return lines
+endf
+
 function! base#file#basename(file)
 	let file = a:file
 	let bname=fnamemodify(file,':p:t')
