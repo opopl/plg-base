@@ -4,6 +4,8 @@ if exists("b:did_base_vim_ftplugin")
 endif
 let b:did_base_vim_ftplugin = 1
 
+"""ftplugin_base_vim
+
 let b:file     = expand('%:p')
 let b:basename = expand('%:p:t')
 let b:ext      = expand('%:p:e')
