@@ -579,6 +579,7 @@ fun! base#initpaths(...)
     call base#pathset({
         \   'pdfout'      : base#envvar('PDFOUT'),
         \   'htmlout'     : base#envvar('HTMLOUT'),
+        \   'jsdocs'      : base#envvar('JSDOCS'),
 				\	})
 
     call base#pathset({

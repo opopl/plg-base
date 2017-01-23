@@ -33,3 +33,5 @@ vim_prettyprint
 vimexplorer
 # added 14:46:23 23-01-17
 tern_for_vim
+# added 15:19:10 23-01-17
+my_autocmd
