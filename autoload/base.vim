@@ -583,6 +583,15 @@ fun! base#initpaths(...)
 				\	})
 
     call base#pathset({
+        \   'open_server'      : base#file#catfile([ 'C:','OpenServer' ]),
+				\	})
+
+    call base#pathset({
+        \   'jq_course_local'  : base#path([ 'open_server','domains', 'jq-course.local' ]),
+				\	})
+
+
+    call base#pathset({
 				\   'desktop'     : base#file#catfile([ hm, base#qw("Desktop") ]),
         \   'mkvimrc'     : mkvimrc,
         \   'mkbashrc'    : mkbashrc,
