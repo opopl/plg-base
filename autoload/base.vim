@@ -587,7 +587,12 @@ fun! base#initpaths(...)
 				\	})
 
     call base#pathset({
-        \   'jq_course_local'  : base#path([ 'open_server','domains', 'jq-course.local' ]),
+        \   'jq_course_local'  : base#file#catfile([ base#path('open_server'),'domains', 'jq-course.local' ]),
+        \   'quote_service_local'  : base#file#catfile([ base#path('open_server'),'domains', 'quote-service.local' ]),
+				\	})
+
+    call base#pathset({
+        \   'ap_local'  : base#file#catfile([ base#path('open_server'),'domains', 'ap.local' ]),
 				\	})
 
 
