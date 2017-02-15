@@ -593,6 +593,7 @@ fun! base#initpaths(...)
 
     call base#pathset({
         \   'ap_local'  : base#file#catfile([ base#path('open_server'),'domains', 'ap.local' ]),
+        \   'inews_local'  : base#file#catfile([ base#path('open_server'),'domains', 'inews.local' ]),
 				\	})
 
 
