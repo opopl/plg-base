@@ -37,4 +37,4 @@ tern_for_vim
 my_autocmd
 # added 18:47:50 03-02-17
 html5_vim
-syntastic
+#syntastic
