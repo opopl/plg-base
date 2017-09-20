@@ -602,6 +602,10 @@ fun! base#initpaths(...)
        let s:paths[k]=substitute(s:paths[k],'\/\s*$','','g')
     endfor
 
+    call base#pathset({ 
+			\	'java_my_projects' : base#file#catfile([ hm, base#qw("repos git java my_projects") ])
+			\	})
+
     if exists("g:dirs")
        call extend(s:paths,g:dirs)
     endif

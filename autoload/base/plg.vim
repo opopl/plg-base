@@ -2,6 +2,21 @@
 "function! base#plg#loadfun(...)
 "endf
 
+
+function! base#plg#loaded (...)
+	let plg=a:1
+	if !base#varexists('plugins')
+		return 0
+	endif
+	let plugins = base#var('plugins')
+
+	if !base#inlist(plg,plugins)
+		return 0
+	endif
+
+	return 1 	
+endfunction
+
 function! base#plg#loadvars (...)
 	if a:0
 		let plg = a:1
