@@ -581,7 +581,23 @@ fun! base#initpaths(...)
     call base#pathset({
         \   'pdfout'      : base#envvar('PDFOUT'),
         \   'htmlout'     : base#envvar('HTMLOUT'),
+        \   'jsdocs'      : base#envvar('JSDOCS'),
 				\	})
+
+    call base#pathset({
+        \   'open_server'      : base#file#catfile([ 'C:','OpenServer' ]),
+				\	})
+
+    call base#pathset({
+        \   'jq_course_local'  : base#file#catfile([ base#path('open_server'),'domains', 'jq-course.local' ]),
+        \   'quote_service_local'  : base#file#catfile([ base#path('open_server'),'domains', 'quote-service.local' ]),
+				\	})
+
+    call base#pathset({
+        \   'ap_local'  : base#file#catfile([ base#path('open_server'),'domains', 'ap.local' ]),
+        \   'inews_local'  : base#file#catfile([ base#path('open_server'),'domains', 'inews.local' ]),
+				\	})
+
 
     call base#pathset({
 				\   'desktop'     : base#file#catfile([ hm, base#qw("Desktop") ]),

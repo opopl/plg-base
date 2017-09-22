@@ -5,6 +5,10 @@ fun! base#init#cmds()
 	command! -nargs=* -complete=custom,base#complete#CD      CD
 		\	call base#CD(<f-args>) 
 
+"""MkDir
+	command! -nargs=*  MkDir
+		\	call base#mkdir#prompt(<f-args>) 
+
 """FileEcho
 	command! -nargs=* -complete=custom,base#complete#fileids FileEcho
 		\	call base#f#echo(<f-args>)
