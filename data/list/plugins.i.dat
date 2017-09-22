@@ -32,3 +32,6 @@ vim-perl
 vim_prettyprint
 vimexplorer
 vimfiler
+unite
+vimproc
+my_java

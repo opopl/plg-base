@@ -38,6 +38,28 @@ function! base#buf#in(...)
 
 endfunction
 
+function! base#buf#open_split (ref)
+
+		let ref   = a:ref
+		let lines = get(ref,'lines',[])
+		let cmds_pre  = get(ref,'cmds_pre',[])
+		
+		split
+		enew
+    setlocal buftype=nofile
+    setlocal nobuflisted
+    "setlocal nomodifiable
+
+		let lnum=line('.')
+		if len(lines)
+			for l in lines
+				call append(lnum,l)
+				let lnum+=1
+			endfor
+		endif
+
+endfunction
+
 function! base#buf#pathids_str ()
 	let ids = base#buf#pathids()
 	return join(ids,' ')

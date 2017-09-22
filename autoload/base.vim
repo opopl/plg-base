@@ -552,6 +552,7 @@ fun! base#initpaths(...)
     let hm        = base#envvar('hm')
     let mrc       = base#envvar('MYVIMRC')
     let projsdir  = base#envvar('PROJSDIR')
+    let pf        = base#envvar('PROGRAMFILES')
 
     let home      = base#envvar('USERPROFILE')
 
@@ -564,7 +565,8 @@ fun! base#initpaths(...)
 
     call base#pathset({ 
         \ 'home'    : home ,
-        \ 'hm'    : hm ,
+        \ 'hm'      : hm ,
+        \ 'pf'      : pf ,
         \ 'conf'    : confdir ,
         \ 'vrt'     : vrt,
         \ 'vim'     : base#envvar('VIM'),
@@ -602,9 +604,6 @@ fun! base#initpaths(...)
        let s:paths[k]=substitute(s:paths[k],'\/\s*$','','g')
     endfor
 
-    call base#pathset({ 
-			\	'java_my_projects' : base#file#catfile([ hm, base#qw("repos git java my_projects") ])
-			\	})
 
     if exists("g:dirs")
        call extend(s:paths,g:dirs)
@@ -628,7 +627,7 @@ fun! base#fileopen(ref)
  let files=[]
 
  let action = 'edit'
- let a      = base#var('fileopen_action')
+ let a      = base#varget('fileopen_action','')
 
 
  let opts={}
@@ -671,6 +670,42 @@ fun! base#inlist(element,list)
  let r=( index(a:list,a:element) >= 0 ) ? 1 : 0
 
  return r 
+
+endfun
+
+function! base#getfromchoosedialog_nums (ref)
+	let ref  = a:ref
+	let opts = get(ref,'list',{})
+
+	let defs = {
+			\	'startopt' : 'usual',
+			\	'header'   : '',
+			\	'numcols'  : 1,
+			\	'bottom'   : "",
+			\	}
+
+	let inref={}
+	call extend(inref,defs)
+	call extend(inref,ref)
+
+	let opts_rev={}
+	for [k,v] in items(opts)
+		call extend(opts_rev,{v : k})
+	endfor
+
+	let optlist=[]
+	let optkeys=sort(keys(opts))
+
+	for k in optkeys
+		call add(optlist,opts[k])
+	endfor
+
+	call extend(inref,{ 'list' : optlist })
+
+  let opt = base#getfromchoosedialog(inref) 
+
+	let optnum = get(opts_rev,opt,0)
+	return optnum
 
 endfun
 
@@ -1965,6 +2000,7 @@ fun! base#sys(...)
 
 endfun
 
+
 function! base#pathset (ref)
 
   if ! exists("s:paths") | let s:paths={} | endif
@@ -1974,14 +2010,31 @@ function! base#pathset (ref)
         call extend(s:paths,e)
     endfor
 
+    let pathlist = sort(keys(s:paths))
+    call base#varset('pathlist',pathlist)
+
 endfun
+
+function! base#append (...)
+  let opt = get(a:000,0,'')
+
+  let sub = 'base#append#'.opt
+	try
+    exe 'call '.sub.'()'
+	catch 
+		call base#warn({ 
+			\	'text' : 'Failure to execute: ' . sub 
+			\	} )
+	endtry
+	
+endfunction
 
 function! base#pathlist ()
     if ! exists("s:paths")
         let s:paths={}
     endif
 
-    let pathlist= sort(keys(s:paths))
+    let pathlist = sort(keys(s:paths))
     call base#var('pathlist',pathlist)
 
     return pathlist
@@ -2612,7 +2665,7 @@ function! base#varsetfromdat (...)
         \   "type" : type ,
         \   })
 
-    call base#var(varname,data)
+    call base#varset(varname,data)
 
     return 1
 
@@ -2625,6 +2678,7 @@ function! base#datafile (id)
 endfunction
 
 function! base#datafiles (id)
+
     let datadir = base#datadir()
     let file = a:id . ".i.dat"
 
@@ -2635,9 +2689,11 @@ function! base#datafiles (id)
         \   })
 
     return files
+
 endfunction
 
 function! base#initvarsfromdat ()
+
 		let refdef = {}
 		let ref    = refdef
 		let refa   = get(a:000,0,{})
@@ -2736,6 +2792,9 @@ function! base#init (...)
         call base#init#cmds()
     elseif opt == 'vars'
         call base#initvars()
+    elseif opt == 'tagids'
+        call base#init#tagids()
+
     elseif opt == 'menus'
         call base#menus#init()
     elseif opt == 'stl'
