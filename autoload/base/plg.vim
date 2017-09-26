@@ -8,7 +8,7 @@ function! base#plg#loaded (...)
 	if !base#varexists('plugins')
 		return 0
 	endif
-	let plugins = base#var('plugins')
+	let plugins = base#varget('plugins',[])
 
 	if !base#inlist(plg,plugins)
 		return 0

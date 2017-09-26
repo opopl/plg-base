@@ -1076,14 +1076,42 @@ fun! base#rmwh(ivar)
 
 endf
 
+"call base#prompt(msg,default)
+"call base#prompt(msg,default,complete)
+
 fun! base#prompt(msg,default,...)
   let [msg,default] = [ a:msg,a:default ]
+
 
   if !base#opttrue('prompt')
     return default
   endif
 
   let complete=get(a:000,0,'')
+
+  if strlen(complete)
+    let v = input(msg,default,complete)
+  else
+    let v = input(msg,default)
+  endif
+
+  return v
+endf
+
+fun! base#input(msg,default,...)
+  let [msg,default] = [ a:msg,a:default ]
+
+	let ref = get(a:000,0,{})
+
+	let prompt = get(ref,'prompt',1)
+	let o      = base#varget('opts',{})
+	let prompt = get(o,'base#input_prompt',prompt)
+
+	if !prompt
+		return
+	endif
+
+  let complete=get(ref,'complete','')
 
   if strlen(complete)
     let v = input(msg,default,complete)
@@ -1883,12 +1911,15 @@ fun! base#getfileinfo(...)
 
  let g:ext = fnamemodify(g:path,':e')
 
+ let pathids=base#buf#pathids()
  let fileinfo={
     \   'path'          : g:path          ,
     \   'ext'           : g:ext           ,
     \   'filename'      : g:filename      ,
     \   'dirname'       : g:dirname       ,
     \   'filename_root' : g:filename_root ,
+    \   'filetype'      : &ft,
+    \   'pathids'       : pathids,
     \   }
  let g:fileinfo=fileinfo
  let b:fileinfo=fileinfo
@@ -2135,7 +2166,7 @@ function! base#info (...)
  call base#varcheckexist('info_topics')
 
  if topic == 'all'
-   for topic in base#var('info_topics') 
+   for topic in base#varget('info_topics',[]) 
         call base#info(topic)
    endfor
  else
@@ -2156,6 +2187,8 @@ function! base#info (...)
        call base#echovar({ 'var' : 'g:filename', 'indent' : indentlev })
        call base#echovar({ 'var' : 'g:path', 'indent' : indentlev })
        call base#echovar({ 'var' : 'g:ext' , 'indent' : indentlev })
+
+       call base#echo({ 'text' : "Directories which this file belongs to: " } )
 
 """info_perlapp
    elseif topic == 'perlapp'
@@ -2927,8 +2960,8 @@ fun! base#listnew(...)
   let a=[]
 
   while i<sz
-   call add(a,'')
-   let i+=1
+	   call add(a,'')
+	   let i+=1
   endw
 
   return a
@@ -2961,12 +2994,12 @@ function! base#grep (...)
     if opt == 'plg_findstr'
 
         let gref = {
-            \  "files"       : files          ,
-            \  "pat"         : pat            ,
-            \  "cmd_name"    : 'Rfindpattern' ,
-            \  "findstr_opt" : '/i'           ,
-            \  "cmd_opt"     : '/R /S'        ,
-            \  "use_startdir"  : 0            ,
+            \  "files"        : files          ,
+            \  "pat"          : pat            ,
+            \  "cmd_name"     : 'Rfindpattern' ,
+            \  "findstr_opt"  : '/i'           ,
+            \  "cmd_opt"      : '/R /S'        ,
+            \  "use_startdir" : 0              ,
             \}
 
         let cmd = 'call findstr#ap#run(gref)'

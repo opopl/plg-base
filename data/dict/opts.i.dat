@@ -9,3 +9,4 @@ buf_showdirs        1
 git_prompt          1
 git_split_output    1
 git_CD              0
+base#input_prompt   1

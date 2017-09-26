@@ -21,5 +21,6 @@ plg_projs
 plg_tex
 plg_txtmy
 plg_my_java
+plg_vim-latex
 ##########
 mkvimrc

@@ -181,31 +181,34 @@ function! base#tg#update (...)
 """base_tg_update_projs_tex
 	""" all tex files in current projs directory
 	elseif tgid == 'projs_tex'
-		let root = projs#root()
-
-	   " let files_tex = base#find({ 
-			"\	"dirs" : [ root ], 
-			"\	"exts" : [ "tex"  ], 
-			"\ })
-		"let files = join(files_tex,' ')
-		"echo files
-		let files = base#file#catfile([ root,'*.tex' ])
+			if base#plg#loaded('projs')
+				let root = projs#root()
+		
+			   " let files_tex = base#find({ 
+					"\	"dirs" : [ root ], 
+					"\	"exts" : [ "tex"  ], 
+					"\ })
+				"let files = join(files_tex,' ')
+				"echo files
+				let files = base#file#catfile([ root,'*.tex' ])
+			endif
 
 	elseif tgid == 'projs_this'
-
-		let proj  = projs#proj#name()
-		let exts  = base#qw('tex vim bib')
-
-		let files_arr = projs#proj#files({ 
-			\	"exts"         : exts,
-			\	"exclude_dirs" : [ 'joins', 'builds' ],
-			\	})
-
-		let files = join(files_arr,' ')
-
-		let tfile = projs#path([ proj . '.tags' ])
-
-		call projs#rootcd()
+		if base#plg#loaded('projs')
+				let proj  = projs#proj#name()
+				let exts  = base#qw('tex vim bib')
+		
+				let files_arr = projs#proj#files({ 
+					\	"exts"         : exts,
+					\	"exclude_dirs" : [ 'joins', 'builds' ],
+					\	})
+		
+				let files = join(files_arr,' ')
+		
+				let tfile = projs#path([ proj . '.tags' ])
+		
+				call projs#rootcd()
+		endif
 
 	elseif tgid == 'ipte_ao'
 		call base#CD(tgid)

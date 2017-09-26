@@ -14,6 +14,9 @@ function! base#buf#type(...)
 		return type
 endf
 
+"base#buf#in('plg')
+"base#buf#in('plg',{ 'subdir': base#qw('base autoload') })
+
 function! base#buf#in(...)
 	let is = 0
 
@@ -23,13 +26,21 @@ function! base#buf#in(...)
 		return 0
 	endif
 
+	let ref    = get(a:000,1,{})
+	let subdir = get(ref,'subdir',[])
+	let dir    = base#file#catfile([ base#path(opt), subdir ])
+
 	if ! exists('b:finfo') | return 0 | endif
 
-	let file = get(b:finfo,'path','')
+	if exists('b:file')
+		let file=b:file
+	elseif exists('b:finfo') && ( type('b:finfo') == type({}) )
+		let file = get(b:finfo,'path','')
+	endif
 
 	if !strlen(file) | return 0 | endif
 
-	let rdir = base#file#reldir(file,base#path(opt))
+	let rdir = base#file#reldir(file,dir)
 	if strlen(rdir)
 		let is = 1
 	endif
@@ -90,15 +101,21 @@ endfunction
 
 function! base#buf#start ()
 
-	"if exists("b:base_buf_started") | return | endif
+	if exists("b:base_buf_started") | return | endif
 
 	let b:file     = expand('%:p')
 	let b:basename = expand('%:p:t')
 	let b:ext      = expand('%:p:e')
-	let b:dirname = expand('%:p:h')
+	let b:dirname  = expand('%:p:h')
+	let b:filetype = &ft
 	
 	if exists('b:finfo') | unlet b:finfo | endif
+
 	let b:finfo   = base#getfileinfo()
+
+	if exists('b:finfo') && type(b:finfo) == type({})
+		let b:pathids  = get(b:finfo,'pathids',[])
+	endif
 
 	let b:base_buf_started=1
 endfunction
