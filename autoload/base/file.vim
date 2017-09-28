@@ -243,7 +243,7 @@ endf
 " 	a  => a/b/c
 " 	b  => a/b/c/d
 "
-" call base#dirs#commonroot ([ dir1, dir2 ])
+" call base#file#commonroot ([ dir1, dir2 ])
 "
 function! base#file#commonroot (...)
 	let dirs = a:1

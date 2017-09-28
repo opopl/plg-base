@@ -49,6 +49,8 @@ function! base#buf#in(...)
 
 endfunction
 
+"base#buf#open_split({ 'lines' : lines })
+
 function! base#buf#open_split (ref)
 
 		let ref   = a:ref

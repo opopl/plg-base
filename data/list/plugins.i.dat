@@ -42,3 +42,4 @@ my_autocmd
 # added 18:47:50 03-02-17
 html5_vim
 syntastic
+gtags_vim

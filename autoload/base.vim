@@ -645,7 +645,6 @@ fun! base#fileopen(ref)
  let action = 'edit'
  let a      = base#varget('fileopen_action','')
 
-
  let opts={}
 
  if base#type(a:ref) == 'String'
@@ -2211,6 +2210,12 @@ function! base#info (...)
        call base#echo({ 'text' : " "  } )
        call base#echo({ 'text' : " base#grepopt   => " . base#grepopt() } )
        call base#echo({ 'text' : " "  } )
+
+"""info_java
+   elseif topic == 'java'
+			if base#plg#loaded('my_java')
+					call my_java#act#info()
+			endif
 
 """info_bufs
    elseif topic == 'bufs'
