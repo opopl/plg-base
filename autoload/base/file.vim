@@ -36,6 +36,28 @@ function! base#file#copy(old,new)
 
 endfunction
 
+function! base#file#move(old,new)
+	if !filereadable(a:old)
+		call base#warn({ 'text' : 'Old file does not exist:'."\n\t" . a:old })
+		return 
+	endif
+	let cmd = ''
+	if has('win32')
+		let cmd = 'move ' . '"'.a:old.'"' . ' ' . '"'.a:new.'"'
+	else
+		let cmd = 'mv ' . '"'.a:old.'"' . ' ' . '"'.a:new.'"'
+	endif
+
+	if !strlen(cmd)
+		return 
+	endif
+
+	let ok = base#sys({ "cmds" : [cmd]})
+
+	return ok
+
+endfunction
+
 function! base#file#delete( ... )
 	let def = {
 		\	'echo' : 0,
@@ -221,7 +243,7 @@ endf
 " 	a  => a/b/c
 " 	b  => a/b/c/d
 "
-" call base#dirs#commonroot ([ dir1, dir2 ])
+" call base#file#commonroot ([ dir1, dir2 ])
 "
 function! base#file#commonroot (...)
 	let dirs = a:1

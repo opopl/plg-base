@@ -57,6 +57,10 @@ function! base#complete#opts (...)
   return base#complete#vars([ 'opts_keys' ])
 endfunction
 
+function! base#complete#BaseAppend (...)
+  return base#complete#vars([ 'opts_BaseAppend' ])
+endfunction
+
 function! base#complete#info (...)
   return base#complete#vars([ 'info_topics' ])
 endfunction

@@ -17,7 +17,7 @@ fun! base#init#cmds()
 	command! -nargs=* -complete=custom,base#complete#fileadd
 	    \   FileAdd call base#f#add(<f-args>) 
 
-"""FileAdd
+"""FileView
 	command! -nargs=* -complete=custom,base#complete#fileids
 	    \   FileView call base#f#view(<f-args>) 
 
@@ -26,6 +26,11 @@ fun! base#init#cmds()
 
 	command! -nargs=* -complete=custom,base#complete#hist#BaseVimCom BaseVimCom
 		\	call base#vim#showcom(<f-args>)
+
+"""BaseAppend
+	command! -nargs=* -complete=custom,base#complete#BaseAppend BaseAppend
+		\	call base#append(<f-args>)
+
 
 """LCOM
 	command! -nargs=* -complete=custom,base#complete#vimcoms LCOM 
@@ -170,6 +175,25 @@ command! -nargs=* -complete=custom,base#complete#omnioptions
 
 endfun
 
+function! base#init#tagids ()
+    let datafile = base#datafile('tagids')
+
+    if !filereadable(datafile)
+        call base#warn({ 
+            \   "text": 'NO datafile for: tagids'
+            \   })
+        return 0
+    endif
+
+    let data = base#readdatfile({ 
+        \   "file" : datafile ,
+        \   "type" : 'list' ,
+        \   })
+
+    call base#varset('tagids',data)
+	
+endfunction
+
 fun! base#init#au()
 
 	let plgdir = base#plgdir()
@@ -184,10 +208,8 @@ fun! base#init#au()
 	endfor
 	exe 'augroup end'
 
-	au BufWritePost,BufRead,BufWinEnter *.i.dat setf conf
-
-	au BufRead,BufWinEnter * call base#buf#onload()
-
+		au BufWritePost,BufRead,BufWinEnter *.i.dat setf conf
+		au BufRead,BufWinEnter * call base#buf#onload()
     au FileType  * call base#buf#start() 
      
 endfun

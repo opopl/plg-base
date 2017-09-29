@@ -168,6 +168,9 @@ function!  base#stl#setparts ()
 	let stlparts['tags']= '%{fnamemodify(&tags,' . "'" . ':~' . "'" . ')}' 
 	
 	let stlparts['makeprg']='%1*\ %{&makeprg}' 
+
+	let stlparts['java_buf_appname'] = '%1*\ %{my_java#buf#appname()}\ %0*' 
+	let stlparts['java_buf_package'] = '%1*\ %{my_java#buf#package()}\ %0*' 
 	
 	"call base#varupdate('PMOD_ModuleName')
   let stlparts['perl_module_name']   ='%5*\ %{perlmy#modname()}\ %0*' 
@@ -214,6 +217,15 @@ function! base#stl#setorders ()
 		        \   'file_name'     ,
 		        \   'file_encoding' ,
 		        \   'encoding'      ,
+                \       ],
+        \   'java'   :   [ 
+		        \   'buffer_number' ,
+		        \   'line_number'   ,
+		        \   'file_name'     ,
+		        \   'file_encoding' ,
+		        \   'encoding'      ,
+		        \   'java_buf_appname'  ,
+		        \   'java_buf_package'  ,
                 \       ],
         \   'plg'   :   [ 
 		        \   'plg_name'      ,

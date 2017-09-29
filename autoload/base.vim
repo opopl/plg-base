@@ -552,6 +552,7 @@ fun! base#initpaths(...)
     let hm        = base#envvar('hm')
     let mrc       = base#envvar('MYVIMRC')
     let projsdir  = base#envvar('PROJSDIR')
+    let pf        = base#envvar('PROGRAMFILES')
 
     let home      = base#envvar('USERPROFILE')
 
@@ -564,7 +565,8 @@ fun! base#initpaths(...)
 
     call base#pathset({ 
         \ 'home'    : home ,
-        \ 'hm'    : hm ,
+        \ 'hm'      : hm ,
+        \ 'pf'      : pf ,
         \ 'conf'    : confdir ,
         \ 'vrt'     : vrt,
         \ 'vim'     : base#envvar('VIM'),
@@ -618,6 +620,7 @@ fun! base#initpaths(...)
        let s:paths[k]=substitute(s:paths[k],'\/\s*$','','g')
     endfor
 
+
     if exists("g:dirs")
        call extend(s:paths,g:dirs)
     endif
@@ -640,8 +643,7 @@ fun! base#fileopen(ref)
  let files=[]
 
  let action = 'edit'
- let a      = base#var('fileopen_action')
-
+ let a      = base#varget('fileopen_action','')
 
  let opts={}
 
@@ -683,6 +685,42 @@ fun! base#inlist(element,list)
  let r=( index(a:list,a:element) >= 0 ) ? 1 : 0
 
  return r 
+
+endfun
+
+function! base#getfromchoosedialog_nums (ref)
+	let ref  = a:ref
+	let opts = get(ref,'list',{})
+
+	let defs = {
+			\	'startopt' : 'usual',
+			\	'header'   : '',
+			\	'numcols'  : 1,
+			\	'bottom'   : "",
+			\	}
+
+	let inref={}
+	call extend(inref,defs)
+	call extend(inref,ref)
+
+	let opts_rev={}
+	for [k,v] in items(opts)
+		call extend(opts_rev,{v : k})
+	endfor
+
+	let optlist=[]
+	let optkeys=sort(keys(opts))
+
+	for k in optkeys
+		call add(optlist,opts[k])
+	endfor
+
+	call extend(inref,{ 'list' : optlist })
+
+  let opt = base#getfromchoosedialog(inref) 
+
+	let optnum = get(opts_rev,opt,0)
+	return optnum
 
 endfun
 
@@ -1037,14 +1075,42 @@ fun! base#rmwh(ivar)
 
 endf
 
+"call base#prompt(msg,default)
+"call base#prompt(msg,default,complete)
+
 fun! base#prompt(msg,default,...)
   let [msg,default] = [ a:msg,a:default ]
+
 
   if !base#opttrue('prompt')
     return default
   endif
 
   let complete=get(a:000,0,'')
+
+  if strlen(complete)
+    let v = input(msg,default,complete)
+  else
+    let v = input(msg,default)
+  endif
+
+  return v
+endf
+
+fun! base#input(msg,default,...)
+  let [msg,default] = [ a:msg,a:default ]
+
+	let ref = get(a:000,0,{})
+
+	let prompt = get(ref,'prompt',1)
+	let o      = base#varget('opts',{})
+	let prompt = get(o,'base#input_prompt',prompt)
+
+	if !prompt
+		return
+	endif
+
+  let complete=get(ref,'complete','')
 
   if strlen(complete)
     let v = input(msg,default,complete)
@@ -1844,12 +1910,15 @@ fun! base#getfileinfo(...)
 
  let g:ext = fnamemodify(g:path,':e')
 
+ let pathids=base#buf#pathids()
  let fileinfo={
     \   'path'          : g:path          ,
     \   'ext'           : g:ext           ,
     \   'filename'      : g:filename      ,
     \   'dirname'       : g:dirname       ,
     \   'filename_root' : g:filename_root ,
+    \   'filetype'      : &ft,
+    \   'pathids'       : pathids,
     \   }
  let g:fileinfo=fileinfo
  let b:fileinfo=fileinfo
@@ -1977,6 +2046,7 @@ fun! base#sys(...)
 
 endfun
 
+
 function! base#pathset (ref)
 
   if ! exists("s:paths") | let s:paths={} | endif
@@ -1986,14 +2056,31 @@ function! base#pathset (ref)
         call extend(s:paths,e)
     endfor
 
+    let pathlist = sort(keys(s:paths))
+    call base#varset('pathlist',pathlist)
+
 endfun
+
+function! base#append (...)
+  let opt = get(a:000,0,'')
+
+  let sub = 'base#append#'.opt
+	try
+    exe 'call '.sub.'()'
+	catch 
+		call base#warn({ 
+			\	'text' : 'Failure to execute: ' . sub 
+			\	} )
+	endtry
+	
+endfunction
 
 function! base#pathlist ()
     if ! exists("s:paths")
         let s:paths={}
     endif
 
-    let pathlist= sort(keys(s:paths))
+    let pathlist = sort(keys(s:paths))
     call base#var('pathlist',pathlist)
 
     return pathlist
@@ -2078,7 +2165,7 @@ function! base#info (...)
  call base#varcheckexist('info_topics')
 
  if topic == 'all'
-   for topic in base#var('info_topics') 
+   for topic in base#varget('info_topics',[]) 
         call base#info(topic)
    endfor
  else
@@ -2099,6 +2186,8 @@ function! base#info (...)
        call base#echovar({ 'var' : 'g:filename', 'indent' : indentlev })
        call base#echovar({ 'var' : 'g:path', 'indent' : indentlev })
        call base#echovar({ 'var' : 'g:ext' , 'indent' : indentlev })
+
+       call base#echo({ 'text' : "Directories which this file belongs to: " } )
 
 """info_perlapp
    elseif topic == 'perlapp'
@@ -2121,6 +2210,12 @@ function! base#info (...)
        call base#echo({ 'text' : " "  } )
        call base#echo({ 'text' : " base#grepopt   => " . base#grepopt() } )
        call base#echo({ 'text' : " "  } )
+
+"""info_java
+   elseif topic == 'java'
+			if base#plg#loaded('my_java')
+					call my_java#act#info()
+			endif
 
 """info_bufs
    elseif topic == 'bufs'
@@ -2624,7 +2719,7 @@ function! base#varsetfromdat (...)
         \   "type" : type ,
         \   })
 
-    call base#var(varname,data)
+    call base#varset(varname,data)
 
     return 1
 
@@ -2637,6 +2732,7 @@ function! base#datafile (id)
 endfunction
 
 function! base#datafiles (id)
+
     let datadir = base#datadir()
     let file = a:id . ".i.dat"
 
@@ -2647,9 +2743,11 @@ function! base#datafiles (id)
         \   })
 
     return files
+
 endfunction
 
 function! base#initvarsfromdat ()
+
 		let refdef = {}
 		let ref    = refdef
 		let refa   = get(a:000,0,{})
@@ -2748,6 +2846,9 @@ function! base#init (...)
         call base#init#cmds()
     elseif opt == 'vars'
         call base#initvars()
+    elseif opt == 'tagids'
+        call base#init#tagids()
+
     elseif opt == 'menus'
         call base#menus#init()
     elseif opt == 'stl'
@@ -2864,8 +2965,8 @@ fun! base#listnew(...)
   let a=[]
 
   while i<sz
-   call add(a,'')
-   let i+=1
+	   call add(a,'')
+	   let i+=1
   endw
 
   return a
@@ -2898,12 +2999,12 @@ function! base#grep (...)
     if opt == 'plg_findstr'
 
         let gref = {
-            \  "files"       : files          ,
-            \  "pat"         : pat            ,
-            \  "cmd_name"    : 'Rfindpattern' ,
-            \  "findstr_opt" : '/i'           ,
-            \  "cmd_opt"     : '/R /S'        ,
-            \  "use_startdir"  : 0            ,
+            \  "files"        : files          ,
+            \  "pat"          : pat            ,
+            \  "cmd_name"     : 'Rfindpattern' ,
+            \  "findstr_opt"  : '/i'           ,
+            \  "cmd_opt"      : '/R /S'        ,
+            \  "use_startdir" : 0              ,
             \}
 
         let cmd = 'call findstr#ap#run(gref)'

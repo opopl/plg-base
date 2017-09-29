@@ -47,7 +47,7 @@ function! base#omni#selectcompletion (...)
     let opts=split(opt,',')
 
     if len(opts) > 1 
-	  call base#var('omni_comps',[])
+	  call base#varset('omni_comps',[])
       for opt in opts
         call base#omni#selectcompletion(opt,'add')
       endfor
@@ -56,14 +56,14 @@ function! base#omni#selectcompletion (...)
   else
     let opt='pap_tex_papers'
 
-    let listcomps=base#var('omni_compoptions_list')
+    let listcomps=base#varget('omni_compoptions_list',[])
 
-    let liststr=join(listcomps,"\n")
-    let dialog="Available omni completions are: " . "\n"
-    let dialog.=base#createprompt(liststr, 1, "\n") . "\n"
-    let dialog.="Choose omni completion by number: " . "\n"
+    let liststr = join(listcomps,"\n")
+    let dialog  = "Available omni completions are: " . "\n"
+    let dialog .= base#createprompt(liststr, 1, "\n") . "\n"
+    let dialog .= "Choose omni completion by number: " . "\n"
 
-    let opt= base#choosefromprompt(dialog,liststr,"\n",'pap_tex_papers')
+    let opt     = base#choosefromprompt(dialog,liststr,"\n",'pap_tex_papers')
     echo "Selected: " . opt
   endif
 
