@@ -18,9 +18,14 @@ function! base#plg#loaded (...)
 endfunction
 
 function! base#plg#loadvars (...)
+
 	if a:0
-		let plg = a:1
+		let plg = get(a:000,0,'')
+		let ref = get(a:000,1,{})
 	endif
+
+	let opts_readarr  = get(ref,'opts_readarr',{})
+	let opts_readdict = get(ref,'opts_readdict',{})
 
 	let types = base#qw('list dict')
 	
@@ -50,9 +55,12 @@ function! base#plg#loadvars (...)
       call extend(datfiles,{ vname : df })
 
 			if type == 'list'
-				let vv = base#readarr(df)
+				let vv = base#readarr(df,opts_readarr)
 			else
-				let vv = base#readdict(df)
+				let rf = { 'file' : df }
+				call extend(rf,opts_readdict)
+				let vv = base#readdict(rf)
+
 			endif
 	
 			call base#varset(vname,vv)

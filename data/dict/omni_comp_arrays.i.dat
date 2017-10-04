@@ -11,6 +11,7 @@
 projs                        projs#list()
 proj_secs                    projs#proj#secnames()
 proj_pics                    projs#piclist()
+java_lang_String             base#varget('my_java_methods_java_lang_String')
 #snippets                    SNI_CurrentSnippets
 #tex_latex_environments      TEX_latex_environments
 #tex_plaintex_commands       TEX_plaintex_commands
