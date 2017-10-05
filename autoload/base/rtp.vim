@@ -33,7 +33,7 @@ endf
 function! base#rtp#update()
 	call base#initplugins()
 
-	for plg in base#var('plugins')
+	for plg in base#varget('plugins',[])
 		call base#rtp#add_plugin(plg)
 	endfor
 

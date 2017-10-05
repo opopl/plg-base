@@ -528,6 +528,11 @@ fun! base#initpaths(...)
 
     let ref = {}
     if a:0 | let ref = a:1 | endif
+
+	let do_echo=0
+	if exists("g:base_echo_init") && g:base_echo_init
+		let do_echo = 1
+	endif
  
 """define_paths
 
@@ -541,9 +546,11 @@ fun! base#initpaths(...)
     endif
         
     if anew
-        call base#echo({ 
-            \   "text" : 'Settings paths anew...' 
-            \   })
+		if do_echo
+	        call base#echo({ 
+	            \   "text" : 'Settings paths anew...' 
+	            \   })
+		endif
         let s:paths={}
     endif
 
@@ -556,12 +563,12 @@ fun! base#initpaths(...)
 
     let home      = base#envvar('USERPROFILE')
 
-		let pc = $COMPUTERNAME
+	let pc = $COMPUTERNAME
 
     let evbin = home.'\AppData\Local\Apps\Evince-2.32.0.145\bin'
-		if isdirectory(evbin)
-      call base#pathset({  'evince_bin' : evbin })
-		endif
+	if isdirectory(evbin)
+		call base#pathset({  'evince_bin' : evbin })
+	endif
 
     call base#pathset({ 
         \ 'home'    : home ,
@@ -629,10 +636,12 @@ fun! base#initpaths(...)
     let pathlist= sort(keys(s:paths))
     call base#varset('pathlist',pathlist)
 
+	if do_echo
 		echo '--- base#initpaths ( paths initialization ) --- '
 		echo 'Have set the value of g:dirs'
 		echo 'Have set the value of base variable "pathlist" (check it via BaseVarEcho)'
 		echo '--------------------------------------------------- '
+	endif
 
     call base#echoprefixold()
 
@@ -2830,10 +2839,12 @@ function! base#initplugins (...)
     if exists('g:plugins') | unlet g:plugins | endif
     let g:plugins=base#varget('plugins',[])
 
+	if exists("g:base_echo_init") && g:base_echo_init
 		echo '--- base#initplugins ( plugins initialization ) --- '
 		echo 'Have set the value of g:plugins'
 		echo 'Have set the value of base variable "plugins" (check it via BaseVarEcho plugins)'
 		echo '--------------------------------------------------- '
+	endif
 
 endf    
 
