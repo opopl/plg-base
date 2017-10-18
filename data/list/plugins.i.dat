@@ -44,3 +44,4 @@ html5_vim
 #syntastic
 syntastic
 gtags_vim
+mru
