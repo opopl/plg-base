@@ -529,10 +529,10 @@ fun! base#initpaths(...)
     let ref = {}
     if a:0 | let ref = a:1 | endif
 
-	let do_echo=0
-	if exists("g:base_echo_init") && g:base_echo_init
-		let do_echo = 1
-	endif
+	  let do_echo=0
+	  if exists("g:base_echo_init") && g:base_echo_init
+		  let do_echo = 1
+	  endif
  
 """define_paths
 
@@ -563,12 +563,12 @@ fun! base#initpaths(...)
 
     let home      = base#envvar('USERPROFILE')
 
-	let pc = $COMPUTERNAME
+	  let pc = base#envvar('COMPUTERNAME')
 
     let evbin = home.'\AppData\Local\Apps\Evince-2.32.0.145\bin'
-	if isdirectory(evbin)
-		call base#pathset({  'evince_bin' : evbin })
-	endif
+	  if isdirectory(evbin)
+		  call base#pathset({  'evince_bin' : evbin })
+	  endif
 
     call base#pathset({ 
         \ 'home'    : home ,
@@ -581,6 +581,16 @@ fun! base#initpaths(...)
         \ 'p'       : base#envvar('TexPapersRoot'),
         \ 'phd_p'   : base#envvar('TexPapersRoot'),
         \   })
+
+    call base#pathset({
+        \   'progs'  : base#file#catfile([ base#path('hm'),'programs' ]),
+        \ })
+
+    if pc == 'APOPLAVSKIYNB'
+	    call base#pathset({ 
+           \ "mingw" : base#file#catfile([ base#path('progs'), 'mingw' ]),
+	         \ })
+	  endif
 
     let mkvimrc  = base#file#catfile([ base#path('conf'), 'mk', 'vimrc' ])
     let mkbashrc = base#file#catfile([ base#path('conf'), 'mk', 'bashrc' ])
@@ -601,8 +611,8 @@ fun! base#initpaths(...)
 				\	})
 
     call base#pathset({
-        \   'ap_local'  : base#file#catfile([ base#path('open_server'),'domains', 'ap.local' ]),
-        \   'inews_local'  : base#file#catfile([ base#path('open_server'),'domains', 'inews.local' ]),
+        \   'ap_local'    : base#file#catfile([ base#path('open_server'),'domains', 'ap.local' ]),
+        \   'inews_local' : base#file#catfile([ base#path('open_server'),'domains', 'inews.local' ]),
 				\	})
 
 

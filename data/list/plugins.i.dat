@@ -45,3 +45,5 @@ html5_vim
 syntastic
 gtags_vim
 mru
+project
+crefvim
