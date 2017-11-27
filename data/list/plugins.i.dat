@@ -47,3 +47,6 @@ gtags_vim
 mru
 project
 crefvim
+phpcd
+phpcomplete
+java_oracle_docs

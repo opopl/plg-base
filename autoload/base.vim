@@ -587,8 +587,13 @@ fun! base#initpaths(...)
         \ })
 
     if pc == 'APOPLAVSKIYNB'
-	    call base#pathset({ 
+	      call base#pathset({ 
            \ "mingw" : base#file#catfile([ base#path('progs'), 'mingw' ]),
+           \ "perl_bin_strawberry_522_32" : base#file#catfile(
+							\	[ 
+							\	base#path('progs'), 
+							\	base#qw('perl strawberry_522_32bit perl bin') 
+						\	]),
 	         \ })
 	  endif
 
@@ -1544,14 +1549,14 @@ function! base#find(ref)
     " list of found files to be returned
     let files = []
 
-    if has('perl')
-        let files = base#findbyperl(a:ref)
+    "if has('perl')
+        "let files = base#findbyperl(a:ref)
+		"endif
+
+    if has('win32')
+      let files = base#findwin(a:ref)
     else
-        if has('win32')
-            let files = base#findwin(a:ref)
-        else
-            let files = base#findunix(a:ref)
-        endif
+      let files = base#findunix(a:ref)
     endif
 
     return files
