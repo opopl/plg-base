@@ -69,6 +69,8 @@ function! base#f#set (ref)
      call extend(s:files,e)
   endfor
 
+  call base#varset('exefiles',s:files)
+
 	call base#var#update('fileids')
 
 endfun

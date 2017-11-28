@@ -9,7 +9,7 @@ emmet
 fileutils
 findstr
 genutils
-ipte
+#ipte
 lasu
 make
 nerdcommenter
@@ -50,3 +50,4 @@ crefvim
 phpcd
 phpcomplete
 java_oracle_docs
+docs

@@ -1,5 +1,26 @@
 
 
+"a-b - elements of a than are not in b
+"
+function! base#list#minus (a,b)
+	let a=a:a
+	let b=a:b
+	let kb={}
+
+	for i in b
+		let kb[i]=1
+	endfor
+
+	let res=[]
+	for i in a
+		if !exists('kb[i]')
+			call add(res,i)
+		endif
+	endfor
+
+	return res
+endf	
+
 function! base#list#add (ref,...)
         
  if a:0

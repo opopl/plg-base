@@ -483,7 +483,7 @@ fun! base#initfiles(...)
         let s:files={}
     endif
 
-  let evince =  base#file#catfile([ 
+  	let evince =  base#file#catfile([ 
       \ base#path('home'),
       \ '\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe' 
       \ ])
@@ -492,12 +492,20 @@ fun! base#initfiles(...)
         call base#f#set({  'evince' : evince })
     endif
 
+		if $COMPUTERNAME == 'APOPLAVSKIYNB'
+  		let cv =  base#file#catfile([ base#path('imagemagick'), 'convert.exe' ])
+
+    	if filereadable(cv)
+      	call base#f#set({  'im_convert' : cv })
+    	endif
+		endif
+
   let exefiles={}
-  for fileid in base#var('exefileids')
+  for fileid in base#varget('exefileids',[])
     let  ok = base#sys({ "cmds" : [ 'where '.fileid ], "skip_errors" : 1 })
 
     if ok
-        let found =  base#var('sysout')
+        let found =  base#varget('sysout',[])
         let add={}
         for f in  found
             if filereadable(f)
@@ -512,7 +520,6 @@ fun! base#initfiles(...)
 
   endfor
 
-  call base#varset('exefiles',exefiles)
   call base#f#set(exefiles)
 
   call base#echoprefixold()
@@ -594,6 +601,7 @@ fun! base#initpaths(...)
 							\	base#path('progs'), 
 							\	base#qw('perl strawberry_522_32bit perl bin') 
 						\	]),
+           \ "imagemagick" : base#file#catfile(base#qw('c: OSPanel modules imagemagick')),
 	         \ })
 	  endif
 

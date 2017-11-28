@@ -1,7 +1,7 @@
 
 Base Plugin Reference
 
-			*base#qw#catpath*
+*base#qw#catpath*
 
 echo base#qw#catpath('projs','a')
 echo base#qw#catpath('projs','a b')
