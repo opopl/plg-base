@@ -10,7 +10,7 @@ function! base#image#convert (a,b)
 
 	let im_cv=get(exes,'im_convert','')
 	if filereadable(im_cv)
-		let cmd = join(im_cv,a:a,a:b,' ')
+		let cmd = join([im_cv,a:a,a:b],' ')
 		call base#sys({ "cmds" : [cmd]})
 	endif
 	
