@@ -28,6 +28,7 @@ function! base#complete#fileids (...)
   return base#complete#vars([ 'fileids' ])
 endfun
 
+
 function! base#complete#fileadd(...)
   return base#complete#vars([ 'opts_FileAdd' ])
 endfun

@@ -75,6 +75,12 @@ function! base#f#set (ref)
 
 endfun
 
+function! base#f#run (...)
+	let fileid = get(a:000,0,'')
+	let files  = get(s:files,fileid,[])
+	
+endfunction
+
 fun! base#f#showfiles(...)
   if ! exists("s:files") | let s:files={} | endif
 
