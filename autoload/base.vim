@@ -2097,13 +2097,14 @@ function! base#append (...)
   let opt = get(a:000,0,'')
 
   let sub = 'base#append#'.opt
-	try
-    exe 'call '.sub.'()'
-	catch 
-		call base#warn({ 
-			\	'text' : 'Failure to execute: ' . sub 
-			\	} )
-	endtry
+	exe 'call '.sub.'()'
+
+ " try
+	"catch 
+		"call base#warn({ 
+			"\	'text' : 'Failure to execute: ' . sub 
+			"\	} )
+	"endtry
 	
 endfunction
 
@@ -2878,23 +2879,34 @@ function! base#init (...)
     let opt = a:1
     if opt == 'cmds'
         call base#init#cmds()
+
     elseif opt == 'vars'
         call base#initvars()
+
+    elseif opt == 'env'
+        call base#env#init()
+
     elseif opt == 'tagids'
         call base#init#tagids()
 
     elseif opt == 'menus'
         call base#menus#init()
+
     elseif opt == 'stl'
         call base#stl#setparts()
+
     elseif opt == 'files'
         call base#initfiles()
+
     elseif opt == 'plugins'
         call base#initplugins()
+
     elseif opt == 'paths'
         call base#initpaths()
+
     elseif opt == 'omni'
         call base#omni#init()
+
     endif
     return
   endif
