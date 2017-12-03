@@ -24,8 +24,8 @@ function! base#env#path (...)
 				let path = substitute(l,pat,'\1','g')
 			endif
 		endfor
-
 	endif
+
 	return path
 
 endfunction
