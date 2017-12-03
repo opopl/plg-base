@@ -615,7 +615,7 @@ fun! base#initpaths(...)
 				\	})
 
     call base#pathset({
-        \   'open_server'      : base#file#catfile([ 'C:','OpenServer' ]),
+        \   'open_server' : base#file#catfile(base#qw('C: OSPanel')),
 				\	})
 
     call base#pathset({
