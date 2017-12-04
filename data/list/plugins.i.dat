@@ -54,3 +54,8 @@ docs
 # php
 phpcd
 phpcomplete
+# tags
+vim-tags
+vim-easytags
+vim-gutentags
+vim-misc

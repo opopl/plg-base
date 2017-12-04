@@ -6,6 +6,8 @@ perl_as
 perlmod
 thisfile
 ##########
+src_vim
+##########
 projs_this
 projs_tex
 ##########

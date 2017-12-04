@@ -111,7 +111,7 @@ function! base#tg#update (...)
 	endif
 
 	"" stored in the corresponding dat-file
-	let tgs_all = base#var('tagids')
+	let tgs_all = base#varget('tagids',[])
 
 	let tfile = base#tg#tfile(tgid)
 	let libs = ''
@@ -120,6 +120,22 @@ function! base#tg#update (...)
 	let libs_as = join(base#qw("C:/Perl/site/lib C:/Perl/lib" ),' ')
 
 	if tgid  == ''
+
+"""base_tg_update_src_vim
+	elseif tgid == 'src_vim'
+		let dir_src = base#qw#catpath('src_vim', 'src')
+		let dirs = []
+
+		call add(dirs,dirs_src)
+
+    let files_arr = base#find({ 
+			\	"dirs" : dirs, 
+			\	"exts" : base#qw('c h'), 
+			\	"relpath" : 0, 
+			\ })
+
+		let files = join(files_arr,' ')
+
 
 	elseif tgid == 'perl_as'
 

@@ -584,9 +584,11 @@ fun! base#initpaths(...)
         \ 'conf'    : confdir ,
         \ 'vrt'     : vrt,
         \ 'vim'     : base#envvar('VIM'),
+        \ 'src_vim' : base#envvar('SRC_VIM'),
         \ 'texdocs' : projsdir,
         \ 'p'       : base#envvar('TexPapersRoot'),
         \ 'phd_p'   : base#envvar('TexPapersRoot'),
+        \ 'include_win_sdk'   : base#envvar('INCLUDE_WIN_SDK'),
         \   })
 
     call base#pathset({
