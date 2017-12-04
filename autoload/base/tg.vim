@@ -126,7 +126,8 @@ function! base#tg#update (...)
 		let dir_src = base#qw#catpath('src_vim', 'src')
 		let dirs = []
 
-		call add(dirs,dirs_src)
+		call add(dirs,dir_src)
+		call add(dirs,base#path('include_win_sdk'))
 
     let files_arr = base#find({ 
 			\	"dirs" : dirs, 
@@ -148,9 +149,9 @@ function! base#tg#update (...)
 		let cwd = getcwd()
 
 		let files_arr = base#find({ 
-			\	"dirs" : [ dir ], 
-			\	"exts" : [ "vim"  ], 
-			\	"relpath" : 0, 
+			\	"dirs"    : [ dir ],
+			\	"exts"    : [ "vim"  ],
+			\	"relpath" : 0,
 			\ })
 
 		let files = join(files_arr,' ')
