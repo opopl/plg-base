@@ -52,10 +52,10 @@ vim-php-manual
 java_oracle_docs
 docs
 # php
-phpcd
-phpcomplete
+#phpcd
+#phpcomplete
 # tags
-vim-tags
-vim-easytags
-vim-gutentags
-vim-misc
+#vim-tags
+#vim-easytags
+#vim-gutentags
+#vim-misc
