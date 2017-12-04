@@ -621,7 +621,8 @@ fun! base#initpaths(...)
 				\	})
 
     call base#pathset({
-				\ 'articleloader' : base#qw#catpath('open_server','domains articleloader')
+				\ 'articleloader' : base#qw#catpath('open_server','domains localhost articleloader'),
+				\ 'localhost'     : base#qw#catpath('open_server','domains localhost'),
 				\	})
 
     call base#pathset({
