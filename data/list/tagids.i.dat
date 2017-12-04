@@ -12,6 +12,7 @@ projs_this
 projs_tex
 ##########
 plg
+plg_vim-php-manual
 plg_ap
 plg_base
 plg_pdoc

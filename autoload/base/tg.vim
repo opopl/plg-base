@@ -114,7 +114,7 @@ function! base#tg#update (...)
 	let tgs_all = base#varget('tagids',[])
 
 	let tfile = base#tg#tfile(tgid)
-	let libs = ''
+	let libs  = ''
 	let files = ''
 
 	let libs_as = join(base#qw("C:/Perl/site/lib C:/Perl/lib" ),' ')
@@ -124,15 +124,15 @@ function! base#tg#update (...)
 """base_tg_update_src_vim
 	elseif tgid == 'src_vim'
 		let dir_src = base#qw#catpath('src_vim', 'src')
-		let dirs = []
+		let dirs    = []
 
 		call add(dirs,dir_src)
 		call add(dirs,base#path('include_win_sdk'))
 
     let files_arr = base#find({ 
-			\	"dirs" : dirs, 
-			\	"exts" : base#qw('c h'), 
-			\	"relpath" : 0, 
+			\	"dirs"    : dirs,
+			\	"exts"    : base#qw('c h'),
+			\	"relpath" : 0,
 			\ })
 
 		let files = join(files_arr,' ')
@@ -184,7 +184,8 @@ function! base#tg#update (...)
 
 """base_tg_update_plg_
 	elseif tgid =~ '^plg_'
-		let pat = '^plg_\(\w\+\)$'
+		"let pat = '^plg_\(\w\+\)$'
+		let pat = '^plg_\(.\+\)$'
 		let plg = substitute(tgid,pat,'\1','g')
 
 		let plgdir = base#catpath('plg',plg)
