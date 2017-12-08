@@ -2,25 +2,33 @@
 function! base#vimlines#action (action,start,end,...)
 	let action = a:action
 
+"""vimlines_execute
 	if action == 'execute'
 		let lnum=a:start
 
-		redir => v
+		let tmp   = tempname()
+		let lines = []
+
 		while lnum<a:end+1
 			let line = getline(lnum)
-			silent exe	line
+			call add(lines,line)
 
 			let lnum+=1
 		endw
-		redir END
-	endif
+		call writefile(lines,tmp)
 
-	if 0
-		echo 2
-		echo 3
-	endif
+		redir => v 
+		silent exe 'so '.tmp
+		redir END
+
+		if 0
+			echo 2
+			echo 3
+		endif
 	
-	let l=split(v,"\n")
-	call base#buf#open_split({ 'lines' : l })
+		let l=split(v,"\n")
+		call base#buf#open_split({ 'lines' : l })
+
+	endif
 
 endfunction
