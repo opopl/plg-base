@@ -2610,7 +2610,7 @@ endfun
 
 
 function! base#plgdir ()
-    return base#var('plgdir')
+    return base#varget('plgdir')
 endf    
 
 "" let dd = base#datadir()
