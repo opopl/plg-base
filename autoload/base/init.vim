@@ -140,7 +140,7 @@ command! -nargs=* -complete=custom,base#complete#omnioptions
 	    \   BaseInit call base#init(<f-args>) 
 
 """VimLinesExecute
-	command! -nargs=1 -range VimLinesExecute
+	command! -nargs=* -range VimLinesExecute
 	\	call base#vimlines#action('execute',<line1>,<line2>,<f-args>)
 	
 """BaseDatView

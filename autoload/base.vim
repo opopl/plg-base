@@ -1354,9 +1354,9 @@ function! base#git (...)
         let fulldir = getcwd()
         let dirname = fnamemodify(fulldir,':p:h:t')
     
-        call base#var('stl_gitcmd_fulldir',fulldir)
-        call base#var('stl_gitcmd_dirname',dirname)
-        call base#var('stl_gitcmd_cmd',gitcmd)
+        call base#varset('stl_gitcmd_fulldir',fulldir)
+        call base#varset('stl_gitcmd_dirname',dirname)
+        call base#varset('stl_gitcmd_cmd',gitcmd)
 
         let exec = [ 
               \ 'call base#buf#type("base#sys")',
