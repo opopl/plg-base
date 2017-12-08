@@ -25,3 +25,6 @@ javax_swing_JFrame           base#varget('my_java_methods_javax_swing_JFrame')
 #vim_commands_user           VimCommands
 #vim_funcs_core              vim_funcs_core
 #vim_funcs_user              vim_funcs_user
+php_DOMDocument_methods      base#varget('idephp_DOMDocument_methods')
+php_DOMNode_methods          base#varget('idephp_DOMNode_methods')
+php_DOMNodeList_methods      base#varget('idephp_DOMNodeList_methods')
