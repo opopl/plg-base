@@ -53,15 +53,19 @@ endfunction
 
 function! base#buf#open_split (ref)
 
-		let ref   = a:ref
-		let lines = get(ref,'lines',[])
-		let cmds_pre  = get(ref,'cmds_pre',[])
+		let ref      = a:ref
+		let lines    = get(ref,'lines',[])
+		let cmds_pre = get(ref,'cmds_pre',[])
 		
 		split
 		enew
     setlocal buftype=nofile
     setlocal nobuflisted
     "setlocal nomodifiable
+		"
+		for cmd in cmds_pre
+			exe cmd
+		endfor
 
 		let lnum=line('.')
 		if len(lines)
