@@ -596,15 +596,7 @@ fun! base#initpaths(...)
         \ })
 
     if pc == 'APOPLAVSKIYNB'
-	      call base#pathset({ 
-           \ "mingw" : base#file#catfile([ base#path('progs'), 'mingw' ]),
-           \ "perl_bin_strawberry_522_32" : base#file#catfile(
-							\	[ 
-							\	base#path('progs'), 
-							\	base#qw('perl strawberry_522_32bit perl bin') 
-						\	]),
-           \ "imagemagick" : base#file#catfile(base#qw('c: OSPanel modules imagemagick')),
-	         \ })
+				call base#initpaths#apoplavskiynb()
 	  endif
 
     let mkvimrc  = base#file#catfile([ base#path('conf'), 'mk', 'vimrc' ])
@@ -1141,9 +1133,12 @@ fun! base#input(msg,default,...)
 
 	let ref = get(a:000,0,{})
 
-	let prompt = get(ref,'prompt',1)
+	let prompt = 1
+
 	let o      = base#varget('opts',{})
 	let prompt = get(o,'base#input_prompt',prompt)
+
+	let prompt = get(ref,'prompt',prompt)
 
 	if !prompt
 		return
