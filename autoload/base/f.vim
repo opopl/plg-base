@@ -81,10 +81,37 @@ function! base#f#set (ref)
 endfun
 
 "call base#f#run (fileid)
+"call base#f#run (fileid,args)
+"call base#f#run (fileid,args,idnum)
+"
+"call base#f#run (fileid,args,0)
+"call base#f#run (fileid,args,1)
+
+"call base#f#run ({ 
+"		\	'id'    : fileid,
+"		\	'args'  : args,
+"		\	'idnum' : idnum
+"		\	})
 
 function! base#f#run (...)
-	let fileid = get(a:000,0,'')
-	let files  = get(s:files,fileid,[])
+	let ref = get(a:000,0,{})
+
+	if type(ref)==type({})
+	elseif type(ref)==type('')
+		let fileid = get(a:000,0,'')
+		let args   = get(a:000,1,'')
+		let idnum  = get(a:000,2,0)
+
+		let files  = get(s:files,fileid,[])
+
+		call base#f#run({ 
+			\	'id'       : fileid,
+			\	'args'     : args,
+			\	'idnum' 	 : idnum})
+		return 1
+	else 
+		return 0
+	endif
 
 	for file in files
 		" code
