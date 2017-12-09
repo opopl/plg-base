@@ -53,11 +53,11 @@ docs
 # php
 #phpcd
 #phpcomplete
-# tags
+###tags
 #vim-tags
 #vim-easytags
-#vim-gutentags
-#vim-misc
+vim-gutentags
+vim-misc
 surround
 ragtag
 idephp

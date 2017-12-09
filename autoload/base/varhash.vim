@@ -24,7 +24,7 @@ function! base#varhash#get (...)
 
 	if !strlen(hashname) | return default | endif
 
-	let val = base#varget(hashname)
+	let val = base#varget(hashname,{})
 
 	if base#type(val) == "Dictionary"
 		let hash = val

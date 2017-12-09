@@ -6,7 +6,7 @@ function! base#stl#set (...)
     else
       let opt='neat'
 
-      let listcomps=base#varget('stlkeys')
+      let listcomps=base#varget('stlkeys',[])
   
       let liststr = join(listcomps,"\n")
       let dialog  = "Available status line keys  are: " . "\n"
@@ -233,7 +233,13 @@ function! base#stl#setorders ()
 		        \   'buffer_number' ,
 		        \   'file_name'     ,
 		        \   'tgids'         ,
-                \       ],
+        \       ],
+        \   'php'   :   [ 
+		        \   'line_number'   ,
+		        \   'buffer_number' ,
+		        \   'file_name'     ,
+		        \   'tgids'         ,
+        \       ],
         \   'neat'   :   [ 
 		        \   'tgids'         ,
 		        \   'mode'          ,
