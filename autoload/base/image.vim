@@ -88,6 +88,7 @@ function! base#image#extract_info (...)
 		endif
 		
 		let cmd = join([im_idn,idn_args,img],' ')
+		call add(cmds,cmd)
 
 		let img_unix = base#file#win2unix(img)
 		let imgname  = fnamemodify(img,':p:t')
@@ -97,11 +98,7 @@ function! base#image#extract_info (...)
 		let img_reldir = fnamemodify(img_reldir,':h')
 		let img_reldir_unix = base#file#win2unix(img_reldir)
 
-		call base#sys({ 
-			\	"cmds"         : [cmd],
-			\	"skip_errors"  : get(ref,'skip_errors',1),
-			\	"split_output" : get(ref,'split_output',0),
-			\	})
+
 
 		let s = base#varget('sysoutstr','')
 
@@ -128,6 +125,14 @@ function! base#image#extract_info (...)
 			if num > max_img_num | break | endif
 		endif
 	endfor
+
+	let w2bat=base#file#catfile([ img_dir, 'extract_info.bat' ])
+	call base#sys({ 
+			\	"cmds"         : cmds,
+			\	"skip_errors"  : get(ref,'skip_errors',1),
+			\	"split_output" : get(ref,'split_output',0),
+			\	'write_to_bat' : w2bat,
+			\	})
 
 	if do_write_html
 			call add(a_html,'    </tbody>')

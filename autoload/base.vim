@@ -1983,7 +1983,8 @@ fun! base#sys(...)
     \   'show_output'  : 0          ,
     \   'prompt'       : 1          ,
     \   'skip_errors'  : 0          ,
-    \   'split_output'  : 0         ,
+    \   'split_output' : 0         ,
+    \   'write_to_bat' : ''        ,
     \   }
 
  if a:0 
@@ -2011,8 +2012,21 @@ fun! base#sys(...)
 
  let ok=1
 
- let output=[]
- let outputstr=''
+ let output    = []
+ let outputstr = ''
+
+ let write_to_bat=get(opts,'write_to_bat','')
+ if strlen(write_to_bat)
+		if filereadable(write_to_bat)
+			call delete(write_to_bat)
+		endif
+		
+		call writefile(lines,write_to_bat)
+		if filereadable(write_to_bat)
+			let cmds_orig = cmds
+			let cmds      = [write_to_bat]
+		endif
+ endif
 
  for cmd in cmds 
     let outstr = system(cmd)
