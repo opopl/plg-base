@@ -27,4 +27,17 @@ function! base#initpaths#apoplavskiynb ()
 			\	"photos_georgia_2016" : base#file#catfile(base#qw('c: doc photos georgia_2016')),
 	    \ })
 
+    call base#pathset({
+        \   'open_server' : base#file#catfile(base#qw('C: OSPanel')),
+				\	})
+
+    call base#pathset({
+				\ 'localhost'     : base#qw#catpath('open_server','domains localhost'),
+				\	})
+
+    call base#pathset({
+				\ 'url_articleloader' : base#qw#catpath('localhost','articleloader'),
+				\ 'url_photoloader' : base#qw#catpath('localhost','photoloader'),
+				\	})
+
 endfunction

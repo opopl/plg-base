@@ -611,15 +611,6 @@ fun! base#initpaths(...)
 				\	})
 
     call base#pathset({
-        \   'open_server' : base#file#catfile(base#qw('C: OSPanel')),
-				\	})
-
-    call base#pathset({
-				\ 'articleloader' : base#qw#catpath('open_server','domains localhost articleloader'),
-				\ 'localhost'     : base#qw#catpath('open_server','domains localhost'),
-				\	})
-
-    call base#pathset({
         \   'jq_course_local'  : base#file#catfile([ base#path('open_server'),'domains', 'jq-course.local' ]),
         \   'quote_service_local'  : base#file#catfile([ base#path('open_server'),'domains', 'quote-service.local' ]),
 				\	})
