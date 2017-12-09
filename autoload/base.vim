@@ -2021,7 +2021,7 @@ fun! base#sys(...)
 			call delete(write_to_bat)
 		endif
 		
-		call writefile(lines,write_to_bat)
+		call writefile(cmds,write_to_bat)
 		if filereadable(write_to_bat)
 			let cmds_orig = cmds
 			let cmds      = [write_to_bat]
