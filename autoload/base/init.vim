@@ -9,8 +9,9 @@ fun! base#init#cmds()
 	command! -nargs=*  MkDir
 		\	call base#mkdir#prompt(<f-args>) 
 
+"""FileRun
 	command! -nargs=*  -complete=custom,base#complete#fileids FileRun
-		\	call base#f#run(<f-args>)
+		\	call base#f#run_prompt(<f-args>)
 
 """FileEcho
 	command! -nargs=* -complete=custom,base#complete#fileids FileEcho

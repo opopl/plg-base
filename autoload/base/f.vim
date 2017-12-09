@@ -92,6 +92,7 @@ endfun
 "		\	'args'  : args,
 "		\	'idnum' : idnum
 "		\	})
+"
 
 function! base#f#run (...)
 	let ref = get(a:000,0,{})
@@ -107,17 +108,49 @@ function! base#f#run (...)
 		call base#f#run({ 
 			\	'id'       : fileid,
 			\	'args'     : args,
-			\	'idnum' 	 : idnum})
+			\	'idnum' 	 : idnum	})
 		return 1
 	else 
 		return 0
 	endif
 
-	for file in files
-		" code
-	endfor
-	
+	let fileid = get(ref,'id','')
+	let args   = get(ref,'args',[])
+	let args_s = join(args,' ')
+	let idnum  = get(ref,'idnum',0)
+
+	let file 	 = base#f#path(fileid,idnum)
+	let cmd    = file . ' ' . args_s
+
+	let cmds   = []
+	call add(cmds,cmd)
+
+	call base#sys({ 
+			\	"cmds"         : cmds,
+			\	"split_output" : 1,
+			\	})
+
 endfunction
+
+function! base#f#run_prompt (...)
+	let fileid = get(a:000,0,'')
+	let f      = base#f#path(fileid)
+
+	let idnum=0
+	if type(f)==type([])
+		let idnum=input('Idnum:',0)
+	endif
+	let file = base#f#path(fileid,idnum)
+
+	let args_s=input('Args:','')
+	let args_a=split(args_s,' ')
+
+	call base#f#run({ 
+		\	'id'    : fileid,
+		\	'args'  : args_a,
+		\	'idnum' : idnum })
+
+endf
 
 fun! base#f#showfiles(...)
   if ! exists("s:files") | let s:files={} | endif
