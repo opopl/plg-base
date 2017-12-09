@@ -63,7 +63,7 @@ function! base#complete#BaseAppend (...)
 endfunction
 
 function! base#complete#imageact (...)
-  return base#complete#vars([ 'opts_imageact' ])
+  return base#complete#vars([ 'opts_ImageAct' ])
 endfunction
 
 function! base#complete#info (...)
