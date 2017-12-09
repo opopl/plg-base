@@ -9,6 +9,10 @@ fun! base#init#cmds()
 	command! -nargs=*  MkDir
 		\	call base#mkdir#prompt(<f-args>) 
 
+"""ImageAct
+	command! -nargs=*  -complete=custom,base#complete#imageact ImageAct 
+		\	call base#image#act(<f-args>)
+
 """FileRun
 	command! -nargs=*  -complete=custom,base#complete#fileids FileRun
 		\	call base#f#run_prompt(<f-args>)

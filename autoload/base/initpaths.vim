@@ -23,4 +23,8 @@ function! base#initpaths#apoplavskiynb ()
 	 		\	]),
 	    \ })
 
+	 call base#pathset({ 
+			\	"photos_georgia_2016" : base#file#catfile(base#qw('c: doc photos georgia_2016')),
+	    \ })
+
 endfunction

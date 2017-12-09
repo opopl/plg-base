@@ -120,14 +120,15 @@ function! base#f#run (...)
 	let idnum  = get(ref,'idnum',0)
 
 	let file 	 = base#f#path(fileid,idnum)
-	let cmd    = file . ' ' . args_s
+	let cmd    = '"'.file.'"' . ' ' . args_s
 
 	let cmds   = []
 	call add(cmds,cmd)
 
 	call base#sys({ 
 			\	"cmds"         : cmds,
-			\	"split_output" : 1,
+			\	"split_output" : get(ref,'split_output',0),
+			\	"skip_errors"  : 1,
 			\	})
 
 endfunction
@@ -146,9 +147,11 @@ function! base#f#run_prompt (...)
 	let args_a=split(args_s,' ')
 
 	call base#f#run({ 
-		\	'id'    : fileid,
-		\	'args'  : args_a,
-		\	'idnum' : idnum })
+		\	'id'           : fileid,
+		\	'args'         : args_a,
+		\	'idnum'        : idnum ,
+		\	'split_output' : 1,
+		\	})
 
 endf
 
