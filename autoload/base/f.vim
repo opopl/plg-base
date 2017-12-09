@@ -65,19 +65,30 @@ function! base#f#set (ref)
   if ! exists("s:files") | let s:files={} | endif
 
   for [ fileid, file ] in items(a:ref) 
+		 if type(file) == type('') && !filereadable(file)
+				continue
+		 endif
+
      let e = { fileid : file }
      call extend(s:files,e)
   endfor
 
   call base#varset('exefiles',s:files)
+  call base#varset('exefileids',sort(keys(s:files)))
 
 	call base#var#update('fileids')
 
 endfun
 
+"call base#f#run (fileid)
+
 function! base#f#run (...)
 	let fileid = get(a:000,0,'')
 	let files  = get(s:files,fileid,[])
+
+	for file in files
+		" code
+	endfor
 	
 endfunction
 
@@ -85,6 +96,26 @@ fun! base#f#showfiles(...)
   if ! exists("s:files") | let s:files={} | endif
 
 	echo s:files
+endfun
+
+fun! base#f#echo_fpath(fpath)
+	let l=[]
+
+	if type(a:fpath)==type('')
+		call add(l,'Exe full path: ' . a:fpath)
+		call add(l,'Exe exists:    ' . ( filereadable(a:fpath)  ? 'YES' : 'NO' ))
+
+	elseif type(a:fpath)==type([])
+		let num=1
+		for f in a:fpath
+			call add(l,'EXE '.num)
+			call extend(l,map(base#f#echo_fpath(f),"substitute(v:val,'^','\\t','g')"))
+			let num+=1
+		endfor
+
+	endif
+
+	return l
 endfun
 
 fun! base#f#echo(...)
@@ -96,7 +127,14 @@ fun! base#f#echo(...)
 	endif
 
   let fpath  = base#f#path(fileid)
-  echo fpath
+
+	let l=[]
+	call add(l,'      ')
+	call add(l,'Exe id:        ' . fileid)
+	call extend(l,base#f#echo_fpath(fpath))
+	call add(l,'      ')
+
+	call base#buf#open_split({ 'lines' : l})
 endf
 
 "echo base#f#path('perl')

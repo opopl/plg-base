@@ -493,11 +493,13 @@ fun! base#initfiles(...)
     endif
 
 		if $COMPUTERNAME == 'APOPLAVSKIYNB'
-  		let cv =  base#file#catfile([ base#path('imagemagick'), 'convert.exe' ])
 
-    	if filereadable(cv)
-      	call base#f#set({  'im_convert' : cv })
-    	endif
+  		let cv  = base#file#catfile([ base#path('imagemagick'), 'convert.exe' ])
+  		let idn = base#file#catfile([ base#path('imagemagick'), 'identify.exe' ])
+
+      call base#f#set({  'im_convert' : cv })
+      call base#f#set({  'im_identify' : idn })
+
 		endif
 
   let exefiles={}
