@@ -300,8 +300,10 @@ function! base#file#commonroot (...)
 	
 endfunction
 
+"echo base#file#reldir('c:\doc\photos','c:\')
+
 function! base#file#reldir (dir,root)
-	let dir = a:dir
+	let dir  = a:dir
 	let root = a:root
 
 	let root = base#file#std(root)
