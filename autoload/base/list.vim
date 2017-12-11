@@ -43,6 +43,21 @@ fun! base#list#contains_matches(list,pat)
 	return ( len(matched) ) ? 1 : 0
 endfun
 
+function! base#list#convert_to_vim(list,varname)
+	let vc=[]
+	call add(vc,"let ".a:varname.'= [')
+	let list=[]
+	for l in copy(a:list)
+		let l = "\\ '".l."',"
+		call add(list,l)
+	endfor
+	call extend(vc,list)
+	call add(vc," \\ ]")
+
+	return vc
+endfun
+
+
 
 function! base#list#add (ref,...)
         
