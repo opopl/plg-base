@@ -1639,8 +1639,11 @@ function! base#findwin(ref)
             "let searchcmd  = 'dir ' .dir.'\*'.ext.searchopts 
             let searchcmd  = 'dir *'.ext.searchopts 
 
-            let ok  = base#sys( { "cmds" : [ searchcmd ], "skip_errors"  : 1 } )
-            let res = base#var('sysoutstr')
+            let ok  = base#sys( { 
+							\	"cmds" : [ searchcmd ], 
+							\	"skip_errors"  : 1 
+							\	})
+            let res = base#varget('sysoutstr','')
 
             if ( ok && ( res !~ '^File Not Found' ) )
                 let found .= res . "\n"

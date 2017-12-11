@@ -37,7 +37,12 @@ function! base#initpaths#apoplavskiynb ()
 
     call base#pathset({
 				\ 'url_articleloader' : base#qw#catpath('localhost','articleloader'),
-				\ 'url_photoloader' : base#qw#catpath('localhost','photoloader'),
+				\ 'url_photoloader'   : base#qw#catpath('localhost','photoloader'),
+				\	})
+
+		call base#pathset({
+			\	'web_mdn_HTML_elements_reference' : 
+				\	'C:\web\MDN_HTML_elements_reference\developer.mozilla.org\en-US\docs\Web\HTML\Element'
 				\	})
 
 endfunction

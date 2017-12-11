@@ -132,8 +132,8 @@ function! base#file#lines(file)
 endf
 
 function! base#file#basename(file)
-	let file = a:file
-	let bname=fnamemodify(file,':p:t')
+	let file  = a:file
+	let bname = fnamemodify(file,':p:t')
 	return bname
 endf
 
