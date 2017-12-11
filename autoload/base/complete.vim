@@ -66,6 +66,10 @@ function! base#complete#imageact (...)
   return base#complete#vars([ 'opts_ImageAct' ])
 endfunction
 
+function! base#complete#FIND (...)
+  return base#complete#vars([ 'opts_FIND' ])
+endfunction
+
 function! base#complete#info (...)
   return base#complete#vars([ 'info_topics' ])
 endfunction

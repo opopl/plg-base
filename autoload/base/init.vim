@@ -13,6 +13,10 @@ fun! base#init#cmds()
 	command! -nargs=*  -complete=custom,base#complete#imageact ImageAct 
 		\	call base#image#act(<f-args>)
 
+"""FIND
+	command! -nargs=* -complete=custom,base#complete#FIND  FIND 
+		\	call base#cmd#FIND(<f-args>) 
+
 """FileRun
 	command! -nargs=*  -complete=custom,base#complete#fileids FileRun
 		\	call base#f#run_prompt(<f-args>)

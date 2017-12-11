@@ -1546,6 +1546,45 @@ fun! base#readdictdat(ref)
  return dict
 endfun
 
+function! base#findbyperl(ref)
+
+	if !has('perl')
+		return
+	endif
+
+	let dirstr = a:ref.dirs
+	let extstr = a:ref.ext
+
+	" list of found files to be returned
+	let files = []
+
+perl << EOF
+	use File::Find ();
+
+	my @dirs=split(":", VIM::Eval('dirstr'));
+	my @exts=split(":", VIM::Eval('extstr'));
+	my @files=();
+
+	my $w = sub { 
+		if (/\.(\w+)$/){
+			my $ext = $1 ;
+
+			if ( grep { /^$ext$/ } @exts ){
+				push(@files,$File::Find::name);
+			}
+		}
+	};
+	File::Find::find({ wanted => $w }, @dirs );
+	my $filestr=join(":",@files);
+	VIM::DoCommand('let filestr="' . $filestr . '"')
+
+EOF
+
+	let files=split(filestr,":")
+	return files
+
+endf
+
 """base_find
 function! base#find(ref)
 
