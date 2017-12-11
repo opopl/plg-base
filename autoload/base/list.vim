@@ -21,6 +21,28 @@ function! base#list#minus (a,b)
 	return res
 endf	
 
+function! base#list#unshift (list,element)
+	let nlist=[]
+	call add(nlist,a:element)
+	call extend(nlist,a:list)
+	return nlist
+endf	
+
+fun! base#list#has(list,element)
+	return base#inlist(a:element,a:list)
+endfun
+
+fun! base#list#matched(list,pat)
+	let list = copy(a:list)
+	let m = filter(list,'v:val =~ a:pat')
+	return m
+endfun
+
+fun! base#list#contains_matches(list,pat)
+	let matched = base#list#matched(a:list,a:pat)
+	return ( len(matched) ) ? 1 : 0
+endfun
+
 
 function! base#list#add (ref,...)
         
