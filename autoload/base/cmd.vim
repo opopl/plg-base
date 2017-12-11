@@ -6,6 +6,9 @@ function! base#cmd#FIND (...)
 	if opt == 'dirid_pattern'
 		let dirid   = input('DIRID:','','custom,base#complete#CD')
 		let pattern = input('Pattern:','')
+
+	elseif opt == 'perl_exts'
+
 	endif
 	
 endfunction

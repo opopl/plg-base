@@ -648,7 +648,7 @@ fun! base#initpaths(...)
     endif
     let g:dirs = s:paths
 
-    let pathlist= sort(keys(s:paths))
+    let pathlist = sort(keys(s:paths))
     call base#varset('pathlist',pathlist)
 
 	if do_echo
