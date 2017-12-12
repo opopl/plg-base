@@ -27,5 +27,6 @@ plg_txtmy
 plg_my_java
 plg_vim-latex
 plg_idephp
+plg_my
 ##########
 mkvimrc

@@ -483,7 +483,7 @@ fun! base#initfiles(...)
         let s:files={}
     endif
 
-  	let evince =  base#file#catfile([ 
+    let evince =  base#file#catfile([ 
       \ base#path('home'),
       \ '\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe' 
       \ ])
@@ -492,15 +492,15 @@ fun! base#initfiles(...)
         call base#f#set({  'evince' : evince })
     endif
 
-		if $COMPUTERNAME == 'APOPLAVSKIYNB'
+    if $COMPUTERNAME == 'APOPLAVSKIYNB'
 
-  		let cv  = base#file#catfile([ base#path('imagemagick'), 'convert.exe' ])
-  		let idn = base#file#catfile([ base#path('imagemagick'), 'identify.exe' ])
+      let cv  = base#file#catfile([ base#path('imagemagick'), 'convert.exe' ])
+      let idn = base#file#catfile([ base#path('imagemagick'), 'identify.exe' ])
 
       call base#f#set({  'im_convert' : cv })
       call base#f#set({  'im_identify' : idn })
 
-		endif
+    endif
 
   let exefiles={}
   for fileid in base#varget('exefileids',[])
@@ -538,10 +538,10 @@ fun! base#initpaths(...)
     let ref = {}
     if a:0 | let ref = a:1 | endif
 
-	  let do_echo=0
-	  if exists("g:base_echo_init") && g:base_echo_init
-		  let do_echo = 1
-	  endif
+    let do_echo=0
+    if exists("g:base_echo_init") && g:base_echo_init
+      let do_echo = 1
+    endif
  
 """define_paths
 
@@ -555,11 +555,11 @@ fun! base#initpaths(...)
     endif
         
     if anew
-		if do_echo
-	        call base#echo({ 
-	            \   "text" : 'Settings paths anew...' 
-	            \   })
-		endif
+    if do_echo
+          call base#echo({ 
+              \   "text" : 'Settings paths anew...' 
+              \   })
+    endif
         let s:paths={}
     endif
 
@@ -572,12 +572,12 @@ fun! base#initpaths(...)
 
     let home      = base#envvar('USERPROFILE')
 
-	  let pc = base#envvar('COMPUTERNAME')
+    let pc = base#envvar('COMPUTERNAME')
 
     let evbin = home.'\AppData\Local\Apps\Evince-2.32.0.145\bin'
-	  if isdirectory(evbin)
-		  call base#pathset({  'evince_bin' : evbin })
-	  endif
+    if isdirectory(evbin)
+      call base#pathset({  'evince_bin' : evbin })
+    endif
 
     call base#pathset({ 
         \ 'home'    : home ,
@@ -598,8 +598,8 @@ fun! base#initpaths(...)
         \ })
 
     if pc == 'APOPLAVSKIYNB'
-				call base#initpaths#apoplavskiynb()
-	  endif
+        call base#initpaths#apoplavskiynb()
+    endif
 
     let mkvimrc  = base#file#catfile([ base#path('conf'), 'mk', 'vimrc' ])
     let mkbashrc = base#file#catfile([ base#path('conf'), 'mk', 'bashrc' ])
@@ -608,21 +608,25 @@ fun! base#initpaths(...)
         \   'pdfout'      : base#envvar('PDFOUT'),
         \   'htmlout'     : base#envvar('HTMLOUT'),
         \   'jsdocs'      : base#envvar('JSDOCS'),
-				\	})
+        \ })
 
     call base#pathset({
         \   'jq_course_local'  : base#file#catfile([ base#path('open_server'),'domains', 'jq-course.local' ]),
         \   'quote_service_local'  : base#file#catfile([ base#path('open_server'),'domains', 'quote-service.local' ]),
-				\	})
+        \ })
 
     call base#pathset({
         \   'ap_local'    : base#file#catfile([ base#path('open_server'),'domains', 'ap.local' ]),
         \   'inews_local' : base#file#catfile([ base#path('open_server'),'domains', 'inews.local' ]),
-				\	})
+        \ })
+
+    call base#pathset({
+        \ 'vh_mdn_elem' : base#qw#catpath('plg','idephp doc html mdn_html_elements_reference'),
+        \ })
 
 
     call base#pathset({
-				\   'desktop'     : base#file#catfile([ hm, base#qw("Desktop") ]),
+        \   'desktop'     : base#file#catfile([ hm, base#qw("Desktop") ]),
         \   'mkvimrc'     : mkvimrc,
         \   'mkbashrc'    : mkbashrc,
         \   'coms'        : base#file#catfile([ mkvimrc, '_coms_' ]) ,
@@ -651,12 +655,12 @@ fun! base#initpaths(...)
     let pathlist = sort(keys(s:paths))
     call base#varset('pathlist',pathlist)
 
-	if do_echo
-		echo '--- base#initpaths ( paths initialization ) --- '
-		echo 'Have set the value of g:dirs'
-		echo 'Have set the value of base variable "pathlist" (check it via BaseVarEcho)'
-		echo '--------------------------------------------------- '
-	endif
+  if do_echo
+    echo '--- base#initpaths ( paths initialization ) --- '
+    echo 'Have set the value of g:dirs'
+    echo 'Have set the value of base variable "pathlist" (check it via BaseVarEcho)'
+    echo '--------------------------------------------------- '
+  endif
 
     call base#echoprefixold()
 
@@ -713,38 +717,38 @@ fun! base#inlist(element,list)
 endfun
 
 function! base#getfromchoosedialog_nums (ref)
-	let ref  = a:ref
-	let opts = get(ref,'list',{})
+  let ref  = a:ref
+  let opts = get(ref,'list',{})
 
-	let defs = {
-			\	'startopt' : 'usual',
-			\	'header'   : '',
-			\	'numcols'  : 1,
-			\	'bottom'   : "",
-			\	}
+  let defs = {
+      \ 'startopt' : 'usual',
+      \ 'header'   : '',
+      \ 'numcols'  : 1,
+      \ 'bottom'   : "",
+      \ }
 
-	let inref={}
-	call extend(inref,defs)
-	call extend(inref,ref)
+  let inref={}
+  call extend(inref,defs)
+  call extend(inref,ref)
 
-	let opts_rev={}
-	for [k,v] in items(opts)
-		call extend(opts_rev,{v : k})
-	endfor
+  let opts_rev={}
+  for [k,v] in items(opts)
+    call extend(opts_rev,{v : k})
+  endfor
 
-	let optlist=[]
-	let optkeys=sort(keys(opts))
+  let optlist=[]
+  let optkeys=sort(keys(opts))
 
-	for k in optkeys
-		call add(optlist,opts[k])
-	endfor
+  for k in optkeys
+    call add(optlist,opts[k])
+  endfor
 
-	call extend(inref,{ 'list' : optlist })
+  call extend(inref,{ 'list' : optlist })
 
   let opt = base#getfromchoosedialog(inref) 
 
-	let optnum = get(opts_rev,opt,0)
-	return optnum
+  let optnum = get(opts_rev,opt,0)
+  return optnum
 
 endfun
 
@@ -1124,18 +1128,18 @@ endf
 fun! base#input(msg,default,...)
   let [msg,default] = [ a:msg,a:default ]
 
-	let ref = get(a:000,0,{})
+  let ref = get(a:000,0,{})
 
-	let prompt = 1
+  let prompt = 1
 
-	let o      = base#varget('opts',{})
-	let prompt = get(o,'base#input_prompt',prompt)
+  let o      = base#varget('opts',{})
+  let prompt = get(o,'base#input_prompt',prompt)
 
-	let prompt = get(ref,'prompt',prompt)
+  let prompt = get(ref,'prompt',prompt)
 
-	if !prompt
-		return
-	endif
+  if !prompt
+    return
+  endif
 
   let complete=get(ref,'complete','')
 
@@ -1305,10 +1309,10 @@ function! base#git (...)
         let kept=base#opt#get(gitopts)
         call base#opt#set(ref)
 
-				call base#echo({ 
-					\ 'text'   : 'Saving to Git repo...',
-					\ 'prefix' : '',
-					\	})
+        call base#echo({ 
+          \ 'text'   : 'Saving to Git repo...',
+          \ 'prefix' : '',
+          \ })
 
         for cmd in cmds
             call base#git(cmd)
@@ -1548,40 +1552,40 @@ endfun
 
 function! base#findbyperl(ref)
 
-	if !has('perl')
-		return
-	endif
+  if !has('perl')
+    return
+  endif
 
-	let dirstr = a:ref.dirs
-	let extstr = a:ref.ext
+  let dirstr = a:ref.dirs
+  let extstr = a:ref.ext
 
-	" list of found files to be returned
-	let files = []
+  " list of found files to be returned
+  let files = []
 
 perl << EOF
-	use File::Find ();
+  use File::Find ();
 
-	my @dirs=split(":", VIM::Eval('dirstr'));
-	my @exts=split(":", VIM::Eval('extstr'));
-	my @files=();
+  my @dirs=split(":", VIM::Eval('dirstr'));
+  my @exts=split(":", VIM::Eval('extstr'));
+  my @files=();
 
-	my $w = sub { 
-		if (/\.(\w+)$/){
-			my $ext = $1 ;
+  my $w = sub { 
+    if (/\.(\w+)$/){
+      my $ext = $1 ;
 
-			if ( grep { /^$ext$/ } @exts ){
-				push(@files,$File::Find::name);
-			}
-		}
-	};
-	File::Find::find({ wanted => $w }, @dirs );
-	my $filestr=join(":",@files);
-	VIM::DoCommand('let filestr="' . $filestr . '"')
+      if ( grep { /^$ext$/ } @exts ){
+        push(@files,$File::Find::name);
+      }
+    }
+  };
+  File::Find::find({ wanted => $w }, @dirs );
+  my $filestr=join(":",@files);
+  VIM::DoCommand('let filestr="' . $filestr . '"')
 
 EOF
 
-	let files=split(filestr,":")
-	return files
+  let files=split(filestr,":")
+  return files
 
 endf
 
@@ -1593,7 +1597,7 @@ function! base#find(ref)
 
     "if has('perl')
         "let files = base#findbyperl(a:ref)
-		"endif
+    "endif
 
     if has('win32')
       let files = base#findwin(a:ref)
@@ -1679,9 +1683,9 @@ function! base#findwin(ref)
             let searchcmd  = 'dir *'.ext.searchopts 
 
             let ok  = base#sys( { 
-							\	"cmds" : [ searchcmd ], 
-							\	"skip_errors"  : 1 
-							\	})
+              \ "cmds" : [ searchcmd ], 
+              \ "skip_errors"  : 1 
+              \ })
             let res = base#varget('sysoutstr','')
 
             if ( ok && ( res !~ '^File Not Found' ) )
@@ -2050,15 +2054,15 @@ fun! base#sys(...)
 
  let write_to_bat=get(opts,'write_to_bat','')
  if strlen(write_to_bat)
-		if filereadable(write_to_bat)
-			call delete(write_to_bat)
-		endif
-		
-		call writefile(cmds,write_to_bat)
-		if filereadable(write_to_bat)
-			let cmds_orig = cmds
-			let cmds      = [write_to_bat]
-		endif
+    if filereadable(write_to_bat)
+      call delete(write_to_bat)
+    endif
+    
+    call writefile(cmds,write_to_bat)
+    if filereadable(write_to_bat)
+      let cmds_orig = cmds
+      let cmds      = [write_to_bat]
+    endif
  endif
 
  for cmd in cmds 
@@ -2148,15 +2152,15 @@ function! base#append (...)
   let opt = get(a:000,0,'')
 
   let sub = 'base#append#'.opt
-	exe 'call '.sub.'()'
+  exe 'call '.sub.'()'
 
  " try
-	"catch 
-		"call base#warn({ 
-			"\	'text' : 'Failure to execute: ' . sub 
-			"\	} )
-	"endtry
-	
+  "catch 
+    "call base#warn({ 
+      "\  'text' : 'Failure to execute: ' . sub 
+      "\  } )
+  "endtry
+  
 endfunction
 
 function! base#pathlist ()
@@ -2297,9 +2301,9 @@ function! base#info (...)
 
 """info_java
    elseif topic == 'java'
-			if base#plg#loaded('my_java')
-					call my_java#act#info()
-			endif
+      if base#plg#loaded('my_java')
+          call my_java#act#info()
+      endif
 
 """info_bufs
    elseif topic == 'bufs'
@@ -2832,9 +2836,9 @@ endfunction
 
 function! base#initvarsfromdat ()
 
-		let refdef = {}
-		let ref    = refdef
-		let refa   = get(a:000,0,{})
+    let refdef = {}
+    let ref    = refdef
+    let refa   = get(a:000,0,{})
 
     call extend(ref,refa)
 
@@ -2914,12 +2918,12 @@ function! base#initplugins (...)
     if exists('g:plugins') | unlet g:plugins | endif
     let g:plugins=base#varget('plugins',[])
 
-	if exists("g:base_echo_init") && g:base_echo_init
-		echo '--- base#initplugins ( plugins initialization ) --- '
-		echo 'Have set the value of g:plugins'
-		echo 'Have set the value of base variable "plugins" (check it via BaseVarEcho plugins)'
-		echo '--------------------------------------------------- '
-	endif
+  if exists("g:base_echo_init") && g:base_echo_init
+    echo '--- base#initplugins ( plugins initialization ) --- '
+    echo 'Have set the value of g:plugins'
+    echo 'Have set the value of base variable "plugins" (check it via BaseVarEcho plugins)'
+    echo '--------------------------------------------------- '
+  endif
 
 endf    
 
@@ -3062,8 +3066,8 @@ fun! base#listnew(...)
   let a=[]
 
   while i<sz
-	   call add(a,'')
-	   let i+=1
+     call add(a,'')
+     let i+=1
   endw
 
   return a
