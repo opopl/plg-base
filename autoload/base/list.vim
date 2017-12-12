@@ -69,10 +69,37 @@ function! base#list#get (arr,ind)
       endfor
       return r
    elseif type(a:ind) == type('')
-      let pat     = '^\(\d\+\):\(\d\+\)$'
-      let list_se = base#string#matchlist(a:ind,pat)
-      if len(list_se)
-         let [start,end]=map(base#list#get(list_se,[0,1]),'str2nr(v:val)')
+      let ind_split=split(a:ind,",")
+
+      let res = []
+      if len(ind_split) > 1
+		     for ind in ind_split
+            "echo ind
+            if exists("a") | unlet a | endif
+            let a = base#list#get(a:arr,ind)
+            if  (type(a) == type('')) || (type(a) == type(0))
+              call add(res,a)
+            elseif  (type(a) == type([]))
+              call extend(res,a)
+            endif
+		     endfor
+         return res
+      endif
+
+      let pats      = { 
+        \ 'range' : '^\(\d\+\):\(\d\+\)$',
+        \ 'single' : '^\(\d\+\)$',
+        \  }
+
+      let list_single = base#string#matchlist(a:ind,pats.single)
+      if len(list_single)
+         let [ind]=map(base#list#get(list_single,[0]),'str2nr(v:val)')
+         return  base#list#get(a:arr,ind)
+      endif
+
+      let list_range = base#string#matchlist(a:ind,pats.range)
+      if len(list_range)
+         let [start,end]=map(base#list#get(list_range,[0,1]),'str2nr(v:val)')
          let ids=base#listnewinc(start,end,1)
          return base#list#get(a:arr,ids)
       endif
