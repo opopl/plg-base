@@ -74,7 +74,6 @@ function! base#list#get (arr,ind)
       let res = []
       if len(ind_split) > 1
 		     for ind in ind_split
-            "echo ind
             if exists("a") | unlet a | endif
             let a = base#list#get(a:arr,ind)
             if  (type(a) == type('')) || (type(a) == type(0))
