@@ -57,6 +57,28 @@ function! base#list#convert_to_vim(list,varname)
 	return vc
 endfun
 
+function! base#list#get (arr,ind)
+   if type(a:ind) == type(0)
+      return get(a:arr,a:ind,'')     
+   elseif type(a:ind) == type([])
+      let r=[]
+      for i in a:ind
+         if type(i)==type(0)
+            call add(r,base#list#get(a:arr,i))     
+         endif
+      endfor
+      return r
+   elseif type(a:ind) == type('')
+      let pat     = '^\(\d\+\):\(\d\+\)$'
+      let list_se = base#string#matchlist(a:ind,pat)
+      if len(list_se)
+         let [start,end]=map(base#list#get(list_se,[0,1]),'str2nr(v:val)')
+         let ids=base#listnewinc(start,end,1)
+         return base#list#get(a:arr,ids)
+      endif
+   endif
+endfun
+
 
 
 function! base#list#add (ref,...)

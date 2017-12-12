@@ -2959,6 +2959,9 @@ function! base#init (...)
     elseif opt == 'paths'
         call base#initpaths()
 
+    elseif opt == 'paths_apoplavskiynb'
+        call base#initpaths#apoplavskiynb()
+
     elseif opt == 'omni'
         call base#omni#init()
 

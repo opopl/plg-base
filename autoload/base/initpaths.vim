@@ -15,6 +15,10 @@ function! base#initpaths#apoplavskiynb ()
 			\	"perl_lib_activestate" : base#qw#catpath('perl_activestate','lib'),
 	    \ })
 
+   call base#pathset({ 
+      \ "georgia_2016" : base#file#catfile([ 'c:', 'doc', 'sport_tourism', 'georgia_2016_trylis']),
+      \ })
+
 	 call base#pathset({ 
       \ "perl_bin_strawberry_522_32" : base#file#catfile(
 	 			\	[ 
