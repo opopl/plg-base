@@ -1,4 +1,7 @@
 
+
+"""used in BaseVimFun
+
 function! base#vim#showfun (...)
 	let fun   = get(a:000,0,'')
 	let lines = base#vim#linesfun(fun)
@@ -22,6 +25,8 @@ function! base#vim#showfun (...)
 		\ })
 
 endfunction
+
+"""used in BaseVimCom
 
 function! base#vim#showcom (...)
 	let com   = get(a:000,0,'')

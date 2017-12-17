@@ -56,10 +56,10 @@ docs
 ###tags
 #vim-tags
 #vim-easytags
-vim-gutentags
+#vim-gutentags
 vim-misc
 surround
-ragtag
+#ragtag
 idephp
 sparkup
 phpfolding

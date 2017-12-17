@@ -17,6 +17,11 @@ function! base#plg#loaded (...)
 	return 1 	
 endfunction
 
+
+function! base#plg#runtime(...)
+	exe 'runtime! plugin/*.vim'
+endf	
+
 function! base#plg#loadvars (...)
 
 	if a:0

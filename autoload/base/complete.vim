@@ -58,6 +58,14 @@ function! base#complete#opts (...)
   return base#complete#vars([ 'opts_keys' ])
 endfunction
 
+function! base#complete#plgact(...)
+    return base#complete#vars([ 'plgact' ])
+endf
+
+function! base#complete#plg(...)
+    return base#complete#vars([ 'plugins' ])
+endf
+
 function! base#complete#BaseAppend (...)
   return base#complete#vars([ 'opts_BaseAppend' ])
 endfunction

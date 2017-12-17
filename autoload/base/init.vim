@@ -1,5 +1,37 @@
 
+fun! base#init#cmds_plg ()
+
+	command! -nargs=* -complete=custom,base#complete#plg PlgAct
+		\	call base#plg#act(<f-args>) 
+
+	command! -nargs=* -complete=custom,base#complete#plg PlgView 
+		\	call base#plg#view(<f-args>) 
+
+	command! -nargs=* -complete=custom,base#complete#plg PlgHelp
+		\	call base#plg#help(<f-args>) 
+
+	command! -nargs=* -complete=custom,base#complete#plg PlgGrep
+		\	call base#plg#grep(<f-args>) 
+
+	command! -nargs=* -complete=custom,base#complete#plg PlgCD 
+		\	call base#plg#cd(<f-args>) 
+
+	command! -nargs=* -complete=custom,base#complete#plg PlgLoad
+		\	call base#plg#load(<f-args>) 
+
+	command! -nargs=* -complete=custom,base#complete#plg PlgRuntime
+		\	call base#plg#runtime(<f-args>) 
+
+	command! -nargs=* -complete=custom,base#complete#plg PlgNew
+		\	call base#plg#new(<f-args>) 
+
+	command! -nargs=* -complete=custom,base#complete#plg PlgList
+		\	call base#plg#echolist(<f-args>) 
+
+endf
+
 fun! base#init#cmds()
+	call base#init#cmds_plg()
 
 """CD
 	command! -nargs=* -complete=custom,base#complete#CD      CD
@@ -33,9 +65,11 @@ fun! base#init#cmds()
 	command! -nargs=* -complete=custom,base#complete#fileids
 	    \   FileView call base#f#view(<f-args>) 
 
+"""BaseVimFun
 	command! -nargs=* -complete=custom,base#complete#hist#BaseVimFun BaseVimFun
 		\	call base#vim#showfun(<f-args>)
 
+"""BaseVimCom
 	command! -nargs=* -complete=custom,base#complete#hist#BaseVimCom BaseVimCom
 		\	call base#vim#showcom(<f-args>)
 
