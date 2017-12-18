@@ -17,7 +17,6 @@ function! base#plg#loaded (...)
 	return 1 	
 endfunction
 
-
 function! base#plg#runtime(...)
 	exe 'runtime! plugin/*.vim'
 endf	
@@ -118,3 +117,296 @@ function! base#plg#opendat (...)
 		call base#stl#set('plg')
 	
 endfunction
+
+
+
+function! base#plg#name()
+	if &buftype == 'nofile'
+		return
+	endif
+
+	let relpath = base#plg#relpath()
+
+	let sp = base#file#ossplit(relpath)
+	let name = sp[0]
+	
+	return name
+endf	
+
+function! base#plg#relpath()
+
+	let plg = base#path('plg')
+	let relpath = base#file#removeroot(expand('%:p'),plg)
+
+	return relpath
+
+endf	
+
+
+function! base#plg#category()
+
+endf	
+
+function! base#plg#help(...)
+		let aa  = a:000
+		let plg = get(aa,0,'')
+
+		if !len(plg)
+			let plg=input('Plugin:','projs','custom,ap#complete#plg')
+			if !len(plg) | return | endif
+		endif
+
+		let sub = plg.'#help'
+		if exists("*".sub)
+				exe	'call '.sub.'()'
+		else
+				return
+		endif
+
+endf	
+
+function! base#plg#grep(...)
+	if a:0
+		let plg = a:1
+	else
+		let plg = input('Plugin name:','projs','custom,ap#complete#plg')
+	endif
+
+	let plgdir = base#catpath('plg',plg)
+
+	let files = base#find({ 
+		\	'dirs' : [ plgdir ]             ,
+		\	'exts' : base#qw('vim dat')     ,
+		\	'subdirs' : 1                   ,
+		\	})
+
+	let pat    = input('GREP pattern:','htlatex')
+
+	let grepopt = input('GREP opt:','plg_findstr','custom,ap#complete#grepopt')
+	call base#grep({ 
+		\	"pat"   : pat     ,
+		\	"files" : files   ,
+		\	"opt"   : grepopt ,
+   		\	})
+
+endfunction
+
+function! base#plg#dir(plg)
+
+	let plg = a:plg
+	let plgdir = base#catpath('plg',plg)
+	
+	return plgdir
+
+endfunction
+
+function! base#plg#act(...)
+	let aa  = a:000
+
+	let plg = get(aa,0,'')
+	let act = get(aa,1,'')
+
+	if !len(plg)
+		let plg=input('Plugin:','','custom,ap#complete#plg')
+		if !len(plg) | redraw! | return | endif
+	endif
+
+	if !strlen(act)
+		let act = input('Action:','','custom,ap#complete#plgact')
+	endif
+
+	if act == 'loadvars'
+		call base#plg#loadvars(plg)
+	endif
+
+endfunction
+
+function! base#plg#view(...)
+	let aa  = a:000
+	let plg = get(aa,0,'')
+	if !len(plg)
+		let plg=input('Plugin:','','custom,ap#complete#plg')
+		if !len(plg) | redraw! | return | endif
+	endif
+
+	let ddir = [ $VIMRUNTIME, 'plg', plg  ]
+	
+	let rootdir  = base#file#catfile(ddir)
+
+	let dirtype = input('Directory type:','autoload','custom,ap#complete#plgdirtypes')
+	let dirs = {
+			\	'root' : rootdir,
+			\	'autoload' : base#file#catfile([ rootdir, 'autoload']),
+			\	'doc'      : base#file#catfile([ rootdir, 'doc']),
+			\	'data'     : base#file#catfile([ rootdir, 'data']),
+			\	'plugin'   : base#file#catfile([ rootdir, 'plugin']),
+			\	'ftplugin' : base#file#catfile([ rootdir, 'ftplugin']),
+			\	}
+	let dir = get(dirs,dirtype,'root')
+
+	if ! isdirectory(dir)
+		call ap#warn('Plugin directory does not exist: ' . dir )
+		return 0
+	endif
+	"let files = ap#find({ 'dirs' : dir, 'ext' : 'vim:dat'} )
+	"
+	let extstr = input('File Extensions:','vim dat','custom,ap#complete#plgexts') 
+
+	let files = base#find({ 
+		\	'dirs' : [ dir ]            ,
+		\	'exts' : base#qw(extstr)    ,
+		\	'subdirs' : 1               ,
+		\	})
+
+	echohl Title
+	echo '-----------------------'
+	echo "Available plugin's files are:"
+	echo '-----------------------'
+	echohl MoreMsg
+	let i = 0 
+	for file in files
+		echo '(' . i . ') ' . file
+		let i += 1
+	endfor
+	echo '-----------------------'
+	echohl None
+	let index = input('Choose file index:','')
+
+	exe 'tabnew ' . files[index]
+	StatusLine plg
+	call base#tg#set('plg_'.plg)
+
+endf
+
+function! base#plg#echolist ()
+	for p in g:plugins
+		echo p
+	endfor
+	
+endfunction
+
+function! base#plg#new(...)
+	if a:0
+		let plg = a:1
+	else
+		let plg = input('New plugin name:','','custom,ap#complete#plg')
+	endif
+
+	let dirs = []
+	let files = []
+	let plgdir = base#catpath('plg',plg)
+
+	call add(dirs,plgdir)
+
+	let rdirs=[]
+	call extend(rdirs, base#qw('ftplugin plugin autoload') )
+	for rd in rdirs
+		call add(dirs,base#file#catfile([ plgdir, rd ]))
+	endfor
+
+	let rfiles = [
+			\	'autoload ' . plg . '.vim'	,
+			\	'plugin ' . plg . '.vim'	,
+			\	]
+	call map(rfiles,'base#file#catfile([ split(v:val," ") ])')
+
+	echo 'Will create relative dirs: '
+	echo '  ' . join(rdirs,' ')
+
+	for dir in dirs
+		echo "\n".'Want to create directory:'
+		echo ' ' . dir
+		let c = input('Create directory? (0/1) :',1)
+
+		if c
+			call base#mkdir(dir)
+		endif
+	endfor
+
+	echo "\n".'Will create relative files: '
+	echo '  ' . join(rfiles,' ')
+
+	call extend(files,map(rfiles,'base#file#catfile([ plgdir, v:val ])'))
+
+	for file in files
+		call base#plg#newfile(plg,file)
+	endfor
+
+endfunction
+
+function! base#plg#relfile(plg,file)
+	let plgdir  = base#catpath('plg',a:plg)
+	let relfile = base#file#removeroot(a:file,plgdir)
+
+	return relfile
+
+endfunction
+
+
+function! base#plg#newfile(plg,file)
+
+	let plg  = a:plg
+	let file = a:file
+
+	let rw = 0
+	if filereadable(file)
+		echo 'File already exists: '
+		echo ' ' . file
+		let rw=input('Overwrite? (1/0): ',rw)
+	endif
+
+	if !rw | return | endif
+
+	let rfile = base#plg#relfile(plg,file)
+	let front = base#file#front(rfile)
+
+	let lines = [ '"""' . plg . '_' . front ]
+	if front == 'autoload'
+		call add(lines,' ')
+		call add(lines,'function! ' . plg . '# ()')
+		call add(lines,' ')
+		call add(lines,'endf')
+		call add(lines,' ')
+	elseif front == 'ftplugin'
+		call add(lines,' ')
+	elseif front == 'plugin'
+		call add(lines,' ')
+	endif
+
+	echo 'Writing to file: '
+	echo '  ' . file
+
+	call writefile(lines,file)
+
+endfunction
+
+"base#plg#load(plg)
+
+function! base#plg#load(...)
+	let plg = get(a:000,0,'')
+	let dir = base#catpath('plg',plg)
+
+	call base#rtp#add_plugin(plg)
+
+	"let lvim = base#file#catfile(dir,'load.vim')
+	"if filereadable(lvim)
+		"exe 'source '.lvim
+	"endif
+
+endfunction
+
+function! base#plg#cd(plg)
+
+	let dir = base#catpath('plg',a:plg)
+
+	if ! isdirectory(dir)
+		call base#warn({ 'text' : 'No directory for plugin ' . a:plg })
+		return 0
+	endif
+
+	call base#cd(dir)
+
+	return 1
+
+endf
+
