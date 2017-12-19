@@ -119,7 +119,7 @@ function!  base#stl#setparts ()
   let stlparts['color_blue']  = '%8*'
   let stlparts['color_white'] = '%0*'
 
-  let stlparts['plg_name'] = '%1*\ %{ap#plg#name()}\ %0*'
+  let stlparts['plg_name'] = '%1*\ %{base#plg#name()}\ %0*'
 
   " percentage done
   let stlparts['percentage_done']='(%-3.p%%)'
@@ -157,7 +157,7 @@ function!  base#stl#setparts ()
 	" modified / unmodified (purple)
 	let stlparts['is_modified']="%6*%{&modified?'modified':''}"
 
-	let stlparts['plg_name'] = '%1*\ %{ap#plg#name()}\ %0*' 
+	let stlparts['plg_name'] = '%1*\ %{base#plg#name()}\ %0*' 
 	
 	let stlparts['vimfun']= '%1*\ %{g:vimfun}\ %0*' 
 	let stlparts['vimcom']= '%1*\ %{g:vimcom}\ %0*' 

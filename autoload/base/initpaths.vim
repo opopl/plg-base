@@ -19,6 +19,10 @@ function! base#initpaths#apoplavskiynb ()
       \ "georgia_2016" : base#file#catfile([ 'c:', 'doc', 'sport_tourism', 'georgia_2016_trylis']),
       \ })
 
+   call base#pathset({ 
+	 		\	'books_conf_work' : 'C:\web\books\books.conf.work\books',
+	 		\} )
+
 	 call base#pathset({ 
       \ "perl_bin_strawberry_522_32" : base#file#catfile(
 	 			\	[ 
