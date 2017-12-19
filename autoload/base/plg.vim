@@ -187,13 +187,13 @@ function! base#plg#grep(...)
 		\	"pat"   : pat     ,
 		\	"files" : files   ,
 		\	"opt"   : grepopt ,
-   		\	})
+ 		\	})
 
 endfunction
 
 function! base#plg#dir(plg)
 
-	let plg = a:plg
+	let plg    = a:plg
 	let plgdir = base#catpath('plg',plg)
 	
 	return plgdir
