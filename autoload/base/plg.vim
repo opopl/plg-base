@@ -17,7 +17,7 @@ function! base#plg#loaded (...)
 	return 1 	
 endfunction
 
-function! base#plg#runtime(...)
+function! base#plg#runtime (...)
 	exe 'runtime! plugin/*.vim'
 endf	
 
@@ -388,12 +388,40 @@ function! base#plg#load(...)
 
 	call base#rtp#add_plugin(plg)
 
+	let rtp_save=&rtp
+	let rtp_s = base#plg#rtp_s(plg)
+
+	exe 'set rtp="'.rtp_s.'"'
+	call base#plg#runtime()
+
 	"let lvim = base#file#catfile(dir,'load.vim')
 	"if filereadable(lvim)
 		"exe 'source '.lvim
 	"endif
 
+	exe 'set rtp='.rtp_save
+	
+
 endfunction
+
+function! base#plg#rtp_s(plg)
+
+	let plg = base#catpath('plg', a:plg )
+
+	let dirs=[ plg, base#file#catfile([ plg , 'after' ]) ]
+
+	let rtp = []
+	for dir in dirs 
+		if isdirectory(dir)
+			call add(rtp,dir)
+		endif
+	endfor
+
+	let rtp = base#uniq(rtp)
+	let rtp_s=join(rtp,",")
+	return rtp_s
+
+endf
 
 function! base#plg#cd(plg)
 

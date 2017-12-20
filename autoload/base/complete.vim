@@ -63,7 +63,7 @@ function! base#complete#plgact(...)
 endf
 
 function! base#complete#plg(...)
-    return base#complete#vars([ 'plugins' ])
+    return base#complete#vars([ 'plugins_all' ])
 endf
 
 function! base#complete#BaseAppend (...)

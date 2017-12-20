@@ -1616,6 +1616,7 @@ endf
 " echo base#find({ "subdirs" : 1, "exts" : [ "vim" ]})
 " echo base#find({ "subdirs" : 1})
 " echo base#find({ "subdirs" : 1, "pat": "^a" })
+" echo base#find({ "subdirs" : 1, "dirs_only": 1 })
 "
 function! base#findwin(ref)
     let ref = a:ref
@@ -1623,7 +1624,8 @@ function! base#findwin(ref)
     let dirs = []
     let exts_def = [ '' ] 
 
-    let do_subdirs = get(ref,'subdirs',1)
+    let do_subdirs   = get(ref,'subdirs',1)
+    let do_dirs_only = get(ref,'dirs_only',0)
 
     let exts = get(ref,'exts',exts_def)
     if ! len(exts) | let exts=exts_def | endif
@@ -1635,7 +1637,7 @@ function! base#findwin(ref)
 
     let dirs = get(ref,'dirs',dirs)
     
-    let searchopts = ' /b/a:-d '
+    let searchopts = ' /b '
 
     if get(ref,'cwd')
         call add(dirs,getcwd())
@@ -1657,6 +1659,12 @@ function! base#findwin(ref)
 
     if do_subdirs 
         let searchopts .= ' /s '
+    endif
+
+    if do_dirs_only
+        let searchopts .= ' /a:d '
+		else
+        let searchopts .= ' /a:-d '
     endif
 
     " list of found files to be returned
@@ -1683,8 +1691,8 @@ function! base#findwin(ref)
             let searchcmd  = 'dir *'.ext.searchopts 
 
             let ok  = base#sys( { 
-              \ "cmds" : [ searchcmd ], 
-              \ "skip_errors"  : 1 
+              \ "cmds"        : [ searchcmd ],
+              \ "skip_errors" : 1
               \ })
             let res = base#varget('sysoutstr','')
 
@@ -2885,29 +2893,42 @@ function! base#initvars (...)
 
     call base#initvarsfromdat()
 
-  call base#var('opts_keys',sort( keys( base#var('opts') )  ) )
+  	call base#varset('opts_keys',sort( keys( base#varget('opts',{}) )  ) )
 
-    call base#var('vim_funcs_user',
+    call base#varset('vim_funcs_user',
         \   base#fnamemodifysplitglob('funs','*.vim',':t:r'))
 
-    call base#var('vim_coms',
+    call base#varset('vim_coms',
         \   base#fnamemodifysplitglob('coms','*.vim',':t:r'))
 
     let varlist = keys(s:basevars)
 
-    call base#var('varlist',varlist)
+    call base#varset('varlist',varlist)
 
     if $COMPUTERNAME == 'OPPC'
         let v='C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe'
-    call base#varset('pdfviewer',v)
+    		call base#varset('pdfviewer',v)
+		elseif $COMPUTERNAME == 'apoplavskiynb'
+        let v='C:\Users\apoplavskiy\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe'
+    		call base#varset('pdfviewer',v)
     endif
+
+		let plugins_all = base#find({ 
+			\	"dirids"  : ['plg'],
+			\	"cwd"     : 1,
+			\	"relpath" : 1,
+			\	"subdirs" : 0,
+			\	"dirs_only" : 1,
+			\	})
+		call filter(plugins_all,'v:val !~ "^.git"')
+    call base#varset('plugins_all',plugins_all)
 
     call base#echoprefixold()
 endf    
 
 function! base#varlist ()
     let varlist = keys(s:basevars)
-    call base#var('varlist',varlist)
+    call base#varset('varlist',varlist)
     return varlist
 endfunction
 

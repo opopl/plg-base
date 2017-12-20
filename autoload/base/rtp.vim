@@ -18,6 +18,8 @@ function! base#rtp#add_plugin(plg)
 
 endf
 
+
+
 function! base#rtp#uniq()
 
 	let rtp = split(&rtp,",")
@@ -30,8 +32,10 @@ function! base#rtp#uniq()
 
 endf
 
-function! base#rtp#update()
+function! base#rtp#update(...)
 	call base#initplugins()
+
+	"let dirs=	get
 
 	for plg in base#varget('plugins',[])
 		call base#rtp#add_plugin(plg)

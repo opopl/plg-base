@@ -25,13 +25,14 @@ let b:is_plgvim = ( b:cr == plgdir )
 let b:is_mkvimrc_com=0
 let b:is_mkvimrc_fun=0
 
+setlocal iskeyword+=#
 
 if b:is_plgvim
 
 	let b:relpath = base#file#removeroot(b:dirname,plgdir)
 	let b:plg     = base#file#front(b:relpath)
 
-	set ts=2
+	setlocal ts=2
 
 	call base#tg#set("plg_".b:plg)
 	StatusLine plg

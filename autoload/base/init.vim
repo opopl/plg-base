@@ -1,30 +1,39 @@
 
 fun! base#init#cmds_plg ()
 
+"""PlgAct
 	command! -nargs=* -complete=custom,base#complete#plg PlgAct
 		\	call base#plg#act(<f-args>) 
 
+"""PlgView
 	command! -nargs=* -complete=custom,base#complete#plg PlgView 
 		\	call base#plg#view(<f-args>) 
 
+"""PlgHelp
 	command! -nargs=* -complete=custom,base#complete#plg PlgHelp
 		\	call base#plg#help(<f-args>) 
 
+"""PlgGrep
 	command! -nargs=* -complete=custom,base#complete#plg PlgGrep
 		\	call base#plg#grep(<f-args>) 
 
+"""PlgCD
 	command! -nargs=* -complete=custom,base#complete#plg PlgCD 
 		\	call base#plg#cd(<f-args>) 
 
+"""PlgLoad
 	command! -nargs=* -complete=custom,base#complete#plg PlgLoad
 		\	call base#plg#load(<f-args>) 
 
+"""PlgRuntime
 	command! -nargs=* -complete=custom,base#complete#plg PlgRuntime
 		\	call base#plg#runtime(<f-args>) 
 
+"""PlgNew
 	command! -nargs=* -complete=custom,base#complete#plg PlgNew
 		\	call base#plg#new(<f-args>) 
 
+"""PlgList
 	command! -nargs=* -complete=custom,base#complete#plg PlgList
 		\	call base#plg#echolist(<f-args>) 
 
