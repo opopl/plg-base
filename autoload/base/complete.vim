@@ -70,6 +70,10 @@ function! base#complete#BaseAppend (...)
   return base#complete#vars([ 'opts_BaseAppend' ])
 endfunction
 
+function! base#complete#BaseAct (...)
+  return base#complete#vars([ 'opts_BaseAct' ])
+endfunction
+
 function! base#complete#imageact (...)
   return base#complete#vars([ 'opts_ImageAct' ])
 endfunction

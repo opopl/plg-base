@@ -2948,6 +2948,14 @@ function! base#initplugins (...)
 
 endf    
 
+function! base#act (...)
+  let act = get(a:000,0,'')
+  let sub = 'base#act#'.act
+
+  exe 'call '.sub.'()'
+
+endf    
+
 
 function! base#init (...)
 

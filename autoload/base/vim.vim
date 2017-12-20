@@ -79,4 +79,16 @@ function! base#vim#linescom (...)
 	
 endfunction
 
+function! base#vim#list_coms (...)
+	let pat = get(a:000,0,'')
+
+	redir => v
+	silent exe 'command '.pat
+	redir END
+
+	let lines = split(v,"\n")
+	return lines
+
+endfunction
+
 

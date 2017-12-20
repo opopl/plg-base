@@ -50,6 +50,7 @@ fun! base#init#cmds()
 	command! -nargs=*  MkDir
 		\	call base#mkdir#prompt(<f-args>) 
 
+
 """ImageAct
 	command! -nargs=*  -complete=custom,base#complete#imageact ImageAct 
 		\	call base#image#act(<f-args>)
@@ -73,6 +74,10 @@ fun! base#init#cmds()
 """FileView
 	command! -nargs=* -complete=custom,base#complete#fileids
 	    \   FileView call base#f#view(<f-args>) 
+
+"""BaseAct
+	command! -nargs=* -complete=custom,base#complete#BaseAct      BaseAct
+		\	call base#act(<f-args>) 
 
 """BaseVimFun
 	command! -nargs=* -complete=custom,base#complete#hist#BaseVimFun BaseVimFun
