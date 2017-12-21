@@ -137,10 +137,15 @@ function! base#tg#update (...)
 
 		let files = join(files_arr,' ')
 
-
 	elseif tgid == 'perl_as'
 
 		let libs.=' ' . libs_as
+
+	elseif tgid == 'perl_inc'
+
+		let a = base#envvar_a('perllib')
+		"let libs=join( map ('ap#file#win(a:val)',a) )
+		let libs = join(a,' ')
 
 """base_tg_update_mkvimrc
 	elseif tgid =~ 'mkvimrc'

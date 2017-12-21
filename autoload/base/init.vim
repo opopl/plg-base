@@ -42,6 +42,9 @@ endf
 fun! base#init#cmds()
 	call base#init#cmds_plg()
 
+"""XmlPretty
+	command! XmlPretty call base#xml#pretty()
+
 """CD
 	command! -nargs=* -complete=custom,base#complete#CD      CD
 		\	call base#CD(<f-args>) 
@@ -84,7 +87,7 @@ fun! base#init#cmds()
 		\	call base#vim#showfun(<f-args>)
 
 """BaseVimCom
-	command! -nargs=* -complete=custom,base#complete#hist#BaseVimCom BaseVimCom
+	command! -nargs=* -complete=command BaseVimCom
 		\	call base#vim#showcom(<f-args>)
 
 """BaseAppend

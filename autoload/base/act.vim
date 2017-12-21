@@ -5,3 +5,9 @@ function! base#act#list_vim_commands ()
 	echo coms
 	
 endfunction
+
+function! base#act#envvar_open_split (...)
+	let envv = input('Env variable:','','environment')
+	call base#envvar_open_split(envv)
+
+endfunction

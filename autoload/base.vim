@@ -2693,6 +2693,27 @@ function! base#plgcd ()
     exe 'cd ' . dir
 endf    
 
+function! base#envvar_a (varname,...)
+	if has('win32')
+		let sep =';'
+	else
+		let sep =':'
+	endif
+	let sep = get(a:000,0,sep)
+
+	let var = base#envvar(a:varname)
+	let a = split(var,sep)
+
+	return a
+
+endf    
+
+function! base#envvar_open_split (varname,...)
+	let a = base#envvar_a(a:varname)
+	call base#buf#open_split({'lines' : a})
+
+endf    
+
 function! base#envvar (varname)
 
     let var  = '$' . a:varname
