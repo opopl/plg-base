@@ -4,8 +4,9 @@ function! base#mysql#query (...)
 		return
 	endif
 
-	let q = get(a:000,0,'')
-	let db="photos"
+	let q   = get(a:000,0,'')
+	let db  = "photos"
+	let res = []
 
 perl << eof
 	use strict;
@@ -24,11 +25,18 @@ perl << eof
 	my $sth = $dbh->prepare($q);
   $sth->execute();
 
+	my @res;
 	while(my @r = $sth->fetchrow_array){
-		VIM::Msg(join(' ',@r));
+		push @res, join(' ',@r);
+	}
+
+	for(@res){
+		s/"/\\"/g;
+		VimCmd('call add(res,"'.$_.'")');
 	}
 
 	$dbh->disconnect;
 eof
+	return res
 	
 endfunction
