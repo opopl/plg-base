@@ -4,8 +4,10 @@ function! base#mysql#query (...)
 		return
 	endif
 
-	let q   = get(a:000,0,'')
-	let db  = "photos"
+	let ref = get(a:000,0,{})
+	let q   = get(ref,'q','')
+	let db  = get(ref,'db','photos')
+
 	let res = []
 
 perl << eof

@@ -21,10 +21,6 @@ fun! base#init#cmds_plg ()
 	command! -nargs=* -complete=custom,base#complete#plg PlgCD 
 		\	call base#plg#cd(<f-args>) 
 
-"""PlgLoad
-	command! -nargs=* -complete=custom,base#complete#plg PlgLoad
-		\	call base#plg#load(<f-args>) 
-
 """PlgRuntime
 	command! -nargs=* -complete=custom,base#complete#plg PlgRuntime
 		\	call base#plg#runtime(<f-args>) 

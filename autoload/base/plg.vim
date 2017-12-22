@@ -18,7 +18,30 @@ function! base#plg#loaded (...)
 endfunction
 
 function! base#plg#runtime (...)
-	exe 'runtime! plugin/*.vim'
+	let plg = get(a:000,0,'')
+
+	if !base#plg#exists(plg)
+		exe 'runtime! plugin/*.vim'
+	else
+		let plgdir = base#qw#catpath('plg',plg)
+		let after = base#file#catfile([plgdir, 'after' ])
+		
+		let dirs = [
+			\ base#file#catfile([plgdir, 'plugin' ]),
+			\ base#file#catfile([after, 'plugin' ]),
+			\	]	
+		let exts=base#qw('vim')
+
+		call base#rtp#add_plugin(plg)
+		let vf = base#find({
+			\	"dirs" : dirs,
+			\	"exts" : exts,
+			\	})
+		for	f in vf
+			silent exe 'so '.f
+		endfor
+
+	endif
 endf	
 
 function! base#plg#loadvars (...)
@@ -285,6 +308,14 @@ function! base#plg#echolist ()
 	
 endfunction
 
+function! base#plg#exists(...)
+	let plg = get(a:000,0,'')
+	let plga = base#varget('plugins_all',[])
+
+	return base#inlist(plg,plga)
+
+endfunction
+
 function! base#plg#new(...)
 	if a:0
 		let plg = a:1
@@ -381,28 +412,6 @@ function! base#plg#newfile(plg,file)
 endfunction
 
 "base#plg#load(plg)
-
-function! base#plg#load(...)
-	let plg = get(a:000,0,'')
-	let dir = base#catpath('plg',plg)
-
-	call base#rtp#add_plugin(plg)
-
-	let rtp_save=&rtp
-	let rtp_s = base#plg#rtp_s(plg)
-
-	exe 'set rtp="'.rtp_s.'"'
-	call base#plg#runtime()
-
-	"let lvim = base#file#catfile(dir,'load.vim')
-	"if filereadable(lvim)
-		"exe 'source '.lvim
-	"endif
-
-	exe 'set rtp='.rtp_save
-	
-
-endfunction
 
 function! base#plg#rtp_s(plg)
 
