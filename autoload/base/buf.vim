@@ -14,6 +14,7 @@ function! base#buf#type(...)
 		return type
 endf
 
+
 "base#buf#in('plg')
 "base#buf#in('plg',{ 'subdir': base#qw('base autoload') })
 
