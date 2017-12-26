@@ -147,7 +147,11 @@ function! base#html#xpath(htmltext,xpath)
 	endif
 
 	let filtered=split(a:htmltext,"\n")
+	let filtered=[]
 	if !strlen(a:xpath)
+		echohl WarningMsg
+		echo 'Empty XPATH'
+		echohl None
 		return filtered
 	endif
 
@@ -174,7 +178,7 @@ perl << eof
 	my @filtered;
 
 	for(@nodes){
-		push @filtered,split("\n",$_->toString);
+					#push @filtered,split("\n",$_->toString);
 	}
 
 	VimListExtend('filtered',\@filtered);
