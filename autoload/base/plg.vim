@@ -442,6 +442,7 @@ function! base#plg#cd(plg)
 	endif
 
 	call base#cd(dir)
+	call base#tg#add('plg_'.a:plg)
 
 	return 1
 

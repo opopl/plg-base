@@ -2227,19 +2227,14 @@ endfunction
 "  base#warn({ "text" : "aaa", "prefix" : ">>> " })
 "
 function! base#warn (ref)
-    let text = ''
-
-    let text = a:ref['text']
-
-  let prefix    = base#echoprefix()
-
-    if exists("a:ref['prefix']")
-        let prefix = a:ref['prefix']
-    endif
+    let text   = get(a:ref,'text','')
+  	let prefix = base#echoprefix()
+		let prefix = get(a:ref,'prefix',prefix)
+		let hl     = get(a:ref,'hl','WarningMsg')
 
     let text = prefix . text
 
-    echohl WarningMsg
+    exe 'echohl '.hl
     echo text
     echohl None
     

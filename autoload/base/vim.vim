@@ -66,6 +66,15 @@ function! base#vim#linesfun (...)
 	
 endfunction
 
+function! base#vim#helptags (...)
+	let ref = get(a:000,0,{})
+	let dir = get(ref,'dir','')
+
+	let dire = shellescape(helpdir)
+	silent exe 'helptags '.dire
+
+endfunction
+
 function! base#vim#linescom (...)
 
 	let com = get(a:000,0,'')
