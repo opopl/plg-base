@@ -205,6 +205,40 @@ eof
 
 endfunction
 
+function! base#html#list_to_txt(html)
+	if !has('perl')
+		return
+	endif
+	let lines=[]
+
+perl << eof
+	use utf8;
+	use Encode;
+
+	use Vim::Perl qw(:funcs :vars);
+	use XML::LibXML;
+
+	my $html=VimVar('a:html');
+
+	my $doc = XML::LibXML->load_html(
+			string          => decode('utf-8',$html),
+			recover         => 1,
+			suppress_errors => 1,
+	);
+	my $xpath='//[ul|ol]/li'
+
+	my @nodes=$dom->findnodes($xpath);
+eof
+ " my @filtered;
+
+	"for(@nodes){
+		"push @filtered,split("\n",$_->toString);
+	"}
+
+	"VimListExtend('filtered',\@filtered);
+
+endfunction
+
 function! base#html#pretty_libxml(string)
 	
 	if !has('perl')
