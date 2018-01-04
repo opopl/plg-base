@@ -61,15 +61,15 @@ fun! base#buffers#get(...)
     let [allpads, listedpads] = [{}, {}]
 
     for n in keys(types)
-        let allpads[n] = repeat(' ', max(allwidths[n]))
+        let allpads[n]    = repeat(' ', max(allwidths[n]))
         let listedpads[n] = repeat(' ', max(listedwidths[n]))
     endfor
 
-	call base#var('buf_allpads',allpads)
-	call base#var('buf_listedpads',listedpads)
+	call base#varset('buf_allpads',allpads)
+	call base#varset('buf_listedpads',listedpads)
 
-  	call base#var('bufs',all)
-    call base#var('bufnums',bufnums)
+	call base#varset('bufs',all)
+	call base#varset('bufnums',bufnums)
 
 endfun
 

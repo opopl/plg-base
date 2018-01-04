@@ -19,6 +19,9 @@ function! base#menu#remove(...)
 
 endfunction
 
+"call base#menu#add(menuopt)
+"call base#menu#add(menuopt,{})
+
 function! base#menu#add(...)
 
  let opts={ 'action' : 'add' }
@@ -196,17 +199,19 @@ function! base#menu#add(...)
 
    for buf in base#varget('bufs',[])
 		 let path = get(buf,'fullname','')
+		 let num  = get(buf,'num',0)
 
-     let mn=''
-     let tab=''
+     let mn  = ''
+     let tab = ''
 
-     let path     = matchstr(path,'^"\zs.*\ze"$')
+     "let path     = matchstr(path,'^"\zs.*\ze"$')
 
      let basename = fnamemodify(path,':p:t')
      let dirname  = fnamemodify(path,':p:h')
 
      let basename_escape = substitute(basename,'\.','\\.','g')
      let dirname_escape  = substitute(dirname,'\.','\\.','g')
+
 
      if path =~ '\.pm$'
         "let module=
@@ -246,14 +251,14 @@ function! base#menu#add(...)
             let width    = 70
             let sepwidth = width-strlen(basename_escape)-strlen(dirname_escape)
 
-            let mn='&BUFFERS.&OTHER.&' . basename_escape 
-            let tab=dirname_escape
+            let mn  = '&BUFFERS.&OTHER.&' . basename_escape
+            let tab = dirname_escape
 
      endif
 
      if len(mn)
         let menu={
-           \   'item'  :  mn,
+           \   'item'  : join([num,mn],' '),
            \   'cmd'   : 'buffer ' . path,
            \   'tab'   : tab,
            \   }
