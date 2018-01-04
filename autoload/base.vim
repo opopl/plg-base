@@ -1717,9 +1717,9 @@ function! base#findwin(ref)
             let add=1
             let cf = copy(file)
 
-            let cfunix = base#file#win2unix(cf)
-            let cfrelunix = substitute(cfunix,'^' . diru . '[/]*','','g') 
-            let cfrel = base#file#unix2win(cfrelunix)
+            let cfunix    = base#file#win2unix(cf)
+            let cfrelunix = substitute(cfunix,'^' . diru . '[/]*','','g')
+            let cfrel     = base#file#unix2win(cfrelunix)
 
             if get(ref,'relpath')
                 let cf = cfrel

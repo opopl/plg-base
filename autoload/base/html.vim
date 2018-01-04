@@ -44,6 +44,13 @@ eof
 
 endfunction
 
+"call base#html#get_url(url,ref)
+"call base#html#get_url(url,{ 'open_split' : 1 })
+"call base#html#get_url(url,{ 'lynx_to_txt' : 1 })
+"
+" used in IdePhP url_load
+"
+
 function! base#html#get_url(url,...)
 	if !has('perl')
 		return
@@ -52,7 +59,9 @@ function! base#html#get_url(url,...)
 	let lines  = []
 	let errors = []
 
-	let ref   = get(a:000,0,{})
+	let ref   = get(a:000,0,{
+		\	'open_split' : 0,
+		\	})
 
 	let xpath = get(ref,'xpath','')
 	let nodes = []
@@ -79,8 +88,10 @@ perl << eof
 
 	my ($content,$statline);
  	if ($response->is_success) {
-		 $content =  $response->decoded_content;
+		 	VimMsg('URL load OK');
+		 	$content =  $response->decoded_content;
  	} else { 
+		 	VimMsg('URL load Fail');
 		 	$statline = $response->status_line;
  	}
 
@@ -106,7 +117,13 @@ perl << eof
 	}
 
 eof
-	call base#buf#open_split({ 'lines' : lines })
+
+	if get(ref,'open_split')
+		call base#buf#open_split({ 'lines' : lines })
+	endif
+
+	if get(ref,'lynx_to_txt')
+	endif
 
 endfunction
 
@@ -178,7 +195,7 @@ perl << eof
 	my @filtered;
 
 	for(@nodes){
-					#push @filtered,split("\n",$_->toString);
+		push @filtered,split("\n",$_->toString);
 	}
 
 	VimListExtend('filtered',\@filtered);

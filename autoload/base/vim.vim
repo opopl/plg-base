@@ -70,8 +70,10 @@ function! base#vim#helptags (...)
 	let ref = get(a:000,0,{})
 	let dir = get(ref,'dir','')
 
-	let dire = shellescape(helpdir)
-	silent exe 'helptags '.dire
+  if strlen(dir)
+		"let dire = shellescape(dir)
+		silent exe 'helptags ' . dir
+  endif
 
 endfunction
 

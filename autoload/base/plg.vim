@@ -165,7 +165,6 @@ function! base#plg#relpath()
 
 endf	
 
-
 function! base#plg#category()
 
 endf	
@@ -175,7 +174,7 @@ function! base#plg#help(...)
 		let plg = get(aa,0,'')
 
 		if !len(plg)
-			let plg=input('Plugin:','projs','custom,ap#complete#plg')
+			let plg=input('Plugin:','projs','custom,base#complete#plg')
 			if !len(plg) | return | endif
 		endif
 
