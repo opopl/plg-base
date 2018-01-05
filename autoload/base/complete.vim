@@ -78,6 +78,10 @@ function! base#complete#imageact (...)
   return base#complete#vars([ 'opts_ImageAct' ])
 endfunction
 
+function! base#complete#basesys (...)
+  return base#complete#vars([ 'hist_basesys' ])
+endfunction
+
 function! base#complete#FIND (...)
   return base#complete#vars([ 'opts_FIND' ])
 endfunction

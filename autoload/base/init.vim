@@ -49,6 +49,9 @@ fun! base#init#cmds()
 	command! -nargs=*  MkDir
 		\	call base#mkdir#prompt(<f-args>) 
 
+"""BaseSYS
+	command! -nargs=* -complete=custom,base#complete#basesys BaseSYS
+		\	call base#sys_split_output(<f-args>) 
 
 """ImageAct
 	command! -nargs=*  -complete=custom,base#complete#imageact ImageAct 

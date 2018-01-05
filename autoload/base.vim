@@ -2008,6 +2008,21 @@ fun! base#getfileinfo(...)
 
 endfun
 
+fun! base#sys_split_output(...)
+	let cmd = join(a:000,' ')
+	let hist = base#varget('hist_basesys',[])
+
+	call base#sys({ 
+		\	"cmds"         : [cmd],
+		\	"split_output" : 1,
+		\	})
+	call add(hist,cmd)
+	call base#uniq(hist)
+
+	call base#varset('hist_basesys',hist)
+
+endfun
+
 " pass command to be executed as String
 "" base#sys(cmd)
 
