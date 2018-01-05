@@ -59,72 +59,57 @@ function! base#html#get_url(url,...)
 	let errors = []
 
 	let ref   = get(a:000,0,{
-		\	'open_split' : 0,
-		\	})
+			\	'open_split'  : 0,
+			\	'check_saved' : 0,
+			\	'save'        : '',
+			\	})
 
 	let xpath = get(ref,'xpath','')
 	let nodes = []
 
+	let save        = get(ref,'save')
+	let check_saved = get(ref,'check_saved')
+
+	if check_saved && strlen(save)
+		let f = base#qw#catpath('saved_html',save)
+		if filereadable(f)
+			let lines=readfile(f)
+			if strlen(xpath)
+				let lines = base#html#xpath({
+						\	'xpath'     : xpath,
+						\	'htmllines' : lines,
+						\	})
+			endif
+			return lines
+		endif
+	endif
+
 perl << eof
-	use utf8;
-	use Encode;
-	use URI;
-	use Data::Dumper qw(Dumper);
-
 	use Vim::Perl qw(:funcs :vars);
-	use LWP;
-
-	use XML::LibXML;
-	use XML::LibXML::PrettyPrint;
+	use HTML::Work;
 
 	my $url   = VimVar('a:url');
 	my $xpath = VimVar('xpath');
+	
+	my $htw=HTML::Work->new();
+	$htw->load_html_from_url({ 
+			url   => $url,
+	});
 
-	my $uri= URI->new($url);
-	my $ua = LWP::UserAgent->new;
-
- 	my $response = $ua->get($uri);
-
-	my ($content,$statline);
- 	if ($response->is_success) {
-		 	VimMsg('URL load OK');
-		 	$content =  $response->decoded_content;
- 	} else { 
-		 	VimMsg('URL load Fail');
-		 	$statline = $response->status_line;
- 	}
-
-	my $dom = XML::LibXML->load_html(
-			string          => $content,
-			#string          => decode('utf-8',$content),
-			recover         => 1,
-			suppress_errors => 1,
-	);
-
-	my $pp = XML::LibXML::PrettyPrint->new(indent_string => "  ");
- 	$pp->pretty_print($dom);
-
-	my ($html_pp,@filtered,@lines);
-	$html_pp=$dom->toString;
-
-	if($xpath){
-		 my @nodes=$dom->findnodes($xpath);
-		 for(@nodes){ 
-				#push @lines,split("\n",$_->toString);
-				my $data=$_->toString;
-
-				#$data=decode('utf-8',$data);
-				push @lines,split("\n",$data);
-		 }
-	}else{
-		@lines=split("\n",$html_pp);
-	}
+	my @lines=$htw->html2lines({ xpath => $xpath });
 	VimListExtend('lines',\@lines);
 
 eof
 
 	if get(ref,'open_split')
 		call base#buf#open_split({ 'lines' : lines })
+	endif
+
+	let save = get(ref,'save','')
+	if strlen(save)
+		let f = base#qw#catpath('saved_html',save)
+		call writefile(lines,f)
+		call base#log('URL saved to: '.f)
 	endif
 
 	if get(ref,'lynx_to_txt')
@@ -228,8 +213,8 @@ perl << eof
 	my $html  = VimVar('htmltext');
 
 	my $htw=HTML::Work->new(
-		html      => $html,
-		sub_alert => sub { VimMsg($_) for(@_); },
+		html    => $html,
+		sub_log => sub { VimMsg($_) for(@_); },
 	);
 	$htw->replace_a;
 

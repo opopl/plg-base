@@ -415,6 +415,16 @@ function! base#islist(var)
   return 0
 endf
 
+function! base#log (msg,...)
+	let ref  = get(a:000,0,{})
+	let log = base#varget('base_log',[])
+
+	call add(log,{ 'msg' : a:msg })
+	call base#varset('base_log',log)
+	return 1
+	
+endfunction
+
 function! base#CD(dirid,...)
     let ref = {}
     if a:0 | let ref = a:1 | endif
@@ -2724,10 +2734,11 @@ function! base#envvar_open_split (varname,...)
 
 endf    
 
-function! base#envvar (varname)
+function! base#envvar (varname,...)
+		let default = get(a:000,0,'')
 
     let var  = '$' . a:varname
-    let val  = ''
+    let val  = default
 
     if exists(var)
         exe 'let val = ' . var

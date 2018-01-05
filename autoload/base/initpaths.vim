@@ -10,6 +10,11 @@ function! base#initpaths#apoplavskiynb ()
 			\	"perl_activestate" : base#envvar("Perl_ActiveState"),
 	    \ })
 
+	 let saved_html = base#file#catfile(base#qw('c: saved html'))
+	 call base#pathset({ 
+			\	"saved_html" : base#envvar("saved_html",saved_html),
+	 		\	})
+
 	 call base#pathset({ 
 			\	"perl_lib_strawberry"  : base#qw#catpath('perl_strawberry','lib'),
 			\	"perl_lib_activestate" : base#qw#catpath('perl_activestate','lib'),
