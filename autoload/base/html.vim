@@ -174,11 +174,44 @@ eof
 endfunction
 
 function! base#html#remove_a(...)
-	if !has('perl')
-		return
-	endif
+	if !has('perl') | return | endif
 
-	let ref      = get(a:000,0,{})
+	let ref       = get(a:000,0,{})
+
+	let htmltext  = get(ref,'htmltext','')
+	let htmllines = get(ref,'htmllines',[])
+
+	let lines = []
+
+perl << eof
+	use utf8;
+	use Encode;
+
+	use Vim::Perl qw(:funcs :vars);
+	use HTML::Strip;
+
+	my $html  = VimVar('htmltext');
+
+  my $hs = HTML::Strip->new(
+			striptags   => [ qw(a) ],
+			emit_spaces => 0,
+	);
+
+  my $clean_html = $hs->parse( $html );
+  $hs->eof;
+
+	my @lines=split("\n",$clean_html);
+	VimListExtend('lines',\@lines);
+
+eof
+	return lines
+
+endfunction
+
+function! base#html#remove_a_libxml(...)
+	if !has('perl') | return | endif
+
+	let ref       = get(a:000,0,{})
 
 	let htmltext  = get(ref,'htmltext','')
 	let htmllines = get(ref,'htmllines',[])
@@ -213,7 +246,7 @@ perl << eof
 			 $new    = $dom->createTextNode($text);
 			 $parent->replaceChild($node,$new);
 		 };
-		 if($@){ }
+		 if($@){ VimMsg($@); }
 	}
 
 	my $pp = XML::LibXML::PrettyPrint->new(indent_string => "  ");
@@ -225,7 +258,8 @@ perl << eof
 	foreach my $l (@lines) {
 		$l=~s/\\/\\\\/g;
 		$l=~s/"/\\"/g;
-		VimCmd('let line='.'"'.$l.'"');
+		my $cmd = "let line='".$l."'";
+		VimCmd($cmd);
 		VimCmd('call add(lines,line)');
 	}
 
