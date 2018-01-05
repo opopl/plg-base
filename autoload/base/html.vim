@@ -181,6 +181,10 @@ function! base#html#remove_a(...)
 	let htmltext  = get(ref,'htmltext','')
 	let htmllines = get(ref,'htmllines',[])
 
+	if len(htmllines)
+		let htmltext=join(htmllines,"\n")
+	endif
+
 	let lines = []
 
 perl << eof
@@ -193,14 +197,16 @@ perl << eof
 	my $html  = VimVar('htmltext');
 
   my $hs = HTML::Strip->new(
-			striptags   => [ qw(a) ],
-			emit_spaces => 0,
+			striptags   => [ qw(aa htm) ],
+			#emit_spaces => 0,
 	);
 
-  my $clean_html = $hs->parse( $html );
+  my $html_strip = $hs->parse( $html );
   $hs->eof;
 
-	my @lines=split("\n",$clean_html);
+	VimMsg($html_strip);
+
+	my @lines=split("\n",$html_strip);
 	VimListExtend('lines',\@lines);
 
 eof
