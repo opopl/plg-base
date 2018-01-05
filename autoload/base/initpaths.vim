@@ -11,6 +11,7 @@ function! base#initpaths#apoplavskiynb ()
 	    \ })
 
 	 let saved_html = base#file#catfile(base#qw('c: saved html'))
+
 	 call base#pathset({ 
 			\	"saved_html" : base#envvar("saved_html",saved_html),
 	 		\	})

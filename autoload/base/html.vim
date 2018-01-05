@@ -62,6 +62,7 @@ function! base#html#get_url(url,...)
 			\	'open_split'  : 0,
 			\	'check_saved' : 0,
 			\	'save'        : '',
+			\	'actions'     : [],
 			\	})
 
 	let xpath = get(ref,'xpath','')
@@ -84,6 +85,10 @@ function! base#html#get_url(url,...)
 		endif
 	endif
 
+	if strlen(save)
+		let savedfile = base#qw#catpath('saved_html',save)
+	endif
+
 perl << eof
 	use Vim::Perl qw(:funcs :vars);
 	use HTML::Work;
@@ -91,7 +96,9 @@ perl << eof
 	my $url   = VimVar('a:url');
 	my $xpath = VimVar('xpath');
 	
-	my $htw=HTML::Work->new();
+	my $htw=HTML::Work->new(
+		sub_log => sub { VimMsg($_) for(@_);}
+	);
 	$htw->load_html_from_url({ 
 			url   => $url,
 	});
@@ -99,17 +106,23 @@ perl << eof
 	my @lines=$htw->html2lines({ xpath => $xpath });
 	VimListExtend('lines',\@lines);
 
+	my $save      = VimVar('save');
+	my $savedfile = VimVar('savedfile');
+
+	if($save){
+		VimMsg($savedfile);
+		VimMsg($xpath);
+
+		$htw->html_saveas({ 
+			xpath => $xpath, 
+			file  => $savedfile,
+		});
+	}
+
 eof
 
 	if get(ref,'open_split')
 		call base#buf#open_split({ 'lines' : lines })
-	endif
-
-	let save = get(ref,'save','')
-	if strlen(save)
-		let f = base#qw#catpath('saved_html',save)
-		call writefile(lines,f)
-		call base#log('URL saved to: '.f)
 	endif
 
 	if get(ref,'lynx_to_txt')
