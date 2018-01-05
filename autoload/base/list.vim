@@ -105,6 +105,14 @@ function! base#list#get (arr,ind)
    endif
 endfun
 
+function! base#list#open_split (list)
+	 split
+	 enew
+	 setlocal buftype=nofile
+	 call append('.',a:list)
+
+endfun
+
 
 
 function! base#list#add (ref,...)

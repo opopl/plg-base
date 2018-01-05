@@ -47,6 +47,7 @@ endfunction
 "call base#html#get_url(url,ref)
 "call base#html#get_url(url,{ 'open_split' : 1 })
 "call base#html#get_url(url,{ 'lynx_to_txt' : 1 })
+"echo base#html#get_url(url,{ 'xpath' : '//div' })
 "
 " used in IdePhP url_load
 "
@@ -97,6 +98,7 @@ perl << eof
 
 	my $dom = XML::LibXML->load_html(
 			string          => $content,
+			#string          => decode('utf-8',$content),
 			recover         => 1,
 			suppress_errors => 1,
 	);
@@ -104,10 +106,21 @@ perl << eof
 	my $pp = XML::LibXML::PrettyPrint->new(indent_string => "  ");
  	$pp->pretty_print($dom);
 
-	my $html_pp;
+	my ($html_pp,@filtered,@lines);
 	$html_pp=$dom->toString;
-	
-	my @lines=split("\n",$html_pp);
+
+	if($xpath){
+		 my @nodes=$dom->findnodes($xpath);
+		 for(@nodes){ 
+				#push @lines,split("\n",$_->toString);
+				my $data=$_->toString;
+
+				#$data=decode('utf-8',$data);
+				push @lines,split("\n",$data);
+		 }
+	}else{
+		@lines=split("\n",$html_pp);
+	}
 	
 	foreach my $l (@lines) {
 		$l=~s/\\/\\\\/g;
@@ -124,6 +137,8 @@ eof
 
 	if get(ref,'lynx_to_txt')
 	endif
+
+	return lines
 
 endfunction
 
