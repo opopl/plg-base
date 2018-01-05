@@ -53,9 +53,7 @@ endfunction
 "
 
 function! base#html#get_url(url,...)
-	if !has('perl')
-		return
-	endif
+	if !has('perl') | return | endif
 
 	let lines  = []
 	let errors = []
@@ -121,13 +119,7 @@ perl << eof
 	}else{
 		@lines=split("\n",$html_pp);
 	}
-	
-	foreach my $l (@lines) {
-		$l=~s/\\/\\\\/g;
-		$l=~s/"/\\"/g;
-		VimCmd('let line='.'"'.$l.'"');
-		VimCmd('call add(lines,line)');
-	}
+	VimListExtend('lines',\@lines);
 
 eof
 
@@ -222,52 +214,28 @@ function! base#html#remove_a_libxml(...)
 	let htmltext  = get(ref,'htmltext','')
 	let htmllines = get(ref,'htmllines',[])
 
+	if len(htmllines)
+		let htmltext=join(htmllines,"\n")
+	endif
+
 	let lines = []
 
 perl << eof
-	# read https://habrahabr.ru/post/53578/ about encodings
-	# http://www.nestor.minsk.by/sr/2008/09/sr80902.html
-	use utf8;
-	use Encode;
 
 	use Vim::Perl qw(:funcs :vars);
-	use XML::LibXML;
-	use XML::LibXML::PrettyPrint;
+	use HTML::Work;
 
 	my $html  = VimVar('htmltext');
 
-	my $dom = XML::LibXML->load_html(
-			string          => decode('utf-8',$html),
-			recover         => 1,
-			suppress_errors => 1,
+	my $htw=HTML::Work->new(
+		html      => $html,
+		sub_alert => sub { VimMsg($_) for(@_); },
 	);
+	$htw->replace_a;
 
-	my $xpath='//a';
-	my @nodes=$dom->findnodes($xpath);
+	my @lines   = $htw->html2lines;
 
-	for my $node(@nodes){
-		 eval {
-			 $parent = $node->parentNode;
-			 $text   = $node->textContent;
-			 $new    = $dom->createTextNode($text);
-			 $parent->replaceChild($node,$new);
-		 };
-		 if($@){ VimMsg($@); }
-	}
-
-	my $pp = XML::LibXML::PrettyPrint->new(indent_string => "  ");
- 	$pp->pretty_print($dom);
-
-	my $html_pp = $dom->toString;
-	my @lines   = split("\n",$html_pp);
-	
-	foreach my $l (@lines) {
-		$l=~s/\\/\\\\/g;
-		$l=~s/"/\\"/g;
-		my $cmd = "let line='".$l."'";
-		VimCmd($cmd);
-		VimCmd('call add(lines,line)');
-	}
+	VimListExtend(lines,\@lines);
 
 eof
 	return lines
@@ -275,9 +243,7 @@ eof
 endfunction
 
 function! base#html#xpath(...)
-	if !has('perl')
-		return
-	endif
+	if !has('perl') | return | endif
 
 	let ref      = get(a:000,0,{})
 
@@ -286,7 +252,7 @@ function! base#html#xpath(...)
 	let xpath     = get(ref,'xpath','')
 
 	if len(htmllines)
-		 let htmltext=split(htmllines,"\n")
+		 let htmltext=join(htmllines,"\n")
 	endif
 
 	let filtered=split(htmltext,"\n")
