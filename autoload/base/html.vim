@@ -207,11 +207,17 @@ perl << eof
 	my @nodes=$dom->findnodes($xpath);
 
 	for my $node(@nodes){
-		 $parent = $node->parentNode;
-		 $text   = $node->textContent;
-		 $new    = $dom->createTextNode($text);
-		 $parent->replaceChild($node,$new);
+		 eval {
+			 $parent = $node->parentNode;
+			 $text   = $node->textContent;
+			 $new    = $dom->createTextNode($text);
+			 $parent->replaceChild($node,$new);
+		 };
+		 if($@){ }
 	}
+
+	my $pp = XML::LibXML::PrettyPrint->new(indent_string => "  ");
+ 	$pp->pretty_print($dom);
 
 	my $html_pp = $dom->toString;
 	my @lines   = split("\n",$html_pp);
@@ -348,7 +354,6 @@ perl << eof
  	$pp->pretty_print($doc);
 
 	my $html_pp;
-	
 	$html_pp=$doc->toString; 
 
 	my @pp;

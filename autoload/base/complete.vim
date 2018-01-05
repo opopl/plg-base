@@ -171,15 +171,12 @@ function! base#complete#vars (...)
 
    elseif type(a:1) == type('')
      let vars=[ a:1 ] 
-
    endif
  endif
 
   for varname in vars
-	let val = base#var(varname)
-	if base#type(val) == 'List'
-    	call extend(comps,val)
-	endif
+		let val = base#varget(varname,[])
+		call extend(comps,val)
   endfor
 
  let comps=base#uniq(sort(comps))
