@@ -65,7 +65,9 @@ function! base#html#get_url(url,...)
 			\	'actions'     : [],
 			\	})
 
-	let xpath = get(ref,'xpath','')
+	let xpath   = get(ref,'xpath','')
+	let actions = get(ref,'actions',[])
+
 	let nodes = []
 
 	let save        = get(ref,'save')
@@ -95,6 +97,7 @@ perl << eof
 
 	my $url   = VimVar('a:url');
 	my $xpath = VimVar('xpath');
+	my @actions = VimVar('actions');
 	
 	my $htw=HTML::Work->new(
 		sub_log => sub { VimMsg($_) for(@_);}
@@ -103,6 +106,12 @@ perl << eof
 			url   => $url,
 	});
 
+	for(@actions){
+		/^replace_a/ && do {
+			$htw->replace_a;
+		};
+	}
+
 	my @lines=$htw->html2lines({ xpath => $xpath });
 	VimListExtend('lines',\@lines);
 
@@ -110,9 +119,6 @@ perl << eof
 	my $savedfile = VimVar('savedfile');
 
 	if($save){
-		VimMsg($savedfile);
-		VimMsg($xpath);
-
 		$htw->html_saveas({ 
 			xpath => $xpath, 
 			file  => $savedfile,
@@ -120,10 +126,20 @@ perl << eof
 	}
 
 eof
-
 	if get(ref,'open_split')
 		call base#buf#open_split({ 'lines' : lines })
 	endif
+
+	for action in actions
+		if action == 'lynx_to_txt'
+			echo action
+			let tmp=tempname()
+			call writefile(lines,tmp)
+			let cmd = 'lynx -dump -force_html '.tmp
+			let ok = base#sys({ "cmds" : [cmd]})
+			let lines = base#varget('sysout',[])
+		endif
+	endfor
 
 	if get(ref,'lynx_to_txt')
 	endif
