@@ -173,14 +173,79 @@ eof
 
 endfunction
 
-function! base#html#xpath(htmltext,xpath)
+function! base#html#remove_a(...)
 	if !has('perl')
 		return
 	endif
 
-	let filtered=split(a:htmltext,"\n")
+	let ref      = get(a:000,0,{})
+
+	let htmltext  = get(ref,'htmltext','')
+	let htmllines = get(ref,'htmllines',[])
+
+	let lines = []
+
+perl << eof
+	# read https://habrahabr.ru/post/53578/ about encodings
+	# http://www.nestor.minsk.by/sr/2008/09/sr80902.html
+	use utf8;
+	use Encode;
+
+	use Vim::Perl qw(:funcs :vars);
+	use XML::LibXML;
+	use XML::LibXML::PrettyPrint;
+
+	my $html  = VimVar('htmltext');
+
+	my $dom = XML::LibXML->load_html(
+			string          => decode('utf-8',$html),
+			recover         => 1,
+			suppress_errors => 1,
+	);
+
+	my $xpath='//a';
+	my @nodes=$dom->findnodes($xpath);
+
+	for my $node(@nodes){
+		 $parent = $node->parentNode;
+		 $text   = $node->textContent;
+		 $new    = $dom->createTextNode($text);
+		 $parent->replaceChild($node,$new);
+	}
+
+	my $html_pp = $dom->toString;
+	my @lines   = split("\n",$html_pp);
+	
+	foreach my $l (@lines) {
+		$l=~s/\\/\\\\/g;
+		$l=~s/"/\\"/g;
+		VimCmd('let line='.'"'.$l.'"');
+		VimCmd('call add(lines,line)');
+	}
+
+eof
+	return lines
+
+endfunction
+
+function! base#html#xpath(...)
+	if !has('perl')
+		return
+	endif
+
+	let ref      = get(a:000,0,{})
+
+	let htmltext  = get(ref,'htmltext','')
+	let htmllines = get(ref,'htmllines',[])
+	let xpath     = get(ref,'xpath','')
+
+	if len(htmllines)
+		 let htmltext=split(htmllines,"\n")
+	endif
+
+	let filtered=split(htmltext,"\n")
 	let filtered=[]
-	if !strlen(a:xpath)
+	if !strlen(xpath)
 		echohl WarningMsg
 		echo 'Empty XPATH'
 		echohl None
@@ -197,8 +262,8 @@ perl << eof
 	use XML::LibXML;
 	use XML::LibXML::PrettyPrint;
 
-	my $html  = VimVar('a:htmltext');
-	my $xpath = VimVar('a:xpath');
+	my $html  = VimVar('htmltext');
+	my $xpath = VimVar('xpath');
 
 	my $dom = XML::LibXML->load_html(
 			string          => decode('utf-8',$html),
