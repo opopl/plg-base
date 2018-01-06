@@ -3121,12 +3121,21 @@ function! base#listnewinc(start,end,inc)
  let i=0
  let counter=a:start
 
- while counter < a:end+1
-   call add(a,counter)
-
-   let counter+=a:inc
-   let i+=1
- endw
+ if a:inc > 0
+	 while counter < a:end+1
+	   call add(a,counter)
+	
+	   let counter+=a:inc
+	   let i+=1
+	 endw
+ else
+	 while counter > a:end-1
+	   call add(a,counter)
+	
+	   let counter+=a:inc
+	   let i+=1
+	 endw
+ endif
 
  return a
 

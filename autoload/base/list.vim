@@ -58,6 +58,9 @@ function! base#list#convert_to_vim(list,varname)
 endfun
 
 function! base#list#get (arr,ind)
+	 let sz   = len(a:arr)
+	 let last = sz-1
+
    if type(a:ind) == type(0)
       return get(a:arr,a:ind,'')     
    elseif type(a:ind) == type([])
@@ -75,6 +78,7 @@ function! base#list#get (arr,ind)
       if len(ind_split) > 1
 		     for ind in ind_split
             if exists("a") | unlet a | endif
+
             let a = base#list#get(a:arr,ind)
             if  (type(a) == type('')) || (type(a) == type(0))
               call add(res,a)
@@ -86,8 +90,8 @@ function! base#list#get (arr,ind)
       endif
 
       let pats      = { 
-        \ 'range' : '^\(\d\+\):\(\d\+\)$',
-        \ 'single' : '^\(\d\+\)$',
+        \ 'range'  : '^\(-\d\+\|\d\+\):\(-\d\+\|\d\+\)$',
+        \ 'single' : '^\(-\d\+\|\d\+\)$',
         \  }
 
       let list_single = base#string#matchlist(a:ind,pats.single)
@@ -97,9 +101,16 @@ function! base#list#get (arr,ind)
       endif
 
       let list_range = base#string#matchlist(a:ind,pats.range)
+			echo list_range
       if len(list_range)
-         let [start,end]=map(base#list#get(list_range,[0,1]),'str2nr(v:val)')
-         let ids=base#listnewinc(start,end,1)
+         let [start,end] = map(base#list#get(list_range,[0,1]),'str2nr(v:val)')
+				 if end > start
+				 		let inc = 1
+				 else
+				 		let inc = -1
+				 endif
+         let ids = base#listnewinc(start,end,inc)
+
          return base#list#get(a:arr,ids)
       endif
    endif
