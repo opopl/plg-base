@@ -20,7 +20,9 @@ function! base#var#dump_split (varname)
 		let last = sz-1
 
 		let a = []
-		call add(a,'let v='.base#list#get(dumplines,0))
+		call add(a,'if exists("w") | unlet w | endif')
+		call add(a,' ')
+		call add(a,'let w='.base#list#get(dumplines,0))
 
 		if last>0
 			let b = base#list#get(dumplines,'1:'.last)
