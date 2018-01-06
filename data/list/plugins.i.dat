@@ -1,4 +1,3 @@
-dbext
 #viewdoc
 #vim-fugitive
 ap
@@ -66,7 +65,12 @@ phpfolding
 showfunc
 xmledit
 xmlparser
-pipe_vim
-pipe_mysql
 my
 keymaps
+###mysql
+pipe_vim
+pipe_mysql
+simpledb
+sqhell
+dbext
+vim-mysql-mode
