@@ -101,6 +101,16 @@ function! base#complete#varlist (...)
 	
 endfunction
 
+function! base#complete#varlist_list (...)
+	 let varlist      = base#varget('varlist',[])
+	 let varlist_list = filter(varlist,'type(base#varget(v:val)) == type([])')
+
+	 call base#varset('varlist_list',varlist_list)
+
+ 	 return base#complete#vars([ 'varlist_list' ])
+
+endfunction
+
 function! base#complete#datlist (...)
 
   return base#complete#vars([ 'datlist' ])

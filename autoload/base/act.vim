@@ -11,3 +11,13 @@ function! base#act#envvar_open_split (...)
 	call base#envvar_open_split(envv)
 
 endfunction
+
+""look opts_BaseAct.i.dat
+function! base#act#open_split_list (...)
+	 
+	let listvar = input('List variable:','','custom,base#complete#varlist_list')
+	let list    = base#varget(listvar,[])
+
+	call base#list#open_split(list)
+
+endfunction

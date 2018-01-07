@@ -416,11 +416,12 @@ function! base#islist(var)
 endf
 
 function! base#log (msg,...)
-	let ref  = get(a:000,0,{})
+	let ref = get(a:000,0,{})
 	let log = base#varget('base_log',[])
 
 	call add(log,{ 'msg' : a:msg })
 	call base#varset('base_log',log)
+
 	return 1
 	
 endfunction

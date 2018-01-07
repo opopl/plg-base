@@ -72,7 +72,12 @@ function! base#vim#helptags (...)
 
   if strlen(dir)
 		"let dire = shellescape(dir)
-		silent exe 'helptags ' . dir
+		try
+			silent exe 'helptags ' . dir
+		catch /^Vim\%((\a\+)\)\=:E154/	
+			call base#log('Vim Error E154: duplicate tag')
+		finally
+		endtry
   endif
 
 endfunction
