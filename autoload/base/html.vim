@@ -148,6 +148,44 @@ eof
 
 endfunction
 
+function! base#html#headings (...)
+	let ref   = get(a:000,0,{})
+
+	let lines = get(ref,'lines',[])
+	let file  = get(ref,'file','')
+
+	if filereadable(file)
+		 let lines=readfile(file)
+	endif
+
+	let headnums = base#listnewinc(1,5,1)
+	let heads    = map(headnums,'"self::h".string(v:val)')
+	let he       = join(heads,' or ')
+	let h        = []
+
+	let xp    = base#html#xpath({
+			\	'xpath'     : '//*['.he.']',
+			\	'htmllines' : lines,
+			\	})
+
+	call map(xp,'xolox#misc#str#trim(v:val)')
+
+	call extend(h,xp)
+	return h
+	
+endfunction
+
+function! base#html#text_between_headings (...)
+	let ref   = get(a:000,0,{})
+	let lines = get(ref,'lines',[])
+
+	let text = []
+	let h    = base#html#headings(ref)
+
+	return text
+
+endfunction
+
 function! base#html#css_pretty(string)
 	if !has('perl')
 		return
