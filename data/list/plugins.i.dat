@@ -67,6 +67,8 @@ xmledit
 xmlparser
 my
 keymaps
+###js
+youcompleteme
 ###mysql
 pipe_vim
 pipe_mysql
