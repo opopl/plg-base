@@ -78,6 +78,7 @@ function! base#vim#helptags (...)
 			call base#log('Vim Error E154: duplicate tag')
 		finally
 		endtry
+
   endif
 
 endfunction

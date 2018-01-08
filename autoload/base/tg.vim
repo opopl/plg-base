@@ -86,6 +86,11 @@ function! base#tg#tfile (...)
 		let proj  = projs#proj#name()
 		let tfile = projs#path([ proj . '.tags' ])
 
+	elseif tgid == 'idephp_help'
+
+		let tfile = base#qw#catpath('plg','idephp help tags')
+
+
 	else
 		let tfile = base#file#catfile([ tdir, tgid . '.tags' ])
 	endif
@@ -121,6 +126,9 @@ function! base#tg#update (...)
 
 	if tgid  == ''
 
+	elseif tgid == 'idephp_help'
+		call idephp#help#helptags()
+
 """base_tg_update_src_vim
 	elseif tgid == 'src_vim'
 		let dir_src = base#qw#catpath('src_vim', 'src')
@@ -146,6 +154,8 @@ function! base#tg#update (...)
 		let a = base#envvar_a('perllib')
 		"let libs=join( map ('ap#file#win(a:val)',a) )
 		let libs = join(a,' ')
+
+	elseif tgid =~ 'idephp_help'
 
 """base_tg_update_mkvimrc
 	elseif tgid =~ 'mkvimrc'
@@ -291,7 +301,7 @@ function! base#tg#update (...)
 			\	"ok"   : ok,
 			\	"add"  : get(opts,'add',0) }
 
-	call base#tg#ok(okref)
+	let ok= base#tg#ok(okref)
 
 	return  ok
 endfunction

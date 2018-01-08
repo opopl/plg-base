@@ -34,3 +34,4 @@ plg_vim-latex
 plg_vim-php-manual
 ##########
 mkvimrc
+idephp_help
