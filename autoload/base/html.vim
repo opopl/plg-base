@@ -236,22 +236,17 @@ perl << eof
 	use Encode;
 
 	use Vim::Perl qw(:funcs :vars);
-	use HTML::Strip;
+	use HTML::Work;
 
 	my $html  = VimVar('htmltext');
-
-  my $hs = HTML::Strip->new(
-			striptags   => [ qw(aa htm) ],
-			#emit_spaces => 0,
+	
+	my $htw=HTML::Work->new(
+		html => $html,
 	);
+	$htw->replace_a;
+	my $lines = $htw->html2lines;
 
-  my $html_strip = $hs->parse( $html );
-  $hs->eof;
-
-	VimMsg($html_strip);
-
-	my @lines=split("\n",$html_strip);
-	VimListExtend('lines',\@lines);
+	VimListExtend('lines',$lines);
 
 eof
 	return lines
