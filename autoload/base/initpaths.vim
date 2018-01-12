@@ -6,7 +6,7 @@ function! base#initpaths#apoplavskiynb ()
 	    \ })
 
 	 call base#pathset({ 
-			\	"perl_strawberry" : base#envvar("Perl_Strawberry"),
+			\	"perl_strawberry"  : base#envvar("Perl_Strawberry"),
 			\	"perl_activestate" : base#envvar("Perl_ActiveState"),
 	    \ })
 
@@ -14,6 +14,11 @@ function! base#initpaths#apoplavskiynb ()
 
 	 call base#pathset({ 
 			\	"saved_html" : base#envvar("saved_html",saved_html),
+	 		\	})
+	 
+
+	 call base#pathset({ 
+			\	'pgdata' : 'C:\OSPanel\modules\database\PostgreSQL-9.6-x64\data',
 	 		\	})
 
 	 call base#pathset({ 

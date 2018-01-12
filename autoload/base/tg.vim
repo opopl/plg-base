@@ -129,6 +129,15 @@ function! base#tg#update (...)
 	elseif tgid == 'idephp_help'
 		call idephp#help#helptags()
 
+		let okref = { 
+			\	"tgid" : tgid,
+			\	"ok"   : 1,
+			\	"add"  : 0, 
+			\	}
+
+		let ok= base#tg#ok(okref)
+		return
+
 """base_tg_update_src_vim
 	elseif tgid == 'src_vim'
 		let dir_src = base#qw#catpath('src_vim', 'src')
@@ -310,7 +319,6 @@ function! base#tg#ok (...)
 	let okref = {}
 	if a:0 | let okref = a:1 | endif
 
-	let cmd  = get(okref,'cmd','')
 	let ok   = get(okref,'ok','')
 	let tgid = get(okref,'tgid','')
 	let add  = get(okref,'add',0)
