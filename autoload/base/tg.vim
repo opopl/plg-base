@@ -80,6 +80,7 @@ function! base#tg#tfile (...)
 		let finfo    = base#getfileinfo()
 		let dirname  = get(finfo,'dirname','')
 		let basename = get(finfo,'filename','')
+
 		let tfile    = base#file#catfile([ dirname, basename . '.tags' ])
 
 	elseif tgid == 'projs_this'
@@ -90,11 +91,9 @@ function! base#tg#tfile (...)
 
 		let tfile = base#qw#catpath('plg','idephp help tags')
 
-
 	else
 		let tfile = base#file#catfile([ tdir, tgid . '.tags' ])
 	endif
-
 
 	return tfile
 endf
@@ -154,10 +153,12 @@ function! base#tg#update (...)
 
 		let files = join(files_arr,' ')
 
+"""tgupdate_perl_as
 	elseif tgid == 'perl_as'
 
 		let libs.=' ' . libs_as
 
+"""tgupdate_perl_inc
 	elseif tgid == 'perl_inc'
 
 		let a = base#envvar_a('perllib')
@@ -299,6 +300,7 @@ function! base#tg#update (...)
 		return 0
 	endif
 
+"""tgupdate_cmd_ctags
 	let cmd = 'ctags -R -o "' . ap#file#win( tfile ) . '" ' . libs . ' ' . files
 
 	echo "Calling ctags command for: " . tgid 

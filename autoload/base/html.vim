@@ -112,7 +112,7 @@ perl << eof
 		};
 	}
 
-	my @lines=$htw->html2lines({ xpath => $xpath });
+	my @lines=$htw->htmllines({ xpath => $xpath });
 	VimListExtend('lines',\@lines);
 
 	my $save      = VimVar('save');
@@ -244,7 +244,7 @@ perl << eof
 		html => $html,
 	);
 	$htw->replace_a;
-	my $lines = $htw->html2lines;
+	my $lines = $htw->htmllines;
 
 	VimListExtend('lines',$lines);
 
@@ -280,7 +280,7 @@ perl << eof
 	);
 	$htw->replace_a;
 
-	my @lines   = $htw->html2lines;
+	my @lines   = $htw->htmllines;
 
 	VimListExtend(lines,\@lines);
 
