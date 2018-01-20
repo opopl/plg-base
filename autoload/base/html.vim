@@ -380,9 +380,7 @@ endfunction
 
 function! base#html#pretty_libxml(string)
 	
-	if !has('perl')
-		return
-	endif
+	if !has('perl') | return | endif
 	let html_pp=[]
 
 perl << eof

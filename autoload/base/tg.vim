@@ -165,6 +165,11 @@ function! base#tg#update (...)
 		"let libs=join( map ('ap#file#win(a:val)',a) )
 		let libs = join(a,' ')
 
+		let cnt = input('(TgUpdate perl_inc) Continue? 1/0: ',0)
+		if !cnt
+			return
+		endif
+
 	elseif tgid =~ 'idephp_help'
 
 """base_tg_update_mkvimrc
