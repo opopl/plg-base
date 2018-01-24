@@ -15,6 +15,10 @@ function! base#initpaths#apoplavskiynb ()
 	 call base#pathset({ 
 			\	"saved_html" : base#envvar("saved_html",saved_html),
 	 		\	})
+
+	 call base#pathset({
+	 		\	'perl_tk_demos' : 'C:\strawberry\perl\site\lib\Tk\demos\widget_lib',
+			\	})
 	 
 
 	 call base#pathset({ 

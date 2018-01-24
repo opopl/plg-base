@@ -158,6 +158,22 @@ function! base#tg#update (...)
 
 		let libs.=' ' . libs_as
 
+"""tgupdate_perl_inc_select
+	elseif tgid == 'perl_inc_select'
+		let mods = base#varget('perlmy_mods_perl_inc_select',[])
+		let locs = {}
+
+		for mod in mods
+			let cmd = 'pminst -l '.mod
+
+			let ok  = base#sys({ "cmds" : [cmd]})
+			let out = base#varget('sysout',[])
+
+			call extend(locs,{ mod : out })
+		endfor
+
+		let json = base#json#encode(locs)
+
 """tgupdate_perl_inc
 	elseif tgid == 'perl_inc'
 
