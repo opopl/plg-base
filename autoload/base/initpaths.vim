@@ -1,3 +1,11 @@
+
+function! base#initpaths#restpc ()
+	 call base#pathset({ 
+      \ "bin_mingw" : base#file#catfile([ base#path('progs'), 'mingw-w64', 'mingw32', 'bin' ]),
+      \ "bin_vs_2005" : base#file#catfile([ base#path('pf'), 'Microsoft Visual Studio 8\VC\bin'  ]),
+	    \ })
+endf
+
 function! base#initpaths#apoplavskiynb ()
 	
 	 call base#pathset({ 
