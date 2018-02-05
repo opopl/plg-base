@@ -610,6 +610,8 @@ fun! base#initpaths(...)
 
     if pc == 'APOPLAVSKIYNB'
         call base#initpaths#apoplavskiynb()
+		elseif pc == 'RESTPC'
+        call base#initpaths#restpc()
     endif
 
     let mkvimrc  = base#file#catfile([ base#path('conf'), 'mk', 'vimrc' ])
