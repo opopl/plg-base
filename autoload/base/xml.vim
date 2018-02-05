@@ -28,4 +28,10 @@ function! base#xml#pretty()
   exe "set ft=" . l:origft
 endfunction
 
-
+function! base#xml#encode (...)
+	let var = get(a:000,0,'')
+	if !has('perl') 
+		return
+	endif
+	
+endfunction
