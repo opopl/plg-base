@@ -15,6 +15,10 @@ function! base#initpaths#apoplavskiynb ()
 	    \ })
 
 	 call base#pathset({ 
+      \ "htmltool" : base#file#catfile([ base#path('repos_git'), 'htmltool' ]),
+	    \ })
+
+	 call base#pathset({ 
 			\	"perl_strawberry"  : base#envvar("Perl_Strawberry"),
 			\	"perl_activestate" : base#envvar("Perl_ActiveState"),
 	    \ })

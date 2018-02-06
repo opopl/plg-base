@@ -3003,6 +3003,7 @@ endf
 
 
 function! base#init (...)
+	
 
   if a:0
     let opt = a:1

@@ -3,6 +3,8 @@ ipte_ao
 ipte_wt
 ###perl
 perl_inc
+perl_inc_select
+perl_htmltool
 perl_as
 perlmod
 ##
