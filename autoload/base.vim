@@ -426,6 +426,13 @@ function! base#log (msg,...)
 	
 endfunction
 
+function! base#noperl()
+	if !has('perl') | echo 'NO PERL INSTALLED' | return 1 | endif
+
+	return 0
+
+endfunction
+
 function! base#CD(dirid,...)
     let ref = {}
     if a:0 | let ref = a:1 | endif
@@ -1511,13 +1518,15 @@ fun! base#fnamemodifysplitglob(...)
  endif
 
  if len(files)
-  call map(files,"fnamemodify(v:val,'" . modifiers . "')")
+  	call map(files,"fnamemodify(v:val,'" . modifiers . "')")
  endif
 
  return files
 
 endf
 
+"		[ 'vim', 'dat' ]=> '*.vim' '*.dat'
+"call base#mapsub(base#qw('vim dat'),'^','*.','g') 
 
 fun! base#mapsub(array,pat,subpat,subopts)
 
@@ -1526,6 +1535,13 @@ fun! base#mapsub(array,pat,subpat,subopts)
   call map(arr,"substitute(v:val,'" . a:pat .  "','" . a:subpat . "','" . a:subopts . "')")
 
   return arr
+endf
+
+"let a = base#mapsub_join(base#qw('vim dat'),'^','*.','g',' ') 
+
+fun! base#mapsub_join(array,pat,subpat,subopts,delim)
+	return join(base#mapsub(a:array,a:pat,a:subpat,a:subopts),a:delim)
+
 endf
 
 function! base#varreset(varname,new)
@@ -1593,7 +1609,7 @@ perl << EOF
   };
   File::Find::find({ wanted => $w }, @dirs );
   my $filestr=join(":",@files);
-  VIM::DoCommand('let filestr="' . $filestr . '"')
+  VIM::DoCommand('let filestr="' . $filestr . '"');
 
 EOF
 
@@ -1631,6 +1647,9 @@ endf
 " echo base#find({ "subdirs" : 1, "pat": "^a" })
 " echo base#find({ "subdirs" : 1, "dirs_only": 1 })
 "
+" 	use vim built-in functions glob(), globpath()
+" echo base#find({ "do_glob" : 1 })
+"
 function! base#findwin(ref)
     let ref = a:ref
 
@@ -1639,6 +1658,8 @@ function! base#findwin(ref)
 
     let do_subdirs   = get(ref,'subdirs',1)
     let do_dirs_only = get(ref,'dirs_only',0)
+
+		let do_glob=get(ref,'do_glob',0)
 
     let exts = get(ref,'exts',exts_def)
     if ! len(exts) | let exts=exts_def | endif
@@ -1697,23 +1718,30 @@ function! base#findwin(ref)
             exe 'cd ' . dir
         endif
 
-        for ext in exts 
-            if strlen(ext) | let ext = '.'.ext | endif
+				if do_glob
+						"let extstr = base#mapsub_join(exts,'^','*.','g',' ') 
+						for ext in exts
+							let found .= globpath(dir,'**/*.'.ext)
+						endfor
+				else
+	
+		        for ext in exts 
+		            if strlen(ext) | let ext = '.'.ext | endif
+		
+		            let searchcmd  = 'dir *'.ext.searchopts 
+		
+			            let ok  = base#sys( { 
+			              \ "cmds"        : [ searchcmd ],
+			              \ "skip_errors" : 1
+			              \ })
+			            let res = base#varget('sysoutstr','')
+			
+			            if ( ok && ( res !~ '^File Not Found' ) )
+			                let found .= res . "\n"
+			            endif
+		        endfor
 
-            "let searchcmd  = 'dir ' .dir.'\*'.ext.searchopts 
-            let searchcmd  = 'dir *'.ext.searchopts 
-
-            let ok  = base#sys( { 
-              \ "cmds"        : [ searchcmd ],
-              \ "skip_errors" : 1
-              \ })
-            let res = base#varget('sysoutstr','')
-
-            if ( ok && ( res !~ '^File Not Found' ) )
-                let found .= res . "\n"
-            endif
-
-        endfor
+				endif
 
         let files=split(found,"\n")
         call filter(files,'v:val != ""')
@@ -2694,7 +2722,7 @@ endfun
 
 
 function! base#plgdir ()
-    return base#varget('plgdir')
+    return base#varget('plgdir','')
 endf    
 
 "" let dd = base#datadir()
@@ -2703,10 +2731,10 @@ endf
 function! base#datadir (...)
     if a:0
         let datadir = a:1
-        return base#var('datadir',datadir)
+        return base#varset('datadir',datadir)
     endif
 
-    return base#var('datadir')
+    return base#varget('datadir','')
 endf    
 
 " go to base plugin root directory
@@ -3006,9 +3034,23 @@ function! base#init (...)
 	
 
   if a:0
-    let opt = a:1
+    let ref = a:1
+
+		if type(ref)==type('')
+				let opt = ref
+		elseif type(ref)==type([])
+				let opts = ref
+				for opt in opts
+					call base#init(opt)
+				endfor
+				return
+		endif
+
     if opt == 'cmds'
         call base#init#cmds()
+
+    elseif opt == 'au'
+        call base#init#au()
 
     elseif opt == 'vars'
         call base#initvars()
@@ -3040,36 +3082,21 @@ function! base#init (...)
     elseif opt == 'omni'
         call base#omni#init()
 
+    elseif opt == 'paplist'
+    		call base#pap#list()
+
     endif
     return
   endif
 
-    " initialize data using base#pathset(...)
-    call base#initpaths()
+	let opts = base#qw('paths plugins tagids vars omni files au cmds menus')
+	call base#init(opts)
 
-    call base#tg#init()
+  call base#rtp#update()
 
-    call base#initplugins()
-
-    call base#initvars()
-    call base#omni#init()
-
-    call base#pap#list()
-
-    " initialize data using base#f#set(...)
-    call base#initfiles()
-
-    call base#init#au()
-    call base#init#cmds()
-
-    "" initialize allmenus
-    call base#menus#init()
-
-    call base#rtp#update()
-
-    call base#stl#setlines()
+  call base#stl#setlines()
     
-    return 1
+  return 1
 
 endfunction
 
@@ -3102,7 +3129,7 @@ function! base#viewdat (...)
         \ })
   endif
 
-  let datfiles=base#varget('datfiles')
+  let datfiles=base#varget('datfiles',{})
 
   if has_key(datfiles,dat)
     let datfile=datfiles[dat]

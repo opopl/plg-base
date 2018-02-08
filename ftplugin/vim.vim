@@ -10,7 +10,6 @@ let b:file     = expand('%:p')
 let b:basename = expand('%:p:t')
 let b:ext      = expand('%:p:e')
 
-let b:root    = projs#root()
 let b:dirname = expand('%:p:h')
 
 let b:finfo   = base#getfileinfo()

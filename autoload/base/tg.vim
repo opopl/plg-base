@@ -44,8 +44,6 @@ function! base#tg#add (...)
 
 endf
 
-function! base#tg#init (...)
-endf
 
 function! base#tg#ids (...)
 	if exists("b:tgids")
