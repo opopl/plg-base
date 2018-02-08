@@ -24,7 +24,7 @@ function! base#plg#runtime (...)
 		exe 'runtime! plugin/*.vim'
 	else
 		let plgdir = base#qw#catpath('plg',plg)
-		let after = base#file#catfile([plgdir, 'after' ])
+		let after  = base#file#catfile([plgdir, 'after' ])
 		
 		let dirs = [
 			\ base#file#catfile([plgdir, 'plugin' ]),
@@ -425,8 +425,9 @@ function! base#plg#rtp_s(plg)
 		endif
 	endfor
 
-	let rtp = base#uniq(rtp)
-	let rtp_s=join(rtp,",")
+	let rtp   = base#uniq(rtp)
+	let rtp_s = join(rtp,",")
+
 	return rtp_s
 
 endf

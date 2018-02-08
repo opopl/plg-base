@@ -1580,19 +1580,17 @@ fun! base#readdictdat(ref)
 endfun
 
 function! base#findbyperl(ref)
+	if base#noperl() | return | endif
 
-  if !has('perl')
-    return
-  endif
-
-  let dirstr = a:ref.dirs
-  let extstr = a:ref.ext
+  let dirstr = join(a:ref.dirs,':')
+  let extstr = join(a:ref.exts,':')
 
   " list of found files to be returned
   let files = []
 
 perl << EOF
   use File::Find ();
+  use Vim::Perl qw(:funcs :vars);
 
   my @dirs=split(":", VIM::Eval('dirstr'));
   my @exts=split(":", VIM::Eval('extstr'));
@@ -3029,15 +3027,16 @@ function! base#act (...)
 
 endf    
 
-
 function! base#init (...)
-	
+
+	let opts = base#qw('paths plugins tagids vars omni files au cmds menus')
 
   if a:0
     let ref = a:1
 
 		if type(ref)==type('')
 				let opt = ref
+				echo 'base#init for: ' .  opt
 		elseif type(ref)==type([])
 				let opts = ref
 				for opt in opts
@@ -3089,7 +3088,6 @@ function! base#init (...)
     return
   endif
 
-	let opts = base#qw('paths plugins tagids vars omni files au cmds menus')
 	call base#init(opts)
 
   call base#rtp#update()
