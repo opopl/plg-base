@@ -2740,6 +2740,8 @@ function! base#initvarsfromdat ()
             \   "subdirs" : 1, 
             \   "relpath" : 1,
             \   "rmext"   : 1, })
+				echo dir
+				echo vars
         let tp = mp[type]
         for v in vars
             call base#varsetfromdat(v,tp)
@@ -2784,6 +2786,8 @@ function! base#init (...)
 
 	let opts = base#qw('paths plugins tagids vars omni files au cmds menus')
 
+	let opts_all = base#qw('paths plugins tagids vars omni files au cmds menus')
+
   if a:0
     let ref = a:1
 
@@ -2796,6 +2800,13 @@ function! base#init (...)
 					call base#init(opt)
 				endfor
 				return
+		endif
+
+		if	!base#inlist(opt,opts_all)
+			echohl WarningMsg
+			echo 'wrong opt for base#init(): ' . opt
+			echohl None
+			return
 		endif
 
     if opt == 'cmds'

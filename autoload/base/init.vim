@@ -44,7 +44,7 @@ endf
 fun! base#init#paths(...)
     call base#echoprefix('(base#init#paths)')
 
-		let dir = base#file#catfile([  $VIMRUNTIME, 'plg'  ])
+		let dir = base#file#catfile([  $VIMRUNTIME, 'plg', 'base'  ])
 		
 		call base#varset('plgdir',dir)
 		call base#datadir( base#file#catfile([ dir, 'data' ]) )
