@@ -44,11 +44,14 @@ endf
 fun! base#init#paths(...)
     call base#echoprefix('(base#init#paths)')
 
+		let plg = base#file#catfile([  $VIMRUNTIME, 'plg'  ])
+
+    call base#pathset({  'plg' : plg })
+
 		let dir = base#file#catfile([  $VIMRUNTIME, 'plg', 'base'  ])
 		
 		call base#varset('plgdir',dir)
 		call base#datadir( base#file#catfile([ dir, 'data' ]) )
-
 
     let ref = {}
     if a:0 | let ref = a:1 | endif
@@ -112,6 +115,7 @@ fun! base#init#paths(...)
         \   'progs'  : base#file#catfile([ base#path('hm'),'programs' ]),
         \ })
 
+		let pc = $COMPUTERNAME
     if pc == 'APOPLAVSKIYNB'
         call base#initpaths#apoplavskiynb()
 		elseif pc == 'RESTPC'

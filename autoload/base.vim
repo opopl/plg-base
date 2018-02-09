@@ -2735,13 +2735,11 @@ function! base#initvarsfromdat ()
     for type in base#qw("list dict")
         let dir = base#file#catfile([ base#datadir(), type ])
         let vars= base#find({ 
-            \   "dirs" : [ dir ], 
-            \   "exts" : [ "i.dat" ],   
-            \   "subdirs" : 1, 
+            \   "dirs"    : [ dir ],
+            \   "exts"    : [ "i.dat" ],
+            \   "subdirs" : 1,
             \   "relpath" : 1,
             \   "rmext"   : 1, })
-				echo dir
-				echo vars
         let tp = mp[type]
         for v in vars
             call base#varsetfromdat(v,tp)
@@ -2784,9 +2782,9 @@ endf
 
 function! base#init (...)
 
-	let opts = base#qw('paths plugins tagids vars omni files au cmds menus')
+	let opts = base#qw('paths plugins tagids vars omni files au cmds menus rtp')
 
-	let opts_all = base#qw('paths plugins tagids vars omni files au cmds menus')
+	let opts_all = base#qw('paths plugins tagids vars omni files au cmds menus rtp')
 
   if a:0
     let ref = a:1
@@ -2846,15 +2844,15 @@ function! base#init (...)
         call base#omni#init()
 
     elseif opt == 'paplist'
-    		call base#pap#list()
+   		call base#pap#list()
 
+    elseif opt == 'rtp'
+  		call base#rtp#update()
     endif
     return
   endif
 
-	call base#init(opts)
-
-  call base#rtp#update()
+  call base#init(opts)
 
   call base#stl#setlines()
     

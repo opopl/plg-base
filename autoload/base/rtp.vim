@@ -33,7 +33,7 @@ function! base#rtp#uniq()
 endf
 
 function! base#rtp#update(...)
-	call base#initplugins()
+	call base#init#plugins()
 
 	"let dirs=	get
 

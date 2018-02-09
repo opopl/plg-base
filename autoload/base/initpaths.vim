@@ -8,9 +8,12 @@ function! base#initpaths#restpc ()
 endf
 
 function! base#initpaths#apoplavskiynb ()
+	 call base#pathset({ 
+      \ "repos_git" : base#file#catfile([ base#path('hm'), 'repos', 'git'  ]),
+	    \ })
 	
 	 call base#pathset({ 
-      \ "mingw" : base#file#catfile([ base#path('progs'), 'mingw' ]),
+      \ "mingw"       : base#file#catfile([ base#path('progs'), 'mingw' ]),
       \ "imagemagick" : base#file#catfile(base#qw('c: OSPanel modules imagemagick')),
 	    \ })
 
