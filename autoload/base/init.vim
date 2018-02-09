@@ -35,6 +35,155 @@ fun! base#init#cmds_plg ()
 
 endf
 
+
+"""base_initpaths
+
+"call base#initpaths()
+"call base#initpaths({ "anew": 1 })
+
+fun! base#init#paths(...)
+    call base#echoprefix('(base#init#paths)')
+
+		let dir = base#file#catfile([  $VIMRUNTIME, 'plg'  ])
+		
+		call base#varset('plgdir',dir)
+		call base#datadir( base#file#catfile([ dir, 'data' ]) )
+
+
+    let ref = {}
+    if a:0 | let ref = a:1 | endif
+
+    let do_echo=0
+    if exists("g:base_echo_init") && g:base_echo_init
+      let do_echo = 1
+    endif
+ 
+"""define_paths
+
+    let anew = 0
+    if ! exists("s:paths") 
+        let anew = 1 
+    else
+        if get(ref,'anew',0) 
+            let anew = 1 
+        endif
+    endif
+        
+    if anew
+    if do_echo
+          call base#echo({ 
+              \   "text" : 'Settings paths anew...' 
+              \   })
+    endif
+        let s:paths={}
+    endif
+
+    let confdir   = base#envvar('CONFDIR')
+    let vrt       = base#envvar('VIMRUNTIME')
+    let hm        = base#envvar('hm')
+    let mrc       = base#envvar('MYVIMRC')
+    let projsdir  = base#envvar('PROJSDIR')
+    let pf        = base#envvar('PROGRAMFILES')
+
+    let home      = base#envvar('USERPROFILE')
+
+    let pc = base#envvar('COMPUTERNAME')
+
+    let evbin = home.'\AppData\Local\Apps\Evince-2.32.0.145\bin'
+    if isdirectory(evbin)
+      call base#pathset({  'evince_bin' : evbin })
+    endif
+
+    call base#pathset({ 
+        \ 'home'    : home ,
+        \ 'hm'      : hm ,
+        \ 'pf'      : pf ,
+        \ 'conf'    : confdir ,
+        \ 'vrt'     : vrt,
+        \ 'vim'     : base#envvar('VIM'),
+        \ 'src_vim' : base#envvar('SRC_VIM'),
+        \ 'texdocs' : projsdir,
+        \ 'p'       : base#envvar('TexPapersRoot'),
+        \ 'phd_p'   : base#envvar('TexPapersRoot'),
+        \ 'include_win_sdk'   : base#envvar('INCLUDE_WIN_SDK'),
+        \   })
+
+    call base#pathset({
+        \   'progs'  : base#file#catfile([ base#path('hm'),'programs' ]),
+        \ })
+
+    if pc == 'APOPLAVSKIYNB'
+        call base#initpaths#apoplavskiynb()
+		elseif pc == 'RESTPC'
+        call base#initpaths#restpc()
+    endif
+
+    let mkvimrc  = base#file#catfile([ base#path('conf'), 'mk', 'vimrc' ])
+    let mkbashrc = base#file#catfile([ base#path('conf'), 'mk', 'bashrc' ])
+
+    call base#pathset({
+        \   'pdfout'      : base#envvar('PDFOUT'),
+        \   'htmlout'     : base#envvar('HTMLOUT'),
+        \   'jsdocs'      : base#envvar('JSDOCS'),
+        \ })
+
+    call base#pathset({
+        \   'jq_course_local'  : base#file#catfile([ base#path('open_server'),'domains', 'jq-course.local' ]),
+        \   'quote_service_local'  : base#file#catfile([ base#path('open_server'),'domains', 'quote-service.local' ]),
+        \ })
+
+    call base#pathset({
+        \   'ap_local'    : base#file#catfile([ base#path('open_server'),'domains', 'ap.local' ]),
+        \   'inews_local' : base#file#catfile([ base#path('open_server'),'domains', 'inews.local' ]),
+        \ })
+
+    call base#pathset({
+        \ 'vh_mdn_elem' : base#qw#catpath('plg','idephp doc html mdn_html_elements_reference'),
+        \ })
+
+
+    call base#pathset({
+        \   'desktop'     : base#file#catfile([ hm, base#qw("Desktop") ]),
+        \   'mkvimrc'     : mkvimrc,
+        \   'mkbashrc'    : mkbashrc,
+        \   'coms'        : base#file#catfile([ mkvimrc, '_coms_' ]) ,
+        \   'funs'        : base#file#catfile([ mkvimrc, '_fun_' ]) ,
+        \   'projs'       : projsdir,
+        \   'perlmod'     : base#file#catfile([ hm, base#qw("repos git perlmod") ]),
+        \   'perlscripts' : base#file#catfile([ hm, base#qw("scripts perl") ]),
+        \   'scripts'     : base#file#catfile([ hm, base#qw("scripts") ]),
+        \   'projs_my'    : base#file#catfile([ hm, base#qw("repos git projs_my") ]),
+        \   'projs_da'    : base#file#catfile([ hm, base#qw("repos git projs_da") ]),
+        \   })
+
+        "\  'projs_da'    : base#file#catfile([ base#qw("Z: ap projs_da") ]),
+
+    "" remove / from the end of the directory
+    for k in keys(s:paths)
+       let s:paths[k]=substitute(s:paths[k],'\/\s*$','','g')
+    endfor
+
+
+    if exists("g:dirs")
+       call extend(s:paths,g:dirs)
+    endif
+    let g:dirs = s:paths
+
+    let pathlist = sort(keys(s:paths))
+    call base#varset('pathlist',pathlist)
+
+  if do_echo
+    echo '--- base#initpaths ( paths initialization ) --- '
+    echo 'Have set the value of g:dirs'
+    echo 'Have set the value of base variable "pathlist" (check it via BaseVarEcho)'
+    echo '--------------------------------------------------- '
+  endif
+
+  call base#echoprefixold()
+
+endf
+
+
 fun! base#init#cmds()
 	call base#init#cmds_plg()
 
@@ -264,7 +413,6 @@ function! base#init#tagids ()
 endfunction
 
 fun! base#init#au()
-
 	let plgdir = base#plgdir()
 
 	let datfiles = base#varget('datfiles',{})
@@ -277,9 +425,131 @@ fun! base#init#au()
 	endfor
 	exe 'augroup end'
 
-		au BufWritePost,BufRead,BufWinEnter *.i.dat setf conf
-		au BufRead,BufWinEnter * call base#buf#onload()
-    au FileType  * call base#buf#start() 
+	au BufWritePost,BufRead,BufWinEnter *.i.dat setf conf
+	au BufRead,BufWinEnter * call base#buf#onload()
+  au FileType  * call base#buf#start() 
      
 endfun
+
+function! base#init#vars (...)
+    call base#echoprefix('(base#initvars)')
+
+    call base#initvarsfromdat()
+
+  	call base#varset('opts_keys',sort( keys( base#varget('opts',{}) )  ) )
+
+    call base#varset('vim_funcs_user',
+        \   base#fnamemodifysplitglob('funs','*.vim',':t:r'))
+
+    call base#varset('vim_coms',
+        \   base#fnamemodifysplitglob('coms','*.vim',':t:r'))
+
+		call base#varlist()
+
+    if $COMPUTERNAME == 'OPPC'
+        let v='C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe'
+    		call base#varset('pdfviewer',v)
+		elseif $COMPUTERNAME == 'apoplavskiynb'
+        let v='C:\Users\apoplavskiy\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe'
+    		call base#varset('pdfviewer',v)
+    endif
+
+		let plugins_all = base#find({ 
+			\	"dirids"    : ['plg'],
+			\	"cwd"       : 1,
+			\	"relpath"   : 1,
+			\	"subdirs"   : 0,
+			\	"dirs_only" : 1,
+			\	})
+		call filter(plugins_all,'v:val !~ "^.git"')
+    call base#varset('plugins_all',plugins_all)
+
+    call base#echoprefixold()
+endf    
+
+fun! base#init#files(...)
+    call base#echoprefix('(base#initfiles)')
+
+    let ref = {}
+    if a:0 | let ref = a:1 | endif
+
+    let anew = 0
+    if ! exists("s:files") 
+        let anew = 1 
+    else
+        if get(ref,'anew',0) 
+            let anew = 1 
+        endif
+    endif
+        
+    if anew
+        call base#echo({ 
+            \   "text" : 'Settings "files" hash anew...',
+            \   })
+        let s:files={}
+    endif
+
+    let evince =  base#file#catfile([ 
+      \ base#path('home'),
+      \ '\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe' 
+      \ ])
+
+    if filereadable(evince)
+        call base#f#set({  'evince' : evince })
+    endif
+
+    if $COMPUTERNAME == 'APOPLAVSKIYNB'
+
+      let cv  = base#file#catfile([ base#path('imagemagick'), 'convert.exe' ])
+      let idn = base#file#catfile([ base#path('imagemagick'), 'identify.exe' ])
+
+      call base#f#set({  'im_convert' : cv })
+      call base#f#set({  'im_identify' : idn })
+
+    endif
+
+  let exefiles={}
+  for fileid in base#varget('exefileids',[])
+    let  ok = base#sys({ 
+			\ "cmds"        : [ 'where '.fileid ],
+			\ "skip_errors" : 1,
+			\ })
+
+    if ok
+        let found =  base#varget('sysout',[])
+        let add={}
+        for f in  found
+            if filereadable(f)
+                let add[f]=1
+            endif
+        endfor
+        let k = keys(add)
+        if len(k)
+          call extend(exefiles,{ fileid : k } )
+        endif
+    endif
+
+  endfor
+
+  call base#f#set(exefiles)
+
+  call base#echoprefixold()
+endf
+
+function! base#init#plugins (...)
+
+    call base#varsetfromdat('plugins','List')
+
+    if exists('g:plugins') | unlet g:plugins | endif
+    let g:plugins=base#varget('plugins',[])
+
+  if exists("g:base_echo_init") && g:base_echo_init
+    echo '--- base#initplugins ( plugins initialization ) --- '
+    echo 'Have set the value of g:plugins'
+    echo 'Have set the value of base variable "plugins" (check it via BaseVarEcho plugins)'
+    echo '--------------------------------------------------- '
+  endif
+
+endf  
+
 

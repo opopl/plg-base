@@ -1,4 +1,5 @@
 
+finish
 let g:base_cmds_done=1
 if exists("g:base_cmds_done")
 	finish 
