@@ -419,8 +419,22 @@ function! base#log (msg,...)
 	let ref = get(a:000,0,{})
 	let log = base#varget('base_log',[])
 
-	call add(log,{ 'msg' : a:msg })
-	call base#varset('base_log',log)
+	if base#type(a:msg) == 'String'
+		let time = strftime("%Y %b %d %X")
+		let msg  = '<<' . time . '>>' .' ' . a:msg
+
+		call add(log,{ 'msg' : msg })
+		call base#varset('base_log',log)
+
+		return 1
+	elseif base#type(a:msg) == 'List'
+		let msgs = a:msg
+		for msg in msgs
+			call base#log(msg)
+		endfor
+		return 1
+		
+	endif
 
 	return 1
 	
@@ -2049,7 +2063,7 @@ function! base#path (pathid)
     let prefix='(base#path) '
 
     if !exists("s:paths")
-        call base#initpaths()
+        call base#init#paths()
     endif
 
     if exists("s:paths[a:pathid]")
@@ -2703,7 +2717,7 @@ endfunction
 function! base#datafiles (id)
 
     let datadir = base#datadir()
-    let file = a:id . ".i.dat"
+    let file    = a:id . ".i.dat"
 
     let files = base#find({
         \ "dirs"    : [ datadir ],
@@ -2716,7 +2730,7 @@ function! base#datafiles (id)
 endfunction
 
 function! base#initvarsfromdat ()
-		echo 'calling: base#initvarsfromdat()'
+		call base#log('calling: base#initvarsfromdat()')
 
     let refdef = {}
     let ref    = refdef
@@ -2791,7 +2805,9 @@ function! base#init (...)
 
 		if type(ref)==type('')
 				let opt = ref
-				echo 'base#init for: ' .  opt
+				let msg = 'base#init for: ' .  opt
+				call base#log(msg)
+
 		elseif type(ref)==type([])
 				let opts = ref
 				for opt in opts
@@ -2986,6 +3002,9 @@ function! base#grep (...)
 
     elseif opt == 'vimgrep'
         let cmd = 'vimgrep /'.pat.'/ '. join(files,' ') 
+
+    elseif opt == 'grep'
+	   silent exe 'grep '.'"'.pat.'"' . join(files,' ')
     endif
 
     exe cmd
@@ -3000,18 +3019,18 @@ function! base#grepopt (...)
             let opt = 'grep'
         endif
     else
-        let opt = base#var('grepopt')
+        let opt = base#varget('grepopt','')
     endif
 
     if a:0 | let opt = a:1 | endif
-    call base#var('grepopt',opt)
+    call base#varset('grepopt',opt)
 
-    return base#var('grepopt')
+    return base#varget('grepopt','')
 endfunction
 
 function! base#envvarlist ()
     call base#envvars()
-    let evlist = base#var('evlist')
+    let evlist = base#varget('evlist',[])
 
     return evlist
 

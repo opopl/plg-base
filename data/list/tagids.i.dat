@@ -1,6 +1,8 @@
 ipte_client
 ipte_ao
 ipte_wt
+###php
+php_urltotxt
 ###perl
 perl_inc
 perl_inc_select
@@ -27,9 +29,10 @@ plg_make
 plg_my
 plg_my_java
 plg_pdoc
-plg_perlmy
 plg_perl-support
+plg_perlmy
 plg_projs
+plg_tagbar
 plg_tex
 plg_txtmy
 plg_vim-latex

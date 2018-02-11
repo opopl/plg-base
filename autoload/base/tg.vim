@@ -156,6 +156,12 @@ function! base#tg#update (...)
 
 		let libs.=' ' . libs_as
 
+"""tgupdate_php_urltotxt
+	elseif tgid == 'php_urltotxt'
+
+		let dir   = base#path('urltotxt')
+		let libs .= ' ' . dir
+
 """tgupdate_perl_htmltool
 	elseif tgid == 'perl_htmltool'
 

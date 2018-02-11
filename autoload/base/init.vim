@@ -109,7 +109,7 @@ fun! base#init#paths(...)
         \ 'p'       : base#envvar('TexPapersRoot'),
         \ 'phd_p'   : base#envvar('TexPapersRoot'),
         \ 'include_win_sdk'   : base#envvar('INCLUDE_WIN_SDK'),
-        \   })
+        \ })
 
     call base#pathset({
         \   'progs'  : base#file#catfile([ base#path('hm'),'programs' ]),
@@ -121,6 +121,10 @@ fun! base#init#paths(...)
 		elseif pc == 'RESTPC'
         call base#initpaths#restpc()
     endif
+
+    call base#initpaths#php()
+    call base#initpaths#perl()
+    call base#initpaths#docs()
 
     let mkvimrc  = base#file#catfile([ base#path('conf'), 'mk', 'vimrc' ])
     let mkbashrc = base#file#catfile([ base#path('conf'), 'mk', 'bashrc' ])
@@ -184,7 +188,6 @@ fun! base#init#paths(...)
   endif
 
   call base#echoprefixold()
-
 endf
 
 
@@ -205,6 +208,9 @@ fun! base#init#cmds()
 """BaseSYS
 	command! -nargs=* -complete=custom,base#complete#basesys BaseSYS
 		\	call base#sys_split_output(<f-args>) 
+
+	command! -nargs=0 BaseLog
+		\	call base#log#view_split(<f-args>) 
 
 """ImageAct
 	command! -nargs=*  -complete=custom,base#complete#imageact ImageAct 
@@ -472,7 +478,7 @@ function! base#init#vars (...)
 endf    
 
 fun! base#init#files(...)
-    call base#echoprefix('(base#initfiles)')
+    call base#echoprefix('(base#init#files)')
 
     let ref = {}
     if a:0 | let ref = a:1 | endif
@@ -487,9 +493,7 @@ fun! base#init#files(...)
     endif
         
     if anew
-        call base#echo({ 
-            \   "text" : 'Settings "files" hash anew...',
-            \   })
+        call base#log('Settings "files" hash anew...')
         let s:files={}
     endif
 

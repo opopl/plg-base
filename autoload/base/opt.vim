@@ -70,12 +70,12 @@ endfunction
 
 function! base#opt#echo (...)
 
-	if a:0
-		let opt = a:1
-	else
-		let opt = input('Option:','','custom,base#complete#opts')
-	endif
+	let opt = get(a:000,0,'')
 	let opts = base#varget('opts',{})
+	if !strlen(opt)
+		call base#var#dump_split('opts')
+		return
+	endif
 
 	if !base#opt#defined(opt)
 		call base#echo({ 'text' : 'Option Undefined: ' . opt })
@@ -88,6 +88,7 @@ endfunction
 
 "function! base#opt#set (opt,val)
 "function! base#opt#set ({ opt : val })
+"
 function! base#opt#set (...)
   let aa=a:000
 

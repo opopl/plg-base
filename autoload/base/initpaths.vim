@@ -7,6 +7,32 @@ function! base#initpaths#restpc ()
 	    \ })
 endf
 
+function! base#initpaths#php ()
+
+	 call base#pathset({ 
+      \ "urltotxt" : base#file#catfile([ base#path('localhost'), 'urltotxt' ]),
+	    \ })
+	
+endfunction
+
+function! base#initpaths#perl ()
+		call base#log('call base#initpaths#perl')
+
+	 call base#pathset({ 
+      \ "htmltool" : base#file#catfile([ base#path('repos_git'), 'htmltool' ]),
+	    \ })
+	
+endfunction
+
+function! base#initpaths#docs ()
+		call base#log('call base#initpaths#docs')
+
+		call base#pathset({ 
+				\	 'materials_georgia_2017': 'C:\doc\sport_tourism\georgia_2017_khalaim\materials',
+				\	})
+	
+endfunction
+
 function! base#initpaths#apoplavskiynb ()
 	 call base#pathset({ 
       \ "repos_git" : base#file#catfile([ base#path('hm'), 'repos', 'git'  ]),
@@ -17,9 +43,6 @@ function! base#initpaths#apoplavskiynb ()
       \ "imagemagick" : base#file#catfile(base#qw('c: OSPanel modules imagemagick')),
 	    \ })
 
-	 call base#pathset({ 
-      \ "htmltool" : base#file#catfile([ base#path('repos_git'), 'htmltool' ]),
-	    \ })
 
 	 call base#pathset({ 
 			\	"perl_strawberry"  : base#envvar("Perl_Strawberry"),

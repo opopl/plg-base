@@ -49,17 +49,7 @@ function! base#rtp#update(...)
 			let ff = base#find({ "dirs" : [docdir] })
 
 			if len(ff)
-				try
-					silent exe 'helptags ' . docdir 
-				"catch /^Vim(execute):E151/
-					"echo 'error E151'
-				catch /.*/
-					echohl WarningMsg
-					echo 'Errors while running helptags for doc dir:'
-					echo '   ' .docdir
-					echohl None
-				endtry
-
+				call base#vim#helptags({ 'dir' : docdir})
 			endif
 		endif
 	endfor

@@ -101,7 +101,6 @@ function! base#list#get (arr,ind)
       endif
 
       let list_range = base#string#matchlist(a:ind,pats.range)
-			echo list_range
       if len(list_range)
          let [start,end] = map(base#list#get(list_range,[0,1]),'str2nr(v:val)')
 				 if end > start

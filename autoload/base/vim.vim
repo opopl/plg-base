@@ -75,7 +75,7 @@ function! base#vim#helptags (...)
 		try
 			silent exe 'helptags ' . dir
 		catch /^Vim\%((\a\+)\)\=:E154/	
-			call base#log('Vim Error E154: duplicate tag')
+			call base#log('Vim Error E154: duplicate tag for docdir: '."\n".dir)
 		finally
 		endtry
 
