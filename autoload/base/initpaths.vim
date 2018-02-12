@@ -36,7 +36,9 @@ function! base#initpaths#docs ()
 
 		call base#pathset({ 
 				\	 'materials_georgia_2017': 'C:\doc\sport_tourism\georgia_2017_khalaim\materials',
+				\	 'gpx_georgia_2017'      : 'C:\doc\sport_tourism\georgia_2017_khalaim\materials\report\GPX_Georgia_2017\saved',
 				\	})
+
 	
 endfunction
 

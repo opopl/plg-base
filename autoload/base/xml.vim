@@ -10,20 +10,12 @@ function! base#xml#pretty()
 		let xml_origin = join(getline(1,'$'),"\n")
 
 perl << eof
-
 		my $warn=sub{ 
 			VIM::Msg($_,"WarningMsg") for(@_);
 		};
 
-		my @mods=qw(
-			XML::LibXML::PrettyPrint
-		);
-		foreach my $mod (@mods) {
-			eval { require $mod; $mod->import; };
-			if (@$) { 
-				$warn->('Failure: use '.$mod,$@); 
-			}
-		}
+		use XML::LibXML::PrettyPrint;
+		use XML::LibXML;
 		use String::Escape qw(quote);
 
 		my ($doc, $pp, $xml_origin, $xml_pretty);
@@ -39,17 +31,24 @@ perl << eof
 		if ($@) { $warn->( '[XML::LibXML] new() failure:',$@); }
 		if (! defined $doc) {
 				$warn->( '[XML::LibXML] $doc UNDEFINED' );
+				return;
 		}
 		
 		$pp  = XML::LibXML::PrettyPrint->new;
-		eval { $xml_pretty = $pp->pretty_print($doc)->toString; };
+		eval { 
+			$pp->pretty_print($doc); 
+			$xml_pretty = $doc->toString; 
+		};
 		if ($@) { $warn->('[XML::LibXML::PrettyPrint] pretty_print() failure:',$@); }
 
-		VIM::DoCommand('let xml_pretty='.quote($str));
+		$str=~s/"/\\"/g;
+		$str=~s/'/\\'/g;
+		VIM::DoCommand('let xml_pretty='.'"'.$str.'"');
 
 eof
-		split
-		enew
+		call base#buf#open_split({ 'lines' : split(xml_pretty,"\n") })
+		"split
+		"enew
 	endif
 endfunction
 
