@@ -60,26 +60,6 @@ fun! base#init#paths(...)
     if exists("g:base_echo_init") && g:base_echo_init
       let do_echo = 1
     endif
- 
-"""define_paths
-
-    let anew = 0
-    if ! exists("s:paths") 
-        let anew = 1 
-    else
-        if get(ref,'anew',0) 
-            let anew = 1 
-        endif
-    endif
-        
-    if anew
-    if do_echo
-          call base#echo({ 
-              \   "text" : 'Settings paths anew...' 
-              \   })
-    endif
-        let s:paths={}
-    endif
 
     let confdir   = base#envvar('CONFDIR')
     let vrt       = base#envvar('VIMRUNTIME')
@@ -167,25 +147,14 @@ fun! base#init#paths(...)
         "\  'projs_da'    : base#file#catfile([ base#qw("Z: ap projs_da") ]),
 
     "" remove / from the end of the directory
-    for k in keys(s:paths)
-       let s:paths[k]=substitute(s:paths[k],'\/\s*$','','g')
-    endfor
-
+		call base#paths_nice()
 
     if exists("g:dirs")
-       call extend(s:paths,g:dirs)
+       call base#pathset(g:dirs)
     endif
-    let g:dirs = s:paths
+    let g:dirs= base#paths()
 
-    let pathlist = sort(keys(s:paths))
-    call base#varset('pathlist',pathlist)
-
-  if do_echo
-    echo '--- base#initpaths ( paths initialization ) --- '
-    echo 'Have set the value of g:dirs'
-    echo 'Have set the value of base variable "pathlist" (check it via BaseVarEcho)'
-    echo '--------------------------------------------------- '
-  endif
+    call base#pathlist()
 
   call base#echoprefixold()
 endf
@@ -482,20 +451,6 @@ fun! base#init#files(...)
 
     let ref = {}
     if a:0 | let ref = a:1 | endif
-
-    let anew = 0
-    if ! exists("s:files") 
-        let anew = 1 
-    else
-        if get(ref,'anew',0) 
-            let anew = 1 
-        endif
-    endif
-        
-    if anew
-        call base#log('Settings "files" hash anew...')
-        let s:files={}
-    endif
 
     let evince =  base#file#catfile([ 
       \ base#path('home'),

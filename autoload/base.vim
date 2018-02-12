@@ -2002,9 +2002,17 @@ fun! base#sys(...)
 endfun
 
 
-function! base#pathset (ref)
+function! base#pathset (ref,...)
 
   if ! exists("s:paths") | let s:paths={} | endif
+	let opts = get(a:000,0,{})
+
+	let anew = get(opts,'anew',0)
+
+	if anew
+		call base#log(['base#pathset anew=1'])
+		let s:paths={}
+	endif
 
     for [ pathid, path ] in items(a:ref) 
         let e = { pathid : path }
@@ -2037,7 +2045,7 @@ function! base#pathlist ()
     endif
 
     let pathlist = sort(keys(s:paths))
-    call base#var('pathlist',pathlist)
+    call base#varset('pathlist',pathlist)
 
     return pathlist
     
@@ -2079,6 +2087,22 @@ function! base#path (pathid)
     
     return path
     
+endfunction
+
+function! base#paths_nice ()
+	if !exists("s:paths") | return | endif
+
+  for k in keys(s:paths)
+     let s:paths[k]=substitute(s:paths[k],'\/\s*$','','g')
+  endfor
+	
+endfunction
+
+function! base#paths()
+	if !exists("s:paths") | return {} | endif
+
+	return s:paths
+
 endfunction
 
 """base_warn
@@ -2793,6 +2817,15 @@ function! base#act (...)
   exe 'call '.sub.'()'
 
 endf    
+
+function! base#pcname ()
+	if has('win32')
+		let pc = base#envvar('COMPUTERNAME')
+	else
+	endif
+	return pc 
+	
+endfunction
 
 function! base#init (...)
 

@@ -21,6 +21,13 @@ function! base#initpaths#perl ()
 	 call base#pathset({ 
       \ "htmltool" : base#file#catfile([ base#path('repos_git'), 'htmltool' ]),
 	    \ })
+
+	 let pc = base#pcname()
+	 if pc == 'apoplavskiynb'
+			call base#pathset({ 
+				\	 'install_cpan_pdl': 'C:\install\perl\cpan\PDL-2.018-0',
+				\	})
+	 endif
 	
 endfunction
 
