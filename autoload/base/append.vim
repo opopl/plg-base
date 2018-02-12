@@ -23,6 +23,12 @@ function! base#append#arr (...)
 
 endfunction
 
+function! base#append#buf_full_path (...)
+	let file = b:file
+	call append(line('.'),b:file)
+
+endfunction
+
 function! base#append#cwd (...)
 		let line=getcwd()
 		let lnum=line('.')
