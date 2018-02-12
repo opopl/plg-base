@@ -10,21 +10,26 @@ function! base#xml#pretty()
 		let xml_origin = join(getline(1,'$'),"\n")
 
 perl << eof
+		use XML::LibXML::PrettyPrint;
+		use XML::LibXML;
+		use Vim::Perl qw(:funcs :vars);
+
+		use strict;
+		use warnings;
+
+		use String::Escape qw(quote);
+
 		my $warn=sub{ 
 			VIM::Msg($_,"WarningMsg") for(@_);
 		};
-
-		use XML::LibXML::PrettyPrint;
-		use XML::LibXML;
-		use String::Escape qw(quote);
 
 		my ($doc, $pp, $xml_origin, $xml_pretty);
 		
 		$xml_origin = VIM::Eval('xml_origin');
 
 		eval {
-			$doc = XML::LibXML->new(
-				xml => $xml_origin,
+			$doc = XML::LibXML->load_xml(
+				string => $xml_origin,
 			);
 		};
 
@@ -34,16 +39,17 @@ perl << eof
 				return;
 		}
 		
-		$pp  = XML::LibXML::PrettyPrint->new;
+		$pp  = XML::LibXML::PrettyPrint->new(indent_string => " " );
 		eval { 
 			$pp->pretty_print($doc); 
 			$xml_pretty = $doc->toString; 
 		};
 		if ($@) { $warn->('[XML::LibXML::PrettyPrint] pretty_print() failure:',$@); }
 
-		$str=~s/"/\\"/g;
-		$str=~s/'/\\'/g;
-		VIM::DoCommand('let xml_pretty='.'"'.$str.'"');
+		$xml_pretty=~s/"/\\"/g;
+		$xml_pretty=~s/'/\\'/g;
+		VIM::DoCommand('let xml_pretty='.'"'.$xml_pretty.'"');
+		#VimMsg($xml);
 
 eof
 		call base#buf#open_split({ 'lines' : split(xml_pretty,"\n") })
