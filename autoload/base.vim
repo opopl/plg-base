@@ -419,9 +419,11 @@ function! base#log (msg,...)
 	let ref = get(a:000,0,{})
 	let log = base#varget('base_log',[])
 
+	let prf = get(ref,'prf','')
+
 	if base#type(a:msg) == 'String'
 		let time = strftime("%Y %b %d %X")
-		let msg  = '<<' . time . '>>' .' ' . a:msg
+		let msg  = '<<' . time . '>>' .' '.prf.' '.a:msg
 
 		call add(log,{ 'msg' : msg })
 		call base#varset('base_log',log)
@@ -429,8 +431,9 @@ function! base#log (msg,...)
 		return 1
 	elseif base#type(a:msg) == 'List'
 		let msgs = a:msg
+
 		for msg in msgs
-			call base#log(msg)
+			call base#log(msg,ref)
 		endfor
 		return 1
 		
@@ -1815,39 +1818,40 @@ endfun
  
 fun! base#getfileinfo(...)
 
- let g:path=''
+ let path     = ''
+ let fileinfo = {}
 
  let ids=[ '<afile>', '<buf>', '%' ] 
  
- while !filereadable(g:path) && len(ids)
+ while !filereadable(path) && len(ids)
     let id     = remove(ids,-1)
-    let g:path = expand(id . ':p')
+    let path   = expand(id . ':p')
  endwhile
 
- if !filereadable(g:path)
-    return
+ if !filereadable(path)
+    return {}
  endif
 
- let g:dirname  = fnamemodify(g:path,':h')
- let g:filename = fnamemodify(g:path,':t')
+ let dirname  = fnamemodify(path,':h')
+ let filename = fnamemodify(path,':t')
 
  " root filename without all extensions removed
- let g:filename_root = get(split(g:filename,'\.'),0)
+ let filename_root = get(split(filename,'\.'),0)
 
- let g:ext = fnamemodify(g:path,':e')
+ let ext = fnamemodify(path,':e')
 
  let pathids=base#buf#pathids()
  let fileinfo={
-    \   'path'          : g:path          ,
-    \   'ext'           : g:ext           ,
-    \   'filename'      : g:filename      ,
-    \   'dirname'       : g:dirname       ,
-    \   'filename_root' : g:filename_root ,
+    \   'path'          : path          ,
+    \   'ext'           : ext           ,
+    \   'filename'      : filename      ,
+    \   'dirname'       : dirname       ,
+    \   'filename_root' : filename_root ,
     \   'filetype'      : &ft,
     \   'pathids'       : pathids,
     \   }
- let g:fileinfo=fileinfo
- let b:fileinfo=fileinfo
+ let fileinfo   = fileinfo
+ let b:fileinfo = fileinfo
 
  return fileinfo
 
@@ -2016,6 +2020,10 @@ function! base#pathset (ref,...)
 
     for [ pathid, path ] in items(a:ref) 
         let e = { pathid : path }
+				call base#log([
+					\'base#pathset: pathid ='.pathid,
+					\'base#pathset: path   ='.path,
+					\	])
         call extend(s:paths,e)
     endfor
 
@@ -2078,9 +2086,11 @@ function! base#path (pathid)
         let path = s:paths[a:pathid]
     else
         let path = ''
+				let txt  = "pathid undefined: " . a:pathid 
+
 
         call base#warn({ 
-            \   "text"   : "path undefined: " . a:pathid ,
+            \   "text"   : txt,
             \   "prefix" : prefix ,
             \   })
     endif
@@ -2121,6 +2131,8 @@ function! base#warn (ref)
     exe 'echohl '.hl
     echo text
     echohl None
+
+		call base#log([text])
     
 endfunction
 
@@ -2157,10 +2169,10 @@ function! base#info (...)
        echo indent . &ft
 
        call base#echo({ 'text' : "Other variables: " } )
-       call base#echovar({ 'var' : 'g:dirname', 'indent' : indentlev })
-       call base#echovar({ 'var' : 'g:filename', 'indent' : indentlev })
-       call base#echovar({ 'var' : 'g:path', 'indent' : indentlev })
-       call base#echovar({ 'var' : 'g:ext' , 'indent' : indentlev })
+       call base#echovar({ 'var' : 'b:dirname', 'indent' : indentlev })
+       call base#echovar({ 'var' : 'b:filename', 'indent' : indentlev })
+       call base#echovar({ 'var' : 'b:path', 'indent' : indentlev })
+       call base#echovar({ 'var' : 'b:ext' , 'indent' : indentlev })
 
        call base#echo({ 'text' : "Directories which this file belongs to: " } )
 
@@ -2917,6 +2929,9 @@ function! base#mkdir (dir)
 
   try
     call mkdir(a:dir,'p')
+    call base#log([
+				\ 'base#mkdir created directory:',
+				\ 'base#mkdir '. a:dir])
   catch
     call base#warn({ "text" : "Failure to create dir: " . a:dir})
   endtry

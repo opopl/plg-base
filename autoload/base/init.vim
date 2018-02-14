@@ -89,10 +89,11 @@ fun! base#init#paths(...)
         \ 'p'       : base#envvar('TexPapersRoot'),
         \ 'phd_p'   : base#envvar('TexPapersRoot'),
         \ 'include_win_sdk'   : base#envvar('INCLUDE_WIN_SDK'),
+        \ 'tagdir'  : base#file#catfile([ hm,'tags' ]),
         \ })
 
-    call base#pathset({
-        \   'progs'  : base#file#catfile([ base#path('hm'),'programs' ]),
+    call base#pathset({ 
+        \ 'progs'  : base#file#catfile([ base#path('hm'),'programs' ]),
         \ })
 
 		let pc = $COMPUTERNAME

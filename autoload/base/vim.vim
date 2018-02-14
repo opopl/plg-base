@@ -67,15 +67,23 @@ function! base#vim#linesfun (...)
 endfunction
 
 function! base#vim#helptags (...)
-	let ref = get(a:000,0,{})
-	let dir = get(ref,'dir','')
+	let ref    = get(a:000,0,{})
+	let docdir = get(ref,'dir','')
 
-  if strlen(dir)
+  if strlen(docdir)
+
+		if ( !isdirectory(docdir) )
+			return
+		endif
+
+		let ff = base#find({ "dirs" : [docdir] })
+
+		if !len(ff) | return | endif
 		"let dire = shellescape(dir)
 		try
-			silent exe 'helptags ' . dir
+			silent exe 'helptags ' . docdir
 		catch /^Vim\%((\a\+)\)\=:E154/	
-			call base#log('Vim Error E154: duplicate tag for docdir: '."\n".dir)
+			call base#log('Vim Error E154: duplicate tag for docdir: '."\n".docdir)
 		finally
 		endtry
 

@@ -70,12 +70,13 @@ endf
 function! base#tg#tfile (...)
 	if a:0 | let tgid = a:1 | endif
 
-	let hm    = base#path('hm')
-	let tdir  = base#file#catfile([ hm, 'tags' ])
+	let tdir = base#path('tagdir')
+
 	call base#mkdir(tdir)
 
 	if tgid == 'thisfile'
 		let finfo    = base#getfileinfo()
+
 		let dirname  = get(finfo,'dirname','')
 		let basename = get(finfo,'filename','')
 

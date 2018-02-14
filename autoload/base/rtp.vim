@@ -32,6 +32,30 @@ function! base#rtp#uniq()
 
 endf
 
+" BaseAct rtp_helptags
+"
+function! base#rtp#helptags(...)
+	let list = base#rtp#list()
+
+	for rtp in list
+
+		let docdir=base#file#catfile([ rtp , 'doc' ])
+		call base#vim#helptags({ 'dir' : docdir})
+	endfor
+
+endf
+
+function! base#rtp#list(...)
+	return split(&rtp,',')
+endf
+
+"call base#rtp#list_opensplit(...)
+
+function! base#rtp#list_opensplit(...)
+	let list = base#rtp#list()
+	call base#buf#open_split({ 'lines' : list })
+endf
+
 function! base#rtp#update(...)
 	call base#init#plugins()
 
