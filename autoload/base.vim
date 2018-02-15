@@ -444,7 +444,7 @@ function! base#log (msg,...)
 endfunction
 
 function! base#noperl()
-	if !has('perl') | echo 'NO PERL INSTALLED' | return 1 | endif
+	if !has('perl') | call base#log( 'NO PERL INSTALLED' ) | return 1 | endif
 
 	return 0
 

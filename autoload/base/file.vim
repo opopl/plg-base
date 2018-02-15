@@ -140,8 +140,15 @@ endf
 function! base#file#write_lines(...)	
 	let ref = get(a:000,0,{})
 
-	let lines = get(ref,'lines',[])
-	let file  = get(ref,'file','')
+	let lines  = get(ref,'lines',[])
+	let file   = get(ref,'file','')
+	let prompt = get(ref,'prompt',0)
+	let mode   = get(ref,'mode','rewrite')
+
+	if prompt
+		let yn = input('(base#file#write_lines) Write to file? (1/0):',0)
+		if !yn | return | endif
+	endif
 
 	let dirname = fnamemodify(file,':p:h')
 
@@ -157,7 +164,13 @@ function! base#file#write_lines(...)
 	" -1 fail code for writefile()
 	let ec=-1
 	try
-		let ec = writefile(lines,file)
+		if mode=='append'
+			let ec = writefile(lines,file,'a')
+
+		elseif mode=='rewrite'
+			let ec = writefile(lines,file)
+
+		endif
 	catch 
 		call base#log([
 			\	'base#file#write_lines errors while writing to file!',

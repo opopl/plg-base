@@ -169,6 +169,11 @@ function! base#tg#update (...)
 		let dir   = base#file#catfile([ base#path('htmltool'), 'lib' ])
 		let libs .= ' ' . dir
 
+	elseif tgid == 'perl_inc_plg_browser'
+
+		let dir   = base#file#catfile([ base#path('plg'), 'browser', 'perl' ])
+		let libs .= ' ' . dir
+
 """tgupdate_perl_inc_select
 	elseif tgid == 'perl_inc_select'
 		let mods = base#varget('perlmy_mods_perl_inc_select',[])

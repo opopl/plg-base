@@ -6,6 +6,7 @@ php_urltotxt
 ###perl
 perl_inc
 perl_inc_select
+perl_inc_plg_browser
 perl_htmltool
 perl_as
 perlmod
@@ -20,6 +21,7 @@ projs_tex
 plg
 plg_ap
 plg_base
+plg_browser
 plg_emmet
 plg_findstr
 plg_gps
