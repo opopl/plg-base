@@ -71,6 +71,10 @@ function! base#f#set (ref)
 
      let e = { fileid : file }
      call extend(s:files,e)
+
+		 call base#log(['base#f#set: fileid='.fileid])
+		 call base#log(['base#f#set: file  ='.file])
+
   endfor
 
   call base#varset('exefiles',s:files)

@@ -24,7 +24,7 @@ function! base#plg#runtime (...)
 		exe 'runtime! plugin/*.vim'
 	else
 		let plgdir = base#qw#catpath('plg',plg)
-		let after = base#file#catfile([plgdir, 'after' ])
+		let after  = base#file#catfile([plgdir, 'after' ])
 		
 		let dirs = [
 			\ base#file#catfile([plgdir, 'plugin' ]),
@@ -191,7 +191,7 @@ function! base#plg#grep(...)
 	if a:0
 		let plg = a:1
 	else
-		let plg = input('Plugin name:','projs','custom,ap#complete#plg')
+		let plg = input('Plugin name:','projs','custom,base#complete#plg')
 	endif
 
 	let plgdir = base#catpath('plg',plg)
@@ -202,9 +202,11 @@ function! base#plg#grep(...)
 		\	'subdirs' : 1                   ,
 		\	})
 
-	let pat    = input('GREP pattern:','htlatex')
+	let pat = input('GREP pattern:','')
 
-	let grepopt = input('GREP opt:','plg_findstr','custom,ap#complete#grepopt')
+	let opt = base#grepopt()
+
+	let grepopt = input('GREP opt:',opt,'custom,ap#complete#grepopt')
 	call base#grep({ 
 		\	"pat"   : pat     ,
 		\	"files" : files   ,
@@ -425,8 +427,9 @@ function! base#plg#rtp_s(plg)
 		endif
 	endfor
 
-	let rtp = base#uniq(rtp)
-	let rtp_s=join(rtp,",")
+	let rtp   = base#uniq(rtp)
+	let rtp_s = join(rtp,",")
+
 	return rtp_s
 
 endf

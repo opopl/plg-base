@@ -85,6 +85,11 @@ function! base#buf#pathids_str ()
 endfunction
 
 function! base#buf#pathids ()
+
+	if !exists("b:file")
+		call base#buf#start()
+	endif
+
 	let fi = 'home hm vim vrt ipte_clients'
 	let fis = base#qw(fi)
 

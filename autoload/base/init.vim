@@ -35,6 +35,132 @@ fun! base#init#cmds_plg ()
 
 endf
 
+
+"""base_initpaths
+
+"call base#initpaths()
+"call base#initpaths({ "anew": 1 })
+
+fun! base#init#paths(...)
+    call base#echoprefix('(base#init#paths)')
+
+		let plg = base#file#catfile([  $VIMRUNTIME, 'plg'  ])
+
+    call base#pathset({  'plg' : plg })
+
+		let dir = base#file#catfile([  $VIMRUNTIME, 'plg', 'base'  ])
+		
+		call base#varset('plgdir',dir)
+		call base#datadir( base#file#catfile([ dir, 'data' ]) )
+
+    let ref = {}
+    if a:0 | let ref = a:1 | endif
+
+    let do_echo=0
+    if exists("g:base_echo_init") && g:base_echo_init
+      let do_echo = 1
+    endif
+
+    let confdir   = base#envvar('CONFDIR')
+    let vrt       = base#envvar('VIMRUNTIME')
+    let hm        = base#envvar('hm')
+    let mrc       = base#envvar('MYVIMRC')
+    let projsdir  = base#envvar('PROJSDIR')
+    let pf        = base#envvar('PROGRAMFILES')
+
+    let home      = base#envvar('USERPROFILE')
+
+    let pc = base#envvar('COMPUTERNAME')
+
+    let evbin = home.'\AppData\Local\Apps\Evince-2.32.0.145\bin'
+    if isdirectory(evbin)
+      call base#pathset({  'evince_bin' : evbin })
+    endif
+
+    call base#pathset({ 
+        \ 'home'    : home ,
+        \ 'hm'      : hm ,
+        \ 'pf'      : pf ,
+        \ 'conf'    : confdir ,
+        \ 'vrt'     : vrt,
+        \ 'vim'     : base#envvar('VIM'),
+        \ 'src_vim' : base#envvar('SRC_VIM'),
+        \ 'texdocs' : projsdir,
+        \ 'p'       : base#envvar('TexPapersRoot'),
+        \ 'phd_p'   : base#envvar('TexPapersRoot'),
+        \ 'include_win_sdk'   : base#envvar('INCLUDE_WIN_SDK'),
+        \ 'tagdir'  : base#file#catfile([ hm,'tags' ]),
+        \ })
+
+    call base#pathset({ 
+        \ 'progs'  : base#file#catfile([ base#path('hm'),'programs' ]),
+        \ })
+
+		let pc = $COMPUTERNAME
+    if pc == 'APOPLAVSKIYNB'
+        call base#initpaths#apoplavskiynb()
+		elseif pc == 'RESTPC'
+        call base#initpaths#restpc()
+    endif
+
+    call base#initpaths#php()
+    call base#initpaths#perl()
+    call base#initpaths#docs()
+
+    let mkvimrc  = base#file#catfile([ base#path('conf'), 'mk', 'vimrc' ])
+    let mkbashrc = base#file#catfile([ base#path('conf'), 'mk', 'bashrc' ])
+
+    call base#pathset({
+        \   'pdfout'      : base#envvar('PDFOUT'),
+        \   'htmlout'     : base#envvar('HTMLOUT'),
+        \   'jsdocs'      : base#envvar('JSDOCS'),
+        \ })
+
+    call base#pathset({
+        \   'jq_course_local'  : base#file#catfile([ base#path('open_server'),'domains', 'jq-course.local' ]),
+        \   'quote_service_local'  : base#file#catfile([ base#path('open_server'),'domains', 'quote-service.local' ]),
+        \ })
+
+    call base#pathset({
+        \   'ap_local'    : base#file#catfile([ base#path('open_server'),'domains', 'ap.local' ]),
+        \   'inews_local' : base#file#catfile([ base#path('open_server'),'domains', 'inews.local' ]),
+        \ })
+
+    call base#pathset({
+        \ 'vh_mdn_elem' : base#qw#catpath('plg','idephp doc html mdn_html_elements_reference'),
+        \ })
+
+
+    call base#pathset({
+        \   'desktop'     : base#file#catfile([ hm, base#qw("Desktop") ]),
+        \   'mkvimrc'     : mkvimrc,
+        \   'mkbashrc'    : mkbashrc,
+        \   'coms'        : base#file#catfile([ mkvimrc, '_coms_' ]) ,
+        \   'funs'        : base#file#catfile([ mkvimrc, '_fun_' ]) ,
+        \   'projs'       : projsdir,
+        \   'perlmod'     : base#file#catfile([ hm, base#qw("repos git perlmod") ]),
+        \   'perlscripts' : base#file#catfile([ hm, base#qw("scripts perl") ]),
+        \   'scripts'     : base#file#catfile([ hm, base#qw("scripts") ]),
+        \   'projs_my'    : base#file#catfile([ hm, base#qw("repos git projs_my") ]),
+        \   'projs_da'    : base#file#catfile([ hm, base#qw("repos git projs_da") ]),
+        \   })
+
+        "\  'projs_da'    : base#file#catfile([ base#qw("Z: ap projs_da") ]),
+
+    "" remove / from the end of the directory
+		call base#paths_nice()
+
+    if exists("g:dirs")
+       call base#pathset(g:dirs)
+    endif
+    let g:dirs= base#paths()
+
+    call base#pathlist()
+
+  call base#echoprefixold()
+endf
+
+
 fun! base#init#cmds()
 	call base#init#cmds_plg()
 
@@ -52,6 +178,9 @@ fun! base#init#cmds()
 """BaseSYS
 	command! -nargs=* -complete=custom,base#complete#basesys BaseSYS
 		\	call base#sys_split_output(<f-args>) 
+
+	command! -nargs=0 BaseLog
+		\	call base#log#view_split(<f-args>) 
 
 """ImageAct
 	command! -nargs=*  -complete=custom,base#complete#imageact ImageAct 
@@ -264,10 +393,9 @@ function! base#init#tagids ()
 endfunction
 
 fun! base#init#au()
-
 	let plgdir = base#plgdir()
 
-	let datfiles = base#var('datfiles')
+	let datfiles = base#varget('datfiles',{})
 
 	exe 'augroup base_au_datfiles'
 	exe '   au!'
@@ -277,86 +405,115 @@ fun! base#init#au()
 	endfor
 	exe 'augroup end'
 
-		au BufWritePost,BufRead,BufWinEnter *.i.dat setf conf
-		au BufRead,BufWinEnter * call base#buf#onload()
-    au FileType  * call base#buf#start() 
+	au BufWritePost,BufRead,BufWinEnter *.i.dat setf conf
+	au BufRead,BufWinEnter * call base#buf#onload()
+  au FileType  * call base#buf#start() 
      
 endfun
 
-"au FileType * call base#statusline('neat')
+function! base#init#vars (...)
+    call base#echoprefix('(base#initvars)')
 
+    call base#initvarsfromdat()
 
-  "LFUN F_OnLoad_perl
-  "LFUN F_OnLoad_dat
-  "LFUN F_OnLoad_vim
-  "LFUN F_OnLoad_help
-  "LFUN F_OnLoad_txt
+  	call base#varset('opts_keys',sort( keys( base#varget('opts',{}) )  ) )
 
-  "LFUN SNI_Reload
+    call base#varset('vim_funcs_user',
+        \   base#fnamemodifysplitglob('funs','*.vim',':t:r'))
 
+    call base#varset('vim_coms',
+        \   base#fnamemodifysplitglob('coms','*.vim',':t:r'))
 
-  "augroup onload_perl
-		"au!
-		"autocmd BufRead      *.pm,*.pl,*.pod call F_OnLoad_perl('BufRead')
-		"autocmd BufWinEnter  *.pm,*.pl,*.pod call F_OnLoad_perl('BufWinEnter')
-		"autocmd BufNewFile   *.pm,*.pl,*.pod call F_OnLoad_perl('BufNewFile')
-		"autocmd BufWritePost *.pm,*.pl,*.pod call F_OnLoad_perl('BufWritePost')
-  "augroup end
+		call base#varlist()
 
-  "augroup onload_all
-		"au!
-		"autocmd FileType  * call SNI_Reload()
-  "augroup end
+    if $COMPUTERNAME == 'OPPC'
+        let v='C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe'
+    		call base#varset('pdfviewer',v)
+		elseif $COMPUTERNAME == 'apoplavskiynb'
+        let v='C:\Users\apoplavskiy\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe'
+    		call base#varset('pdfviewer',v)
+    endif
 
-  "augroup onload_txt
-		"au!
-		"autocmd BufRead      *.txt call F_OnLoad_txt('BufRead')
-		"autocmd BufWinEnter  *.txt call F_OnLoad_txt('BufWinEnter')
-		"autocmd BufNewFile   *.txt call F_OnLoad_txt('BufNewFile')
-		"autocmd BufWritePost *.txt call F_OnLoad_txt('BufWritePost')
+		let plugins_all = base#find({ 
+			\	"dirids"    : ['plg'],
+			\	"cwd"       : 1,
+			\	"relpath"   : 1,
+			\	"subdirs"   : 0,
+			\	"dirs_only" : 1,
+			\	})
+		call filter(plugins_all,'v:val !~ "^.git"')
+    call base#varset('plugins_all',plugins_all)
 
-  "augroup END
-	
-  "augroup onload_vim
-		"au!
-		"autocmd BufRead      *.vim call F_OnLoad_vim('BufRead')
-		"autocmd BufWinEnter  *.vim call F_OnLoad_vim('BufWinEnter')
-		"autocmd BufNewFile   *.vim call F_OnLoad_vim('BufNewFile')
-		"autocmd BufWritePost *.vim call F_OnLoad_vim('BufWritePost')
+    call base#echoprefixold()
+endf    
 
-  "augroup END
+fun! base#init#files(...)
+    call base#echoprefix('(base#init#files)')
 
-  "augroup onload_dat
-		"au!
-		"autocmd BufRead      *.dat call F_OnLoad_dat('BufRead')
-		"autocmd BufWinEnter  *.dat call F_OnLoad_dat('BufWinEnter')
-		"autocmd BufNewFile   *.dat call F_OnLoad_dat('BufNewFile')
-		"autocmd BufWritePost *.dat call F_OnLoad_dat('BufWritePost')
+    let ref = {}
+    if a:0 | let ref = a:1 | endif
 
-  "augroup END
+    let evince =  base#file#catfile([ 
+      \ base#path('home'),
+      \ '\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe' 
+      \ ])
 
-  "augroup op_vimconsole
-	  "au!
-	
-	  "autocmd BufNewFile,BufRead zshrc set ft=sh
-	
-	  "autocmd BufNewFile,BufRead *.i.dat set ft=dat
-	  "autocmd BufNewFile,BufRead *.dat set ft=dat
-	  "autocmd BufNewFile,BufRead *.tex set ft=tex
-	
-	  "autocmd BufNewFile,BufRead *.data set ft=sql
-	  "autocmd BufNewFile,BufRead *.db set ft=sql
-	
-	  "autocmd BufNewFile,BufRead makefile set makeprg=make | call F_CdP()
-	  "autocmd BufNewFile,BufRead gitconfig set ft=gitconfig
-		
-	  "autocmd BufNewFile,BufRead,BufWinEnter $hm/wrk/traveltek/* 
-        "\   RFUN TRV_OnLoad
+    if filereadable(evince)
+        call base#f#set({  'evince' : evince })
+    endif
 
-	  "autocmd BufNewFile,BufRead,BufWinEnter /doc/perl/tex/makefile 
-		  "\	compiler latex |
-		  "\	set makeprg=make\ _hperl
+    if $COMPUTERNAME == 'APOPLAVSKIYNB'
 
-  "augroup end
+      let cv  = base#file#catfile([ base#path('imagemagick'), 'convert.exe' ])
+      let idn = base#file#catfile([ base#path('imagemagick'), 'identify.exe' ])
+
+      call base#f#set({  'im_convert' : cv })
+      call base#f#set({  'im_identify' : idn })
+
+    endif
+
+  let exefiles={}
+  for fileid in base#varget('exefileids',[])
+    let  ok = base#sys({ 
+			\ "cmds"        : [ 'where '.fileid ],
+			\ "skip_errors" : 1,
+			\ })
+
+    if ok
+        let found =  base#varget('sysout',[])
+        let add={}
+        for f in  found
+            if filereadable(f)
+                let add[f]=1
+            endif
+        endfor
+        let k = keys(add)
+        if len(k)
+          call extend(exefiles,{ fileid : k } )
+        endif
+    endif
+
+  endfor
+
+  call base#f#set(exefiles)
+
+  call base#echoprefixold()
+endf
+
+function! base#init#plugins (...)
+
+    call base#varsetfromdat('plugins','List')
+
+    if exists('g:plugins') | unlet g:plugins | endif
+    let g:plugins=base#varget('plugins',[])
+
+  if exists("g:base_echo_init") && g:base_echo_init
+    echo '--- base#initplugins ( plugins initialization ) --- '
+    echo 'Have set the value of g:plugins'
+    echo 'Have set the value of base variable "plugins" (check it via BaseVarEcho plugins)'
+    echo '--------------------------------------------------- '
+  endif
+
+endf  
 
 

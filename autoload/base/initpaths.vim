@@ -7,12 +7,57 @@ function! base#initpaths#restpc ()
 	    \ })
 endf
 
+function! base#initpaths#php ()
+
+	 call base#pathset({ 
+      \ "urltotxt" : base#file#catfile([ base#path('localhost'), 'urltotxt' ]),
+	    \ })
+	
+endfunction
+
+function! base#initpaths#perl ()
+		call base#log('call base#initpaths#perl')
+
+	 call base#pathset({ 
+      \ "htmltool" : base#file#catfile([ base#path('repos_git'), 'htmltool' ]),
+	    \ })
+
+	 let pc = base#pcname()
+	 if pc == 'apoplavskiynb'
+			call base#pathset({ 
+				\	 'install_cpan_pdl': 'C:\install\perl\cpan\PDL-2.018-0',
+				\	})
+	 endif
+	
+endfunction
+
+function! base#initpaths#docs ()
+		call base#log('call base#initpaths#docs')
+
+		call base#pathset({ 
+				\	 'materials_georgia_2017': 'C:\doc\sport_tourism\georgia_2017_khalaim\materials',
+				\	 'gpx_georgia_2017'      : 'C:\doc\sport_tourism\georgia_2017_khalaim\materials\report\GPX_Georgia_2017\saved',
+				\	})
+
+	
+endfunction
+
 function! base#initpaths#apoplavskiynb ()
+	 call base#pathset({ 
+      \ "repos_git" : base#file#catfile([ base#path('hm'), 'repos', 'git'  ]),
+	    \ })
+
+	 call base#pathset({ 
+      \ "c_work" : base#file#catfile([ 'C:', 'work'  ]),
+      \ "work_gpx_georgia_2017" : base#file#catfile([ 'C:', 'work', 'georgia_2017', 'gpx'  ]),
+	    \ })
+
 	
 	 call base#pathset({ 
-      \ "mingw" : base#file#catfile([ base#path('progs'), 'mingw' ]),
+      \ "mingw"       : base#file#catfile([ base#path('progs'), 'mingw' ]),
       \ "imagemagick" : base#file#catfile(base#qw('c: OSPanel modules imagemagick')),
 	    \ })
+
 
 	 call base#pathset({ 
 			\	"perl_strawberry"  : base#envvar("Perl_Strawberry"),

@@ -137,6 +137,61 @@ function! base#file#basename(file)
 	return bname
 endf
 
+function! base#file#write_lines(...)	
+	let ref = get(a:000,0,{})
+
+	let lines  = get(ref,'lines',[])
+	let file   = get(ref,'file','')
+	let prompt = get(ref,'prompt',0)
+	let mode   = get(ref,'mode','rewrite')
+
+	if prompt
+		let yn = input('(base#file#write_lines) Write to file? (1/0):',0)
+		if !yn | return | endif
+	endif
+
+	let dirname = fnamemodify(file,':p:h')
+
+	if !isdirectory(dirname)
+		call base#mkdir(dirname)
+	endif
+
+	call base#log([
+			\	'base#file#write_lines writing to file:',
+			\	'base#file#write_lines  '.file,
+			\	])
+
+	" -1 fail code for writefile()
+	let ec=-1
+	try
+		if mode=='append'
+			let ec = writefile(lines,file,'a')
+
+		elseif mode=='rewrite'
+			let ec = writefile(lines,file)
+
+		endif
+	catch 
+		call base#log([
+			\	'base#file#write_lines errors while writing to file!',
+			\	])
+	finally
+		if filereadable(file)
+			call base#log([
+				\	'base#file#write_lines file exists.',
+				\	])
+		endif
+
+		call base#log([
+				\	'writefile() exit code: '.ec,
+				\	'	(-1 - FAIL, 0 - OK)',
+				\	],{'prf' : 'base#file#write_lines'})
+	endtry
+
+
+
+endf
+
 function! base#file#front(file)
 
 	let spt = base#file#ossplit( a:file )

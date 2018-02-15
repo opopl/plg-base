@@ -2,3 +2,5 @@ splitsystem
 cwd
 #
 env_path
+###buf
+buf_full_path

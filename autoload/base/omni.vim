@@ -7,7 +7,7 @@ fun! base#omni#basecomplete(findstart,base, arr)
 
     if a:findstart
       " locate the start of the word
-      let line = getline('.')
+      let line  = getline('.')
       let start = col('.') - 1
 
       while start > 0 && line[start - 1] =~ '\a'
@@ -32,15 +32,15 @@ endfun
 
 fun! base#omni#complete(findstart,base)
  
- return base#omni#basecomplete(a:findstart,a:base,base#var('omni_comps'))
+ return base#omni#basecomplete(a:findstart,a:base,base#varget('omni_comps',[]))
 
 endfun
 
 function! base#omni#selectcompletion (...)
 
- set omnifunc=base#omni#complete
+ set omnifunc = base#omni#complete
 
- let funopts='replace'
+ let funopts  = 'replace'
 
   if a:0
     let opt=a:1
@@ -113,8 +113,9 @@ endf
 
 function! base#omni#init ()
 
-	let h    = base#var('omni_comp_arrays')
+	let h    = base#varget('omni_comp_arrays',{})
 	let list = sort(keys(h))
-	call base#var('omni_compoptions_list',list)
+
+	call base#varset('omni_compoptions_list',list)
 	
 endfunction

@@ -7,8 +7,12 @@ function! base#json#encode (...)
 
 perl << eof
 	use JSON::XS;
-	use Vim::Perl qw(:funcs :vars);
 	use Data::Dumper;
+
+	use Vim::Perl qw(
+		VimVar
+		VimListExtend
+	);
 
 	my $var = VimVar('var');
 
@@ -21,6 +25,7 @@ perl << eof
 	VimListExtend('jsonlist',\@json);
 
 eof
+
 	let json = join(jsonlist,"\n")
 	return json
 	

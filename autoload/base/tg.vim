@@ -44,8 +44,6 @@ function! base#tg#add (...)
 
 endf
 
-function! base#tg#init (...)
-endf
 
 function! base#tg#ids (...)
 	if exists("b:tgids")
@@ -72,12 +70,13 @@ endf
 function! base#tg#tfile (...)
 	if a:0 | let tgid = a:1 | endif
 
-	let hm    = base#path('hm')
-	let tdir  = base#file#catfile([ hm, 'tags' ])
+	let tdir = base#path('tagdir')
+
 	call base#mkdir(tdir)
 
 	if tgid == 'thisfile'
 		let finfo    = base#getfileinfo()
+
 		let dirname  = get(finfo,'dirname','')
 		let basename = get(finfo,'filename','')
 
@@ -157,6 +156,23 @@ function! base#tg#update (...)
 	elseif tgid == 'perl_as'
 
 		let libs.=' ' . libs_as
+
+"""tgupdate_php_urltotxt
+	elseif tgid == 'php_urltotxt'
+
+		let dir   = base#path('urltotxt')
+		let libs .= ' ' . dir
+
+"""tgupdate_perl_htmltool
+	elseif tgid == 'perl_htmltool'
+
+		let dir   = base#file#catfile([ base#path('htmltool'), 'lib' ])
+		let libs .= ' ' . dir
+
+	elseif tgid == 'perl_inc_plg_browser'
+
+		let dir   = base#file#catfile([ base#path('plg'), 'browser', 'perl' ])
+		let libs .= ' ' . dir
 
 """tgupdate_perl_inc_select
 	elseif tgid == 'perl_inc_select'

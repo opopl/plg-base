@@ -23,7 +23,7 @@ function! base#pap#list()
 	endfor
 	let paplist=sort(paplist)
 
-	call base#var('paplist',paplist)
+	call base#varset('paplist',paplist)
 
 	return paplist
 endf

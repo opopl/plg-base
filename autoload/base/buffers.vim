@@ -76,9 +76,25 @@ endfun
 fun! base#buffers#list(...)
   call base#buffers#get()
 
-  call base#varecho('bufs')
+	let id   = get(a:000,0,'')
+	let bufs = base#varget('bufs',[])
 
-  return
+	let res =[]
+	if !strlen(id)
+			let res = bufs
+			for buf in bufs
+				echo base#type(buf)
+				"call add(res,string(buf))
+			endfor
+	else
+			if id == 'path'
+					" code
+			endif
+	endif
+
+	call base#buf#open_split({ 'lines' : res })
+
+  return res
  
 endfun
 

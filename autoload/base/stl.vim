@@ -182,7 +182,7 @@ endfun
 
 function! base#stl#setorders ()
 
-	call base#echo({ 'text' : 'base#stl#setorders()'})
+	call base#log(['base#stl#setorders()'])
 
 	let stlorders={}
   for key in base#varhash#keys('statuslines')

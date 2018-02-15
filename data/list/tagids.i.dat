@@ -1,8 +1,13 @@
 ipte_client
 ipte_ao
 ipte_wt
+###php
+php_urltotxt
 ###perl
 perl_inc
+perl_inc_select
+perl_inc_plg_browser
+perl_htmltool
 perl_as
 perlmod
 ##
@@ -16,8 +21,10 @@ projs_tex
 plg
 plg_ap
 plg_base
+plg_browser
 plg_emmet
 plg_findstr
+plg_gps
 plg_idephp
 plg_ipte
 plg_lasu
@@ -25,9 +32,10 @@ plg_make
 plg_my
 plg_my_java
 plg_pdoc
-plg_perlmy
 plg_perl-support
+plg_perlmy
 plg_projs
+plg_tagbar
 plg_tex
 plg_txtmy
 plg_vim-latex

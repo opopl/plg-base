@@ -12,6 +12,11 @@ function! base#act#envvar_open_split (...)
 
 endfunction
 
+function! base#act#rtp_helptags (...)
+	call base#rtp#helptags()
+
+endfunction
+
 ""look opts_BaseAct.i.dat
 function! base#act#open_split_list (...)
 	 

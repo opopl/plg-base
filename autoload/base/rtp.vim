@@ -32,8 +32,32 @@ function! base#rtp#uniq()
 
 endf
 
+" BaseAct rtp_helptags
+"
+function! base#rtp#helptags(...)
+	let list = base#rtp#list()
+
+	for rtp in list
+
+		let docdir=base#file#catfile([ rtp , 'doc' ])
+		call base#vim#helptags({ 'dir' : docdir})
+	endfor
+
+endf
+
+function! base#rtp#list(...)
+	return split(&rtp,',')
+endf
+
+"call base#rtp#list_opensplit(...)
+
+function! base#rtp#list_opensplit(...)
+	let list = base#rtp#list()
+	call base#buf#open_split({ 'lines' : list })
+endf
+
 function! base#rtp#update(...)
-	call base#initplugins()
+	call base#init#plugins()
 
 	"let dirs=	get
 
@@ -49,17 +73,7 @@ function! base#rtp#update(...)
 			let ff = base#find({ "dirs" : [docdir] })
 
 			if len(ff)
-				try
-					silent exe 'helptags ' . docdir 
-				"catch /^Vim(execute):E151/
-					"echo 'error E151'
-				catch /.*/
-					echohl WarningMsg
-					echo 'Errors while running helptags for doc dir:'
-					echo '   ' .docdir
-					echohl None
-				endtry
-
+				call base#vim#helptags({ 'dir' : docdir})
 			endif
 		endif
 	endfor
