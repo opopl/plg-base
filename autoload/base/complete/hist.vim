@@ -12,5 +12,6 @@ function! base#complete#hist#BaseVimFun (...)
 	let ch = get(hist,'BaseVimFun',[])
 
 	let comps=ch
+	call extend(comps,base#varget('opts_BaseVimFun',[]))
 	return join(comps,"\n")
 endfunction

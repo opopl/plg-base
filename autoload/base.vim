@@ -3052,8 +3052,16 @@ function! base#grep (...)
         let cmd = 'vimgrep /'.pat.'/ '. join(files,' ') 
 
     elseif opt == 'grep'
-	   silent exe 'grep '.'"'.pat.'"' . join(files,' ')
+				let patq = '"'.pat.'"'
+				let a    = []
+
+				call extend(a,['grep',patq])
+				call extend(a,files)
+
+	   		let cmd = join(a,' ')
     endif
+		echo '----'
+		echo cmd
 
     exe cmd
     
@@ -3063,6 +3071,7 @@ function! base#grepopt (...)
     if ! base#varexists('grepopt')
         if has('win32')
             let opt = 'plg_findstr'
+            let opt = 'grep'
         else
             let opt = 'grep'
         endif
@@ -3071,9 +3080,12 @@ function! base#grepopt (...)
     endif
 
     if a:0 | let opt = a:1 | endif
+
+		let opt = 'grep'
     call base#varset('grepopt',opt)
 
-    return base#varget('grepopt','')
+    "return base#varget('grepopt','')
+    return opt
 endfunction
 
 function! base#envvarlist ()
