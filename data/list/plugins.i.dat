@@ -12,7 +12,6 @@ nerdtree
 idephp
 findstr
 snipmate
-dbext
 projs
 tagbar
 html5_vim
@@ -21,6 +20,11 @@ surround
 ScrollColor
 tex
 tabular
+### databases
+dbext
+vim_prettyprint
+#simpledb
+#sqhell
 #browser
 #bufexplorer
 #ctags
@@ -35,7 +39,6 @@ tabular
 #vim-git
 #vim-latex
 #vim-perl
-#vim_prettyprint
 #vimexplorer
 #vimfiler
 #unite
@@ -75,8 +78,6 @@ tabular
 ####mysql
 #pipe_vim
 #pipe_mysql
-#simpledb
-#sqhell
 #vim-mysql-mode
 #idecpp
 #gps

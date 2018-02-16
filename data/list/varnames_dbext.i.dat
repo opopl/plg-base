@@ -1,0 +1,7 @@
+g:dbext_default_profile_usual
+g:dbext_default_profile_mysql_local
+g:dbext_default_user
+g:dbext_default_passwd
+g:dbext_default_dbname
+g:dbext_default_host
+g:dbext_default_port

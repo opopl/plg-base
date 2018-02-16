@@ -2164,8 +2164,11 @@ function! base#info (...)
    endfor
  else
 
+	 if topic == ''
+	 elseif topic == 'dbext'
+			call base#info#dbext()
 """info_file
-   if topic == 'file'
+	 elseif topic == 'file'
        call base#echo({ 'text' : "Current file: " } )
        echo indent . expand('%:p')
 
@@ -2639,7 +2642,7 @@ endfunction
 
 """base_varecho
 function! base#varecho (varname,...)
-    let val =  base#var(a:varname)
+    let val =  base#varget(a:varname)
 
     let ref = { 'text' : a:varname .' => '. base#dump(val),'prefix':'' }
     if a:0
@@ -2652,8 +2655,8 @@ function! base#varecho (varname,...)
 endfunction
 
 function! base#dump (...)
-    let val = a:1
-    let dump =''
+    let val  = a:1
+    let dump = ''
 
     if exists("*PrettyPrint")
         let dump = PrettyPrint(val)
