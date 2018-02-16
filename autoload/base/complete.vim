@@ -66,6 +66,10 @@ function! base#complete#plg(...)
     return base#complete#vars([ 'plugins_all' ])
 endf
 
+function! base#complete#plg_with_all(...)
+    return base#complete#vars([ 'plugins_all' ],{ 'addmore' : ['_all_'] })
+endf
+
 function! base#complete#BaseAppend (...)
   return base#complete#vars([ 'opts_BaseAppend' ])
 endfunction
@@ -171,23 +175,25 @@ function! base#complete#dattypes (...)
  return join(comps,"\n")
 endfunction
 
+"call base#complete#vars ([varname])
+"
+" for PlgAct:
+"call base#complete#vars ([plugins_all],{ 'addmore' : ['_all_']})
+
 function! base#complete#vars (...)
 
- let comps=[]
+ let comps = []
+ let vars  = get(a:000,0,[])
 
- if a:0
-   if type(a:1) == type([])
-     let vars=a:1
+ let ref     = get(a:000,1,{})
+ let addmore = get(ref,'addmore',[])
 
-   elseif type(a:1) == type('')
-     let vars=[ a:1 ] 
-   endif
- endif
-
-  for varname in vars
+ for varname in vars
 		let val = base#varget(varname,[])
 		call extend(comps,val)
-  endfor
+ endfor
+
+ call extend(comps,addmore)
 
  let comps=base#uniq(sort(comps))
 

@@ -419,14 +419,21 @@ function! base#log (msg,...)
 	let ref = get(a:000,0,{})
 	let log = base#varget('base_log',[])
 
-	let prf = get(ref,'prf','')
+	let prf     = get(ref,'prf','')
+	let do_echo = get(ref,'echo',0)
 
 	if base#type(a:msg) == 'String'
 		let time = strftime("%Y %b %d %X")
-		let msg  = '<<' . time . '>>' .' '.prf.' '.a:msg
+
+		let msg_prf = prf.' '.a:msg
+		let msg = '<<' . time . '>>' .' '.msg_prf
 
 		call add(log,{ 'msg' : msg })
 		call base#varset('base_log',log)
+
+		if do_echo
+			echo msg_prf
+		endif
 
 		return 1
 	elseif base#type(a:msg) == 'List'
@@ -1840,8 +1847,8 @@ fun! base#getfileinfo(...)
 
  let ext = fnamemodify(path,':e')
 
- let pathids=base#buf#pathids()
- let fileinfo={
+ let pathids  = base#buf#pathids()
+ let fileinfo = {
     \   'path'          : path          ,
     \   'ext'           : ext           ,
     \   'filename'      : filename      ,
@@ -3066,6 +3073,7 @@ function! base#grep (...)
     exe cmd
     
 endfunction
+
 
 function! base#grepopt (...)
     if ! base#varexists('grepopt')

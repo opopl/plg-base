@@ -224,6 +224,10 @@ function! base#plg#dir(plg)
 
 endfunction
 
+"call base#plg#act(plg,act)
+"call base#plg#act('base',act)
+"call base#plg#act('_all_',act)
+
 function! base#plg#act(...)
 	let aa  = a:000
 
@@ -235,12 +239,27 @@ function! base#plg#act(...)
 		if !len(plg) | redraw! | return | endif
 	endif
 
+	if plg == '_all_'
+		call base#varset('PlgAct_mode','all')
+
+		let plgs = base#varget('plugins',[])
+		for plg in plgs
+			call base#plg#act(plg,act)
+		endfor
+
+		call base#varset('PlgAct_mode','single')
+		return
+	endif
+
+
 	if !strlen(act)
 		let act = input('Action:','','custom,ap#complete#plgact')
 	endif
 
 	if act == 'loadvars'
 		call base#plg#loadvars(plg)
+	elseif act == 'list_ftplugin_vim'
+		call base#plg#list_ftplugin_vim(plg)
 	endif
 
 endfunction

@@ -2,7 +2,7 @@
 fun! base#init#cmds_plg ()
 
 """PlgAct
-	command! -nargs=* -complete=custom,base#complete#plg PlgAct
+	command! -nargs=* -complete=custom,base#complete#plg_with_all PlgAct
 		\	call base#plg#act(<f-args>) 
 
 """PlgView
@@ -14,7 +14,7 @@ fun! base#init#cmds_plg ()
 		\	call base#plg#help(<f-args>) 
 
 """PlgGrep
-	command! -nargs=* -complete=custom,base#complete#plg PlgGrep
+	command! -nargs=* -complete=custom,base#complete#plg_with_all PlgGrep
 		\	call base#plg#grep(<f-args>) 
 
 """PlgCD
@@ -406,8 +406,8 @@ fun! base#init#au()
 	exe 'augroup end'
 
 	au BufWritePost,BufRead,BufWinEnter *.i.dat setf conf
-	au BufRead,BufWinEnter * call base#buf#onload()
-  au FileType  * call base#buf#start() 
+	"au BufRead,BufWinEnter * call base#buf#onload()
+  "au FileType  * call base#buf#start() 
      
 endfun
 
