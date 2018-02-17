@@ -457,6 +457,50 @@ function! base#noperl()
 
 endfunction
 
+"" DIR - list directory contents 
+
+function! base#DIR(opt,...)
+    let ref = {}
+    if a:0 | let ref = a:1 | endif
+
+		let opt=a:opt
+
+		let spc=base#qw(' _buf_dirname_ _cwd_ ')
+
+		if opt == ''
+
+		elseif base#inlist(opt,spc)
+			if opt == '_buf_dirname_'
+				let dir = b:dirname
+
+			elseif opt == '_cwd_'
+				let dir = getcwd()
+
+			endif
+		elseif base#inlist(opt,base#pathlist())
+			let dirid = opt
+    	let dir   = base#path(dirid)
+		endif
+
+		let exts_s = input('Extensions:','txt')
+		let exts   = base#qw(exts_s)
+
+		let rlp= input('Relative path (1-relative 0-full)? 1/0: ',0)
+
+		let ff = base#find({ 
+			\	"dirs"    : [dir],
+			\	"exts"    : exts,
+			\	"cwd"     : 1,
+			\	"relpath" : rlp,
+			\	"subdirs" : 1,
+			\	"pat"     : '^a',
+			\	"fnamemodify" : '',
+			\	})
+
+		call base#buf#open_split({ 'lines' : ff })
+
+endfunction
+
 function! base#CD(dirid,...)
     let ref = {}
     if a:0 | let ref = a:1 | endif

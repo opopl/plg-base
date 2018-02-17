@@ -37,6 +37,15 @@ function! base#complete#CD (...)
   return base#complete#vars([ 'pathlist' ])
 endfunction
 
+function! base#complete#DIR (...)
+	let opts = base#varget('opts_DIR',[])
+	let more = []
+
+	call extend(more,opts)
+
+  return base#complete#vars([ 'pathlist' ],{'addmore' : more })
+endfunction
+
 function! base#complete#sync (...)
   return base#complete#vars([ 'opts_Sync' ])
 endfunction
