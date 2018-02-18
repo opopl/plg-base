@@ -52,6 +52,10 @@ function! base#initpaths#apoplavskiynb ()
       \ "work_gpx_georgia_2017" : base#file#catfile([ 'C:', 'work', 'georgia_2017', 'gpx'  ]),
 	    \ })
 
+
+	 call base#pathset({ 
+			\ 'sql_data' : 	'C:\Users\apoplavskiy\data\sql_data',
+	 		\})
 	
 	 call base#pathset({ 
       \ "mingw"       : base#file#catfile([ base#path('progs'), 'mingw' ]),

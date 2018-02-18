@@ -1,5 +1,7 @@
+g:dbext_default_profile
 g:dbext_default_profile_usual
 g:dbext_default_profile_mysql_local
+g:dbext_default_profile_mysql_local_DBI
 g:dbext_default_user
 g:dbext_default_passwd
 g:dbext_default_dbname

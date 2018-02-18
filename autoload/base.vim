@@ -2456,10 +2456,11 @@ function! base#info (...)
 
 """info_plugins
    elseif topic == 'plugins'
+			let plugins = base#varget('plugins',[])
     
        call base#echo({ 'text' : "PLUGINS: " } )
-       call base#echo({ 'text' : "g:plugins =>  " 
-        \   . "\n\t" . join(g:plugins,"\n\t"),'indentlev' : indentlev })
+       call base#echo({ 'text' : "plugins =>  " 
+        \   . "\n\t" . join(plugins,"\n\t"),'indentlev' : indentlev })
 
 
 """info_make
@@ -3114,8 +3115,8 @@ function! base#grep (...)
 
 	   		let cmd = join(a,' ')
     endif
-		echo '----'
-		echo cmd
+		"echo '----'
+		"echo cmd
 
     exe cmd
     

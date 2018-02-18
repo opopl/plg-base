@@ -324,14 +324,16 @@ perl << eof
 	my $html  = VimVar('htmltext');
 	my $xpath = VimVar('xpath');
 
-	my $dom = XML::LibXML->load_html(
+	my ($dom,@nodes,@filtered);
+
+	$dom = XML::LibXML->load_html(
 			string          => decode('utf-8',$html),
 			recover         => 1,
 			suppress_errors => 1,
 	);
 
-	my @nodes=$dom->findnodes($xpath);
-	my @filtered;
+	@nodes=$dom->findnodes($xpath);
+	@filtered;
 
 	for(@nodes){
 		push @filtered,split("\n",$_->toString);

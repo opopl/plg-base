@@ -321,13 +321,6 @@ function! base#plg#view(...)
 
 endf
 
-function! base#plg#echolist ()
-	for p in g:plugins
-		echo p
-	endfor
-	
-endfunction
-
 function! base#plg#exists(...)
 	let plg = get(a:000,0,'')
 	let plga = base#varget('plugins_all',[])

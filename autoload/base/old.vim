@@ -1144,7 +1144,8 @@ function! base#old#varupdate (ref)
 
         call add(g:rtp,$VIMRUNTIME)
 
-        for plugin in g:plugins
+				let plugins = base#varget('plugins',[])
+        for plugin in plugins
            let pdir=$VIMRUNTIME . '/' .  g:pluginroot . '/' . plugin
            if isdirectory(pdir)
               call add(g:rtp,pdir)

@@ -24,10 +24,11 @@ ScrollColor
 tabular
 ### databases
 dbext
+simpledb
+sqhell
+#
 vim_prettyprint
 vim-latex
-#simpledb
-#sqhell
 #browser
 #bufexplorer
 #ctags

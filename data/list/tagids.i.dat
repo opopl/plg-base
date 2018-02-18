@@ -22,6 +22,7 @@ plg
 plg_ap
 plg_base
 plg_browser
+plg_dbext
 plg_emmet
 plg_findstr
 plg_gps

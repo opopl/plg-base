@@ -92,6 +92,8 @@ fun! base#init#paths(...)
         \ 'tagdir'  : base#file#catfile([ hm,'tags' ]),
         \ })
 
+
+
     call base#pathset({ 
         \ 'progs'  : base#file#catfile([ base#path('hm'),'programs' ]),
         \ })
@@ -507,16 +509,6 @@ endf
 function! base#init#plugins (...)
 
     call base#varsetfromdat('plugins','List')
-
-    if exists('g:plugins') | unlet g:plugins | endif
-    let g:plugins=base#varget('plugins',[])
-
-  if exists("g:base_echo_init") && g:base_echo_init
-    echo '--- base#initplugins ( plugins initialization ) --- '
-    echo 'Have set the value of g:plugins'
-    echo 'Have set the value of base variable "plugins" (check it via BaseVarEcho plugins)'
-    echo '--------------------------------------------------- '
-  endif
 
 endf  
 
