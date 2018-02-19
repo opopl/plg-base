@@ -27,7 +27,9 @@ function! base#vimlines#action (action,start,end,...)
 		endif
 	
 		let l=split(v,"\n")
-		call base#buf#open_split({ 'lines' : l })
+		if len(l)
+			call base#buf#open_split({ 'lines' : l })
+		endif
 
 	endif
 

@@ -105,6 +105,7 @@ fun! base#init#paths(...)
         call base#initpaths#restpc()
     endif
 
+    call base#initpaths#progs()
     call base#initpaths#php()
     call base#initpaths#perl()
     call base#initpaths#docs()
@@ -435,7 +436,7 @@ function! base#init#vars (...)
     if $COMPUTERNAME == 'OPPC'
         let v='C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe'
     		call base#varset('pdfviewer',v)
-		elseif $COMPUTERNAME == 'apoplavskiynb'
+		elseif $COMPUTERNAME == 'APOPLAVSKIYNB'
         let v='C:\Users\apoplavskiy\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe'
     		call base#varset('pdfviewer',v)
     endif

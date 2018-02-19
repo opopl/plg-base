@@ -3078,7 +3078,7 @@ function! base#grep (...)
     let ref = {}
     if a:0 | let ref = a:1 | endif
 
-    let opt = base#grepopt()
+		let opt = base#grepopt()
 
     let pat   = get(ref,'pat','')
     let files = get(ref,'files',[])

@@ -15,6 +15,18 @@ function! base#initpaths#php ()
 	
 endfunction
 
+function! base#initpaths#progs ()
+	 let pc = base#pcname()
+
+	 if pc == 'APOPLAVSKIYNB'
+		 call base#pathset({ 
+	      \ "prog_elinks" : base#file#catfile([ base#path('hm'), 'programs', 'browsers','elinks' ]),
+		    \ })
+
+	 endif
+	
+endfunction
+
 function! base#initpaths#perl ()
 		call base#log('call base#initpaths#perl')
 
@@ -22,8 +34,12 @@ function! base#initpaths#perl ()
       \ "htmltool" : base#file#catfile([ base#path('repos_git'), 'htmltool' ]),
 	    \ })
 
+	 call base#pathset({ 
+      \ "plg_perlmy_scripts" : base#file#catfile([ base#path('plg'), 'perlmy', 'scripts' ]),
+	    \ })
+
 	 let pc = base#pcname()
-	 if pc == 'apoplavskiynb'
+	 if pc == 'APOPLAVSKIYNB'
 			call base#pathset({ 
 				\	 'install_cpan_pdl': 'C:\install\perl\cpan\PDL-2.018-0',
 				\	})
@@ -45,6 +61,10 @@ endfunction
 function! base#initpaths#apoplavskiynb ()
 	 call base#pathset({ 
       \ "repos_git" : base#file#catfile([ base#path('hm'), 'repos', 'git'  ]),
+	    \ })
+
+	 call base#pathset({ 
+      \ "install" : base#file#qw('C: install'),
 	    \ })
 
 	 call base#pathset({ 
@@ -77,7 +97,7 @@ function! base#initpaths#apoplavskiynb ()
 	 call base#pathset({
 	 		\	'perl_tk_demos' : 'C:\strawberry\perl\site\lib\Tk\demos\widget_lib',
 			\	})
-	 
+
 
 	 call base#pathset({ 
 			\	'pgdata' : 'C:\OSPanel\modules\database\PostgreSQL-9.6-x64\data',
