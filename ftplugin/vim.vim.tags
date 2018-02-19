@@ -4,14 +4,24 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
-aucmds	C:\Users\op\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^	let aucmds = [ $/;"	v
-b:basename	C:\Users\op\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^let b:basename = expand('%:p:t')$/;"	v
-b:did_base_vim_ftplugin	C:\Users\op\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^let b:did_base_vim_ftplugin = 1$/;"	v
-b:dirname	C:\Users\op\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^let b:dirname = expand('%:p:h')$/;"	v
-b:ext	C:\Users\op\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^let b:ext      = expand('%:p:e')$/;"	v
-b:file	C:\Users\op\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^let b:file     = expand('%:p')$/;"	v
-b:finfo	C:\Users\op\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^let b:finfo   = base#getfileinfo()$/;"	v
-b:root	C:\Users\op\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^let b:root    = projs#root()$/;"	v
-b:ufile	C:\Users\op\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^	let b:ufile = base#file#win2unix(b:file)$/;"	v
-cr	C:\Users\op\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^let cr = base#file#commonroot([ b:dirname, base#path('plg')] )$/;"	v
-fr	C:\Users\op\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^	let fr = '  autocmd BufWinEnter,BufRead,BufEnter,BufWritePost '$/;"	v
+<LocalLeader>plc	C:\Users\apoplavskiy\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^vnoremap <buffer> <LocalLeader>plc  :'<,'>PerlLinesComment<CR>$/;"	m
+<LocalLeader>plc	C:\Users\apoplavskiy\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^vnoremap <buffer> <LocalLeader>plc  :'<,'>PerlLinesSplitNewFile<CR>$/;"	m
+<LocalLeader>plc	C:\Users\apoplavskiy\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^vnoremap <buffer> <LocalLeader>plc  :'<,'>PerlLinesSyntaxCheck<CR>$/;"	m
+<LocalLeader>plu	C:\Users\apoplavskiy\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^vnoremap <buffer> <LocalLeader>plu  :'<,'>PerlLinesUnComment<CR>$/;"	m
+b:aucmds	C:\Users\apoplavskiy\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^	let b:aucmds = [ ]$/;"	v
+b:basename	C:\Users\apoplavskiy\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^let b:basename = expand('%:p:t')$/;"	v
+b:cr	C:\Users\apoplavskiy\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^let b:cr      = base#file#commonroot([ b:dirname, plgdir ] )$/;"	v
+b:did_base_vim_ftplugin	C:\Users\apoplavskiy\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^let b:did_base_vim_ftplugin = 1$/;"	v
+b:dirname	C:\Users\apoplavskiy\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^let b:dirname = expand('%:p:h')$/;"	v
+b:ext	C:\Users\apoplavskiy\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^let b:ext      = expand('%:p:e')$/;"	v
+b:file	C:\Users\apoplavskiy\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^let b:file     = expand('%:p')$/;"	v
+b:finfo	C:\Users\apoplavskiy\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^let b:finfo   = base#getfileinfo()$/;"	v
+b:is_mkvimrc_com	C:\Users\apoplavskiy\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^let b:is_mkvimrc_com=0$/;"	v
+b:is_mkvimrc_fun	C:\Users\apoplavskiy\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^let b:is_mkvimrc_fun=0$/;"	v
+b:is_plgvim	C:\Users\apoplavskiy\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^let b:is_plgvim = ( b:cr == plgdir )$/;"	v
+b:plg	C:\Users\apoplavskiy\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^	let b:plg     = base#file#front(b:relpath)$/;"	v
+b:relpath	C:\Users\apoplavskiy\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^	let b:relpath = base#file#removeroot(b:dirname,plgdir)$/;"	v
+b:ufile	C:\Users\apoplavskiy\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^	let b:ufile = base#file#win2unix(b:file)$/;"	v
+fr	C:\Users\apoplavskiy\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^	let fr = '  autocmd BufWinEnter,BufRead,BufEnter,BufWritePost '$/;"	v
+ftplugin_base_vim	C:\Users\apoplavskiy\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^"""ftplugin_base_vim$/;"	z
+plgdir	C:\Users\apoplavskiy\programs\Vim\Vim74\plg\base\ftplugin\vim.vim	/^let plgdir    = base#path('plg')$/;"	v
