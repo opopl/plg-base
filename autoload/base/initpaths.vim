@@ -1,5 +1,5 @@
 
-function! base#initpaths#restpc ()
+function! base#initpaths#RESTPC ()
 	 call base#pathset({ 
       \ "bin_mingw" : base#file#catfile([ base#path('progs'), 'mingw-w64', 'mingw32', 'bin' ]),
       \ "bin_vs_2005" : base#file#catfile([ base#path('pf'), 'Microsoft Visual Studio 8\VC\bin'  ]),
@@ -21,6 +21,15 @@ function! base#initpaths#progs ()
 	 if pc == 'APOPLAVSKIYNB'
 		 call base#pathset({ 
 	      \ "prog_elinks" : base#file#catfile([ base#path('hm'), 'programs', 'browsers','elinks' ]),
+		    \ })
+
+	 elseif pc == 'RESTPC'
+		 call base#pathset({ 
+	      \ "xampp" : base#file#catfile([ base#path('hm'), 'programs', 'xampp' ]),
+		    \ })
+
+		 call base#pathset({ 
+	      \ "mysql" : base#file#catfile([ base#path('xampp'), 'mysql'  ]),
 		    \ })
 
 	 endif
@@ -63,7 +72,7 @@ function! base#initpaths#docs ()
 	
 endfunction
 
-function! base#initpaths#apoplavskiynb ()
+function! base#initpaths#APOPLAVSKIYNB ()
 	 call base#pathset({ 
       \ "repos_git" : base#file#catfile([ base#path('hm'), 'repos', 'git'  ]),
 	    \ })

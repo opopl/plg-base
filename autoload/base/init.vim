@@ -100,9 +100,9 @@ fun! base#init#paths(...)
 
 		let pc = $COMPUTERNAME
     if pc == 'APOPLAVSKIYNB'
-        call base#initpaths#apoplavskiynb()
+        call base#initpaths#APOPLAVSKIYNB()
 		elseif pc == 'RESTPC'
-        call base#initpaths#restpc()
+        call base#initpaths#RESTPC()
     endif
 
     call base#initpaths#progs()
