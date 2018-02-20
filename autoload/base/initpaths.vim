@@ -38,6 +38,11 @@ function! base#initpaths#perl ()
       \ "plg_perlmy_scripts" : base#file#catfile([ base#path('plg'), 'perlmy', 'scripts' ]),
 	    \ })
 
+	 call base#pathset({ 
+      \ "cpan_build_strawberry" : base#file#catfile([ base#path('perl_strawberry'), '..', 'cpan', 'build' ]),
+      \ "cpan_install" : base#file#catfile(base#qw('C: install perl cpan')),
+	    \ })
+
 	 let pc = base#pcname()
 	 if pc == 'APOPLAVSKIYNB'
 			call base#pathset({ 

@@ -11,9 +11,9 @@
 projs                        projs#list()
 proj_secs                    projs#proj#secnames()
 proj_pics                    projs#piclist()
-java_lang_String             base#varget('my_java_methods_java_lang_String')
-javax_swing_JButton          base#varget('my_java_methods_javax_swing_JButton')
-javax_swing_JFrame           base#varget('my_java_methods_javax_swing_JFrame')
+java_lang_String             base#varget('my_java_methods_java_lang_String',[])
+javax_swing_JButton          base#varget('my_java_methods_javax_swing_JButton',[])
+javax_swing_JFrame           base#varget('my_java_methods_javax_swing_JFrame',[])
 #snippets                    SNI_CurrentSnippets
 #tex_latex_environments      TEX_latex_environments
 #tex_plaintex_commands       TEX_plaintex_commands
@@ -25,6 +25,7 @@ javax_swing_JFrame           base#varget('my_java_methods_javax_swing_JFrame')
 #vim_commands_user           VimCommands
 #vim_funcs_core              vim_funcs_core
 #vim_funcs_user              vim_funcs_user
-php_DOMDocument_methods      base#varget('idephp_DOMDocument_methods')
-php_DOMNode_methods          base#varget('idephp_DOMNode_methods')
-php_DOMNodeList_methods      base#varget('idephp_DOMNodeList_methods')
+php_DOMDocument_methods      base#varget('idephp_DOMDocument_methods',[])
+php_DOMNode_methods          base#varget('idephp_DOMNode_methods',[])
+php_DOMNodeList_methods      base#varget('idephp_DOMNodeList_methods',[])
+dbi_list_db					 perlmy#dbi#list_db({'split' : 0})

@@ -38,7 +38,7 @@ endfun
 
 function! base#omni#selectcompletion (...)
 
- set omnifunc = base#omni#complete
+ set omnifunc=base#omni#complete
 
  let funopts  = 'replace'
 

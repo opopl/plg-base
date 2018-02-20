@@ -136,6 +136,18 @@ function! base#tg#update (...)
 		let ok= base#tg#ok(okref)
 		return
 
+	elseif tgid == 'help_plg_perlmy'
+ "   call idephp#help#helptags()
+
+		"let okref = { 
+			"\	"tgid" : tgid,
+			"\	"ok"   : 1,
+			"\	"add"  : 0, 
+			"\	}
+
+		"let ok= base#tg#ok(okref)
+		return
+
 """base_tg_update_src_vim
 	elseif tgid == 'src_vim'
 		let dir_src = base#qw#catpath('src_vim', 'src')
