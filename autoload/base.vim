@@ -2666,9 +2666,20 @@ function! base#envvar (varname,...)
     let var  = '$' . a:varname
     let val  = default
 
-    if exists(var)
-        exe 'let val = ' . var
-    endif
+		if has('perl')
+perl << eof
+	use Vim::Perl qw(VimLet VimEval);
+
+	my $varname = VimEval('a:varname');
+	my $val     = $ENV{$varname} || '';
+
+	VimLet('val',$val);
+eof
+		else
+	    if exists(var)
+	        exe 'let val = ' . var
+	    endif
+		endif
 
     return val
 

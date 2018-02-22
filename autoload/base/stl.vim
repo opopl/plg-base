@@ -39,18 +39,18 @@ function! base#stl#set (...)
 	endif
 	if strlen(evs) | silent exe evs | endif
 
-	call base#var('stl',sline)
-	call base#var('stlopt',opt)
+	call base#varset('stl',sline)
+	call base#varset('stlopt',opt)
 
 endfun
 
 function!  base#stl#setparts ()
 
- LFUN F_IgnoreCase
- LFUN F_SoPiece
+ "LFUN F_IgnoreCase
+ "LFUN F_SoPiece
 
  "call base#sopiece("NeatStatusLine.vim")
- call F_SoPiece("NeatStatusLine.vim")
+ "call F_SoPiece("NeatStatusLine.vim")
 
 """stl_neat
   let stlparts={}
