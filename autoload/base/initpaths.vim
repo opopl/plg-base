@@ -11,6 +11,7 @@ function! base#initpaths#php ()
 
 	 call base#pathset({ 
       \ "urltotxt" : base#file#catfile([ base#path('localhost'), 'urltotxt' ]),
+      \ "adminer_src" : base#file#catfile([ base#path('repos_git'), 'adminer_src' ]),
 	    \ })
 	
 endfunction

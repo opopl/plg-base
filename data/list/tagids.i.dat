@@ -3,6 +3,7 @@ ipte_ao
 ipte_wt
 ###php
 php_urltotxt
+php_adminer_src
 ###perl
 perl_inc
 perl_inc_select

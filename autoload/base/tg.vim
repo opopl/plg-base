@@ -136,6 +136,7 @@ function! base#tg#update (...)
 		let ok= base#tg#ok(okref)
 		return
 
+"""tgupdate_help_plg_perlmy
 	elseif tgid == 'help_plg_perlmy'
  "   call idephp#help#helptags()
 
@@ -148,7 +149,7 @@ function! base#tg#update (...)
 		"let ok= base#tg#ok(okref)
 		return
 
-"""base_tg_update_src_vim
+"""tgupdate_src_vim
 	elseif tgid == 'src_vim'
 		let dir_src = base#qw#catpath('src_vim', 'src')
 		let dirs    = []
@@ -168,6 +169,11 @@ function! base#tg#update (...)
 	elseif tgid == 'perl_as'
 
 		let libs.=' ' . libs_as
+
+"""tgupdate_php_adminer_src
+	elseif tgid == 'php_adminer_src'
+		let dir   = base#path('adminer_src')
+		let libs .= ' ' . dir
 
 """tgupdate_php_urltotxt
 	elseif tgid == 'php_urltotxt'
@@ -216,7 +222,7 @@ function! base#tg#update (...)
 
 	elseif tgid =~ 'idephp_help'
 
-"""base_tg_update_mkvimrc
+"""basetg_update_mkvimrc
 	elseif tgid =~ 'mkvimrc'
 
 		let dir = base#path('mkvimrc')
@@ -230,7 +236,7 @@ function! base#tg#update (...)
 
 		let files = join(files_arr,' ')
 
-"""base_tg_update_plg
+"""basetg_update_plg
 	elseif tgid == 'plg'
 		let lines = []
 		for tg in tgs_all
@@ -256,7 +262,7 @@ function! base#tg#update (...)
 
 		return 1
 
-"""base_tg_update_plg_
+"""basetg_update_plg_
 	elseif tgid =~ '^plg_'
 		"let pat = '^plg_\(\w\+\)$'
 		let pat = '^plg_\(.\+\)$'
@@ -270,7 +276,7 @@ function! base#tg#update (...)
 			\ })
 		let files = join(files_arr,' ')
 
-"""base_tg_update_projs_tex
+"""tgupdate_projs_tex
 	""" all tex files in current projs directory
 	elseif tgid == 'projs_tex'
 			if base#plg#loaded('projs')
