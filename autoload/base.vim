@@ -1296,7 +1296,7 @@ function! base#powershell (...)
       \ ,
       \ }
   let psopts=get(psopts_h,pscmd,[])
-  call base#var('psopts',psopts)
+  call base#varset('psopts',psopts)
 
   let opts = input('Further options for powershell:','','custom,base#complete#psopts')
   while len(opts)
