@@ -3,8 +3,6 @@ set nocompatible
 set gfn=Lucida_Console:h15:cANSI
 colors koehler
 
-let g:base_echo_init=0
-
 set rtp+=$VIMRUNTIME/plg/base
 set rtp+=$VIMRUNTIME/plg/ap
 

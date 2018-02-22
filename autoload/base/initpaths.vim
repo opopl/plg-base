@@ -5,6 +5,14 @@ function! base#initpaths#RESTPC ()
       \ "bin_vs_2005" : base#file#catfile([ base#path('pf'), 'Microsoft Visual Studio 8\VC\bin'  ]),
       \ "repos_git" : base#file#catfile([ base#path('hm'), 'repos', 'git'  ]),
 	    \ })
+
+	 call base#pathset({ 
+      \ "localhost" : base#file#catfile([ base#path('repos_git'), 'localhost'  ]),
+	 		\})
+
+	 call base#pathset({ 
+      \ "perl_strawberry" : base#file#catfile([ base#path('repos_git'), 'localhost'  ]),
+	 		\})
 endf
 
 function! base#initpaths#php ()
@@ -42,6 +50,11 @@ function! base#initpaths#perl ()
 
 	 call base#pathset({ 
       \ "htmltool" : base#file#catfile([ base#path('repos_git'), 'htmltool' ]),
+	    \ })
+
+	 call base#pathset({ 
+			\	"perl_strawberry"  : base#envvar("Perl_Strawberry"),
+			\	"perl_activestate" : base#envvar("Perl_ActiveState"),
 	    \ })
 
 	 call base#pathset({ 
@@ -98,10 +111,6 @@ function! base#initpaths#APOPLAVSKIYNB ()
 	    \ })
 
 
-	 call base#pathset({ 
-			\	"perl_strawberry"  : base#envvar("Perl_Strawberry"),
-			\	"perl_activestate" : base#envvar("Perl_ActiveState"),
-	    \ })
 
 	 let saved_html = base#file#catfile(base#qw('c: saved html'))
 

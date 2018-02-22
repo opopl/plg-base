@@ -74,7 +74,6 @@ vim-latex
 #showfunc
 #xmledit
 #xmlparser
-#keymaps
 ####js
 #youcompleteme
 ####mysql
@@ -86,3 +85,4 @@ vim-latex
 webapi
 vdbi
 google
+keymaps

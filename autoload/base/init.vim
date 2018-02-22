@@ -44,22 +44,18 @@ endf
 fun! base#init#paths(...)
     call base#echoprefix('(base#init#paths)')
 
-		let plg = base#file#catfile([  $VIMRUNTIME, 'plg'  ])
+		let vrt = base#envvar('VIMRUNTIME')
+		let plg = base#file#catfile([  vrt, 'plg'  ])
 
     call base#pathset({  'plg' : plg })
 
-		let dir = base#file#catfile([  $VIMRUNTIME, 'plg', 'base'  ])
+		let dir = base#file#catfile([  vrt, 'plg', 'base'  ])
 		
 		call base#varset('plgdir',dir)
 		call base#datadir( base#file#catfile([ dir, 'data' ]) )
 
     let ref = {}
     if a:0 | let ref = a:1 | endif
-
-    let do_echo=0
-    if exists("g:base_echo_init") && g:base_echo_init
-      let do_echo = 1
-    endif
 
     let confdir   = base#envvar('CONFDIR')
     let vrt       = base#envvar('VIMRUNTIME')
@@ -117,16 +113,6 @@ fun! base#init#paths(...)
         \   'pdfout'      : base#envvar('PDFOUT'),
         \   'htmlout'     : base#envvar('HTMLOUT'),
         \   'jsdocs'      : base#envvar('JSDOCS'),
-        \ })
-
-    call base#pathset({
-        \   'jq_course_local'  : base#file#catfile([ base#path('open_server'),'domains', 'jq-course.local' ]),
-        \   'quote_service_local'  : base#file#catfile([ base#path('open_server'),'domains', 'quote-service.local' ]),
-        \ })
-
-    call base#pathset({
-        \   'ap_local'    : base#file#catfile([ base#path('open_server'),'domains', 'ap.local' ]),
-        \   'inews_local' : base#file#catfile([ base#path('open_server'),'domains', 'inews.local' ]),
         \ })
 
     call base#pathset({
