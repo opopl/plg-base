@@ -54,7 +54,7 @@ function! base#plg#loadvars (...)
 	let opts_readarr  = get(ref,'opts_readarr',{})
 	let opts_readdict = get(ref,'opts_readdict',{})
 
-	let types = base#qw('list dict')
+	let types = base#qw('list listlines dict')
 	
 	let rpath = plg.' '.'data'
 
@@ -62,6 +62,10 @@ function! base#plg#loadvars (...)
 
 	for type in types
 		let typedir = base#qw#catpath('plg',rpath.' '.type)
+
+		if !isdirectory(typedir)
+			continue
+		endif
 	
 		let ext  = "i.dat"
 		let exts = [ ext ]
@@ -83,6 +87,11 @@ function! base#plg#loadvars (...)
 
 			if type == 'list'
 				let vv = base#readarr(df,opts_readarr)
+
+			elseif type == 'listlines'
+				call extend(opts_readarr,{ 'splitlines' : 0 })
+				let vv = base#readarr(df,opts_readarr)
+
 			else
 				let rf = { 'file' : df }
 				call extend(rf,opts_readdict)
