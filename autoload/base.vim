@@ -2670,8 +2670,22 @@ function! base#envvar (varname,...)
 perl << eof
 	use Vim::Perl qw(VimLet VimEval);
 
+	my $default = VimEval('default');
+	my $env=sub { my $vname=shift; $ENV{$vname} || $default; };
+
 	my $varname = VimEval('a:varname');
-	my $val     = $ENV{$varname} || '';
+	my $val     = $env->($varname);
+
+
+	if($^O eq 'MSWin32'){
+		local $_=$val;
+		while(/%(\w+)%/){
+			my $vname = $1;
+			my $vval  = $env->($vname);
+			s/%(\w+)%/$vval/g;
+		}
+		$val=$_;
+	}
 
 	VimLet('val',$val);
 eof
