@@ -1,5 +1,54 @@
 ""
 "http://vim.wikia.com/wiki/Pretty-formatting_XML
+"
+"
+
+function! base#xml#load_from_file(file)
+		let file=a:file
+perl << eof
+		use strict;
+		use warnings;
+
+		use XML::LibXML;
+		use Vim::Perl qw(:funcs :vars);
+		use Vim::Xml qw($doms $dom);
+		#use Vim::Plg::idephp qw($doms_xml);
+
+		use String::Escape qw(quote);
+
+		my $file = VimVar('file');
+
+		if(!-e $file){VimWarn('File does not exist:',$file); return; }
+
+		my($fh,$dom);
+
+		eval {
+			open $fh, '<', $file;
+			binmode $fh; 
+		};
+		if($@){
+			VimWarn('Errors while loading file: ',$file,$@);
+			return;
+		}
+
+		eval { $dom = XML::LibXML->load_xml(IO => $fh); };
+		if($@){
+			VimWarn('Errors while XML::LibXML->load_xml(IO => $fh): ',$@);
+			return;
+		}
+		unless(defined $dom){ VimWarn('DOM is not defined!'); return;}
+		my @n=$dom->findnodes('/pj/files/file/text()');
+
+		my @s=map { $_->toString } @n;
+		VimMsg(Dumper(\@s));
+
+		#VimMsg($dom->toString);
+		close $fh;
+
+eof
+	
+endfunction
+
 function! base#xml#pretty()
 	if base#noperl() 
 		call base#xml#pretty_xmllint()
