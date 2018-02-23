@@ -15,7 +15,7 @@ perl << eof
 
 		use XML::LibXML;
 		use Vim::Perl qw(:funcs :vars);
-		use Vim::Xml qw($domcache $dom);
+		use Vim::Xml qw($domcache xpathcache $dom);
 		#use Vim::Plg::idephp qw($doms_xml);
 
 		use String::Escape qw(quote);
