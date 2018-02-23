@@ -15,7 +15,7 @@ perl << eof
 
 		use XML::LibXML;
 		use Vim::Perl qw(:funcs :vars);
-		use Vim::Xml qw($domcache xpathcache $dom);
+		use Vim::Xml qw($DOMCACHE $XPATHCACHE $DOM);
 		#use Vim::Plg::idephp qw($doms_xml);
 
 		use String::Escape qw(quote);
@@ -36,7 +36,7 @@ perl << eof
 			return;
 		}
 
-		$dom = $domcache->{$file};
+		$dom = $DOMCACHE->{$file};
 
 		if(! defined $dom){
 			eval { $dom = XML::LibXML->load_xml(IO => $fh); };
@@ -44,18 +44,27 @@ perl << eof
 				VimWarn('Errors while XML::LibXML->load_xml(IO => $fh): ',$@);
 				return;
 			}
-			$domcache->{$file}=$dom;
+			$DOMCACHE->{$file}=$dom;
 		}
 
 		unless(defined $dom){ VimWarn('DOM is not defined!'); return;}
+		$DOM=$dom;
+
+		#VimMsg($dom->toString);
+		close $fh;
+eof
+	
+endfunction
+
+function! base#xml#xpath ()
+perl << eof
+		my $dom=Vim::Xml::dom;
 		my @n=$dom->findnodes('/pj/files/file/text()');
 
 		my @s=map { $_->toString } @n;
 		VimMsg(Dumper(\@s));
 
-		#VimMsg($dom->toString);
-		close $fh;
-
+	
 eof
 	
 endfunction
