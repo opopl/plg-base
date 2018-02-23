@@ -212,6 +212,7 @@ function! base#tg#update (...)
 	elseif tgid == 'perl_inc'
 
 		let a = base#envvar_a('perllib')
+		let a = perlmy#perl#inc_a()
 		"let libs=join( map ('ap#file#win(a:val)',a) )
 		let libs = join(a,' ')
 
