@@ -3,20 +3,25 @@
 "
 "
 
-function! base#xml#load_from_file(file)
+function! base#xml#load_from_file(file,...)
 		let file=a:file
+		let opts = get(a:000,0,{})
+
+		let reload = get(opts,'reload',0)
+
 perl << eof
 		use strict;
 		use warnings;
 
 		use XML::LibXML;
 		use Vim::Perl qw(:funcs :vars);
-		use Vim::Xml qw($doms $dom);
+		use Vim::Xml qw($domcache $dom);
 		#use Vim::Plg::idephp qw($doms_xml);
 
 		use String::Escape qw(quote);
 
 		my $file = VimVar('file');
+		my $reload = VimVar('reload');
 
 		if(!-e $file){VimWarn('File does not exist:',$file); return; }
 
@@ -31,11 +36,17 @@ perl << eof
 			return;
 		}
 
-		eval { $dom = XML::LibXML->load_xml(IO => $fh); };
-		if($@){
-			VimWarn('Errors while XML::LibXML->load_xml(IO => $fh): ',$@);
-			return;
+		$dom = $domcache->{$file};
+
+		if(!$dom){
+			eval { $dom = XML::LibXML->load_xml(IO => $fh); };
+			if($@){
+				VimWarn('Errors while XML::LibXML->load_xml(IO => $fh): ',$@);
+				return;
+			}
+			$domcache->{$file}=$dom;
 		}
+
 		unless(defined $dom){ VimWarn('DOM is not defined!'); return;}
 		my @n=$dom->findnodes('/pj/files/file/text()');
 
