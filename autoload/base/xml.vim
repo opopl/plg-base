@@ -38,7 +38,7 @@ perl << eof
 
 		$dom = $domcache->{$file};
 
-		if(!$dom){
+		if(! defined $dom){
 			eval { $dom = XML::LibXML->load_xml(IO => $fh); };
 			if($@){
 				VimWarn('Errors while XML::LibXML->load_xml(IO => $fh): ',$@);
