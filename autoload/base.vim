@@ -1508,6 +1508,8 @@ endf
 " 	use vim built-in functions glob(), globpath()
 " echo base#find({ "do_glob" : 1 })
 "
+" echo base#find({ ... , 'mapsub' : ['\.xml$','','g'] })
+"
 function! base#findwin(ref)
     let ref = a:ref
 
@@ -1651,6 +1653,15 @@ function! base#findwin(ref)
 
         let map = get(ref,'map','')
         if strlen(map)
+            call filter(newfiles,"'" . map . "'")
+        endif
+
+        let mapsub = get(ref,'mapsub',[])
+        if len(mapsub)
+						let [pat,subpat,subopts]      = base#list#get(mapsub,'0:2')
+
+						let newfiles = base#mapsub(newfiles,pat,subpat,subopts)
+
             call filter(newfiles,"'" . map . "'")
         endif
 
