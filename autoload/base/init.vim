@@ -167,7 +167,7 @@ fun! base#init#cmds()
 		\	call base#CD(<f-args>) 
 
 """DIR
-	command! -nargs=* -complete=custom,base#complete#DIR      DIR
+	command! -nargs=* -complete=custom,base#complete#DIR     DIR
 		\	call base#DIR(<f-args>) 
 
 """MkDir

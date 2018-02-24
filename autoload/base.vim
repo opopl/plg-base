@@ -459,22 +459,32 @@ endfunction
 
 "" DIR - list directory contents 
 
-function! base#DIR(opt,...)
-    let ref = {}
-    if a:0 | let ref = a:1 | endif
+function! base#DIR(...)
+		let refdef={
+			\	'exts'         : [],
+			\	'ask_for_exts' : 1,
+			\	}
 
-		let opt=a:opt
+		let opt   = get(a:000,0,'')
+		let refin = get(a:000,1,{})
 
-		let spc=base#qw(' _buf_dirname_ _cwd_ ')
+		let ref={}
+		call extend(ref,refdef)
+		call extend(ref,refin)
+
+		let spc = base#qw(' _buf_dirname_ _cwd_ ')
 
 		if opt == ''
+			let opt = '_cwd_'
+		endif
 
-		elseif base#inlist(opt,spc)
+		if base#inlist(opt,spc)
 			if opt == '_buf_dirname_'
 				let dir = b:dirname
 
 			elseif opt == '_cwd_'
 				let dir = getcwd()
+				"call extend(ref,{'ask_for_exts' : 0})
 
 			endif
 		elseif base#inlist(opt,base#pathlist())
@@ -482,18 +492,22 @@ function! base#DIR(opt,...)
     	let dir   = base#path(dirid)
 		endif
 
-		let exts_s = input('Extensions:','txt')
-		let exts   = base#qw(exts_s)
+		let exts=get(ref,'exts',[])
+		if get(ref,'ask_for_exts')
+			let exts_s = input('Extensions (separated by space):','')
+			let exts   = base#qw(exts_s)
+		endif
 
-		let rlp= input('Relative path (1-relative 0-full)? 1/0: ',0)
+		let rlp = input('Relative path (1-relative 0-full)? 1/0: ',0)
 
-		let ff = base#find({ 
+		let pat = ''
+		let ff  = base#find({ 
 			\	"dirs"    : [dir],
 			\	"exts"    : exts,
 			\	"cwd"     : 1,
 			\	"relpath" : rlp,
 			\	"subdirs" : 1,
-			\	"pat"     : '^a',
+			\	"pat"     : pat,
 			\	"fnamemodify" : '',
 			\	})
 
