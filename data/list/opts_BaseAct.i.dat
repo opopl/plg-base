@@ -4,3 +4,6 @@ open_split_list
 rtp_helptags
 ###sqlite
 sqlite_list_plugins
+sqlite_list_datfiles
+sqlite_list_keys_datfiles
+sqlite_reload_from_fs

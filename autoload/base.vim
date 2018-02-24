@@ -2912,10 +2912,17 @@ function! base#varlist ()
 endfunction
 
   
-
 function! base#act (...)
   let act = get(a:000,0,'')
-  let sub = 'base#act#'.act
+
+	if act == ''
+		return
+	elseif act =~ '^sqlite_'
+		let cmd = substitute(act,'^sqlite_\(.*\)$','\1','g')
+  	let sub = 'base#sqlite#'.cmd
+	else
+  	let sub = 'base#act#'.act
+	endif
 
   exe 'call '.sub.'()'
 
