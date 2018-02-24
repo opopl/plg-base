@@ -57,37 +57,43 @@ fun! base#init#paths(...)
     let ref = {}
     if a:0 | let ref = a:1 | endif
 
-    let confdir   = base#envvar('CONFDIR')
-    let vrt       = base#envvar('VIMRUNTIME')
+
     let hm        = base#envvar('hm')
+    let home      = base#envvar('USERPROFILE')
+    let pf        = base#envvar('PROGRAMFILES')
+    let vrt       = base#envvar('VIMRUNTIME')
+    let pc = base#envvar('COMPUTERNAME')
+    let confdir   = base#envvar('CONFDIR')
     let mrc       = base#envvar('MYVIMRC')
     let projsdir  = base#envvar('PROJSDIR')
-    let pf        = base#envvar('PROGRAMFILES')
 
-    let home      = base#envvar('USERPROFILE')
+    call base#pathset({ 
+        \ 'home'          : home ,
+        \ 'hm'            : hm ,
+        \ 'pf'            : pf ,
+        \ 'conf'          : confdir ,
+        \ 'vrt'           : vrt,
+        \ 'vim'           : base#envvar('VIM'),
+        \ 'src_vim'       : base#envvar('SRC_VIM'),
+        \ 'texdocs'       : projsdir,
+        \ 'p'             : base#envvar('TexPapersRoot'),
+        \ 'phd_p'         : base#envvar('TexPapersRoot'),
+        \ 'tagdir'        : base#file#catfile([ hm,'tags' ]),
+        \ 'appdata'       : base#envvar('appdata'),
+        \ 'appdata_local' : base#envvar('localappdata'),
+        \ 'include_win_sdk'   : base#envvar('INCLUDE_WIN_SDK'),
+        \ })
 
-    let pc = base#envvar('COMPUTERNAME')
+    call base#pathset({ 
+        \ 'appdata_plg_base'  : base#qw#catpath('appdata','vim plg base'),
+        \ })
 
-    let evbin = home.'\AppData\Local\Apps\Evince-2.32.0.145\bin'
+		let evbin = base#file#catfile([ 
+			\	base#path('appdata_local'), 'Apps', 'Evince-2.32.0.145', 'bin' ])
+
     if isdirectory(evbin)
       call base#pathset({  'evince_bin' : evbin })
     endif
-
-    call base#pathset({ 
-        \ 'home'    : home ,
-        \ 'hm'      : hm ,
-        \ 'pf'      : pf ,
-        \ 'conf'    : confdir ,
-        \ 'vrt'     : vrt,
-        \ 'vim'     : base#envvar('VIM'),
-        \ 'src_vim' : base#envvar('SRC_VIM'),
-        \ 'texdocs' : projsdir,
-        \ 'p'       : base#envvar('TexPapersRoot'),
-        \ 'phd_p'   : base#envvar('TexPapersRoot'),
-        \ 'include_win_sdk'   : base#envvar('INCLUDE_WIN_SDK'),
-        \ 'tagdir'  : base#file#catfile([ hm,'tags' ]),
-        \ })
-
 
 
     call base#pathset({ 
@@ -383,6 +389,27 @@ function! base#init#tagids ()
 
     call base#varset('tagids',data)
 	
+endfunction
+
+fun! base#init#sqlite()
+	let done = base#varget('done_base_init_sqlite',0)
+	if done 
+		return 
+	endif
+
+	let prf={ 'prf' : 'base#init#sqlite' }
+	call base#log([
+			\	'db initialization',
+			\	],prf)
+
+perl << eof
+	use Vim::Plg::Base;
+
+	our $plgbase=Vim::Plg::Base->new;
+eof
+
+	call base#varset('done_base_init_sqlite',1)
+
 endfunction
 
 fun! base#init#au()

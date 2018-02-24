@@ -12,6 +12,11 @@ function! base#act#envvar_open_split (...)
 
 endfunction
 
+function! base#act#sqlite_list_plugins (...)
+	call base#sqlite#list_plugins()
+endfunction
+
+
 function! base#act#rtp_helptags (...)
 	call base#rtp#helptags()
 

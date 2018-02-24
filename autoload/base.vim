@@ -2933,8 +2933,10 @@ endfunction
 function! base#init (...)
 
 	let opts = base#qw('paths plugins tagids vars omni files au cmds menus rtp')
+	let opts = base#varget('init_order',opts)
 
-	let opts_all = base#qw('paths plugins tagids vars omni files au cmds menus rtp')
+	let opts_all = opts
+	let opts_all = base#varget('all_init_cmds',opts_all)
 
   if a:0
     let ref = a:1
@@ -2965,14 +2967,25 @@ function! base#init (...)
     elseif opt == 'au'
         call base#init#au()
 
+    elseif opt == 'sqlite'
+        call base#init#sqlite()
+
+    elseif opt == 'files'
+        call base#init#files()
+
+    elseif opt == 'paths'
+        call base#init#paths()
+
     elseif opt == 'vars'
         call base#init#vars()
 
-    elseif opt == 'env'
-        call base#env#init()
+    elseif opt == 'plugins'
+        call base#init#plugins()
 
     elseif opt == 'tagids'
         call base#init#tagids()
+
+"---------------------------
 
     elseif opt == 'menus'
         call base#menus#init()
@@ -2980,14 +2993,11 @@ function! base#init (...)
     elseif opt == 'stl'
         call base#stl#setparts()
 
-    elseif opt == 'files'
-        call base#init#files()
+    elseif opt == 'env'
+        call base#env#init()
 
-    elseif opt == 'plugins'
-        call base#init#plugins()
 
-    elseif opt == 'paths'
-        call base#init#paths()
+
 
     elseif opt == 'paths_apoplavskiynb'
         call base#initpaths#apoplavskiynb()
