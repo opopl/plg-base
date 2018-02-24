@@ -90,6 +90,9 @@ function! base#tg#tfile (...)
 
 		let tfile = base#qw#catpath('plg','idephp help tags')
 
+	elseif tgid == 'help_perlmy'
+		let tfile = base#qw#catpath('plg','perlmy doc tags')
+
 	else
 		let tfile = base#file#catfile([ tdir, tgid . '.tags' ])
 	endif
@@ -136,6 +139,19 @@ function! base#tg#update (...)
 		let ok= base#tg#ok(okref)
 		return
 
+"""tgupdate_help_perlmy
+	elseif tgid == 'help_perlmy'
+		call perlmy#help#helptags()
+
+		let okref = { 
+			\	"tgid" : tgid,
+			\	"ok"   : 1,
+			\	"add"  : 0, 
+			\	}
+
+		let ok= base#tg#ok(okref)
+		return
+
 """tgupdate_help_plg_perlmy
 	elseif tgid == 'help_plg_perlmy'
  "   call idephp#help#helptags()
@@ -165,10 +181,6 @@ function! base#tg#update (...)
 
 		let files = join(files_arr,' ')
 
-"""tgupdate_perl_as
-	elseif tgid == 'perl_as'
-
-		let libs.=' ' . libs_as
 
 """tgupdate_php_adminer_src
 	elseif tgid == 'php_adminer_src'
@@ -186,6 +198,11 @@ function! base#tg#update (...)
 
 		let dir   = base#file#catfile([ base#path('htmltool'), 'lib' ])
 		let libs .= ' ' . dir
+
+"""tgupdate_perl_as
+	elseif tgid == 'perl_as'
+
+		let libs.=' ' . libs_as
 
 	elseif tgid == 'perl_inc_plg_browser'
 
@@ -220,8 +237,6 @@ function! base#tg#update (...)
 		if !cnt
 			return
 		endif
-
-	elseif tgid =~ 'idephp_help'
 
 """basetg_update_mkvimrc
 	elseif tgid =~ 'mkvimrc'
