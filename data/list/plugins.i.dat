@@ -43,8 +43,6 @@ vim-latex
 #vim-perl
 #vimexplorer
 #vimfiler
-#unite
-#vimproc
 #my_java
 ## added 14:46:23 23-01-17
 #tern_for_vim
@@ -86,3 +84,5 @@ webapi
 vdbi
 google
 keymaps
+vimproc
+unite
