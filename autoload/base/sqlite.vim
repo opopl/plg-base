@@ -21,6 +21,24 @@ eof
 	
 endfunction
 
+function! base#sqlite#info ()
+	call base#init#sqlite()
+
+	let info=[]
+perl << eof
+	use File::stat;
+	my $info=[];
+
+	push @$info,'DBFILE: '.( $plgbase->dbfile || '');
+#	push @$info,'aa ';
+
+	VimListExtend('info',$info);
+eof
+	call base#buf#open_split({ 'lines' : info })
+	return 1
+
+endfunction
+
 function! base#sqlite#list_keys_datfiles ()
 	call base#init#sqlite()
 

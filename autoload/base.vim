@@ -2283,6 +2283,10 @@ function! base#info (...)
           call my_java#act#info()
       endif
 
+"""info_sqlite
+   elseif topic == 'sqlite'
+			call base#sqlite#info()
+
 """info_bufs
    elseif topic == 'bufs'
 
@@ -2851,7 +2855,7 @@ endfunction
 
 function! base#datafile (id)
     let files = base#datafiles(a:id)
-    let file = get(files,0,'')
+    let file  = get(files,0,'')
     return file
 endfunction
 

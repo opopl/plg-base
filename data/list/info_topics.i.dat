@@ -1,11 +1,13 @@
 bufs
 completions
+dbext
 dirs
 encodings
 env
 file
 git
 grep
+java
 keymap
 lasu
 latex
@@ -19,9 +21,8 @@ plugins
 proj
 proj_usedpacks
 rtp
+sqlite
 statusline
 tags
 vhooks
 vim
-java
-dbext
