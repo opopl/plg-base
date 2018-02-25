@@ -23,6 +23,16 @@ eof
 	
 endfunction
 
+function! base#sqlite#tk ()
+perl << eof
+	package main;
+	use base qw( use Vim::Plg::Base::Tk );
+	__PACKAGE__->new( plgbase => $plgbase )->run;
+
+eof
+
+endfunction
+
 function! base#sqlite#info ()
 	call base#init#sqlite()
 
@@ -42,13 +52,19 @@ eof
 
 endfunction
 
+"BaseAct sqlite_list_keys_datfiles
 function! base#sqlite#list_keys_datfiles ()
 	call base#init#sqlite()
 
+	let k=[]
 perl << eof
+	$plgbase->get_datfiles_from_db;
+
 	my $df = [ $plgbase->datfiles_keys ];
-	VimMsg(Dumper($df));
+	VimListExtend('k',$k);
 eof
+	let k=sort(k)
+	call base#buf#open_split({ 'lines' : k })
 	
 endfunction
 
