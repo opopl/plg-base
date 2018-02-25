@@ -7,3 +7,4 @@ sqlite_list_plugins
 sqlite_list_datfiles
 sqlite_list_keys_datfiles
 sqlite_reload_from_fs
+sqlite_drop_tables

@@ -4,6 +4,8 @@ function! base#sqlite#list_plugins ()
 
 	let p=[]
 perl << eof
+	$plgbase->get_plugins_from_db;
+
 	my @p = $plgbase->plugins;
 	VimListExtend('p',\@p);
 eof
@@ -30,6 +32,7 @@ perl << eof
 	my $info=[];
 
 	push @$info,'DBFILE: '.( $plgbase->dbfile || '');
+	push @$info,'SIZE:   '.( $plgbase->db_dbfile_size || 0);
 #	push @$info,'aa ';
 
 	VimListExtend('info',$info);
@@ -49,7 +52,14 @@ eof
 	
 endfunction
 
+function! base#sqlite#drop_tables ()
+	call base#init#sqlite()
 
+perl << eof
+	$plgbase->db_drop_tables({ all => 1 });
+eof
+	
+endfunction
 
 function! base#sqlite#reload_from_fs ()
 	call base#init#sqlite()
