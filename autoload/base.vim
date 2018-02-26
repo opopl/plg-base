@@ -2292,6 +2292,9 @@ function! base#info (...)
    elseif topic == 'sqlite_prompt'
 			call base#sqlite#info({ 'prompt' : 1 })
 
+   elseif topic == 'sqlite_sql'
+			call base#sqlite#info_sql()
+
 """info_bufs
    elseif topic == 'bufs'
 

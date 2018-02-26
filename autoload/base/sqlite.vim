@@ -63,9 +63,31 @@ function! base#sqlite#info (...)
 	if prompt
 	else
 		call extend(info,base#sqlite#info_dbfile())
+		call extend(info,base#sqlite#info_tables())
 	endif
 
 	call base#buf#open_split({ 'lines' : info })
+	return 1
+
+endfunction
+
+function! base#sqlite#info_sql (...)
+	call base#init#sqlite()
+
+	let q    = ''
+	let q    = get(a:000,0,q)
+
+	if !strlen(q)
+		let q =input('SQLITE query:','select * from plugins','custom,base#complete#sqlite_sql')
+	endif
+
+perl << eof
+	my $dbh=$plgbase->dbh;
+	
+eof
+
+
+	call base#buf#open_split({ 'lines' : lines })
 	return 1
 
 endfunction
@@ -80,6 +102,24 @@ perl << eof
 
 	push @$info,'DBFILE: '.( $plgbase->dbfile || '');
 	push @$info,'SIZE:   '.( $plgbase->db_dbfile_size || 0);
+
+	VimListExtend('info',$info);
+eof
+	return info
+
+endfunction
+
+function! base#sqlite#info_tables ()
+	call base#init#sqlite()
+
+	let info=[]
+perl << eof
+	use File::stat;
+	my $info=[];
+
+	my $dbh=$plgbase->dbh;
+
+	push @$info,'TABLES: ', map { "\t".$_} $dbh->tables;
 
 	VimListExtend('info',$info);
 eof
