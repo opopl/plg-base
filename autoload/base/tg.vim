@@ -154,12 +154,21 @@ function! base#tg#update (...)
 		return
 	endif
 
+	let refsys = {}
+
 	"" stored in the corresponding dat-file
 	let tgs_all = base#varget('tagids',[])
 
+	" tagfile full path
 	let tfile = base#tg#tfile(tgid)
+
 	let libs  = ''
+
+	" list of files
 	let files = ''
+
+	" file with the list of files
+	let filelist = ''
 
 	let libs_as = join(base#qw("C:/Perl/site/lib C:/Perl/lib" ),' ')
 
@@ -222,8 +231,33 @@ function! base#tg#update (...)
 
 """tgupdate_php_adminer_src
 	elseif tgid == 'php_adminer_src'
-		let dir   = base#path('adminer_src')
-		let libs .= ' ' . dir
+		"let dir   = base#path('adminer_src')
+		"let libs .= ' ' . dir
+		let f     = idephp#pj#files_tags('adminer_src')
+		call map(f,'base#file#win2unix(v:val)')
+		let files = join(f,' ')
+
+		let filelist = base#qw#catpath('plg','idephp pj files_tags.txt')
+		call base#file#write_lines({ 
+			\	'lines' : f, 
+			\	'file'  : filelist, 
+			\})
+		let cmd = 'ctags -R -o "' . ap#file#win( tfile ) . '" ' . libs . ' ' . ' -L ' . '"'.filelist .'"'
+
+		echo "Calling ctags command for: " . tgid 
+
+		call extend(refsys,{ 'cmds' : [ cmd ] })
+		let ok = base#sys(refsys)
+
+		let okref = { 
+				\	"cmd"  : cmd,
+				\	"tgid" : tgid,
+				\	"ok"   : ok,
+				\	"add"  : get(opts,'add',0) }
+
+		let ok= base#tg#ok(okref)
+	
+		return  ok
 
 """tgupdate_php_urltotxt
 	elseif tgid == 'php_urltotxt'
@@ -413,7 +447,9 @@ function! base#tg#update (...)
 	let cmd = 'ctags -R -o "' . ap#file#win( tfile ) . '" ' . libs . ' ' . files
 
 	echo "Calling ctags command for: " . tgid 
-	let ok = base#sys( cmd )
+
+	call extend(refsys,{ 'cmds' : [ cmd ] })
+	let ok = base#sys(refsys)
 
 	let okref = { 
 			\	"cmd"  : cmd,

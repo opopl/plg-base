@@ -39,7 +39,7 @@ fun! base#pdfview(...)
   let file = get(a:000,0,'')
   let opts = get(a:000,1,{})
 
-  let viewer = base#f#path('evince')
+  let viewer = base#exefile#path('evince')
 
   if filereadable(file)
      if get(opts,'cdfile',0)
@@ -2456,7 +2456,7 @@ function! base#info (...)
         call base#echo({ 'text' : "Perl-related: " } )
         call base#echo({ 'text' : "$PERLLIB => \n\t" . perllib  } )
 
-        let perlexes=join(base#f#path('perl'),"\n\t")
+        let perlexes=join(base#exefile#path('perl'),"\n\t")
         call base#echo({ 'text' : "Perl Executables:"   } )
         call base#echo({ 'text' : "  perlexes => \n\t" . perlexes } )
 
@@ -2975,7 +2975,7 @@ endfunction
 
 function! base#init (...)
 
-	let opts = base#qw('paths plugins tagids vars omni files au cmds menus rtp sqlite')
+	let opts = base#qw('sqlite paths files plugins tagids vars omni au cmds menus rtp')
 	let opts = base#varget('init_order',opts)
 
 	let opts_all = opts

@@ -191,19 +191,19 @@ fun! base#init#cmds()
 
 """FileRun
 	command! -nargs=*  -complete=custom,base#complete#fileids FileRun
-		\	call base#f#run_prompt(<f-args>)
+		\	call base#exefile#run_prompt(<f-args>)
 
 """FileEcho
-	command! -nargs=* -complete=custom,base#complete#fileids FileEcho
-		\	call base#f#echo(<f-args>)
+	command! -nargs=* -complete=custom,base#complete#exefileids FileEcho
+		\	call base#exefile#echo(<f-args>)
 
 """FileAdd
 	command! -nargs=* -complete=custom,base#complete#fileadd
-	    \   FileAdd call base#f#add(<f-args>) 
+	    \   FileAdd call base#exefile#add(<f-args>) 
 
 """FileView
-	command! -nargs=* -complete=custom,base#complete#fileids
-	    \   FileView call base#f#view(<f-args>) 
+	command! -nargs=* -complete=custom,base#complete#exefileids
+	    \   FileView call base#exefile#view(<f-args>) 
 
 """BaseAct
 	command! -nargs=* -complete=custom,base#complete#BaseAct      BaseAct
@@ -474,6 +474,8 @@ endf
 fun! base#init#files(...)
     call base#echoprefix('(base#init#files)')
 
+		call base#init#sqlite()
+
     let ref = {}
     if a:0 | let ref = a:1 | endif
 
@@ -483,7 +485,7 @@ fun! base#init#files(...)
       \ ])
 
     if filereadable(evince)
-        call base#f#set({  'evince' : evince })
+        call base#exefile#set({  'evince' : evince })
     endif
 
     if $COMPUTERNAME == 'APOPLAVSKIYNB'
@@ -491,8 +493,8 @@ fun! base#init#files(...)
       let cv  = base#file#catfile([ base#path('imagemagick'), 'convert.exe' ])
       let idn = base#file#catfile([ base#path('imagemagick'), 'identify.exe' ])
 
-      call base#f#set({  'im_convert' : cv })
-      call base#f#set({  'im_identify' : idn })
+      call base#exefile#set({  'im_convert' : cv })
+      call base#exefile#set({  'im_identify' : idn })
 
     endif
 
@@ -519,7 +521,7 @@ fun! base#init#files(...)
 
   endfor
 
-  call base#f#set(exefiles)
+  call base#exefile#set(exefiles)
 
   call base#echoprefixold()
 endf

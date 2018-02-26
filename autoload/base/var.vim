@@ -3,10 +3,10 @@ function! base#var#update (varname)
 	let varname = a:varname
 
 	if varname == 'fileids'
-		let files = base#f#files()
+		let files = base#exefile#files()
 
 		let fileids = sort(keys(files))
-		call base#varset('fileids',fileids)
+		call base#varset('exefileids',fileids)
 	endif
 
 endfunction

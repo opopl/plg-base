@@ -85,7 +85,7 @@ function! base#sqlite#info_sql (...)
 
 	call base#varset('base_sqlite_last_sql_query',q)
 
-	let opt_print = input('Print:','','custom,base#complete#sqlite_sql_opt_print')
+	let opt_print = input('Print:','perldumper','custom,base#complete#sqlite_sql_opt_print')
 
 	let ref = { 'opt_print' : opt_print } 
 	if opt_print == 'perlpack'

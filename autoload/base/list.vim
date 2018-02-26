@@ -124,6 +124,12 @@ function! base#list#open_split (list)
 endfun
 
 
+function! base#list#rmwh (list)
+	let list=a:list
+	call map(list,'base#rmwh(v:val)')
+	return list
+endfun
+
 
 function! base#list#add (ref,...)
         

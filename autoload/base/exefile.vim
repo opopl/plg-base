@@ -1,13 +1,13 @@
 
 
-function! base#f#view (...)
+function! base#exefile#view (...)
 	let fileid = get(a:000,0,'')
 
 	if !strlen(fileid)
-		let fileid = input('Fileid:','','custom,base#complete#fileids')
+		let fileid = input('Fileid:','','custom,base#complete#exefileids')
 	endif
 
-	let fp = base#f#path(fileid)
+	let fp = base#exefile#path(fileid)
 
 	if base#type(fp)=='List'
 		let files = fp
@@ -21,8 +21,8 @@ function! base#f#view (...)
 
 endfunction
 
-function! base#f#add (...)
-  if ! exists("s:files") | let s:files={} | endif
+function! base#exefile#add (...)
+  if ! exists("s:exefiles") | let s:exefiles={} | endif
 
 	let opt = get(a:000,0,'')
 
@@ -32,7 +32,7 @@ function! base#f#add (...)
 
 		let fileid = substitute(bname,'\.','_','g')
 
-		let fileid = input('Suggested fileid:',fileid,'custom,base#complete#fileids')
+		let fileid = input('Suggested fileid:',fileid,'custom,base#complete#exefileids')
 
 		let lines=[]
 
@@ -49,56 +49,77 @@ function! base#f#add (...)
 		let cnt = input('Continue? (1/0):',1)
 
 		if cnt
-			call base#f#set({ fileid : filepath })
+			call base#exefile#set({ fileid : filepath })
 		endif
 	endif
 	
 endfunction
 
-function! base#f#files ()
-  if ! exists("s:files") | let s:files={} | endif
-	return s:files
+function! base#exefile#files ()
+  if ! exists("s:exefiles") | let s:exefiles={} | endif
+	return s:exefiles
 endfunction
 
-function! base#f#set (ref)
+function! base#exefile#set (...)
+	let ref=get(a:000,0,{})
 
-  if ! exists("s:files") | let s:files={} | endif
+  if ! exists("s:exefiles") | let s:exefiles={} | endif
 
-  for [ fileid, file ] in items(a:ref) 
+	call base#init#sqlite()
+
+  for [ fileid, file ] in items(ref) 
 		 if type(file) == type('') && !filereadable(file)
 				continue
 		 endif
 
      let e = { fileid : file }
-     call extend(s:files,e)
+     call extend(s:exefiles,e)
 
-		 call base#log(['base#f#set: fileid='.fileid])
-		 call base#log(['base#f#set: file  ='.file])
+		 if has('perl')
+perl << eof
+		use Vim::Perl qw(VimVar);
+
+		my $file   = VimVar('file');
+		my $fileid = VimVar('fileid');
+
+		my($dbh,$sth);
+
+		$dbh = $plgbase->dbh;
+		eval { $sth = $dbh->prepare('insert into exefiles ( fileid, file ) values(?,?)'); };
+		if ($@) { $plgbase->warn($@); return; }
+
+		eval { $sth->execute($fileid,$file); };
+		if ($@) { $plgbase->warn($@); return;}
+eof
+		 endif
+
+		 call base#log(['base#exefile#set: fileid='.fileid])
+		 call base#log(['base#exefile#set: file  ='.file])
 
   endfor
 
-  call base#varset('exefiles',s:files)
-  call base#varset('exefileids',sort(keys(s:files)))
+  call base#varset('exefiles',s:exefiles)
+  call base#varset('exefileids',sort(keys(s:exefiles)))
 
 	call base#var#update('fileids')
 
 endfun
 
-"call base#f#run (fileid)
-"call base#f#run (fileid,args)
-"call base#f#run (fileid,args,idnum)
+"call base#exefile#run (fileid)
+"call base#exefile#run (fileid,args)
+"call base#exefile#run (fileid,args,idnum)
 "
-"call base#f#run (fileid,args,0)
-"call base#f#run (fileid,args,1)
+"call base#exefile#run (fileid,args,0)
+"call base#exefile#run (fileid,args,1)
 
-"call base#f#run ({ 
+"call base#exefile#run ({ 
 "		\	'id'    : fileid,
 "		\	'args'  : args,
 "		\	'idnum' : idnum
 "		\	})
 "
 
-function! base#f#run (...)
+function! base#exefile#run (...)
 	let ref = get(a:000,0,{})
 
 	if type(ref)==type({})
@@ -107,9 +128,9 @@ function! base#f#run (...)
 		let args   = get(a:000,1,'')
 		let idnum  = get(a:000,2,0)
 
-		let files  = get(s:files,fileid,[])
+		let files  = get(s:exefiles,fileid,[])
 
-		call base#f#run({ 
+		call base#exefile#run({ 
 			\	'id'       : fileid,
 			\	'args'     : args,
 			\	'idnum' 	 : idnum	})
@@ -123,7 +144,7 @@ function! base#f#run (...)
 	let args_s = join(args,' ')
 	let idnum  = get(ref,'idnum',0)
 
-	let file 	 = base#f#path(fileid,idnum)
+	let file 	 = base#exefile#path(fileid,idnum)
 	let cmd    = '"'.file.'"' . ' ' . args_s
 
 	let cmds   = []
@@ -137,20 +158,20 @@ function! base#f#run (...)
 
 endfunction
 
-function! base#f#run_prompt (...)
+function! base#exefile#run_prompt (...)
 	let fileid = get(a:000,0,'')
-	let f      = base#f#path(fileid)
+	let f      = base#exefile#path(fileid)
 
 	let idnum=0
 	if type(f)==type([])
 		let idnum=input('Idnum:',0)
 	endif
-	let file = base#f#path(fileid,idnum)
+	let file = base#exefile#path(fileid,idnum)
 
 	let args_s=input('Args:','')
 	let args_a=split(args_s,' ')
 
-	call base#f#run({ 
+	call base#exefile#run({ 
 		\	'id'           : fileid,
 		\	'args'         : args_a,
 		\	'idnum'        : idnum ,
@@ -159,13 +180,13 @@ function! base#f#run_prompt (...)
 
 endf
 
-fun! base#f#showfiles(...)
-  if ! exists("s:files") | let s:files={} | endif
+fun! base#exefile#showfiles(...)
+  if ! exists("s:exefiles") | let s:exefiles={} | endif
 
-	echo s:files
+	echo s:exefiles
 endfun
 
-fun! base#f#echo_fpath(fpath)
+fun! base#exefile#echo_fpath(fpath)
 	let l=[]
 
 	if type(a:fpath)==type('')
@@ -176,7 +197,7 @@ fun! base#f#echo_fpath(fpath)
 		let num=1
 		for f in a:fpath
 			call add(l,'EXE '.num)
-			call extend(l,map(base#f#echo_fpath(f),"substitute(v:val,'^','\\t','g')"))
+			call extend(l,map(base#exefile#echo_fpath(f),"substitute(v:val,'^','\\t','g')"))
 			let num+=1
 		endfor
 
@@ -185,38 +206,38 @@ fun! base#f#echo_fpath(fpath)
 	return l
 endfun
 
-fun! base#f#echo(...)
+fun! base#exefile#echo(...)
   let aa     = a:000
   let fileid = get(aa,0,'')
 
 	if !strlen(fileid)
-		call base#f#showfiles()
+		call base#exefile#showfiles()
 	endif
 
-  let fpath  = base#f#path(fileid)
+  let fpath  = base#exefile#path(fileid)
 
 	let l=[]
 	call add(l,'      ')
 	call add(l,'Exe id:        ' . fileid)
-	call extend(l,base#f#echo_fpath(fpath))
+	call extend(l,base#exefile#echo_fpath(fpath))
 	call add(l,'      ')
 
 	call base#buf#open_split({ 'lines' : l})
 endf
 
-"echo base#f#path('perl')
-"echo base#f#path('perl',0)
-"echo base#f#path('perl',1)
+"echo base#exefile#path('perl')
+"echo base#exefile#path('perl',0)
+"echo base#exefile#path('perl',1)
 
-fun! base#f#path(...)
+fun! base#exefile#path(...)
   let aa=a:000
 
-  if ! exists("s:files") | let s:files={} | endif
+  if ! exists("s:exefiles") | let s:exefiles={} | endif
 
   let fileid = get(aa,0,'')
   let index  = get(aa,1,'')
 
-  let fpath  = get(s:files,fileid,'')
+  let fpath  = get(s:exefiles,fileid,'')
 
   if type(fpath) == type([])
      if len(index)

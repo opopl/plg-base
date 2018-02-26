@@ -24,10 +24,9 @@ function! base#complete#vimcoms (...)
   return base#complete#vars([ 'vim_coms' ])
 endfun
 
-function! base#complete#fileids (...)
-  return base#complete#vars([ 'fileids' ])
+function! base#complete#exefileids (...)
+  return base#complete#vars([ 'exefileids' ])
 endfun
-
 
 function! base#complete#fileadd(...)
   return base#complete#vars([ 'opts_FileAdd' ])

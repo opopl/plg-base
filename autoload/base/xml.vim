@@ -4,10 +4,10 @@
 "
 
 function! base#xml#load_from_file(file,...)
-		let file=a:file
+		let file = a:file
 		let opts = get(a:000,0,{})
 
-		let reload = get(opts,'reload',0)
+		let reload = get(opts,'reload',1)
 
 perl << eof
 		use strict;
@@ -20,7 +20,7 @@ perl << eof
 
 		use String::Escape qw(quote);
 
-		my $file = VimVar('file');
+		my $file   = VimVar('file');
 		my $reload = VimVar('reload');
 
 		if(!-e $file){VimWarn('File does not exist:',$file); return; }
@@ -38,10 +38,11 @@ perl << eof
 
 		$dom = $DOMCACHE->{$file};
 
-		if(! defined $dom){
+		if( $reload || not defined $dom){
 			eval { $dom = XML::LibXML->load_xml(IO => $fh); };
 			if($@){
 				VimWarn('Errors while XML::LibXML->load_xml(IO => $fh): ',$@);
+				close $fh;
 				return;
 			}
 			$DOMCACHE->{$file}=$dom;
@@ -56,16 +57,66 @@ eof
 	
 endfunction
 
-function! base#xml#xpath ()
+function! base#xml#xpath_attr (...)
+		let xpath     = get(a:000,0,'')
+		let attr_list = get(a:000,1,[])
+
+		let attr_val=[]
+
 perl << eof
-		my $dom=Vim::Xml::dom;
-		my @n=$dom->findnodes('/pj/files/file/text()');
+		my $dom  = $Vim::Xml::DOM;
+		my $xpc  = $Vim::Xml::XPATHCACHE;
 
-		my @s=map { $_->toString } @n;
-		VimMsg(Dumper(\@s));
+		my $xpath     = VimVar('xpath') || '';
 
+		my $attr_list = VimVar('attr_list') || [];
+		my $attr_val  = [];
+
+		my $nodes     = $xpc->{$xpath} || [ $dom->findnodes($xpath) ];
+		foreach my $attr_name (@$attr_list) {
+			foreach my $n (@$nodes) {
+				my $attr = $n->getAttribute($attr_name);
+
+				my $val = ((defined $attr) ? $attr : '');
+
+				push @$attr_val, $val;
+			}
+		}
+		VimListExtend('attr_val',$attr_val);
+eof
+		return attr_val
+
+endfunction
+
+function! base#xml#xpath_lines (...)
+		let xpath = get(a:000,0,'')
+
+		let list=[]
+perl << eof
+		my $dom = $Vim::Xml::DOM;
+
+		my $xpath = VimVar('xpath');
+		my @n     = $dom->findnodes($xpath);
+
+		my $n=sub { 
+			local $_=shift;
+			my $t = $_->toString;
+			my @t = split("\n",$t);
+			@t;
+		};
+		my @list=map { $n->($_) } @n;
+
+		my $s=sub {
+			my @r;
+			local $_=shift;
+
+			$_;
+		};
+		@list=map { $s->($_) } @list;
+		VimListExtend('list',[@list]);
 	
 eof
+		return list
 	
 endfunction
 
