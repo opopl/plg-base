@@ -71,22 +71,34 @@ function! base#sqlite#info (...)
 
 endfunction
 
+
+"""sqlite_sql
 function! base#sqlite#info_sql (...)
 	call base#init#sqlite()
 
-	let q    = ''
-	let q    = get(a:000,0,q)
+	let q_last = base#varget('base_sqlite_last_sql_query','')
+	let q      = get(a:000,0,'')
 
 	if !strlen(q)
-		let q =input('SQLITE query:','select * from plugins','custom,base#complete#sqlite_sql')
+		let q =input('SQLITE query:','','custom,base#complete#sqlite_sql')
 	endif
 
-perl << eof
-	my $dbh=$plgbase->dbh;
+	call base#varset('base_sqlite_last_sql_query',q)
+
+	let opt_print = input('Print:','','custom,base#complete#sqlite_sql_opt_print')
+
+	let ref = { 'opt_print' : opt_print } 
+	if opt_print == 'perlpack'
+
+		let fmt = base#varget('base_sqlite_last_pack_fmt','A30')
+		let fmt = input('pack() fmt:',fmt)
 	
-eof
+		call base#varset('base_sqlite_last_pack_fmt',fmt)
+		call extend(ref,{ 'pack_fmt' : fmt })
+	endif
 
 
+	let lines = base#sql#q_sqlite(q,ref)
 	call base#buf#open_split({ 'lines' : lines })
 	return 1
 
@@ -119,7 +131,7 @@ perl << eof
 
 	my $dbh=$plgbase->dbh;
 
-	push @$info,'TABLES: ', map { "\t".$_} $dbh->tables;
+	push @$info,'TABLES: ', map { "\t".$_ } $plgbase->db_tables;
 
 	VimListExtend('info',$info);
 eof

@@ -11,5 +11,3 @@ stl
 tagids
 vars
 sqlite
-sqlite_prompt
-sqlite_sql

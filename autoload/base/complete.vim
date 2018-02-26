@@ -87,6 +87,14 @@ function! base#complete#BaseAct (...)
   return base#complete#vars([ 'opts_BaseAct' ])
 endfunction
 
+function! base#complete#sqlite_sql (...)
+  return base#complete#vars([ 'sqlite_sql' ])
+endfunction
+
+function! base#complete#sqlite_sql_opt_print (...)
+  return base#complete#vars([ 'sqlite_sql_opt_print' ])
+endfunction
+
 function! base#complete#imageact (...)
   return base#complete#vars([ 'opts_ImageAct' ])
 endfunction

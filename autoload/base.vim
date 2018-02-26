@@ -848,8 +848,14 @@ fun! base#readdatfile(ref,...)
     let ref=opts
     call extend(ref,{ 'file' :  file } )
     let res=base#readdict( ref )
+
  elseif opts.type == 'List'
     let res=base#readarr(file,opts)
+
+ elseif opts.type == 'ListLines'
+		call extend(opts,{ 'splitlines' : 0 })
+    let res=base#readarr(file,opts)
+
  endif
 
  return res
@@ -2898,8 +2904,12 @@ function! base#initvarsfromdat ()
     let dir = base#datadir()
     let dir = get(ref,'dir',dir)
 
-    let mp = { "list" : "List", "dict" : "Dictionary" }
-    for type in base#qw("list dict")
+    let mp = { 
+			\	"list"      : "List",
+			\	"dict"      : "Dictionary",
+			\	"listlines" : "ListLines"
+			\	}
+    for type in base#qw("list listlines dict")
         let dir = base#file#catfile([ base#datadir(), type ])
         let vars= base#find({ 
             \   "dirs"    : [ dir ],

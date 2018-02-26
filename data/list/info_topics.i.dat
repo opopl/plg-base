@@ -21,8 +21,10 @@ plugins
 proj
 proj_usedpacks
 rtp
-sqlite
 statusline
 tags
 vhooks
 vim
+sqlite
+sqlite_prompt
+sqlite_sql

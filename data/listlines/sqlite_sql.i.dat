@@ -1,0 +1,3 @@
+select plugin from plugins
+select key,type,plugin,datfile from datfiles
+select * from sqlite_master
