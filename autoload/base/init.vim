@@ -189,21 +189,17 @@ fun! base#init#cmds()
 	command! -nargs=* -complete=custom,base#complete#FIND  FIND 
 		\	call base#cmd#FIND(<f-args>) 
 
-"""FileRun
-	command! -nargs=*  -complete=custom,base#complete#fileids FileRun
+"""ExeFileRun
+	command! -nargs=*  -complete=custom,base#complete#exefileids FileRun
 		\	call base#exefile#run_prompt(<f-args>)
 
-"""FileEcho
+"""ExeFileEcho
 	command! -nargs=* -complete=custom,base#complete#exefileids FileEcho
 		\	call base#exefile#echo(<f-args>)
 
-"""FileAdd
-	command! -nargs=* -complete=custom,base#complete#fileadd
-	    \   FileAdd call base#exefile#add(<f-args>) 
-
 """FileView
-	command! -nargs=* -complete=custom,base#complete#exefileids
-	    \   FileView call base#exefile#view(<f-args>) 
+	command! -nargs=* -complete=custom,base#complete#fileids
+	    \   FileView call base#f#view(<f-args>) 
 
 """BaseAct
 	command! -nargs=* -complete=custom,base#complete#BaseAct      BaseAct
