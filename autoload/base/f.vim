@@ -15,7 +15,11 @@ function! base#f#add (...)
 	let fileid = get(ref,'fileid','')
 	let file   = get(ref,'file','')
 	let type   = get(ref,'type','')
-	
+
+	let ex = { 'fileid' : { 'file' : file, 'type' : type } }
+	call extend(s:files,ex) 
+
+	call base#init#sqlite()
 perl << eof
 	use Vim::Perl qw(:funcs :vars);
 
@@ -25,7 +29,9 @@ perl << eof
 	my $type   = VimVar('type');
 	my $file   = VimVar('file');
 
+	$plgbase->db_create_tables;
 	$dbh = $plgbase->dbh;
+
 	my $q=qq{
 		insert into files(fileid,type,file) values(?,?,?);
 	};

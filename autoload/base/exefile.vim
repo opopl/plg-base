@@ -85,6 +85,8 @@ perl << eof
 		my($dbh,$sth);
 
 		$dbh = $plgbase->dbh;
+		$plgbase->db_create_tables;
+
 		eval { $sth = $dbh->prepare('insert into exefiles ( fileid, file ) values(?,?)'); };
 		if ($@) { $plgbase->warn($@); return; }
 

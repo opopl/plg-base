@@ -26,5 +26,5 @@ tags
 vhooks
 vim
 sqlite
-sqlite_prompt
+#sqlite_prompt
 sqlite_sql
