@@ -494,28 +494,28 @@ fun! base#init#files(...)
 
     endif
 
-  let exefiles={}
-  for fileid in base#varget('exefileids',[])
-    let  ok = base#sys({ 
-			\ "cmds"        : [ 'where '.fileid ],
-			\ "skip_errors" : 1,
-			\ })
+"  let exefiles={}
+  "for fileid in base#varget('exefileids',[])
+    "let  ok = base#sys({ 
+			"\ "cmds"        : [ 'where '.fileid ],
+			"\ "skip_errors" : 1,
+			"\ })
 
-    if ok
-        let found =  base#varget('sysout',[])
-        let add={}
-        for f in  found
-            if filereadable(f)
-                let add[f]=1
-            endif
-        endfor
-        let k = keys(add)
-        if len(k)
-          call extend(exefiles,{ fileid : k } )
-        endif
-    endif
+    "if ok
+        "let found =  base#varget('sysout',[])
+        "let add={}
+        "for f in  found
+            "if filereadable(f)
+                "let add[f]=1
+            "endif
+        "endfor
+        "let k = keys(add)
+        "if len(k)
+          "call extend(exefiles,{ fileid : k } )
+        "endif
+    "endif
 
-  endfor
+  "endfor
 
   call base#exefile#set(exefiles)
 
