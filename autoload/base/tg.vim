@@ -29,6 +29,44 @@ function! base#tg#set (...)
 	
 endfunction
 
+function! base#tg#go (...)
+	let tgs = get(a:000,0,'')
+	let ref = get(a:000,1,{})
+
+	let tg=''
+	if base#type(tgs) == 'String'
+		let tg=tgs
+		
+	elseif base#type(tgs) == 'List'
+		for tg in tgs
+			call base#tg#go(tg,ref)
+		endfor
+		return
+	endif
+
+	let after = get(ref,'after',[])
+	let before = get(ref,'before',[])
+
+	for cmd in before
+		try
+			exe cmd
+		endtry
+	endfor
+
+	try
+			exe 'tag '. tg
+	endtry
+
+	for cmd in after
+		try
+			exe cmd
+		endtry
+	endfor
+
+		"catch /^Vim\%((\a\+)\)\=:E684
+
+endfunction
+
 function! base#tg#add (...)
 	if a:0 | let tgid = a:1 | endif
 

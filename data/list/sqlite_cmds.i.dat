@@ -1,0 +1,6 @@
+list_plugins
+list_datfiles
+list_keys_datfiles
+reload_from_fs
+drop_tables
+tk

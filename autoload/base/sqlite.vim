@@ -1,4 +1,5 @@
 
+"""sqlite_list_plugins
 function! base#sqlite#list_plugins ()
 	call base#init#sqlite()
 
@@ -13,6 +14,24 @@ eof
 	
 endfunction
 
+"BaseAct sqlite_list_keys_datfiles
+"""sqlite_list_keys_datfiles
+function! base#sqlite#list_keys_datfiles ()
+	call base#init#sqlite()
+
+	let k=[]
+perl << eof
+	$plgbase->get_datfiles_from_db({ 'reload_from_fs' => 1 });
+
+	my $k = [ $plgbase->datfiles_keys ];
+	VimListExtend('k',$k);
+eof
+	let k=sort(k)
+	call base#buf#open_split({ 'lines' : k })
+	
+endfunction
+
+"""sqlite_list_datfiles
 function! base#sqlite#list_datfiles ()
 	call base#init#sqlite()
 
@@ -33,7 +52,25 @@ eof
 
 endfunction
 
-function! base#sqlite#info ()
+function! base#sqlite#info (...)
+	call base#init#sqlite()
+
+	let ref    = get(a:000,0,{})
+	let prompt = get(ref,'prompt',0)
+
+	let info=[]
+
+	if prompt
+	else
+		call extend(info,base#sqlite#info_dbfile())
+	endif
+
+	call base#buf#open_split({ 'lines' : info })
+	return 1
+
+endfunction
+
+function! base#sqlite#info_dbfile ()
 	call base#init#sqlite()
 
 	let info=[]
@@ -43,30 +80,13 @@ perl << eof
 
 	push @$info,'DBFILE: '.( $plgbase->dbfile || '');
 	push @$info,'SIZE:   '.( $plgbase->db_dbfile_size || 0);
-#	push @$info,'aa ';
 
 	VimListExtend('info',$info);
 eof
-	call base#buf#open_split({ 'lines' : info })
-	return 1
+	return info
 
 endfunction
 
-"BaseAct sqlite_list_keys_datfiles
-function! base#sqlite#list_keys_datfiles ()
-	call base#init#sqlite()
-
-	let k=[]
-perl << eof
-	$plgbase->get_datfiles_from_db;
-
-	my $df = [ $plgbase->datfiles_keys ];
-	VimListExtend('k',$k);
-eof
-	let k=sort(k)
-	call base#buf#open_split({ 'lines' : k })
-	
-endfunction
 
 function! base#sqlite#drop_tables ()
 	call base#init#sqlite()

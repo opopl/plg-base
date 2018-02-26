@@ -353,6 +353,10 @@ command! -nargs=* -complete=custom,base#complete#omnioptions
 	command! -nargs=* -complete=custom,base#complete#tagids  TgUpdate 
 		\	call base#tg#update(<f-args>) 
 
+"""TgGo
+	command! -nargs=* -complete=tag_listfiles  TgGo
+		\	call base#tg#go(<f-args>) 
+
 """TgAdd
 	command! -nargs=* -complete=custom,base#complete#tagids  TgAdd 
 		\	call base#tg#add(<f-args>) 

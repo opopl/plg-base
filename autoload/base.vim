@@ -415,6 +415,8 @@ function! base#islist(var)
   return 0
 endf
 
+" call base#log(msg)
+
 function! base#log (msg,...)
 	let ref = get(a:000,0,{})
 	let log = base#varget('base_log',[])
@@ -2287,6 +2289,9 @@ function! base#info (...)
    elseif topic == 'sqlite'
 			call base#sqlite#info()
 
+   elseif topic == 'sqlite_prompt'
+			call base#sqlite#info({ 'prompt' : 1 })
+
 """info_bufs
    elseif topic == 'bufs'
 
@@ -2957,7 +2962,7 @@ endfunction
 
 function! base#init (...)
 
-	let opts = base#qw('paths plugins tagids vars omni files au cmds menus rtp')
+	let opts = base#qw('paths plugins tagids vars omni files au cmds menus rtp sqlite')
 	let opts = base#varget('init_order',opts)
 
 	let opts_all = opts
