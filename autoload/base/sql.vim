@@ -11,9 +11,9 @@ function! base#sql#q_sqlite (q,...)
 perl << eof
 	my $dbh=$plgbase->dbh;
 
-	my $q   = VimVar('q');
-	my $fmt = VimVar('fmt');
-	my $opp = VimVar('opp');
+	my $q     = VimVar('q');
+	my $fmt   = VimVar('fmt');
+	my $opp   = VimVar('opp');
 	my $fetch = VimVar('fetch');
 
 	my $sth = $dbh->prepare($q);
