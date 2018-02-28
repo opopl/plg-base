@@ -92,6 +92,10 @@ function! base#initpaths#APOPLAVSKIYNB ()
 	    \ })
 
 	 call base#pathset({ 
+      \ "household" : base#file#catfile([ base#path('repos_git'), 'household'  ]),
+	    \ })
+
+	 call base#pathset({ 
       \ "install" : base#file#qw('C: install'),
 	    \ })
 

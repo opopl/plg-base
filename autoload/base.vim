@@ -591,7 +591,13 @@ fun! base#fileopen(ref)
 
  if strlen(a) | let action = a | endif
 
+ let open_if_exist=get(opts,'open_if_exist',1)
+
  for file in files
+	if (open_if_exist && !filereadable(file))
+		continue
+	endif
+
   exe action . ' ' . file
   let exec=get(opts,'exec','')
   if len(exec)

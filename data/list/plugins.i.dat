@@ -23,7 +23,7 @@ surround
 ScrollColor
 tabular
 ### databases
-dbext
+#dbext
 simpledb
 sqhell
 #
