@@ -34,7 +34,7 @@ plg_make
 plg_my
 plg_my_java
 plg_pdoc
-plg_perl-support
+plg_perlsupport
 plg_perlmy
 plg_projs
 plg_tagbar

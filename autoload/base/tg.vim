@@ -231,18 +231,25 @@ function! base#tg#update (...)
 
 """tgupdate_php_adminer_src
 	elseif tgid == 'php_adminer_src'
-		"let dir   = base#path('adminer_src')
-		"let libs .= ' ' . dir
 		let f     = idephp#pj#files_tags('adminer_src')
 		call map(f,'base#file#win2unix(v:val)')
 		let files = join(f,' ')
 
-		let filelist = base#qw#catpath('plg','idephp pj files_tags.txt')
+		let filelist = base#qw#catpath('plg','idephp pj files_tags '.tgid.'.txt')
+
 		call base#file#write_lines({ 
 			\	'lines' : f, 
 			\	'file'  : filelist, 
 			\})
-		let cmd = 'ctags -R -o "' . ap#file#win( tfile ) . '" ' . libs . ' ' . ' -L ' . '"'.filelist .'"'
+
+		let a=[]
+
+		call extend(a,[ 'ctags','-R -o' ] )
+		call extend(a,[ base#string#qq( ap#file#win( tfile ) ) ] )
+		call extend(a,[ libs ])
+		call extend(a,[ '-L',base#string#qq(filelist) ] )
+		
+		let cmd = join(a," ")
 
 		echo "Calling ctags command for: " . tgid 
 

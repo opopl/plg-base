@@ -97,8 +97,8 @@ function! base#sqlite#info_sql (...)
 		call extend(ref,{ 'pack_fmt' : fmt })
 	endif
 
-
-	let lines = base#sql#q_sqlite(q,ref)
+	call extend(ref,{ 'dbtype' : 'sqlite' })
+	let lines = base#sql#q(q,ref)
 	call base#buf#open_split({ 'lines' : lines })
 	return 1
 

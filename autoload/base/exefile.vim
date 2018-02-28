@@ -67,6 +67,8 @@ function! base#exefile#set (...)
 
 	call base#init#sqlite()
 
+	let pc = base#pcname()
+
   for [ fileid, file ] in items(ref) 
 		 if type(file) == type('') && !filereadable(file)
 				continue
@@ -81,16 +83,17 @@ perl << eof
 
 		my $file   = VimVar('file');
 		my $fileid = VimVar('fileid');
+		my $pc     = VimVar('pc');
 
 		my($dbh,$sth);
 
 		$dbh = $plgbase->dbh;
 		$plgbase->db_create_tables;
 
-		eval { $sth = $dbh->prepare('insert into exefiles ( fileid, file ) values(?,?)'); };
+		eval { $sth = $dbh->prepare('insert into exefiles ( fileid, file, pc ) values(?,?)'); };
 		if ($@) { $plgbase->warn($@); return; }
 
-		eval { $sth->execute($fileid,$file); };
+		eval { $sth->execute($fileid,$file,$pc); };
 		if ($@) { $plgbase->warn($@); return;}
 eof
 		 endif

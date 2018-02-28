@@ -2968,6 +2968,7 @@ function! base#pcname ()
 	if has('win32')
 		let pc = base#envvar('COMPUTERNAME')
 	else
+		let pc = base#envvar('HOSTNAME')
 	endif
 	return pc 
 	

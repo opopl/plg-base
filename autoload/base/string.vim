@@ -6,3 +6,7 @@ function! base#string#matchlist (string,pattern)
    endif
    return a
 endfunction
+
+function! base#string#qq (string)
+	return '"'.a:string.'"'
+endfunction
