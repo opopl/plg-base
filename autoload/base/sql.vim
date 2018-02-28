@@ -110,8 +110,10 @@ perl << eof
 		}
 
 		my $fetchrow = sub { 
+			my $nrow=[];
 			my $row=[];
 			eval { $row = $sth->$method; }; 
+			@$nrow=@$row;
 			if ($@) {
 				my @m;
 					push @m,
@@ -121,15 +123,15 @@ perl << eof
 				VimWarn(@m);
 				return undef;
 			}
-#			for($method){
-#				/^fetchrow_arrayref$/ && do {
-#					@$row = map { encode('utf8',$_) } @$row;
-#					next;
-#				};
-#				last;
-#			}
+			for($method){
+				/^fetchrow_arrayref$/ && do {
+					@$nrow = map { encode('utf8',$_) } @$row;
+					next;
+				};
+				last;
+			}
 			
-			return $row;
+			return $nrow;
 		};
 	
 		while (my $row=$fetchrow->()) {
@@ -153,6 +155,8 @@ perl << eof
 	}
 
 	VimListExtend('lines',$lines);
+
+	$Vim::Perl::SILENT=0;
 	
 eof
 	return lines
