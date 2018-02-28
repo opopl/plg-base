@@ -86,6 +86,7 @@ fun! base#init#paths(...)
 
     call base#pathset({ 
         \ 'appdata_plg_base'  : base#qw#catpath('appdata','vim plg base'),
+        \ 'appdata_plg_perlmy'  : base#qw#catpath('appdata','vim plg perlmy'),
         \ })
 
 		let evbin = base#file#catfile([ 

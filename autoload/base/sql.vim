@@ -14,6 +14,7 @@ function! base#sql#q (sql_query,...)
 perl << eof
 	use Vim::Perl qw(:funcs :vars);
 	use Vim::Dbi;
+	use SQL::SplitStatement;
 
 	my $dbh;
 
@@ -37,87 +38,80 @@ perl << eof
 	my $opp       = VimVar('opp');
 	my $fetch     = VimVar('fetch');
 
-	#VimMsg($sql_query); return;
+  my $ss    = SQL::SplitStatement->new;
+	my @stats = $ss->split($sql_query);
 
-	my @qa=();
-	push @qa,	
-#		'use household;',
-#		'use household;',
-# qq{ use household; show tables; },
- qq{ use household; },
-		;
+	my $lines;
+	for(@stats){
+		my $query=$_;
 
-	my $q=join(";",@qa);
-	VimMsg($q);
-	$dbh->do($_) for;
-	return;
-
-	my $sth;
-	eval {$sth = $dbh->prepare($sql_query); };
-	my $errstr = sub { $dbh->errstr; };
-	if ($@) {
-		my $s = 'eval {$sth = $dbh->prepare($query);};';
-		my @m;
-		push @m,  
-			'base#sql#q: errors for: ',$s,
-			'error thrown:',$@,
-			'$dbh->errstr=',$errstr->(),
-			'query=',$sql_query;
-		VimWarn(@m);
-		return;
-	}
-	defined $sth or do { 
-		my @m;
-		push @m,
-			'base#sql#q: $sth undefined!!',
-			'$dbh->errstr=',$errstr->(),
-			'query=',$sql_query;
-		VimWarn(@m); 
-		return; 
-	};
-	
-	my @e=();
-	VimMsg('executing...');
-	eval { $sth->execute(@e); };
-	VimMsg(['executed.',$errstr->()]);
-
-	if ($@) {
-			my $s = q|eval {$sth = $dbh->prepare(@e);};|;
+		my $sth;
+		eval {$sth = $dbh->prepare($query); };
+		my $errstr = sub { $dbh->errstr; };
+		if ($@) {
+			my $s = 'eval {$sth = $dbh->prepare($query);};';
 			my @m;
 			push @m,  
 				'base#sql#q: errors for: ',$s,
+				'error thrown:',$@,
 				'$dbh->errstr=',$errstr->(),
-				'query=',$sql_query,
-#				'@e='.Dumper([@e]),
-				;
-		VimWarn(@m); 
-		return; 
-	}
+				'query=',$query;
+			VimWarn(@m);
+			return;
+		}
+		defined $sth or do { 
+			my @m;
+			push @m,
+				'base#sql#q: $sth undefined!!',
+				'$dbh->errstr=',$errstr->(),
+				'query=',$query;
+			VimWarn(@m); 
+			return; 
+		};
+	
+		my @e=();
+		VimMsg('executing prepared $sth');
+		eval { $sth->execute(@e); };
+		VimMsg(['executed.',$errstr->()]);
 
-	my $lines;
-	my $fetchrow = sub { 
-		my $row;
-		eval { $row = $sth->fetchrow_arrayref; }; 
-		return $row;
-	};
-
-	while (my $row=$fetchrow->()) {
-		my $line;
-
-		for($opp){
-			/perlpack/ && do {
-				$line = pack($fmt,( map { (defined $_) ? $_ : '' } @$row ));
-				next;
-			};
-			/perldumper/ && do {
-				$line = Dumper($row);
-				next;
-			};
-			last;
+		if ($@) {
+				my $s = q|eval {$sth = $dbh->prepare(@e);};|;
+				my @m;
+				push @m,  
+					'base#sql#q: errors for: ',$s,
+					'$dbh->errstr=',$errstr->(),
+					'query=',$query,
+	#				'@e='.Dumper([@e]),
+					;
+			VimWarn(@m); 
+			return; 
 		}
 
-		push @$lines,split("\n",$line);
+		my $fetchrow = sub { 
+			my $row;
+			eval { $row = $sth->fetchrow_arrayref; }; 
+			return $row;
+		};
+	
+		while (my $row=$fetchrow->()) {
+			my $line;
+	
+			for($opp){
+				/perlpack/ && do {
+					$line = pack($fmt,( map { (defined $_) ? $_ : '' } @$row ));
+					next;
+				};
+				/perldumper/ && do {
+					$line = Dumper($row);
+					next;
+				};
+				last;
+			}
+	
+			push @$lines,split("\n",$line);
+		}
 	}
+
 	VimListExtend('lines',$lines);
 	
 eof
