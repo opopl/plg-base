@@ -16,6 +16,21 @@ perl << eof
 	use Vim::Dbi;
 	use SQL::SplitStatement;
 
+	$Vim::Perl::SILENT=1;
+
+	use utf8;
+	use open qw(:std :utf8);
+
+	use Encode;
+	use Encode::Locale;
+
+	if (-t) 
+	{
+		binmode(STDIN, ":encoding(console_in)");
+		binmode(STDOUT, ":encoding(console_out)");
+		binmode(STDERR, ":encoding(console_out)");
+	}
+
 	my $dbh;
 
 	my $dbtype = VimVar('dbtype');
@@ -25,6 +40,7 @@ perl << eof
 				next;
 			};
 			/^mysql$/&& do {
+				$vimdbi->connect;
 				$dbh=$vimdbi->dbh;
 				next;
 			};
@@ -93,7 +109,6 @@ perl << eof
 				VimMsg(['executed.',$errstr->()]);
 		}
 
-		my $method='fetchrow_arrayref';
 		my $fetchrow = sub { 
 			my $row=[];
 			eval { $row = $sth->$method; }; 
@@ -106,6 +121,13 @@ perl << eof
 				VimWarn(@m);
 				return undef;
 			}
+#			for($method){
+#				/^fetchrow_arrayref$/ && do {
+#					@$row = map { encode('utf8',$_) } @$row;
+#					next;
+#				};
+#				last;
+#			}
 			
 			return $row;
 		};
@@ -125,9 +147,9 @@ perl << eof
 				last;
 			}
 	
-			push @$lines,( split("\n",$line) );
+			push @$lines, ( split("\n",$line ) );
 		}
-#		VimMsg(Dumper($lines));
+		VIM::Msg(Dumper($lines));
 	}
 
 	VimListExtend('lines',$lines);
