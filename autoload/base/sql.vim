@@ -37,11 +37,12 @@ perl << eof
 	my $fmt       = VimVar('fmt');
 	my $opp       = VimVar('opp');
 	my $fetch     = VimVar('fetch');
+	my $method    = $fetch;
 
   my $ss    = SQL::SplitStatement->new;
 	my @stats = $ss->split($sql_query);
 
-	my $lines;
+	my $lines=[];
 	for(@stats){
 		my $query=$_;
 
@@ -72,8 +73,6 @@ perl << eof
 		my @e=();
 		VimMsg('executing prepared $sth');
 		eval { $sth->execute(@e); };
-		VimMsg(['executed.',$errstr->()]);
-
 		if ($@) {
 				my $s = q|eval {$sth = $dbh->prepare(@e);};|;
 				my @m;
@@ -81,15 +80,33 @@ perl << eof
 					'base#sql#q: errors for: ',$s,
 					'$dbh->errstr=',$errstr->(),
 					'query=',$query,
-	#				'@e='.Dumper([@e]),
 					;
+					if (@e) {
+						push @m,'@e=',Dumper([@e]);
+					}
 			VimWarn(@m); 
 			return; 
 		}
+			if ($dbh->err) {
+				VimWarn($dbh->errstr);
+			}else{
+				VimMsg(['executed.',$errstr->()]);
+		}
 
+		my $method='fetchrow_arrayref';
 		my $fetchrow = sub { 
-			my $row;
-			eval { $row = $sth->fetchrow_arrayref; }; 
+			my $row=[];
+			eval { $row = $sth->$method; }; 
+			if ($@) {
+				my @m;
+					push @m,
+					'base#sql#q: errors while $sth->fetchrow...',
+					'$dbh->errstr=',$errstr->(),
+					$@;
+				VimWarn(@m);
+				return undef;
+			}
+			
 			return $row;
 		};
 	
@@ -108,8 +125,9 @@ perl << eof
 				last;
 			}
 	
-			push @$lines,split("\n",$line);
+			push @$lines,( split("\n",$line) );
 		}
+#		VimMsg(Dumper($lines));
 	}
 
 	VimListExtend('lines',$lines);
