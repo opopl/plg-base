@@ -110,6 +110,10 @@ function! base#complete#info (...)
   return base#complete#vars([ 'info_topics' ])
 endfunction
 
+"function! base#complete#fetch (...)
+  "return base#complete#vars([ 'inf' ])
+"endfunction
+
 function! base#complete#tagids (...)
   return base#complete#vars([ 'tagids' ])
 endfunction

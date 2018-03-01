@@ -16,7 +16,7 @@ perl << eof
 	use Vim::Dbi;
 	use SQL::SplitStatement;
 
-	$Vim::Perl::SILENT=1;
+#	$Vim::Perl::SILENT=1;
 
 	use utf8;
 	use open qw(:std :utf8);
@@ -58,9 +58,16 @@ perl << eof
   my $ss    = SQL::SplitStatement->new;
 	my @stats = $ss->split($sql_query);
 
+	my $debug=sub { 
+		return;
+		VimMsg([@_]); 
+	};
+
 	my $lines=[];
 	for(@stats){
 		my $query=$_;
+
+		$debug->($_);
 
 		my $sth;
 		eval {$sth = $dbh->prepare($query); };
@@ -87,8 +94,12 @@ perl << eof
 		};
 	
 		my @e=();
-		VimMsg('executing prepared $sth');
+		$debug->('executing prepared $sth');
+		#$sth->execute(@e);
+
 		eval { $sth->execute(@e); };
+		$debug->('executed.',$errstr->());
+
 		if ($@) {
 				my $s = q|eval {$sth = $dbh->prepare(@e);};|;
 				my @m;
@@ -103,16 +114,18 @@ perl << eof
 			VimWarn(@m); 
 			return; 
 		}
-			if ($dbh->err) {
-				VimWarn($dbh->errstr);
-			}else{
-				VimMsg(['executed.',$errstr->()]);
-		}
+#		if ($dbh->err) {
+#				VimWarn($dbh->errstr);
+#			}else{
+#				VimMsg(['executed.',$errstr->()]);
+#		}
 
 		my $fetchrow = sub { 
-			my $nrow=[];
-			my $row=[];
+			my $nrow=undef;
+			my $row=undef;
 			eval { $row = $sth->$method; }; 
+			unless($row){ return; }
+
 			@$nrow=@$row;
 			if ($@) {
 				my @m;
@@ -134,8 +147,11 @@ perl << eof
 			return $nrow;
 		};
 	
+		$debug->('Fetching rows');
 		while (my $row=$fetchrow->()) {
 			my $line;
+
+			$debug->(Dumper($row));
 	
 			for($opp){
 				/perlpack/ && do {
@@ -151,12 +167,11 @@ perl << eof
 	
 			push @$lines, ( split("\n",$line ) );
 		}
-		VIM::Msg(Dumper($lines));
 	}
 
 	VimListExtend('lines',$lines);
 
-	$Vim::Perl::SILENT=0;
+#	$Vim::Perl::SILENT=0;
 	
 eof
 	return lines

@@ -97,6 +97,18 @@ function! base#sqlite#info_sql (...)
 		call extend(ref,{ 'pack_fmt' : fmt })
 	endif
 
+
+	let fetch = input('Fetch:','','custom, perlmy#complete#dbi_fetch_methods')
+	if !len(fetch)
+	let fetch=base#getfromchoosedialog({ 
+		\ 'list'        : base#varget('perlmy_dbi_fetch_methods',[]),
+		\ 'startopt'    : 'fetchrow_arrayref',
+		\ 'header'      : "Available fetch methods are: ",
+		\ 'numcols'     : 1,
+		\ 'bottom'      : "Choose fetch by number: ",
+		\ })
+	endif
+
 	call extend(ref,{ 'dbtype' : 'sqlite' })
 	let lines = base#sql#q(q,ref)
 	call base#buf#open_split({ 'lines' : lines })
