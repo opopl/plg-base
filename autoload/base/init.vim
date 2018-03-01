@@ -333,6 +333,10 @@ command! -nargs=* -complete=custom,base#complete#omnioptions
 """BaseDatView
 	command! -nargs=* -complete=custom,base#complete#datlist
 	    \   BaseDatView call base#viewdat(<f-args>) 
+
+"""IDAT
+	command! -nargs=* -complete=custom,base#complete#datlist
+	    \   IDAT call base#idat#act(<f-args>) 
 	
 """StatusLine
 	command! -nargs=* -complete=custom,base#complete#statuslines
