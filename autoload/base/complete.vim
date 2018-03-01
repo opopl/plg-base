@@ -132,9 +132,11 @@ function! base#complete#varlist_list (...)
 endfunction
 
 function! base#complete#datlist (...)
-
   return base#complete#vars([ 'datlist' ])
-	
+endfunction
+
+function! base#complete#idat_acts (...)
+  return base#complete#vars([ 'idat_acts' ])
 endfunction
 
 function! base#complete#statuslines (...)
