@@ -176,6 +176,10 @@ function!  base#stl#setparts ()
   let stlparts['perl_module_name']   ='%5*\ %{perlmy#modname()}\ %0*' 
   let stlparts['path_relative_home'] ='%{expand(' . "'" . '%:~:t' . "'" . ')}'
 
+	let q="'"
+	let stlparts['idephp_pj_name']='%1*\ pj:\ %{base#varget('.q. 'idephp_pj_name' .q.','.q.q.')}\ %0*' 
+	let stlparts['idephp_pj_head']='%1*\ %{string('.q.'IDEPHP'.q.')}\ %0*' 
+
 	call base#varset('stlparts',stlparts)
 
 endfun
@@ -282,9 +286,18 @@ function! base#stl#setorders ()
         \   'bush'   :   [ 
 		        \   'bush_name',
 		        \   ],
-        \   'vimcom'   :   [ 
+        \   'vimcom'   :   
+						\		[ 
 		        \   'vimcom' ,
 		        \   'tgids'  ,
+		        \   ],
+				\   'idephp_pj'   :   
+						\		[ 
+		        \   'idephp_pj_head'  ,
+		        \   'idephp_pj_name'  ,
+		        \   'buffer_number'  ,
+		        \   'line_number'  ,
+		        \   'file_name'  ,
 		        \   ],
         \   'projs'   :   [ 
 		        \   'buffer_number'    ,

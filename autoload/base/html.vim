@@ -205,12 +205,8 @@ perl << eof
 
 	my $o = $css->output();
 	my @o = split("\n",$o);
-	for(@o){
-		s/"/\\"/g;
-		$cmd = 'call add(css_pp,"'.$_.'")';
-		#VimMsg($cmd);
-		VimCmd($cmd);
-	}
+
+	VimListExtend('css_pp',[@o]);
 
 eof
 	return css_pp
