@@ -2274,6 +2274,18 @@ function! base#info (...)
        call base#echo({ 'text' : "PerlApp options: " } )
        call base#varecho('perlmy_perlapp_opts')
 
+"""info_leaders
+   elseif topic == 'leaders'
+       call base#echo({ 'text' : "Leader variables: " } )
+
+			 let lines=[]
+       call add(lines,'mapleader:        ' . base#vimvar#get('g:mapleader') )
+       call add(lines,'maplocalleader:   ' . base#vimvar#get('g:maplocalleader') )
+
+			 for line in lines
+			 		call base#echo({ 'text' : line })
+			 endfor
+
 """info_git
    elseif topic == 'git'
        call base#echo({ 'text' : "Git: " } )
