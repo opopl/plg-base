@@ -191,6 +191,10 @@ fun! base#init#cmds()
 	command! -nargs=* -complete=custom,base#complete#FIND  FIND 
 		\	call base#cmd#FIND(<f-args>) 
 
+"""VH
+	command! -nargs=* -complete=custom,base#complete#VH  VH
+		\	call base#vh#act(<f-args>) 
+
 """ExeFileRun
 	command! -nargs=*  -complete=custom,base#complete#exefileids FileRun
 		\	call base#exefile#run_prompt(<f-args>)

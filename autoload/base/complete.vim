@@ -118,6 +118,10 @@ function! base#complete#tagids (...)
   return base#complete#vars([ 'tagids' ])
 endfunction
 
+function! base#complete#VH (...)
+  return base#complete#vars([ 'opts_VH' ])
+endfunction
+
 function! base#complete#varlist (...)
   call base#varlist()
 
