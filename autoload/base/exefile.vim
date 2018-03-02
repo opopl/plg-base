@@ -63,7 +63,7 @@ endfunction
 function! base#exefile#set (...)
 	let ref=get(a:000,0,{})
 
-  if ! exists("s:exefiles") | let s:exefiles={} | endif
+  if !exists("s:exefiles") | let s:exefiles={} | endif
 
 	call base#init#sqlite()
 

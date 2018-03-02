@@ -88,3 +88,5 @@ keymaps
 vimproc
 unite
 devdocs
+tlib
+ttags

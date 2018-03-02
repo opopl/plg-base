@@ -498,6 +498,8 @@ fun! base#init#files(...)
       call base#exefile#set({  'im_convert' : cv })
       call base#exefile#set({  'im_identify' : idn })
 
+      "call base#txtfile#set({  'im_identify' : idn })
+
     endif
 
   call base#echoprefixold()

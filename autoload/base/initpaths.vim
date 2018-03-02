@@ -66,6 +66,10 @@ function! base#initpaths#perl ()
       \ "cpan_install" : base#file#catfile(base#qw('C: install perl cpan')),
 	    \ })
 
+	 call base#pathset({ 
+      \ "dancer_bookstore" : base#qw#catpath('perlmod','apps dancer bookstore'),
+	    \ })
+
 	 let pc = base#pcname()
 	 if pc == 'APOPLAVSKIYNB'
 			call base#pathset({ 
@@ -93,6 +97,10 @@ function! base#initpaths#APOPLAVSKIYNB ()
 
 	 call base#pathset({ 
       \ "household" : base#file#catfile([ base#path('repos_git'), 'household'  ]),
+	    \ })
+
+	 call base#pathset({ 
+      \ "ospanel_config" : base#file#catfile(base#qw('c: OSPanel userdata config')),
 	    \ })
 
 	 call base#pathset({ 
