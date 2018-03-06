@@ -57,6 +57,45 @@ eof
 	
 endfunction
 
+function! base#xml#load_from_string(string,...)
+		let string = a:string
+		let opts   = get(a:000,0,{})
+
+		let reload = get(opts,'reload',1)
+
+perl << eof
+		use strict;
+		use warnings;
+
+		use XML::LibXML;
+		use Vim::Perl qw(:funcs :vars);
+		use Vim::Xml qw($DOMCACHE $XPATHCACHE $DOM);
+
+		use IO::String;
+
+		use String::Escape qw(quote);
+
+		my $string = VimVar('string');
+
+		my($fh,$dom);
+		$fh=IO::String->new($string);
+
+		eval { $dom = XML::LibXML->load_xml(IO => $fh); };
+		if($@){
+				VimWarn('Errors while XML::LibXML->load_xml(IO => $fh): ',$@,'$string=',$string);
+				close $fh;
+				return;
+		}
+
+		unless(defined $dom){ VimWarn('DOM is not defined!'); return;}
+		$DOM=$dom;
+
+		close $fh;
+eof
+	
+endfunction
+
+
 function! base#xml#xpath_attr (...)
 		let xpath     = get(a:000,0,'')
 		let attr_list = get(a:000,1,[])
