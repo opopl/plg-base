@@ -10,7 +10,7 @@ function! base#sql#q (sql_query,...)
 	let opp    = get(ref,'opt_print','perldumper')
 	let fetch  = get(ref,'fetch','fetchrow_arrayref')
 
-	let lines=[]
+	let lines  = []
 perl << eof
 	use Vim::Perl qw(:funcs :vars);
 	use Vim::Dbi;
@@ -26,7 +26,7 @@ perl << eof
 
 	if (-t) 
 	{
-		binmode(STDIN, ":encoding(console_in)");
+		binmode(STDIN,  ":encoding(console_in)");
 		binmode(STDOUT, ":encoding(console_out)");
 		binmode(STDERR, ":encoding(console_out)");
 	}
