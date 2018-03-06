@@ -113,6 +113,7 @@ fun! base#init#paths(...)
     call base#initpaths#php()
     call base#initpaths#perl()
     call base#initpaths#docs()
+    call base#initpaths#data()
 
     let mkvimrc  = base#file#catfile([ base#path('conf'), 'mk', 'vimrc' ])
     let mkbashrc = base#file#catfile([ base#path('conf'), 'mk', 'bashrc' ])

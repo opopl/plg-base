@@ -94,6 +94,15 @@ function! base#initpaths#docs ()
 	
 endfunction
 
+function! base#initpaths#data ()
+		call base#log('call base#initpaths#docs')
+
+		call base#pathset({ 
+				\	 'data_csv': base#file#catfile([ base#path('repos_git'), 'data_csv' ]),
+				\	})
+
+endfunction
+
 function! base#initpaths#APOPLAVSKIYNB ()
 	 call base#pathset({ 
       \ "repos_git" : base#file#catfile([ base#path('hm'), 'repos', 'git'  ]),
