@@ -212,6 +212,10 @@ fun! base#init#cmds()
 	command! -nargs=* -complete=custom,base#complete#BaseAct      BaseAct
 		\	call base#act(<f-args>) 
 
+"""BufAct
+	command! -nargs=* -range -complete=custom,base#complete#BufAct      BufAct
+		\	call base#buf#act(<line1>,<line2>,<f-args>) 
+
 """BaseVimFun
 	command! -nargs=* -complete=custom,base#complete#hist#BaseVimFun BaseVimFun
 		\	call base#vim#showfun(<f-args>)
@@ -436,7 +440,10 @@ fun! base#init#au()
 	endfor
 	exe 'augroup end'
 
-	au BufWritePost,BufRead,BufWinEnter *.i.dat setf conf
+	au BufNewFile,BufWritePost,BufRead,BufWinEnter *.i.dat setf conf
+	au BufRead,BufNewFile,BufWinEnter *.csv		set filetype=csv
+	au BufRead,BufNewFile,BufWinEnter *.tsv		set filetype=tsv
+
 	"au BufRead,BufWinEnter * call base#buf#onload()
   "au FileType  * call base#buf#start() 
      

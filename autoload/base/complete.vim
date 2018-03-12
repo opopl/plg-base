@@ -86,6 +86,14 @@ function! base#complete#BaseAct (...)
   return base#complete#vars([ 'opts_BaseAct' ])
 endfunction
 
+function! base#complete#BufAct (...)
+	let comps = []
+	if exists("b:comps_BufAct")
+		let comps = b:comps_BufAct
+	endif
+	return join(comps,"\n")
+endfunction
+
 function! base#complete#sqlite_sql (...)
   return base#complete#vars([ 'sqlite_sql' ])
 endfunction

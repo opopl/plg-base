@@ -30,7 +30,14 @@ function! base#append#csv_headers_numeric (...)
 	let start = input('Start header:',start)
 
 	let end   = 10
-	let end   = input('End header:',10)
+	let end   = input('End header:',end)
+
+	let h   = base#listnewinc(start,end,1)
+	let sep = ","
+	let s   = join(h,sep)
+
+	let lnum = line('.')
+	call append(lnum,s)
 
 endfunction
 

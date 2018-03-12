@@ -14,6 +14,31 @@ function! base#buf#type(...)
 		return type
 endf
 
+function! base#buf#act(...)
+	let start = get(a:000,0,0)
+	let end   = get(a:000,1,getline('$'))
+	let act   = get(a:000,2,'')
+
+	if !strlen(act) | return | endif
+	if !strlen(&ft) 
+		echoerr 'No filetype!'
+		return 
+	endif
+
+	call base#varset('bufact_start',start)
+	call base#varset('bufact_end',end)
+
+	let acts = exists('b:comps_BufAct') ? b:comps_BufAct : []
+
+	"if !base#inlist(act,acts)
+		"return
+	"endif
+
+	let sub  = 'base#bufact#'.&ft.'#'.act
+	exe 'call '. sub.'()'
+
+endf
+
 
 "base#buf#in('plg')
 "base#buf#in('plg',{ 'subdir': base#qw('base autoload') })
