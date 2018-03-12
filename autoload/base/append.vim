@@ -23,6 +23,17 @@ function! base#append#arr (...)
 
 endfunction
 
+
+function! base#append#csv_headers_numeric (...)
+
+	let start = 0
+	let start = input('Start header:',start)
+
+	let end   = 10
+	let end   = input('End header:',10)
+
+endfunction
+
 function! base#append#hist_cmd (...)
 	let nrr   = input('History item range:','-1')
 	let a     = split(nrr,':')

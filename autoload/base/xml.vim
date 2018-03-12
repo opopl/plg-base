@@ -61,19 +61,15 @@ function! base#xml#load_from_string(string,...)
 		let string = a:string
 		let opts   = get(a:000,0,{})
 
-		let reload = get(opts,'reload',1)
-
 perl << eof
 		use strict;
 		use warnings;
 
 		use XML::LibXML;
-		use Vim::Perl qw(:funcs :vars);
+		use Vim::Perl qw(VimWarn VimVar);
 		use Vim::Xml qw($DOMCACHE $XPATHCACHE $DOM);
 
 		use IO::String;
-
-		use String::Escape qw(quote);
 
 		my $string = VimVar('string');
 
@@ -134,7 +130,17 @@ function! base#xml#xpath_lines (...)
 perl << eof
 		my $dom = $Vim::Xml::DOM;
 
+		unless (defined $dom){
+			VimWarn('$Vim::Xml::DOM undefined!');
+			return;
+		}
+
 		my $xpath = VimVar('xpath');
+		unless ($xpath){
+			VimWarn('empty xpath!');
+			return;
+		}
+		
 		my @n     = $dom->findnodes($xpath);
 
 		my $n=sub { 
