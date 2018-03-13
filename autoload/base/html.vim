@@ -378,7 +378,7 @@ endfunction
 
 function! base#html#pretty_libxml(string)
 	
-	if !has('perl') | return | endif
+	if !has('perl') | return [] | endif
 	let html_pp=[]
 
 perl << eof
@@ -393,11 +393,14 @@ perl << eof
 
 	my $html=VimVar('a:string');
 
-	my $doc = XML::LibXML->load_html(
+	my $doc;
+
+	eval { $doc = XML::LibXML->load_html(
 			string          => decode('utf-8',$html),
 			recover         => 1,
 			suppress_errors => 1,
-	);
+	);};
+	if($@){ VimWarn($@); }
 
 	my $pp = XML::LibXML::PrettyPrint->new(indent_string => "  ");
  	$pp->pretty_print($doc);
@@ -407,13 +410,8 @@ perl << eof
 
 	my @pp;
 
-	push @pp,split("\n",$html_pp);
-	for(@pp){
-		s/\\/\\\\/g;
-		s/"/\\"/g;
-		$cmd = 'call add(html_pp,"'.$_.'")';
-		VimCmd($cmd);
-	}
+	push @pp,(split("\n",$html_pp));
+	VimListExtend('html_pp',\@pp);
 
 eof
 

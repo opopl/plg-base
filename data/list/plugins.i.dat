@@ -30,6 +30,7 @@ sqhell
 #
 vim_prettyprint
 vim-latex
+vim-misc
 #browser
 #bufexplorer
 #ctags
@@ -66,7 +67,6 @@ vim-latex
 ##vim-tags
 ##vim-easytags
 ##vim-gutentags
-#vim-misc
 ##ragtag
 #sparkup
 #phpfolding

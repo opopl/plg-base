@@ -131,6 +131,20 @@ function! base#file#lines(file)
 	return lines
 endf
 
+function! base#file#tempname(...)
+	let tmpname  = ''
+	let template = get(a:000,0,'')
+perl << eof
+	my $template=VimVar('template');
+
+	use File::Temp qw/:mktemp/;
+
+  my $tmp = mktemp( $template );
+	VimLet('tmpname',$tmp);
+eof
+	return tmpname
+endf
+
 function! base#file#basename(file)
 	let file  = a:file
 	let bname = fnamemodify(file,':p:t')

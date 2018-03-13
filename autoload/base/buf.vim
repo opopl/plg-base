@@ -84,9 +84,10 @@ function! base#buf#open_split (ref)
 		let cmds_pre = get(ref,'cmds_pre',[])
 
 		let text      = get(ref,'text','')
-		let textlines = split(text,"\n")
-
-		call extend(lines,textlines)
+		if len(text)
+			let textlines = split(text,"\n")
+			call extend(lines,textlines)
+		endif
 
 		if !len(lines)
 			return

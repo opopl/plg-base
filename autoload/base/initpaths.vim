@@ -17,9 +17,9 @@ endf
 
 function! base#initpaths#php ()
 
-	 call base#pathset({ 
-      \ "urltotxt" : base#file#catfile([ base#path('localhost'), 'urltotxt' ]),
-      \ "adminer_src" : base#file#catfile([ base#path('repos_git'), 'adminer_src' ]),
+	 call base#pathset({
+      \ "urltotxt"     : base#file#catfile([ base#path('repos_git'), 'urltotxt' ]),
+      \ "adminer_src"  : base#file#catfile([ base#path('repos_git'), 'adminer_src' ]),
 	    \ })
 	
 endfunction
@@ -90,6 +90,7 @@ function! base#initpaths#docs ()
 		call base#pathset({ 
 				\	'httpd_docs'  : 'C:\help\apache\httpd-docs-2.4.28.en',
 				\	'sqlite_docs' : 'C:\help\sqlite\sqlite_doc',
+      	\ "help" 				: base#file#qw('C: help'),
 				\})
 	
 endfunction

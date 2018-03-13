@@ -1,24 +1,27 @@
 
 
+"""BufAct_lynx_dump_split
 function! base#bufact#html#lynx_dump_split ()
+	call base#buf#start()
 
-	let starthead = input('Start:',0)
-	let endhead   = input('End:',10)
-	let sep       = input('Separator:',',')
-	let prefix    = input('Prefix:','f')
+	let lines = getline(0,'$') 
+	let tmp   = tempname()
+	call writefile(lines,tmp)
+	let cmd = 'lynx -dump -force_html '.tmp
+	echo tmp
+	call base#sys({ "cmds" : [cmd], 'split_output' : 1 })
 
-perl << eof
-	my $start  = VimVar('starthead');
-	my $end    = VimVar('endhead');
-	my $sep    = VimVar('sep');
-	my $prefix = VimVar('prefix');
-
-	my @h = map { $prefix . $_ } ($start .. $end );
-	my $h = join($sep,@h);
-
-	$curbuf->Append(0,$h);
-eof
-	
 endfunction
 
+"""BufAct_pretty_libxml
+function! base#bufact#html#pretty_libxml ()
+	call base#buf#start()
+
+	let lines = getline(0,'$')
+	let html  = join(lines,"\n")
+
+	let html_pp=base#html#pretty_libxml(html)
+	call base#buf#open_split({ 'lines' : html_pp })
+
+endfunction
 

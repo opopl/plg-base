@@ -180,6 +180,8 @@ function!  base#stl#setparts ()
 	let stlparts['idephp_pj_name']='%1*\ pj:\ %{base#varget('.q. 'idephp_pj_name' .q.','.q.q.')}\ %0*' 
 	let stlparts['idephp_pj_head']='%1*\ %{string('.q.'IDEPHP'.q.')}\ %0*' 
 
+	let stlparts['HTML']='%1*\ %{string('.q.'HTML'.q.')}\ %0*' 
+
 	call base#varset('stlparts',stlparts)
 
 endfun
@@ -201,6 +203,14 @@ function! base#stl#setorders ()
                 \   'file_type',
                 \   'encoding',
                 \   'file_encoding',
+                \       ],
+        \   'html'   :   [ 
+                \   'HTML'     ,
+                \   'file_name'     ,
+                \   'file_format'   ,
+                \   'file_type'     ,
+                \   'encoding'      ,
+                \   'file_encoding' ,
                 \       ],
         \   'perl_pm'   :   [ 
 		        \   'perl_module_name' ,
