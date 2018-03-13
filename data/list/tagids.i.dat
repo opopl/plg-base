@@ -42,6 +42,7 @@ plg_tagbar
 plg_tex
 plg_txtmy
 plg_vim-latex
+plg_vimproc
 plg_vim-php-manual
 ##########
 mkvimrc
