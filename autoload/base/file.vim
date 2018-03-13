@@ -132,14 +132,26 @@ function! base#file#lines(file)
 endf
 
 function! base#file#tempname(...)
+	let ref      = get(a:000,0,{})
+
+	let template = get(ref,'template','')
+	let suffix   = get(ref,'suffix','')
+	let dir      = get(ref,'dir','')
+
 	let tmpname  = ''
-	let template = get(a:000,0,'')
 perl << eof
-	my $template=VimVar('template');
+	use File::Temp qw(tempfile);
+	use File::Path qw(mkpath);
 
-	use File::Temp qw/:mktemp/;
+	my $template = VimVar('template') || 'XXXXXX';
+	my $suffix   = VimVar('suffix') || '';
 
-  my $tmp = mktemp( $template );
+	my $dir = VimVar('dir') || catfile($ENV{appdata},qw(plg base base_file_tempname ));
+	mkpath $dir unless -d $dir;
+
+	my $tmp;
+  (undef, $tmp) = tempfile($template, OPEN => 0, DIR => $dir, SUFFIX => $suffix);
+
 	VimLet('tmpname',$tmp);
 eof
 	return tmpname
