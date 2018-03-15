@@ -294,7 +294,8 @@ function! base#html#xpath(...)
 	let htmllines = get(ref,'htmllines',[])
 	let xpath     = get(ref,'xpath','')
 
-	let add_comments     = get(ref,'add_comments',0)
+	let add_comments = get(ref,'add_comments',0)
+	let cdata2text   = get(ref,'cdata2text',0)
 
 	if len(htmllines)
 		 let htmltext=join(htmllines,"\n")
@@ -323,7 +324,9 @@ perl << eof
 
 	my $html         = VimVar('htmltext');
 	my $xpath        = VimVar('xpath');
+
 	my $add_comments = VimVar('add_comments');
+	my $cdata2text   = VimVar('cdata2text');
 
 	my ($dom,@nodes,@filtered);
 
@@ -345,6 +348,12 @@ perl << eof
 			foreach my $cmt (@$cmts) {
 				my $cnode=XML::LibXML::Comment->new($cmt);
 				push @filtered,$cnode->toString;
+			}
+		}
+
+		if ($cdata2text) {
+			if ($ntype == XML_CDATA_SECTION_NODE) {
+				# body...
 			}
 		}
 		push @filtered,split("\n",$node->toString);
