@@ -25,3 +25,25 @@ function! base#bufact#html#pretty_libxml ()
 
 endfunction
 
+function! base#bufact#html#xpath ()
+	call base#buf#start()
+
+	let lines = getline(0,'$')
+	let html  = join(lines,"\n")
+
+	let xpath = idephp#hist#input({ 
+			\	'msg'  : 'XPATH:',
+			\	'hist' : 'xpath',
+			\	})
+
+	let filtered = []
+
+	let filtered = base#html#xpath({
+				\	'htmltext' : html,
+				\	'xpath'    : xpath,
+				\	})
+
+	call base#buf#open_split({ 'lines' : filtered })
+
+endfunction
+

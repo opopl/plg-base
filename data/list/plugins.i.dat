@@ -31,6 +31,8 @@ sqhell
 vim_prettyprint
 vim-latex
 vim-misc
+xmledit
+xmlparser
 #browser
 #bufexplorer
 #ctags
@@ -71,8 +73,6 @@ vim-misc
 #sparkup
 #phpfolding
 #showfunc
-#xmledit
-#xmlparser
 ####js
 #youcompleteme
 ####mysql

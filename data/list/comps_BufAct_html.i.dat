@@ -1,3 +1,7 @@
 lynx_dump_split
 pretty_libxml
-remove_nodes
+remove_xpath
+xpath
+find_style
+find_form
+find_script

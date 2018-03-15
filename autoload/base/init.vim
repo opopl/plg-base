@@ -58,14 +58,14 @@ fun! base#init#paths(...)
     if a:0 | let ref = a:1 | endif
 
 
-    let hm        = base#envvar('hm')
-    let home      = base#envvar('USERPROFILE')
-    let pf        = base#envvar('PROGRAMFILES')
-    let vrt       = base#envvar('VIMRUNTIME')
-    let pc = base#envvar('COMPUTERNAME')
-    let confdir   = base#envvar('CONFDIR')
-    let mrc       = base#envvar('MYVIMRC')
-    let projsdir  = base#envvar('PROJSDIR')
+    let hm       = base#envvar('hm')
+    let home     = base#envvar('USERPROFILE')
+    let pf       = base#envvar('PROGRAMFILES')
+    let vrt      = base#envvar('VIMRUNTIME')
+    let pc       = base#envvar('COMPUTERNAME')
+    let confdir  = base#envvar('CONFDIR')
+    let mrc      = base#envvar('MYVIMRC')
+    let projsdir = base#envvar('PROJSDIR')
 
     call base#pathset({ 
         \ 'home'          : home ,
@@ -122,6 +122,7 @@ fun! base#init#paths(...)
         \   'pdfout'      : base#envvar('PDFOUT'),
         \   'htmlout'     : base#envvar('HTMLOUT'),
         \   'jsdocs'      : base#envvar('JSDOCS'),
+        \   'htmldocs'    : base#envvar('HTMLDOCS',base#qw#catpath('repos_git','htmldocs')),
         \ })
 
     call base#pathset({
