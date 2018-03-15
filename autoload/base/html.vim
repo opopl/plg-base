@@ -405,6 +405,66 @@ eof
 
 endfunction
 
+function! base#html#xpath_remove_nodes(...)
+	if !has('perl') | return | endif
+
+	let ref      = get(a:000,0,{})
+
+	let htmltext  = get(ref,'htmltext','')
+	let htmllines = get(ref,'htmllines',[])
+	let xpath     = get(ref,'xpath','')
+
+	if len(htmllines)
+		 let htmltext=join(htmllines,"\n")
+	endif
+
+	let filtered=split(htmltext,"\n")
+	let filtered=[]
+	if !strlen(xpath)
+		echohl WarningMsg
+		echo 'Empty XPATH'
+		echohl None
+		return filtered
+	endif
+
+perl << eof
+	# read https://habrahabr.ru/post/53578/ about encodings
+	# http://www.nestor.minsk.by/sr/2008/09/sr80902.html
+	use utf8;
+	use Encode;
+
+	use Vim::Perl qw(:funcs :vars);
+	use XML::LibXML;
+	use XML::LibXML::PrettyPrint;
+
+	my $html  = VimVar('htmltext');
+	my $xpath = VimVar('xpath');
+
+	my ($dom,@nodes,@filtered);
+
+	$dom = XML::LibXML->load_html(
+			string          => decode('utf-8',$html),
+			recover         => 1,
+			suppress_errors => 1,
+	);
+
+	@nodes=$dom->findnodes($xpath);
+
+	for my $node (@nodes){
+		my $parent=$node->parentNode;
+		eval { $parent->removeChild($node); };
+		if ($@) {
+			VimWarn($@);
+		}
+	}
+	$html=$dom->toString;
+	VimLet('htmltext',html);
+	return $html;
+eof
+
+endfunction
+
+
 function! base#html#list_to_txt(html)
 	if !has('perl')
 		return

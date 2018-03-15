@@ -80,3 +80,36 @@ function! base#bufact#html#quickfix_xpath ()
 
 endfunction
 
+function! base#bufact#html#remove_nodes ()
+	call base#buf#start()
+
+	let lines = getline(0,'$')
+	let html  = join(lines,"\n")
+
+	let xpath = idephp#hist#input({ 
+			\	'msg'  : 'XPATH:',
+			\	'hist' : 'xpath',
+			\	})
+
+	let lines = []
+
+	let lines = base#html#xpath_remove_nodes({
+				\	'htmltext' : html,
+				\	'xpath'    : xpath,
+				\	})
+
+	for line in lines
+		 let text = get(line,'text','')
+		 let r = {
+		 		\	'bufnr'    : bufnr('%'),
+		 		\	'text'     : strpart(text,0,50),
+		 		\	}
+		 call extend(line,r)
+	endfor
+	if len(lines)
+	  call setqflist(lines)	
+		copen
+	endif
+
+endfunction
+
