@@ -155,6 +155,7 @@ function! base#buf#start ()
 	let b:ext      = expand('%:p:e')
 	let b:dirname  = expand('%:p:h')
 	let b:filetype = &ft
+	let b:bufnr    = bufnr(0)
 	
 	if exists('b:finfo') | unlet b:finfo | endif
 
