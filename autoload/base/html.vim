@@ -353,7 +353,21 @@ perl << eof
 
 		if ($cdata2text) {
 			if ($ntype == XML_CDATA_SECTION_NODE) {
-				# body...
+					my $content=$node->textContent;
+					my $tx=$dom->createTextNode->new($content);
+					my $parent = $node->parentNode;
+
+					$parent->removeChild($node);
+					$parent->appendChild($tx);
+			}
+			elsif ($ntype == XML_TEXT_NODE) {
+				my @tn=$node->findnodes('./*');
+				foreach my $n (@tn) {
+					# body...
+				}
+			}
+			elsif ($ntype == XML_ELEMENT_NODE) {
+				my @tn=$node->findnodes('./text()');
 			}
 		}
 		push @filtered,split("\n",$node->toString);

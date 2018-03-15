@@ -42,6 +42,7 @@ function! base#bufact#html#xpath ()
 				\	'htmltext'     : html,
 				\	'xpath'        : xpath,
 				\	'add_comments' : 1,
+				\	'cdata2text'   : 1,
 				\	})
 
 	call base#buf#open_split({ 'lines' : filtered })
