@@ -326,7 +326,6 @@ perl << eof
 	my $xpath        = VimVar('xpath');
 
 	my $add_comments = VimVar('add_comments');
-	my $cdata2text   = VimVar('cdata2text');
 
 	my ($dom,@nodes,@filtered);
 
@@ -351,23 +350,28 @@ perl << eof
 			}
 		}
 
+		my $cdata2text   = VimVar('cdata2text');
 		if ($cdata2text) {
 			if ($ntype == XML_CDATA_SECTION_NODE) {
-					my $content=$node->textContent;
-					my $tx=$dom->createTextNode->new($content);
-					my $parent = $node->parentNode;
+					my $content = $node->textContent;
+					my $tx      = $dom->createTextNode->new($content);
+					my $parent  = $node->parentNode;
 
 					$parent->removeChild($node);
 					$parent->appendChild($tx);
 			}
-			elsif ($ntype == XML_TEXT_NODE) {
+			else {
 				my @tn=$node->findnodes('./*');
 				foreach my $n (@tn) {
-					# body...
+					if ($n->nodeType == XML_CDATA_SECTION_NODE) {
+						my $content = $n->textContent;
+						my $tx      = $dom->createTextNode->new($content);
+						my $parent  = $node->parentNode;
+	
+						$parent->removeChild($node);
+						$parent->appendChild($tx);
+					}
 				}
-			}
-			elsif ($ntype == XML_ELEMENT_NODE) {
-				my @tn=$node->findnodes('./text()');
 			}
 		}
 		push @filtered,split("\n",$node->toString);
