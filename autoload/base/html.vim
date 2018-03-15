@@ -294,6 +294,8 @@ function! base#html#xpath(...)
 	let htmllines = get(ref,'htmllines',[])
 	let xpath     = get(ref,'xpath','')
 
+	let add_comments     = get(ref,'add_comments',0)
+
 	if len(htmllines)
 		 let htmltext=join(htmllines,"\n")
 	endif
@@ -317,8 +319,11 @@ perl << eof
 	use XML::LibXML;
 	use XML::LibXML::PrettyPrint;
 
-	my $html  = VimVar('htmltext');
-	my $xpath = VimVar('xpath');
+	use Vim::Xml qw(%nodetypes);
+
+	my $html         = VimVar('htmltext');
+	my $xpath        = VimVar('xpath');
+	my $add_comments = VimVar('add_comments');
 
 	my ($dom,@nodes,@filtered);
 
@@ -331,8 +336,18 @@ perl << eof
 	@nodes=$dom->findnodes($xpath);
 	@filtered;
 
-	for(@nodes){
-		push @filtered,split("\n",$_->toString);
+	for my $node (@nodes){
+		my $ntype=$node->nodeType;
+		if ($add_comments) {
+			my $cmts = [
+				'nodeType='.$nodetypes{$ntype}||'undef',
+			];
+			foreach my $cmt (@$cmts) {
+				my $cnode=XML::LibXML::Comment->new($cmt);
+				push @filtered,$cnode->toString;
+			}
+		}
+		push @filtered,split("\n",$node->toString);
 	}
 
 	VimListExtend('filtered',\@filtered);

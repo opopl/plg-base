@@ -2263,9 +2263,9 @@ function! base#info (...)
 
        call base#echo({ 'text' : "Other variables: " } )
        call base#echovar({ 'var' : 'b:dirname', 'indent' : indentlev })
-       call base#echovar({ 'var' : 'b:filename', 'indent' : indentlev })
-       call base#echovar({ 'var' : 'b:path', 'indent' : indentlev })
+       call base#echovar({ 'var' : 'b:file', 'indent' : indentlev })
        call base#echovar({ 'var' : 'b:ext' , 'indent' : indentlev })
+       call base#echovar({ 'var' : 'b:bufnr' , 'indent' : indentlev })
 
        call base#echo({ 'text' : "Directories which this file belongs to: " } )
 

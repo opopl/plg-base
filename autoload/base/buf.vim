@@ -34,8 +34,23 @@ function! base#buf#act(...)
 		"return
 	"endif
 
-	let sub  = 'base#bufact#'.&ft.'#'.act
-	exe 'call '. sub.'()'
+	let ft   = &ft
+	let subs = []
+	if base#inlist(ft,base#qw('php html'))
+		for ff in base#qw('html php')
+			if base#inlist(act,base#varget('comps_BufAct_'.ff,[]))
+				let sub  = 'base#bufact#'.ff.'#'.act
+				call add(subs,sub)
+			endif
+		endfor
+ 	else
+		let sub  = 'base#bufact#'.ft.'#'.act
+		call add(subs,sub)
+	endif
+
+	for sub in subs
+		exe 'call '. sub.'()'
+	endfor
 
 endf
 

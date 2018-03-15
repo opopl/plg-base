@@ -39,8 +39,9 @@ function! base#bufact#html#xpath ()
 	let filtered = []
 
 	let filtered = base#html#xpath({
-				\	'htmltext' : html,
-				\	'xpath'    : xpath,
+				\	'htmltext'     : html,
+				\	'xpath'        : xpath,
+				\	'add_comments' : 1,
 				\	})
 
 	call base#buf#open_split({ 'lines' : filtered })
