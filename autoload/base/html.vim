@@ -420,6 +420,7 @@ function! base#html#xpath_remove_nodes(...)
 
 	let filtered=split(htmltext,"\n")
 	let filtered=[]
+
 	if !strlen(xpath)
 		echohl WarningMsg
 		echo 'Empty XPATH'
@@ -440,6 +441,8 @@ perl << eof
 	my $html  = VimVar('htmltext');
 	my $xpath = VimVar('xpath');
 
+	my $ref = VimVar('ref') || {};
+
 	my ($dom,@nodes,@filtered);
 
 	$dom = XML::LibXML->load_html(
@@ -449,15 +452,26 @@ perl << eof
 	);
 
 	@nodes=$dom->findnodes($xpath);
+	unless(@nodes){ return; }
 
+	my $pp = XML::LibXML::PrettyPrint->new(indent_string => "  ");
 	for my $node (@nodes){
 		my $parent=$node->parentNode;
 		eval { $parent->removeChild($node); };
 		if ($@) {
 			VimWarn($@);
+			next;
 		}
+ 		$pp->pretty_print($parent);
 	}
 	$html=$dom->toString;
+
+	if ($ref->{fillbuf}) {
+		my $c=$curbuf->Count(); 
+		VimMsg($c);
+		$curbuf->Delete(1,$c);
+		$curbuf->Append(1,split("\n",$html));
+	}
 	VimLet('htmltext',html);
 	return $html;
 eof
