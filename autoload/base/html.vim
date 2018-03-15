@@ -320,7 +320,7 @@ perl << eof
 	use XML::LibXML;
 	use XML::LibXML::PrettyPrint;
 
-	use Vim::Xml qw(%nodetypes);
+	use Vim::Xml qw(%nodetypes node_cdata2text);
 
 	my $html         = VimVar('htmltext');
 	my $xpath        = VimVar('xpath');
@@ -352,27 +352,7 @@ perl << eof
 
 		my $cdata2text   = VimVar('cdata2text');
 		if ($cdata2text) {
-			if ($ntype == XML_CDATA_SECTION_NODE) {
-					my $content = $node->textContent;
-					my $tx      = $dom->createTextNode->new($content);
-					my $parent  = $node->parentNode;
-
-					$parent->removeChild($node);
-					$parent->appendChild($tx);
-			}
-			else {
-				my @tn=$node->findnodes('./*');
-				foreach my $n (@tn) {
-					if ($n->nodeType == XML_CDATA_SECTION_NODE) {
-						my $content = $n->textContent;
-						my $tx      = $dom->createTextNode->new($content);
-						my $parent  = $node->parentNode;
-	
-						$parent->removeChild($node);
-						$parent->appendChild($tx);
-					}
-				}
-			}
+			node_cdata2text($dom,$node);
 		}
 		push @filtered,split("\n",$node->toString);
 	}
