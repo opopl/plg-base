@@ -10,3 +10,7 @@ endfunction
 function! base#string#qq (string)
 	return '"'.a:string.'"'
 endfunction
+
+function! base#string#quote (string)
+	return '"'.a:string.'"'
+endfunction

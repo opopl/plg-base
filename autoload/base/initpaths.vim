@@ -20,6 +20,7 @@ function! base#initpaths#php ()
 	 call base#pathset({
       \ "urltotxt"     : base#file#catfile([ base#path('repos_git'), 'urltotxt' ]),
       \ "adminer_src"  : base#file#catfile([ base#path('repos_git'), 'adminer_src' ]),
+      \ "include_php"  : 'c:/include/php',
 	    \ })
 	
 endfunction
