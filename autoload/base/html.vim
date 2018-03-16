@@ -296,6 +296,7 @@ function! base#html#xpath(...)
 
 	let add_comments = get(ref,'add_comments',0)
 	let cdata2text   = get(ref,'cdata2text',0)
+	let load_as      = get(ref,'load_as','xml')
 
 	if len(htmllines)
 		 let htmltext=join(htmllines,"\n")
@@ -320,20 +321,36 @@ perl << eof
 	use XML::LibXML;
 	use XML::LibXML::PrettyPrint;
 
-	use Vim::Xml qw(%nodetypes node_cdata2text);
+	use Vim::Xml qw(%nodetypes node_cdata2text $DOM $PARSER);
 
 	my $html         = VimVar('htmltext');
 	my $xpath        = VimVar('xpath');
 
 	my $add_comments = VimVar('add_comments');
+	my $cdata2text   = VimVar('cdata2text');
 
-	my ($dom,@nodes,@filtered);
+	my ($dom,@nodes,@filtered,$parser);
 
-	$dom = XML::LibXML->load_html(
+	$parser=$PARSER || XML::LibXML->new; 
+
+	$parser->set_options({ 
+			expand_entities => 0,
+			load_ext_dtd 		=> 1,
+			keep_blanks     => 1,
+			no_cdata        => 0,
+	});
+
+	my $inp={
 			string          => decode('utf-8',$html),
 			recover         => 1,
 			suppress_errors => 1,
-	);
+	};
+
+	if ($load_as eq 'xml') {
+		$dom = $parser->load_xml(%$inp);
+	} elsif ($load_as eq 'html'){
+		$dom = $parser->load_html(%$inp);
+	}
 
 	@nodes=$dom->findnodes($xpath);
 	@filtered;
@@ -342,7 +359,7 @@ perl << eof
 		my $ntype=$node->nodeType;
 		if ($add_comments) {
 			my $cmts = [
-				'nodeType='.$nodetypes{$ntype}||'undef',
+				'nodeType='.$nodetypes{$ntype} || 'undef',
 			];
 			foreach my $cmt (@$cmts) {
 				my $cnode=XML::LibXML::Comment->new($cmt);
@@ -350,9 +367,10 @@ perl << eof
 			}
 		}
 
-		my $cdata2text   = VimVar('cdata2text');
 		if ($cdata2text) {
-			node_cdata2text($dom,$node);
+			VIM::Msg('aaaaa');
+			VIM::Msg($node->textContent);
+			$node = node_cdata2text($node,$dom,$parser);
 		}
 		push @filtered,split("\n",$node->toString);
 	}
