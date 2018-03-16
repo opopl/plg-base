@@ -130,6 +130,43 @@ function! base#list#rmwh (list)
 	return list
 endfun
 
+function! base#list#add_heads_letters (ref,...)
+	let ref         = a:ref
+
+	let list        = get(ref,'list',[])
+	let startletter = get(ref,'start','a')
+	let endletter   = get(ref,'end','z')
+
+	let slist=[]
+	for l in list
+		if type(l)==type('')
+			call add(slist,l)
+		endif
+	endfor
+
+perl << eof
+	my $s     = VimVar('startletter');
+	my $e     = VimVar('endletter');
+	my @heads = ( $s .. $e );
+
+	my @list = VimVar('slist');
+	my @nlist;
+	my $head=shift @heads;
+	foreach my $l (@list) {
+		local $_=$l;
+		/^\S/ && do {
+			s/^/$head /g;
+			$head=shift @heads;
+		};
+		VIM::Msg($l);
+		push @nlist,$_;
+	}
+	VimLet('list',[@nlist]);
+eof
+
+	"return list
+
+endfun
 
 function! base#list#add (ref,...)
         

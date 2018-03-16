@@ -296,7 +296,7 @@ function! base#html#xpath(...)
 
 	let add_comments = get(ref,'add_comments',0)
 	let cdata2text   = get(ref,'cdata2text',0)
-	let load_as      = get(ref,'load_as','xml')
+	let load_as      = get(ref,'load_as','html')
 
 	if len(htmllines)
 		 let htmltext=join(htmllines,"\n")
@@ -321,24 +321,29 @@ perl << eof
 	use XML::LibXML;
 	use XML::LibXML::PrettyPrint;
 
-	use Vim::Xml qw(%nodetypes node_cdata2text $DOM $PARSER);
+	use Vim::Xml qw(%nodetypes node_cdata2text $DOM $PARSER $PARSER_OPTS);
 
 	my $html         = VimVar('htmltext');
 	my $xpath        = VimVar('xpath');
+	my $ref          = VimVar('ref') || {};
 
 	my $add_comments = VimVar('add_comments');
 	my $cdata2text   = VimVar('cdata2text');
+	my $load_as      = VimVar('load_as');
 
 	my ($dom,@nodes,@filtered,$parser);
 
 	$parser=$PARSER || XML::LibXML->new; 
 
-	$parser->set_options({ 
+	my $xml_libxml_parser_options=$PARSER_OPTS || 
+	{
 			expand_entities => 0,
 			load_ext_dtd 		=> 1,
 			keep_blanks     => 1,
 			no_cdata        => 0,
-	});
+	};
+
+	$parser->set_options(%$xml_libxml_parser_options);
 
 	my $inp={
 			string          => decode('utf-8',$html),
