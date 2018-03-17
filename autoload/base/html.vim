@@ -168,6 +168,9 @@ function! base#html#headings (...)
 
 perl << eof
 	use Vim::Xml qw($PARSER $PARSER_OPTS);
+	use XML::LibXML;
+	use XML::LibXML::PrettyPrint;
+	use Encode qw(decode);
 	my ($dom,@nodes,$parser);
 
 	$parser=$PARSER || XML::LibXML->new; 
@@ -189,6 +192,7 @@ perl << eof
 			load_ext_dtd 		=> 1,
 			keep_blanks     => 1,
 			no_cdata        => 0,
+			line_numbers    => 1,
 	};
 
 	$parser->set_options(%$xml_libxml_parser_options);
@@ -210,13 +214,33 @@ perl << eof
 	#my $newdom = XML::LibXML::Document->new;
 
 	my %added=();
+	my @nodes;
 	while(my $node = $nodelist->pop) {
+		 unshift @nodes,$node;
 		 my $lnum=$node->line_number;
  		 $pp->pretty_print($node);
 
 		 my $pos = $nodelist->size;
 		 my $cmt = "*" x 10 . "pos: ".$pos;
 		 my $cn  = XML::LibXML::Comment->new($cmt);
+
+		 $node->setAttribute('node_lineno',$lnum);
+		 $node->setAttribute('node_id',$pos);
+
+		 my $text=$node->textContent;
+		 $text=~s/^\s*//g;
+		 $text=~s/\s*$//g;
+		 $node->setAttribute('node_text',$text);
+		 my @textchildren;
+		 
+		 for($node->childNodes() ){
+				if ($_->nodeType == XML_TEXT_NODE) {
+					push @textchildren,$_;
+				}
+		 }
+		 for my $tchild (@textchildren){
+		 		$node->removeChild($tchild);
+		 }
 
 		 my $prev = $nodelist->get_node($pos);
 		 last unless $prev;
@@ -236,21 +260,39 @@ perl << eof
 				#VimMsg($prev->toString);
 		 }
 
+		 unshift @children,{ 
+		 		node => $node,
+				num  => $n_node,
+				line => $node->line_number,
+		 };
+		 
 		 if ($n{prev} < $n{node}) {
-				unshift @children,$node;
-				for my $child (@children){
+				for my $c (@children){
+					my $child      = $c->{node};
+					my $child_num  = $c->{num};
+					my $child_line = $c->{line};
+
 					my $clone=$child->cloneNode(1);
+
+					next if ($n{prev} > $child_num);
+
 					$prev->addChild($child);
+					$added{$child_line}=1;
 				}
-				$added{$prev->line_number}=1;
 				@children=();
 		 }else{
-				unshift @children,$node;
 		 }
 	}
 
-	my $n=join("\n",@sn);
-	VimMsg(Dumper($n));
+	my @n = map { $added{$_->line_number} ? $_ : () } @nodes;
+	my @s = map { $pp->pretty_print($_); $_->toString } @n;
+
+	my $stars = '*' x 50;
+	VimMsg([$stars,'Added nodes',$stars]);
+	for(@s){
+		VimMsg('-'x 50);
+		VimMsg($_);
+	}
 	
 eof
 
