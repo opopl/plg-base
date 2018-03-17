@@ -13,6 +13,18 @@ function! base#bufact#html#lynx_dump_split ()
 
 endfunction
 
+function! base#bufact#html#headings ()
+	call base#buf#start()
+
+	let lines = getline(0,'$') 
+	let h     = base#html#headings({ 
+			\	'lines' : lines 
+			\	})
+
+	call base#buf#open_split({ 'lines' : h })
+
+endfunction
+
 """BufAct_pretty_libxml
 function! base#bufact#html#pretty_libxml ()
 	call base#buf#start()

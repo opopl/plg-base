@@ -157,20 +157,62 @@ function! base#html#headings (...)
 	if filereadable(file)
 		 let lines=readfile(file)
 	endif
+	let html = join(lines,"\n")
 
 	let headnums = base#listnewinc(1,5,1)
 	let heads    = map(headnums,'"self::h".string(v:val)')
 	let he       = join(heads,' or ')
 	let h        = []
 
-	let xp    = base#html#xpath({
-			\	'xpath'     : '//*['.he.']',
-			\	'htmllines' : lines,
-			\	})
+	let xpath = '//*['.he.']'
 
-	call map(xp,'xolox#misc#str#trim(v:val)')
+perl << eof
+	use Vim::Xml qw($PARSER $PARSER_OPTS);
+	my ($dom,@nodes,$parser);
 
-	call extend(h,xp)
+	$parser=$PARSER || XML::LibXML->new; 
+
+	#	my $xpath    = VimVar('xpath');
+	my $html=VimVar('html');
+
+	my @headnums = (1 .. 5);
+	my @heads    = map { "self::h" . $_ } @headnums;
+	my $he       = join(' or ',@heads);
+	my $xpath    = '//*['.$he.']';
+
+#"//*[self::h1 or self::h2 or self::h3 or self::h4 or self::h5]
+#//*[preceding-sibling::h2 = 'Summary' and following-sibling::h2 = 'Location']
+
+	my $xml_libxml_parser_options=$PARSER_OPTS || 
+	{
+			expand_entities => 0,
+			load_ext_dtd 		=> 1,
+			keep_blanks     => 1,
+			no_cdata        => 0,
+	};
+
+	$parser->set_options(%$xml_libxml_parser_options);
+
+	my $inp={
+			string          => decode('utf-8',$html),
+			recover         => 1,
+			suppress_errors => 1,
+	};
+
+	$dom = $parser->load_html(%$inp);
+
+	my $nodelist=$dom->findnodes($xpath);
+	while(my $node = $nodelist->pop) {
+		my $size = $nodelist->size;
+		my $last = $nodelist->get_node($size); 
+
+		last unless $last;
+
+		VimMsg($node->toString);
+		#VimMsg($last->toString);
+	}
+eof
+
 	return h
 	
 endfunction
@@ -373,8 +415,6 @@ perl << eof
 		}
 
 		if ($cdata2text) {
-			VIM::Msg('aaaaa');
-			VIM::Msg($node->textContent);
 			$node = node_cdata2text($node,$dom,$parser);
 		}
 		push @filtered,split("\n",$node->toString);
