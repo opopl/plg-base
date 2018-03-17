@@ -203,9 +203,17 @@ perl << eof
 
 	my $nodelist = $dom->findnodes($xpath);
 	my $sub      = sub { local $_=shift; s/^h(\d+)/$1/g; $_ };
+	my @add;
+	my @sn;
+
+	my $pp = XML::LibXML::PrettyPrint->new(indent_string => "  ");
 	while(my $node = $nodelist->pop) {
-		 my $size = $nodelist->size;
-		 my $prev = $nodelist->get_node($size); 
+ 		 $pp->pretty_print($node);
+
+		 unshift @sn,$node->toString;
+
+		 my $pos = $nodelist->size;
+		 my $prev = $nodelist->get_node($pos); 
 		 last unless $prev;
 
 		 my $n_prev = $sub->($prev->nodeName);
@@ -214,17 +222,26 @@ perl << eof
 			 	prev => $n_prev,
 			 	node => $n_node,
 		 );
-		 VimMsg(Dumper(\%n));
+		 #VimMsg(Dumper(\%n));
 
 		 if ($n{prev} < $n{node}) {
-			 VimMsg('prev<node');
-			 $prev->addChild($node);
+				VimMsg('prev<node');
+				push @add,$node;
+				$prev->addChild($_) for(@add);
+				@add=();
+				next;
+		 }elsif($n{prev}==$n{node}){
+				push @add,$node;
+				next;
 		 }
 
-		 VimMsg($node->toString);
 		 #VimMsg($last->toString);
 		#VimMsg($last->toString);
 	}
+
+	my $n=join("\n",@sn);
+	VimMsg(Dumper($n));
+	
 eof
 
 	return h
