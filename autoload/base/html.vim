@@ -201,26 +201,25 @@ perl << eof
 
 	$dom = $parser->load_html(%$inp);
 
-	my $nodelist=$dom->findnodes($xpath);
-	my $s = sub { local $_=shift; s/^h(\d+)/$1/g; $_ };
+	my $nodelist = $dom->findnodes($xpath);
+	my $sub      = sub { local $_=shift; s/^h(\d+)/$1/g; $_ };
 	while(my $node = $nodelist->pop) {
 		 my $size = $nodelist->size;
 		 my $prev = $nodelist->get_node($size); 
 		 last unless $prev;
 
-		 my $n_prev = $s->($prev->nodeName);
-		 my $n_node = $s->($node->nodeName);
+		 my $n_prev = $sub->($prev->nodeName);
+		 my $n_node = $sub->($node->nodeName);
 		 my %n=(
-		 	prev => $n_prev,
-		 	node => $n_node,
+			 	prev => $n_prev,
+			 	node => $n_node,
 		 );
 		 VimMsg(Dumper(\%n));
 
-		  if ($n{prev} < $n{node}) {
-				 VimMsg('prev<node');
-				 $prev->addChild($node);
-		  }
-
+		 if ($n{prev} < $n{node}) {
+			 VimMsg('prev<node');
+			 $prev->addChild($node);
+		 }
 
 		 VimMsg($node->toString);
 		 #VimMsg($last->toString);
