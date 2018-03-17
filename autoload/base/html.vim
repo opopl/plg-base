@@ -206,10 +206,12 @@ perl << eof
 	my @children;
 	my @sn;
 
-	my $pp     = XML::LibXML::PrettyPrint->new(indent_string = > " ");
+	my $pp     = XML::LibXML::PrettyPrint->new(indent_string => " ");
 	#my $newdom = XML::LibXML::Document->new;
 
+	my %added=();
 	while(my $node = $nodelist->pop) {
+		 my $lnum=$node->line_number;
  		 $pp->pretty_print($node);
 
 		 my $pos = $nodelist->size;
@@ -236,15 +238,15 @@ perl << eof
 
 		 if ($n{prev} < $n{node}) {
 				unshift @children,$node;
-				for(@children){
-					my $clone=$_->cloneNode(1);
-					$prev->addChild($clone);
+				for my $child (@children){
+					my $clone=$child->cloneNode(1);
+					$prev->addChild($child);
 				}
+				$added{$prev->line_number}=1;
 				@children=();
 		 }else{
 				unshift @children,$node;
 		 }
-
 	}
 
 	my $n=join("\n",@sn);
