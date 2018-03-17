@@ -203,17 +203,20 @@ perl << eof
 
 	my $nodelist = $dom->findnodes($xpath);
 	my $sub      = sub { local $_=shift; s/^h(\d+)/$1/g; $_ };
-	my @add;
+	my @children;
 	my @sn;
 
-	my $pp = XML::LibXML::PrettyPrint->new(indent_string => "  ");
+	my $pp     = XML::LibXML::PrettyPrint->new(indent_string = > " ");
+	#my $newdom = XML::LibXML::Document->new;
+
 	while(my $node = $nodelist->pop) {
  		 $pp->pretty_print($node);
 
-		 unshift @sn,$node->toString;
-
 		 my $pos = $nodelist->size;
-		 my $prev = $nodelist->get_node($pos); 
+		 my $cmt = "*" x 10 . "pos: ".$pos;
+		 my $cn  = XML::LibXML::Comment->new($cmt);
+
+		 my $prev = $nodelist->get_node($pos);
 		 last unless $prev;
 
 		 my $n_prev = $sub->($prev->nodeName);
@@ -224,19 +227,24 @@ perl << eof
 		 );
 		 #VimMsg(Dumper(\%n));
 
-		 if ($n{prev} < $n{node}) {
-				VimMsg('prev<node');
-				push @add,$node;
-				$prev->addChild($_) for(@add);
-				@add=();
-				next;
-		 }elsif($n{prev}==$n{node}){
-				push @add,$node;
-				next;
+		 if ($n_node eq '1') {
+				#VimMsg($node->toString);
+		 }
+		 if ($n_prev eq '1') {
+				#VimMsg($prev->toString);
 		 }
 
-		 #VimMsg($last->toString);
-		#VimMsg($last->toString);
+		 if ($n{prev} < $n{node}) {
+				unshift @children,$node;
+				for(@children){
+					my $clone=$_->cloneNode(1);
+					$prev->addChild($clone);
+				}
+				@children=();
+		 }else{
+				unshift @children,$node;
+		 }
+
 	}
 
 	my $n=join("\n",@sn);
