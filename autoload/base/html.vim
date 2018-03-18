@@ -579,24 +579,14 @@ function! base#html#xpath_remove_nodes(...)
 		 let htmltext=join(htmllines,"\n")
 	endif
 
-	let filtered=split(htmltext,"\n")
-	let filtered=[]
-
-	if !strlen(xpath)
-		echohl WarningMsg
-		echo 'Empty XPATH'
-		echohl None
-		return filtered
-	endif
-
 perl << eof
-	# read https://habrahabr.ru/post/53578/ about encodings
-	# http://www.nestor.minsk.by/sr/2008/09/sr80902.html
 	use utf8;
 	use Encode;
 
 	use Vim::Perl qw(:funcs :vars);
 	use HTML::Work;
+
+	my $ref     = VimVar('ref') || {};
 
 	my $html    = VimVar('htmltext');
 	my $xpath   = VimVar('xpath');
@@ -604,19 +594,17 @@ perl << eof
 
 	my $htw=HTML::Work->new;
 
-	my $ref = VimVar('ref') || {};
-
 	my $dom = $htw->init_dom({ 
 		html    => $html,
 		load_as => $load_as,
 	});
 
-	$htw->nodes_remove({ xpath => $xpath });
-	$html=$dom->toString;
+	$html = $htw
+		->nodes_remove({ xpath => $xpath })
+		->htmlstr;
 
 	if ($ref->{fillbuf}) {
 		my $c=$curbuf->Count(); 
-		#VimMsg($c);
 		$curbuf->Delete(1,$c);
 		$curbuf->Append(1,split("\n",$html));
 	}
@@ -661,43 +649,40 @@ eof
 
 endfunction
 
-function! base#html#pretty_libxml(string)
+function! base#html#pretty_libxml(...)
 	
 	if !has('perl') | return [] | endif
+
+	let ref      = get(a:000,0,{})
+	let htmltext = get(ref,'htmltext','')
+
 	let html_pp=[]
 
 perl << eof
-	# read https://habrahabr.ru/post/53578/ about encodings
-	# http://www.nestor.minsk.by/sr/2008/09/sr80902.html
 	use utf8;
 	use Encode;
 
 	use Vim::Perl qw(:funcs :vars);
-	use XML::LibXML;
-	use XML::LibXML::PrettyPrint;
+	use HTML::Work;
 
-	my $html=VimVar('a:string');
+	my $htw  = HTML::Work->new;
+	my $html = VimVar('htmltext');
+	my $ref  = VimVar('ref');
 
-	my $doc;
+	my $html_pp = $htw
+		->init_dom({ html => $html })
+		->dom_pretty
+		->htmlstr;
 
-	eval { $doc = XML::LibXML->load_html(
-			string          => decode('utf-8',$html),
-			recover         => 1,
-			suppress_errors => 1,
-	);};
-	if($@){ VimWarn($@); }
 
-	my $pp = XML::LibXML::PrettyPrint->new(indent_string => "  ");
- 	$pp->pretty_print($doc);
-
-	my $html_pp;
-	$html_pp=$doc->toString; 
-
-	my @pp;
+	if ($ref->{fillbuf}) {
+		my $c=$curbuf->Count(); 
+		$curbuf->Delete(1,$c);
+		$curbuf->Append(1,split("\n",$html_pp));
+	}
 
 	push @pp,(split("\n",$html_pp));
 	VimListExtend('html_pp',\@pp);
-
 eof
 
 	return html_pp

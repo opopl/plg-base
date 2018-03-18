@@ -32,7 +32,11 @@ function! base#bufact#html#pretty_libxml ()
 	let lines = getline(0,'$')
 	let html  = join(lines,"\n")
 
-	let html_pp=base#html#pretty_libxml(html)
+	let html_pp=base#html#pretty_libxml({ 
+			\	'htmltext' : html,
+			\	'fillbuf'  : 1,
+			\	})
+
 	call base#buf#open_split({ 'lines' : html_pp })
 
 endfunction
