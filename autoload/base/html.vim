@@ -95,31 +95,31 @@ perl << eof
 	use Vim::Perl qw(:funcs :vars);
 	use HTML::Work;
 
-	my $url   = VimVar('a:url');
-	my $xpath = VimVar('xpath');
+	my $url     = VimVar('a:url');
+	my $xpath   = VimVar('xpath');
 	my @actions = VimVar('actions');
 	
-	my $htw=HTML::Work->new(
+	our $HTW ||= HTML::Work->new(
 		sub_log => sub { VimMsg($_) for(@_);}
 	);
-	$htw->load_html_from_url({ 
+	$HTW->load_html_from_url({ 
 			url   => $url,
 	});
 
 	for(@actions){
 		/^replace_a/ && do {
-			$htw->replace_a;
+			$HTW->replace_a;
 		};
 	}
 
-	my @lines=$htw->htmllines({ xpath => $xpath });
+	my @lines=$HTW->htmllines({ xpath => $xpath });
 	VimListExtend('lines',\@lines);
 
 	my $save      = VimVar('save');
 	my $savedfile = VimVar('savedfile');
 
 	if($save){
-		$htw->html_saveas({ 
+		$HTW->html_saveas({ 
 			xpath => $xpath, 
 			file  => $savedfile,
 		});
@@ -353,11 +353,11 @@ perl << eof
 
 	my $html  = VimVar('htmltext');
 	
-	my $htw=HTML::Work->new(
+	our $HTW ||= HTML::Work->new(
 		html => $html,
 	);
-	$htw->replace_a;
-	my $lines = $htw->htmllines;
+	$HTW->replace_a;
+	my $lines = $HTW->htmllines;
 
 	VimListExtend('lines',$lines);
 
@@ -387,13 +387,13 @@ perl << eof
 
 	my $html  = VimVar('htmltext');
 
-	my $htw=HTML::Work->new(
+	our $HTW ||= HTML::Work->new(
 		html    => $html,
 		sub_log => sub { VimMsg($_) for(@_); },
 	);
-	$htw->replace_a;
+	$HTW->replace_a;
 
-	my @lines   = $htw->htmllines;
+	my @lines   = $HTW->htmllines;
 
 	VimListExtend(lines,\@lines);
 
@@ -413,32 +413,23 @@ function! base#html#xpath(...)
 
 	let add_comments = get(ref,'add_comments',0)
 	let cdata2text   = get(ref,'cdata2text',0)
-	let load_as      = get(ref,'load_as','html')
+
+	let load_as      = base#html#libxml_load_as()
+	let load_as      = get(ref,'load_as',load_as)
 
 	if len(htmllines)
 		 let htmltext=join(htmllines,"\n")
 	endif
 
-	let filtered=split(htmltext,"\n")
 	let filtered=[]
-	if !strlen(xpath)
-		echohl WarningMsg
-		echo 'Empty XPATH'
-		echohl None
-		return filtered
-	endif
 
 perl << eof
-	# read https://habrahabr.ru/post/53578/ about encodings
-	# http://www.nestor.minsk.by/sr/2008/09/sr80902.html
 	use utf8;
 	use Encode;
 
 	use Vim::Perl qw(:funcs :vars);
+	use HTML::Work;
 	use XML::LibXML;
-	use XML::LibXML::PrettyPrint;
-
-	use Vim::Xml qw(%nodetypes node_cdata2text $DOM $PARSER $PARSER_OPTS);
 
 	my $html         = VimVar('htmltext');
 	my $xpath        = VimVar('xpath');
@@ -448,34 +439,16 @@ perl << eof
 	my $cdata2text   = VimVar('cdata2text');
 	my $load_as      = VimVar('load_as');
 
-	my ($dom,@nodes,@filtered,$parser);
+	our $HTW ||= HTML::Work->new(sub_log => sub { VimWarn(@_); });
 
-	$parser=$PARSER || XML::LibXML->new; 
+	my @nodes = $HTW
+		->init_dom({ 
+				html    => $html,
+		,		load_as => $load_as,
+		})
+		->nodes({ xpath => $xpath });
 
-	my $xml_libxml_parser_options=$PARSER_OPTS || 
-	{
-			expand_entities => 0,
-			load_ext_dtd 		=> 1,
-			keep_blanks     => 1,
-			no_cdata        => 0,
-	};
-
-	$parser->set_options(%$xml_libxml_parser_options);
-
-	my $inp={
-			string          => decode('utf-8',$html),
-			recover         => 1,
-			suppress_errors => 1,
-	};
-
-	if ($load_as eq 'xml') {
-		$dom = $parser->load_xml(%$inp);
-	} elsif ($load_as eq 'html'){
-		$dom = $parser->load_html(%$inp);
-	}
-
-	@nodes=$dom->findnodes($xpath);
-	@filtered;
+	my @filtered;
 
 	for my $node (@nodes){
 		my $ntype=$node->nodeType;
@@ -490,7 +463,10 @@ perl << eof
 		}
 
 		if ($cdata2text) {
-			$node = node_cdata2text($node,$dom,$parser);
+			$node = $HTW->node_cdata2text({ 
+				node   => $node,
+				dom    => $dom,
+				parser => $parser });
 		}
 		push @filtered,split("\n",$node->toString);
 	}
@@ -570,10 +546,13 @@ function! base#html#xpath_remove_nodes(...)
 
 	let ref      = get(a:000,0,{})
 
+	let opts    = base#varget('opts',{})
+	let load_as = get(opts,'libxml_load_as','')
+	let load_as = get(ref,'load_as',load_as)
+
 	let htmltext  = get(ref,'htmltext','')
 	let htmllines = get(ref,'htmllines',[])
 	let xpath     = get(ref,'xpath','')
-	let load_as   = get(ref,'load_as','xml')
 
 	if len(htmllines)
 		 let htmltext=join(htmllines,"\n")
@@ -592,14 +571,13 @@ perl << eof
 	my $xpath   = VimVar('xpath');
 	my $load_as = VimVar('load_as');
 
-	my $htw=HTML::Work->new;
+	our $HTW ||= HTML::Work->new(sub_log => sub { VimWarn(@_); });
 
-	my $dom = $htw->init_dom({ 
-		html    => $html,
-		load_as => $load_as,
-	});
-
-	$html = $htw
+	$html = $HTW
+		->init_dom({ 
+			html    => $html,
+			load_as => $load_as,
+		})
 		->nodes_remove({ xpath => $xpath })
 		->htmlstr;
 
@@ -649,12 +627,22 @@ eof
 
 endfunction
 
+
+function! base#html#libxml_load_as()
+	let opts    = base#varget('opts',{})
+	let load_as = get(opts,'libxml_load_as','')
+	return load_as
+endfunction
+
 function! base#html#pretty_libxml(...)
 	
 	if !has('perl') | return [] | endif
 
 	let ref      = get(a:000,0,{})
 	let htmltext = get(ref,'htmltext','')
+
+	let load_as      = base#html#libxml_load_as()
+	let load_as      = get(ref,'load_as',load_as)
 
 	let html_pp=[]
 
@@ -665,15 +653,20 @@ perl << eof
 	use Vim::Perl qw(:funcs :vars);
 	use HTML::Work;
 
-	my $htw  = HTML::Work->new;
-	my $html = VimVar('htmltext');
-	my $ref  = VimVar('ref');
+	our $HTW  ||= HTML::Work->new( sub_log => sub { VimWarn(@_); } );
 
-	my $html_pp = $htw
-		->init_dom({ html => $html })
+	my $ref     = VimVar('ref');
+	my $load_as = VimVar('load_as');
+
+	my $html = VimVar('htmltext');
+
+	my $html_pp = $HTW
+		->init_dom({ 
+			html    => $html,
+			load_as => $load_as,
+		})
 		->dom_pretty
 		->htmlstr;
-
 
 	if ($ref->{fillbuf}) {
 		my $c=$curbuf->Count(); 

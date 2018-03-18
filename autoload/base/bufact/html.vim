@@ -32,12 +32,15 @@ function! base#bufact#html#pretty_libxml ()
 	let lines = getline(0,'$')
 	let html  = join(lines,"\n")
 
+	let load_as      = base#html#libxml_load_as()
+
 	let html_pp=base#html#pretty_libxml({ 
 			\	'htmltext' : html,
 			\	'fillbuf'  : 1,
+			\	'load_as'  : load_as,
 			\	})
 
-	call base#buf#open_split({ 'lines' : html_pp })
+	"call base#buf#open_split({ 'lines' : html_pp })
 
 endfunction
 
@@ -54,11 +57,14 @@ function! base#bufact#html#xpath ()
 
 	let filtered = []
 
+	let load_as = base#html#libxml_load_as()
+
 	let filtered = base#html#xpath({
 				\	'htmltext'     : html,
 				\	'xpath'        : xpath,
 				\	'add_comments' : 0,
 				\	'cdata2text'   : 1,
+				\	'load_as'      : load_as,
 				\	})
 
 	call base#buf#open_split({ 'lines' : filtered })
@@ -98,6 +104,7 @@ function! base#bufact#html#quickfix_xpath ()
 
 endfunction
 
+"""remove_xpath
 function! base#bufact#html#remove_xpath ()
 	call base#buf#start()
 
@@ -115,8 +122,27 @@ function! base#bufact#html#remove_xpath ()
 				\	'htmltext' : html,
 				\	'xpath'    : xpath,
 				\	'fillbuf'  : 1,
-				\	'load_as'  : 'xml',
 				\	})
 
 endfunction
+
+"""table_to_txt
+function! base#bufact#html#table_to_txt ()
+	call base#buf#start()
+
+	let lines = getline(0,'$')
+	let html  = join(lines,"\n")
+
+	let xpath = '//table'
+	let lines = []
+
+	let tblines = base#html#xpath({
+				\	'htmltext' : html,
+				\	'xpath'    : xpath,
+				\	'fillbuf'  : 0,
+				\	})
+	call base#buf#open_split({ 'lines' : tblines })
+
+endfunction
+
 
