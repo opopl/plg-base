@@ -53,7 +53,7 @@ function! base#bufact#html#xpath ()
 	let filtered = base#html#xpath({
 				\	'htmltext'     : html,
 				\	'xpath'        : xpath,
-				\	'add_comments' : 1,
+				\	'add_comments' : 0,
 				\	'cdata2text'   : 1,
 				\	})
 

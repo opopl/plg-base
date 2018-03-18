@@ -596,55 +596,22 @@ perl << eof
 	use Encode;
 
 	use Vim::Perl qw(:funcs :vars);
-	use XML::LibXML;
-	use XML::LibXML::PrettyPrint;
-	use Vim::Xml qw($PARSER);
+	use HTML::Work;
 
 	my $html    = VimVar('htmltext');
 	my $xpath   = VimVar('xpath');
 	my $load_as = VimVar('load_as');
 
+	my $htw=HTML::Work->new;
+
 	my $ref = VimVar('ref') || {};
 
-	my ($dom,@nodes,@filtered,$parser);
+	my $dom = $htw->init_dom({ 
+		html    => $html,
+		load_as => $load_as,
+	});
 
-	$XML::LibXML::skipXMLDeclaration = 1;
-
-	my $o=$PARSER_OPTS || 
-	{
-			expand_entities => 0,
-			load_ext_dtd 		=> 1,
-			keep_blanks     => 1,
-			no_cdata        => 1,
-			line_numbers    => 1,
-	};
-	my $parser = $PARSER || XML::LibXML->new($o); 
-	my $loadsubs = { 
-		xml  => sub { $parser->load_xml(@_); },
-		html => sub { $parser->load_html(@_); },
-	};
-	my $load = $loadsubs->{$load_as} || undef;
-	unless ($load){ return; }
-	my $inp={
-			string          => decode('utf-8',$html),
-			recover         => 1,
-			suppress_errors => 1,
-	};
-	$dom = $load->(%$inp);
-
-	@nodes=$dom->findnodes($xpath);
-	unless(@nodes){ return; }
-
-	my $pp = XML::LibXML::PrettyPrint->new(indent_string => "  ");
-	for my $node (@nodes){
-		my $parent=$node->parentNode;
-		eval { $parent->removeChild($node); };
-		if ($@) {
-			VimWarn($@);
-			next;
-		}
- 		$pp->pretty_print($parent);
-	}
+	$htw->nodes_remove({ xpath => $xpath });
 	$html=$dom->toString;
 
 	if ($ref->{fillbuf}) {
