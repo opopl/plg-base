@@ -188,6 +188,33 @@ perl << eof
 	foreach my $table (@tables) {
 		my $perltable=[];
 
+		my @th = $table->findnodes('.//th');
+		my @headers;
+		if (@th) {
+			foreach my $th (@th) {
+				push @headers,$HTW->node_text_content($th);
+			}
+		}
+
+		my $nh       = scalar @headers;
+		my @nh       = (1 .. $nh );
+		my @fh       = map { "f_" . $_ } @nh;
+		my $tablenam = "t_".$table_id;
+
+		if (@headers) {
+			my @q;
+			push @q, 
+				"create table $tablenam",
+				"(",
+				join("," => map { $_." varchar(100)"} @fh),
+				")";
+			my $q=join("",@q);
+			VimMsg($q);
+			
+			eval { $dbh->do($q); };
+			if ($@) { VimMsg($@); }
+		}
+
 		my @tr = $table->findnodes('.//tr');
 
 		foreach my $row (@tr) {
@@ -208,6 +235,19 @@ perl << eof
 				push @$perlrow,$celltext;
 			}
 			push @$perltable,$perlrow;
+
+			my $f=join("," => @fh);
+			my $quot=join("," => map { "?" } @nh );
+			my $ins=qq{
+ 				insert into $tablenam ( $f ) values( $quot )
+			};
+			my $sth;
+			
+			eval { $sth = $dbh->prepare($ins); };
+			if ($@) { VimWarn($@); }
+			my @e=@$perlrow;
+			eval { $sth->execute(@e); };
+			if ($@) { VimWarn($@); }
 		}
 
 		$table_id++;
@@ -222,16 +262,14 @@ perl << eof
 			my $n=scalar @$row;
 			my $fmt = 'A50' x $n;
 			my $s = pack($fmt,@$row);
-			VimMsg($s);
 			push @vimtext,$s;
 		}
 	}
 
 	VimLet('vimtext',\@vimtext);
-	VimMsg(Dumper(\@vimtext));
 eof
 
-	"call base#buf#open_split({ 'lines' : vimtext })
+	call base#buf#open_split({ 'lines' : vimtext })
 
 endfunction
 
