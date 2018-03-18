@@ -141,7 +141,63 @@ function! base#bufact#html#table_to_txt ()
 				\	'xpath'    : xpath,
 				\	'fillbuf'  : 0,
 				\	})
-	call base#buf#open_split({ 'lines' : tblines })
+
+	let vimtext=[]
+perl << eof
+	my $tblines         = VimVar('tblines');
+	$HTW
+		->init_dom({ htmllines => $tblines })
+		;
+
+	my @tables=$HTW->nodes({ 
+		xpath => '//table' 
+	});
+	my $table_id   = 0;
+	my $perltables = {};
+	foreach my $table (@tables) {
+		my $perltable=[];
+
+		my @tr = $table->findnodes('.//tr');
+
+		foreach my $row (@tr) {
+			my $perlrow=[];
+			my @td = $row->findnodes('.//td');
+			foreach my $cell (@td) {
+				for my $subcell($cell->findnodes('.//*')){
+					my $lref = {
+						node            => $subcell,
+						text_callbacks  => [],
+						encode_entities => 0,
+						etags           => [qw(br)],
+					};
+					$HTW->node_replace_with_textContent($lref);
+				}
+				my $celltext=$cell->textContent;
+				push @$perlrow,$celltext;
+			}
+			push @$perltable,$perlrow;
+		}
+
+		$table_id++;
+		$perltables->{$table_id}={ data => $perltable };
+	}
+
+	my @ids=sort keys %$perltables;
+	my @vimtext;
+	foreach my $id (@ids) {
+		my $data = $perltables->{$id}->{data}; 
+		foreach my $row (@$data) {
+			my $n=scalar @$row;
+			my $fmt = 'A30' x $n;
+			my $s = pack($fmt,@$row);
+			push @vimtext,$s;
+		}
+	}
+
+	VimLet('vimtext',\@vimtext);
+eof
+
+	call base#buf#open_split({ 'lines' : vimtext })
 
 endfunction
 
