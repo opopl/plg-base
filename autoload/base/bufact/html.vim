@@ -111,6 +111,7 @@ function! base#bufact#html#remove_xpath ()
 				\	'htmltext' : html,
 				\	'xpath'    : xpath,
 				\	'fillbuf'  : 1,
+				\	'load_as'  : 'xml',
 				\	})
 
 endfunction

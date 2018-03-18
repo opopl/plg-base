@@ -251,14 +251,6 @@ perl << eof
 			 	prev => $n_prev,
 			 	node => $n_node,
 		 );
-		 #VimMsg(Dumper(\%n));
-
-		 if ($n_node eq '1') {
-				#VimMsg($node->toString);
-		 }
-		 if ($n_prev eq '1') {
-				#VimMsg($prev->toString);
-		 }
 
 		 unshift @children,{ 
 		 		node => $node,
@@ -581,6 +573,7 @@ function! base#html#xpath_remove_nodes(...)
 	let htmltext  = get(ref,'htmltext','')
 	let htmllines = get(ref,'htmllines',[])
 	let xpath     = get(ref,'xpath','')
+	let load_as   = get(ref,'load_as','xml')
 
 	if len(htmllines)
 		 let htmltext=join(htmllines,"\n")
@@ -605,19 +598,39 @@ perl << eof
 	use Vim::Perl qw(:funcs :vars);
 	use XML::LibXML;
 	use XML::LibXML::PrettyPrint;
+	use Vim::Xml qw($PARSER);
 
-	my $html  = VimVar('htmltext');
-	my $xpath = VimVar('xpath');
+	my $html    = VimVar('htmltext');
+	my $xpath   = VimVar('xpath');
+	my $load_as = VimVar('load_as');
 
 	my $ref = VimVar('ref') || {};
 
-	my ($dom,@nodes,@filtered);
+	my ($dom,@nodes,@filtered,$parser);
 
-	$dom = XML::LibXML->load_html(
+	$XML::LibXML::skipXMLDeclaration = 1;
+
+	my $o=$PARSER_OPTS || 
+	{
+			expand_entities => 0,
+			load_ext_dtd 		=> 1,
+			keep_blanks     => 1,
+			no_cdata        => 1,
+			line_numbers    => 1,
+	};
+	my $parser = $PARSER || XML::LibXML->new($o); 
+	my $loadsubs = { 
+		xml  => sub { $parser->load_xml(@_); },
+		html => sub { $parser->load_html(@_); },
+	};
+	my $load = $loadsubs->{$load_as} || undef;
+	unless ($load){ return; }
+	my $inp={
 			string          => decode('utf-8',$html),
 			recover         => 1,
 			suppress_errors => 1,
-	);
+	};
+	$dom = $load->(%$inp);
 
 	@nodes=$dom->findnodes($xpath);
 	unless(@nodes){ return; }
@@ -636,7 +649,7 @@ perl << eof
 
 	if ($ref->{fillbuf}) {
 		my $c=$curbuf->Count(); 
-		VimMsg($c);
+		#VimMsg($c);
 		$curbuf->Delete(1,$c);
 		$curbuf->Append(1,split("\n",$html));
 	}
