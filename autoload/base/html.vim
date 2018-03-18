@@ -582,9 +582,57 @@ perl << eof
 		->htmlstr;
 
 	if ($ref->{fillbuf}) {
-		my $c=$curbuf->Count(); 
-		$curbuf->Delete(1,$c);
-		$curbuf->Append(1,split("\n",$html));
+		$Vim::Perl::CURBUF=$main::curbuf;
+		CurBufSet({ text => $html });
+	}
+	VimLet('htmltext',html);
+	return $html;
+eof
+
+endfunction
+
+function! base#html#xpath_remove_attr(...)
+	if !has('perl') | return | endif
+
+	let ref      = get(a:000,0,{})
+
+	let opts    = base#varget('opts',{})
+	let load_as = get(opts,'libxml_load_as','')
+	let load_as = get(ref,'load_as',load_as)
+
+	let htmltext  = get(ref,'htmltext','')
+	let htmllines = get(ref,'htmllines',[])
+	let xpath     = get(ref,'xpath','')
+
+	if len(htmllines)
+		 let htmltext=join(htmllines,"\n")
+	endif
+
+perl << eof
+	use utf8;
+	use Encode;
+
+	use Vim::Perl qw(:funcs :vars);
+	use HTML::Work;
+
+	my $ref     = VimVar('ref') || {};
+
+	my $html    = VimVar('htmltext');
+	my $xpath   = VimVar('xpath');
+	my $load_as = VimVar('load_as');
+
+	our $HTW ||= HTML::Work->new(sub_log => sub { VimWarn(@_); });
+
+	$html = $HTW
+		->init_dom({ 
+			html    => $html,
+			load_as => $load_as,
+		})
+		->nodes_remove_attr({ xpath => $xpath })
+		->htmlstr;
+
+	if ($ref->{fillbuf}) {
+		CurBufSet({ text => $html });
 	}
 	VimLet('htmltext',html);
 	return $html;

@@ -127,6 +127,19 @@ function! base#bufact#html#remove_xpath ()
 endfunction
 
 """table_to_txt
+function! base#bufact#html#remove_attr ()
+	call base#buf#start()
+
+	let lines = getline(0,'$')
+	let html  = join(lines,"\n")
+
+	let xpath = '//*'
+	let lines = []
+
+
+endfunction
+
+"""table_to_txt
 function! base#bufact#html#table_to_txt ()
 	call base#buf#start()
 
@@ -188,7 +201,7 @@ perl << eof
 		my $data = $perltables->{$id}->{data}; 
 		foreach my $row (@$data) {
 			my $n=scalar @$row;
-			my $fmt = 'A30' x $n;
+			my $fmt = 'A50' x $n;
 			my $s = pack($fmt,@$row);
 			push @vimtext,$s;
 		}
