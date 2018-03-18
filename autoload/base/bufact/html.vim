@@ -185,6 +185,8 @@ perl << eof
 
 	use DBI;
 	my $dbh = DBI->connect("dbi:SQLite:dbname=:memory:","","");
+
+	my $sub_tablenam = sub { "t_" . shift; };
 	foreach my $table (@tables) {
 		my $perltable=[];
 
@@ -199,17 +201,16 @@ perl << eof
 		my $nh       = scalar @headers;
 		my @nh       = (1 .. $nh );
 		my @fh       = map { "f_" . $_ } @nh;
-		my $tablenam = "t_".$table_id;
+		my $tablenam = $sub_tablenam->($table_id);
 
 		if (@headers) {
 			my @q;
 			push @q, 
 				"create table $tablenam",
 				"(",
-				join("," => map { $_." varchar(100)"} @fh),
+				join("," => map { $_." varchar(200)"} @fh),
 				")";
 			my $q=join("",@q);
-			VimMsg($q);
 			
 			eval { $dbh->do($q); };
 			if ($@) { VimMsg($@); }
@@ -243,15 +244,15 @@ perl << eof
 			};
 			my $sth;
 			
-			eval { $sth = $dbh->prepare($ins); };
+			eval { $sth = $dbh->prepare($ins) or VimWarn($dbh->errstr) };
 			if ($@) { VimWarn($@); }
 			my @e=@$perlrow;
 			eval { $sth->execute(@e); };
 			if ($@) { VimWarn($@); }
 		}
 
-		$table_id++;
 		$perltables->{$table_id}={ data => $perltable };
+		$table_id++;
 	}
 
 	my @ids=sort keys %$perltables;
@@ -264,12 +265,27 @@ perl << eof
 			my $s = pack($fmt,@$row);
 			push @vimtext,$s;
 		}
+
+		my $tablenam = $sub_tablenam->($id);
+		my $q = qq{ select * from $tablenam };
+		my $sth;
+		eval { $sth = $dbh->prepare($q) or VimWarn($dbh->errstr) };
+		if ($@) { VimWarn($@); }
+		my @e=();
+		eval { $sth->execute(@e); };
+		if ($@) { VimWarn($@); }
+
+#    my $rows = $dbh->selectall_arrayref($sql);
+#		while(my $r=$sth->fetchrow_arrayref){
+#			VimMsg(Dumper($r));
+#		}
+
 	}
 
 	VimLet('vimtext',\@vimtext);
 eof
 
-	call base#buf#open_split({ 'lines' : vimtext })
+	"call base#buf#open_split({ 'lines' : vimtext })
 
 endfunction
 
