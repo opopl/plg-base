@@ -126,15 +126,30 @@ function! base#bufact#html#remove_xpath ()
 
 endfunction
 
-"""table_to_txt
-function! base#bufact#html#remove_attr ()
-	call base#buf#start()
+"""remove_attr
+function! base#bufact#html#attr_remove ()
+	let load_as = base#html#libxml_load_as()
+perl << eof
+	use Vim::Perl qw(:funcs :vars);
+	$Vim::Perl::CURBUF=$curbuf;
 
-	let lines = getline(0,'$')
-	let html  = join(lines,"\n")
-
-	let xpath = '//*'
-	let lines = []
+	my $load_as = VimVar('load_as');
+	my $xpath = '//*';
+	my $lines = [ $curbuf->Get(1 .. $curbuf->Count) ];
+	$HTW
+		->init_dom({ htmllines => $lines, load_as => $load_as })
+		;
+	my @nodes=$HTW->nodes({ xpath => $xpath});
+	foreach my $node (@nodes) {
+		my @attr = $node->findnodes('./attribute::*');
+		my @names = map { $_->nodeName } @attr;
+		foreach my $name (@names) {
+			$node->removeAttribute($name);
+		}
+	}
+	my $html=$HTW->htmlstr;
+	CurBufSet({ text => $html});
+eof
 
 
 endfunction
@@ -167,6 +182,9 @@ perl << eof
 	});
 	my $table_id   = 0;
 	my $perltables = {};
+
+	use DBI;
+	my $dbh = DBI->connect("dbi:SQLite:dbname=:memory:","","");
 	foreach my $table (@tables) {
 		my $perltable=[];
 
@@ -185,7 +203,8 @@ perl << eof
 					};
 					$HTW->node_replace_with_textContent($lref);
 				}
-				my $celltext=$cell->textContent;
+				my $celltext=$HTW->node_text_content($cell);
+
 				push @$perlrow,$celltext;
 			}
 			push @$perltable,$perlrow;
@@ -203,14 +222,16 @@ perl << eof
 			my $n=scalar @$row;
 			my $fmt = 'A50' x $n;
 			my $s = pack($fmt,@$row);
+			VimMsg($s);
 			push @vimtext,$s;
 		}
 	}
 
 	VimLet('vimtext',\@vimtext);
+	VimMsg(Dumper(\@vimtext));
 eof
 
-	call base#buf#open_split({ 'lines' : vimtext })
+	"call base#buf#open_split({ 'lines' : vimtext })
 
 endfunction
 
