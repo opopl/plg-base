@@ -402,8 +402,21 @@ eof
 
 endfunction
 
+function! base#html#htw_init ()
+perl << eof
+	use HTML::Work;
+	our $HTW ||= HTML::Work->new({
+			sub_log  => sub { VimMsg([@_]) },
+			sub_warn => sub { VimWarn(@_) },
+	});
+eof
+	
+endfunction
+
 function! base#html#xpath(...)
 	if !has('perl') | return | endif
+
+	call base#html#htw_init()
 
 	let ref      = get(a:000,0,{})
 
@@ -428,7 +441,6 @@ perl << eof
 	use Encode;
 
 	use Vim::Perl qw(:funcs :vars);
-	use HTML::Work;
 	use XML::LibXML;
 
 	my $html         = VimVar('htmltext');
@@ -438,8 +450,6 @@ perl << eof
 	my $add_comments = VimVar('add_comments');
 	my $cdata2text   = VimVar('cdata2text');
 	my $load_as      = VimVar('load_as');
-
-	our $HTW ||= HTML::Work->new(sub_log => sub { VimWarn(@_); });
 
 	my @nodes = $HTW
 		->init_dom({ 
