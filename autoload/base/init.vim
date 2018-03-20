@@ -195,7 +195,7 @@ fun! base#init#cmds()
 
 """VH
 	command! -nargs=* -range -complete=custom,base#complete#VH  VH
-		\	call base#vh#act(<line1>,<line2>,<f-args>) 
+		\	call base#vh#act(<f-args>,<line1>,<line2>) 
 
 """ExeFileRun
 	command! -nargs=*  -complete=custom,base#complete#exefileids FileRun

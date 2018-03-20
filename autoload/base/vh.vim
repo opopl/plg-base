@@ -1,16 +1,46 @@
 
 function! base#vh#number_headings (...)
-	let start = get(a:000,0,0)
+	let start = get(a:000,0,1)
 	let end   = get(a:000,1,line('$'))
 
-	let startnumber = input('Start number:','a')
-	let endnumber   = input('End number:','z')
+	let startid = input('Start id:','a')
+	let endid   = input('End id:','z')
 
 perl << eof
-	BEGIN {$i=0; @a=($startnumber..$endnumber)}; if(/^\S(.+)/){ s/^(\S+)/$a[$i]. $1/g; $i++; }
+	use Vim::Perl qw(VimVar);
+
+	my $start = VimVar('start');
+	my $end   = VimVar('end');
+	my @range = ( $start .. $end );
+
+	my $startid = VimVar('startid');
+	my $endid   = VimVar('endid');
+
+	my @a = ( $startid .. $endid ); 
+
+	my $lines = [ $curbuf->Get( @range ) ];
+	my $lnum=1;
+	for(@$lines){
+		if(/^\S(.+)/){ 
+			my $a=shift @a;
+			s/^(\S.+)/$a $1/g; 
+			$curbuf->Set($lnum,$_);
+		}
+		$lnum++;
+	}
 	
 eof
 	
+endfunction
+
+function! base#vh#tag_from_basename (...)
+	call base#buf#start()
+
+	let tag = b:basename
+	let tag = substitute(tag,'\.\w\+$','','g')
+
+	call append(line(0),'*'.tag.'*')
+
 endfunction
 
 function! base#vh#prompt_arabic (...)
@@ -54,13 +84,20 @@ eof
 
 endfunction
 
+"call base#vh#act (act,start,end)
+"call base#vh#act (act)
 
-function! base#vh#act (start,end,...)
-	let start = a:start
-	let end   = a:end
 
+function! base#vh#act (...)
 	if !(&ft=='help')
 		return
+	endif
+
+	let start = 1
+	let end   = line('$')
+	if base#vim#in_visual_mode ()
+		let start = get(a:000,1,1)
+		let end   = get(a:000,2,line('$'))
 	endif
 
 	let act = get(a:000,0,'')

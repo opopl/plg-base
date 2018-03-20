@@ -66,6 +66,13 @@ function! base#vim#linesfun (...)
 	
 endfunction
 
+function! base#vim#in_visual_mode (...)
+	let m = base#qw('V v')
+
+	return  base#inlist(mode(),m) ? 1 : 0
+
+endfunction
+
 function! base#vim#helptags (...)
 	let ref    = get(a:000,0,{})
 	let docdir = get(ref,'dir','')
