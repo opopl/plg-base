@@ -128,17 +128,12 @@ endfunction
 
 """remove_attr
 function! base#bufact#html#attr_remove ()
+	call base#html#htw_load_buf()
 	let load_as = base#html#libxml_load_as()
 perl << eof
 	use Vim::Perl qw(:funcs :vars);
-	$Vim::Perl::CURBUF=$curbuf;
 
-	my $load_as = VimVar('load_as');
 	my $xpath = '//*';
-	my $lines = [ $curbuf->Get(1 .. $curbuf->Count) ];
-	$HTW
-		->init_dom({ htmllines => $lines, load_as => $load_as })
-		;
 	my @nodes=$HTW->nodes({ xpath => $xpath});
 	foreach my $node (@nodes) {
 		my @attr = $node->findnodes('./attribute::*');
@@ -148,7 +143,27 @@ perl << eof
 		}
 	}
 	my $html=$HTW->htmlstr;
+
+	$Vim::Perl::CURBUF=$curbuf;
 	CurBufSet({ text => $html});
+eof
+
+endfunction
+
+"""table_to_txt
+function! base#bufact#html#replace_a ()
+	call base#html#htw_load_buf()
+perl << eof
+	$HTW->replace_a;
+	CurBufSet({ text => $HTW->htmlstr });
+eof
+endfunction
+
+ function! base#bufact#html#replace_pre ()
+	call base#html#htw_load_buf()
+perl << eof
+	$HTW->replace_pre;
+	CurBufSet({ text => $HTW->htmlstr });
 eof
 
 endfunction
@@ -156,14 +171,13 @@ endfunction
 """table_to_txt
 function! base#bufact#html#table_to_txt ()
 	call base#buf#start()
+	call base#html#htw_init()
 
 	let lines = getline(0,'$')
 	let html  = join(lines,"\n")
 
 	let xpath = '//table'
 	let lines = []
-
-	call base#html#htw_init()
 
 	let tblines = base#html#xpath({
 				\	'htmltext' : html,
@@ -173,7 +187,7 @@ function! base#bufact#html#table_to_txt ()
 
 	let vimtext  = []
 	let offset   = input('offset:',5)
-	let maxwidth = input('maxwidth:','50')
+	let maxwidth = input('maxwidth:',50)
 
 perl << eof
 	my $offset   = VimVar('offset');
@@ -182,7 +196,10 @@ perl << eof
 
 	$HTW
 		->init_dom({ htmllines => $tblines })
-		->tables_to_txt({ offset => $offset })
+		->tables_to_txt({ 
+			offset   => $offset,
+			maxwidth => $maxwidth,
+		})
 		;
 	my $dbh=$HTW->{dbh_sqlite};
 

@@ -44,109 +44,6 @@ eof
 
 endfunction
 
-"call base#html#get_url(url,ref)
-"call base#html#get_url(url,{ 'open_split' : 1 })
-"call base#html#get_url(url,{ 'lynx_to_txt' : 1 })
-"echo base#html#get_url(url,{ 'xpath' : '//div' })
-"
-" used in IdePhP url_load
-"
-
-function! base#html#get_url(url,...)
-	if !has('perl') | return | endif
-
-	let lines  = []
-	let errors = []
-
-	let ref   = get(a:000,0,{
-			\	'open_split'  : 0,
-			\	'check_saved' : 0,
-			\	'save'        : '',
-			\	'actions'     : [],
-			\	})
-
-	let xpath   = get(ref,'xpath','')
-	let actions = get(ref,'actions',[])
-
-	let nodes = []
-
-	let save        = get(ref,'save')
-	let check_saved = get(ref,'check_saved')
-
-	if check_saved && strlen(save)
-		let f = base#qw#catpath('saved_html',save)
-		if filereadable(f)
-			let lines=readfile(f)
-			if strlen(xpath)
-				let lines = base#html#xpath({
-						\	'xpath'     : xpath,
-						\	'htmllines' : lines,
-						\	})
-			endif
-			return lines
-		endif
-	endif
-
-	if strlen(save)
-		let savedfile = base#qw#catpath('saved_html',save)
-	endif
-
-perl << eof
-	use Vim::Perl qw(:funcs :vars);
-	use HTML::Work;
-
-	my $url     = VimVar('a:url');
-	my $xpath   = VimVar('xpath');
-	my @actions = VimVar('actions');
-	
-	our $HTW ||= HTML::Work->new(
-		sub_log => sub { VimMsg($_) for(@_);}
-	);
-	$HTW->load_html_from_url({ 
-			url   => $url,
-	});
-
-	for(@actions){
-		/^replace_a/ && do {
-			$HTW->replace_a;
-		};
-	}
-
-	my @lines=$HTW->htmllines({ xpath => $xpath });
-	VimListExtend('lines',\@lines);
-
-	my $save      = VimVar('save');
-	my $savedfile = VimVar('savedfile');
-
-	if($save){
-		$HTW->html_saveas({ 
-			xpath => $xpath, 
-			file  => $savedfile,
-		});
-	}
-
-eof
-	if get(ref,'open_split')
-		call base#buf#open_split({ 'lines' : lines })
-	endif
-
-	for action in actions
-		if action == 'lynx_to_txt'
-			echo action
-			let tmp=tempname()
-			call writefile(lines,tmp)
-			let cmd = 'lynx -dump -force_html '.tmp
-			let ok = base#sys({ "cmds" : [cmd]})
-			let lines = base#varget('sysout',[])
-		endif
-	endfor
-
-	if get(ref,'lynx_to_txt')
-	endif
-
-	return lines
-
-endfunction
 
 function! base#html#headings (...)
 	let ref   = get(a:000,0,{})
@@ -405,10 +302,48 @@ endfunction
 function! base#html#htw_init ()
 perl << eof
 	use HTML::Work;
-	our $HTW ||= HTML::Work->new({
+	our $HTW ||= HTML::Work->new(
 			sub_log  => sub { VimMsg([@_]) },
 			sub_warn => sub { VimWarn(@_) },
+	);
+eof
+endfunction
+
+function! base#html#url_load (...)
+	let ref=get(a:000,0,{})
+	call base#html#htw_init ()
+	let load_as      = base#html#libxml_load_as()
+perl << eof
+	use File::Spec::Functions qw(catfile);
+	use Vim::Perl qw(:vars :funcs);
+	my $dir = catfile($ENV{appdata},qw(vim plg base saved_urls ));
+
+	my $ref = VimVar('ref') || {};
+	my $url = $ref->{url} || '';
+
+	$HTW->load_html_from_url({
+		url => $url,
 	});
+	my $html = $HTW->htmlstr;
+	VimCmd('enew');
+	VimCmd('split');
+	$Vim::Perl::CURBUF=$curbuf;
+	CurBufSet({ $text => $HTW->htmlstr });
+eof
+endfunction
+
+function! base#html#htw_load_buf ()
+	call base#html#htw_init ()
+	let load_as      = base#html#libxml_load_as()
+perl << eof
+	use Vim::Perl qw(:funcs :vars);
+	$Vim::Perl::CURBUF=$curbuf;
+
+	my $load_as = VimVar('load_as');
+	my $lines = [ $curbuf->Get(1 .. $curbuf->Count) ];
+	$HTW
+		->init_dom({ htmllines => $lines, load_as => $load_as })
+		;
 eof
 	
 endfunction
@@ -554,6 +489,8 @@ endfunction
 function! base#html#xpath_remove_nodes(...)
 	if !has('perl') | return | endif
 
+	call base#html#htw_init()
+
 	let ref      = get(a:000,0,{})
 
 	let opts    = base#varget('opts',{})
@@ -580,8 +517,6 @@ perl << eof
 	my $html    = VimVar('htmltext');
 	my $xpath   = VimVar('xpath');
 	my $load_as = VimVar('load_as');
-
-	our $HTW ||= HTML::Work->new(sub_log => sub { VimWarn(@_); });
 
 	$html = $HTW
 		->init_dom({ 
