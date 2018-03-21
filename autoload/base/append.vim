@@ -74,6 +74,14 @@ function! base#append#cwd (...)
 		call append(lnum,line)
 endfunction
 
+function! base#append#envvar (...)
+  let var = input('Environment variable:','')
+  let val = base#envvar(var)
+
+	call append(line('.'),val)
+
+endfunction
+
 function! base#append#env_path (...)
 	let path_a=base#env#path_a()
 

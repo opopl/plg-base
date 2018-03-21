@@ -2,6 +2,7 @@ splitsystem
 cwd
 #
 env_path
+envvar
 ###buf
 buf_full_path
 hist_cmd

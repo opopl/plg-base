@@ -2,11 +2,26 @@
 function! base#var#update (varname)
 	let varname = a:varname
 
+  let datlist  = base#varget('datlist',[])
+  let datfiles = base#varget('datfiles',{})
+
 	if varname == 'fileids'
 		let files = base#exefile#files()
 
 		let fileids = sort(keys(files))
 		call base#varset('exefileids',fileids)
+
+  elseif base#inlist(varname,datlist)
+    let datfile = get(datfiles,varname,'')
+    let dfu = base#file#win2unix(datfile)
+
+    let type = fnamemodify(dfu,':p:h:t')
+
+    let data = base#readdatfile({ 
+        \   "file" : datfile ,
+        \   "type" : type ,
+        \   })
+    call base#varset(varname,data)
 	endif
 
 endfunction

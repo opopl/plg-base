@@ -109,11 +109,7 @@ fun! base#init#paths(...)
         call base#initpaths#RESTPC()
     endif
 
-    call base#initpaths#progs()
-    call base#initpaths#php()
-    call base#initpaths#perl()
-    call base#initpaths#docs()
-    call base#initpaths#data()
+
 
     let mkvimrc  = base#file#catfile([ base#path('conf'), 'mk', 'vimrc' ])
     let mkbashrc = base#file#catfile([ base#path('conf'), 'mk', 'bashrc' ])
@@ -143,6 +139,12 @@ fun! base#init#paths(...)
         \   'projs_my'    : base#file#catfile([ hm, base#qw("repos git projs_my") ]),
         \   'projs_da'    : base#file#catfile([ hm, base#qw("repos git projs_da") ]),
         \   })
+
+	    call base#initpaths#progs()
+	    call base#initpaths#php()
+	    call base#initpaths#perl()
+	    call base#initpaths#docs()
+	    call base#initpaths#data()
 
         "\  'projs_da'    : base#file#catfile([ base#qw("Z: ap projs_da") ]),
 

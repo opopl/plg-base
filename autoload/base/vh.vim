@@ -23,7 +23,36 @@ perl << eof
 	for(@$lines){
 		if(/^\S(.+)/){ 
 			my $a=shift @a;
-			s/^(\S.+)/$a $1/g; 
+			s/^(\S.+)/"$a. ". $1/eg; 
+			$curbuf->Set($lnum,$_);
+		}
+		$lnum++;
+	}
+	
+eof
+	
+endfunction
+
+function! base#vh#remove_headings (...)
+	let start = get(a:000,0,1)
+	let end   = get(a:000,1,line('$'))
+
+	let head_fmt = input('Heading perl regexp format:','(\w+\.\s+)' )
+
+perl << eof
+	use Vim::Perl qw(VimVar);
+
+	my $start = VimVar('start');
+	my $end   = VimVar('end');
+	my @range = ( $start .. $end );
+
+	my $lines = [ $curbuf->Get( @range ) ];
+	my $lnum=1;
+	my $head_fmt = VimVar('head_fmt');
+	my $pat = qr/^$head_fmt/;
+	for(@$lines){
+		if(/$pat/){ 
+			s/$pat//g; 
 			$curbuf->Set($lnum,$_);
 		}
 		$lnum++;
