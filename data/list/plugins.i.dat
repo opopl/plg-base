@@ -33,6 +33,7 @@ vim-latex
 vim-misc
 xmledit
 xmlparser
+vim-perl
 #browser
 #bufexplorer
 #ctags
@@ -44,7 +45,6 @@ xmlparser
 #pdoc
 #pl
 #vim-git
-#vim-perl
 #vimexplorer
 #vimfiler
 #my_java
