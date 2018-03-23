@@ -443,9 +443,11 @@ fun! base#init#au()
 	endfor
 	exe 'augroup end'
 
-	au BufNewFile,BufWritePost,BufRead,BufWinEnter *.i.dat setf conf
+	au BufNewFile,BufWritePost,BufRead,BufWinEnter *.i.dat setf idat
 	au BufRead,BufNewFile,BufWinEnter *.csv		set filetype=csv
 	au BufRead,BufNewFile,BufWinEnter *.tsv		set filetype=tsv
+
+	au BufWritePost *.i.dat BufAct update_var 
 
 	"au BufRead,BufWinEnter * call base#buf#onload()
   "au FileType  * call base#buf#start() 

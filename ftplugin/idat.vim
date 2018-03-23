@@ -1,4 +1,5 @@
 
+let b:comps_BufAct = base#varget('comps_BufAct_idat',[])
 if exists("b:idephp_did_ftplugin_idat") | finish | endif
 let b:idephp_did_ftplugin_idat=1
 

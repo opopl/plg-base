@@ -1,4 +1,4 @@
 add_headers_numeric
 column_count
-select
+select_to_latex_table
 remove_empty_rows

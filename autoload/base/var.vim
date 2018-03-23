@@ -5,6 +5,12 @@ function! base#var#update (varname)
   let datlist  = base#varget('datlist',[])
   let datfiles = base#varget('datfiles',{})
 
+	let types = {
+			\	'dict'      : 'Dictionary',
+			\	'list'      : 'List',
+			\	'listlines' : 'ListLines',
+			\	}
+
 	if varname == 'fileids'
 		let files = base#exefile#files()
 
@@ -15,14 +21,23 @@ function! base#var#update (varname)
     let datfile = get(datfiles,varname,'')
     let dfu = base#file#win2unix(datfile)
 
-    let type = fnamemodify(dfu,':p:h:t')
+    let typedir = fnamemodify(dfu,':p:h:t')
+		let type    = get(types,typedir,'')
 
     let data = base#readdatfile({ 
         \   "file" : datfile ,
         \   "type" : type ,
         \   })
     call base#varset(varname,data)
+	else
+		return
 	endif
+
+	redraw!
+	echohl MoreMsg
+	echo 'Updated: ' . varname 
+	echohl None
+	return
 
 endfunction
 

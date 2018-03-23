@@ -1,5 +1,6 @@
 
 function! base#bufact#csv#add_headers_numeric ()
+	call base#buf#start()
 
 	let starthead = input('Start:',0)
 	let endhead   = input('End:',10)
@@ -30,8 +31,8 @@ perl << eof
 	my $end   = VimVar('end');
 	my $sep   = VimVar('sep');
 
-	my $l=$curbuf->Get($start);
-	my $count = scalar ( split(/$sep/,$l,-1) ); 
+	my $l     = $curbuf->Get($start);
+	my $count = scalar ( split(/$sep/,$l,-1) );
 
 	VIM::Msg($count);
 eof
@@ -39,23 +40,29 @@ eof
 endfunction
 
 function! base#bufact#csv#remove_empty_rows ()
+	call base#buf#start()
+
 	let start = base#varget('bufact_start',0)
 	let end   = base#varget('bufact_end',line('$'))
 	let sep   = ","
 
 endfunction
 
-function! base#bufact#csv#select ()
+function! base#bufact#csv#select_to_latex_table ()
+	call base#buf#start()
+
 	let start = base#varget('bufact_start',0)
 	let end   = base#varget('bufact_end',line('$'))
 	let sep   = ","
 
-	let fields  = input('Select fields:','*')
+	let fields   = input('Select fields:','*')
 	let textable = []
 
 perl << eof
 	use DBI;
 	use LaTeX::Table;
+	use Vim::Perl qw(:funcs :vars);
+	use LaTeX::Encode;
 	#use Number::Format qw(:subs);  # use mighty CPAN to format values
 
 	my $start = VimVar('start');
@@ -67,6 +74,7 @@ perl << eof
 
 	(my $tb = $bname ) =~ s/\.(\w+)$//g;
 
+	my $warn = sub { VimWarn(@_); };
 	my $dbh = DBI->connect("dbi:CSV:", undef, undef, {
 		f_schema         => undef,
 		f_dir            => "$dir",
@@ -82,21 +90,30 @@ perl << eof
 		csv_null         => 0,
 		#RaiseError       => 1,
 		PrintError       => 1,
-	}) or die $DBI::errstr;
+	}) or $warn->($DBI::errstr);
 
 	my $fields=VimVar('fields');
 
-	my $q=qq{ select $fields from $tb };
-	my @e   = ();
-	my $sth = $dbh->prepare($q);
-	eval {$sth->execute(@e);};
+	my $sth;
+	my $q = qq{ select $fields from $tb };
+	my @e = ();
+
+	eval { $sth = $dbh->prepare($q) or $warn->($dbh->errstr); };
+	if ($@) { $warn->($q,$@,$dbh->errstr); }
+
+	eval {$sth->execute(@e) or $warn->($dbh->errstr);};
+	if ($@) { $warn->($q,$@,$dbh->errstr,Dumper(\@e)); }
 
 	my $header = [];
-	my $data = [];
+	my $data   = [];
 
+	my $cb_row = sub { 
+		my $cell = shift;
+		latex_encode($cell);
+	};
 	while (my $row = $sth->fetchrow_arrayref) {
 		my $r;
-		@$r = map { defined($_) ? $_ : '' } @$row;
+		@$r = map { defined($_) ? $cb_row->($_) : '' } @$row;
 		push @$data,$r;
 	}
 	
@@ -116,7 +133,6 @@ perl << eof
 	my @tex = split("\n",$tex);
 
 	VimListExtend('textable',\@tex);
-
 eof
 	call base#buf#open_split({ 'lines' : textable })
 	

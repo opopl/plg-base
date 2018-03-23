@@ -1,10 +1,13 @@
 
-function! base#vh#number_headings (...)
+"""VH_index_headings
+function! base#vh#index_headings (...)
 	let start = get(a:000,0,1)
 	let end   = get(a:000,1,line('$'))
 
 	let startid = input('Start id:','a')
 	let endid   = input('End id:','z')
+
+	let pat     = input('Perl heading regexp:','^(\S.+)')
 
 perl << eof
 	use Vim::Perl qw(VimVar);
@@ -12,6 +15,9 @@ perl << eof
 	my $start = VimVar('start');
 	my $end   = VimVar('end');
 	my @range = ( $start .. $end );
+
+	my $pat   = VimVar('pat');
+	my $patqr = qr/$pat/;
 
 	my $startid = VimVar('startid');
 	my $endid   = VimVar('endid');
@@ -21,9 +27,9 @@ perl << eof
 	my $lines = [ $curbuf->Get( @range ) ];
 	my $lnum=1;
 	for(@$lines){
-		if(/^\S(.+)/){ 
+		if(/$patqr/){ 
 			my $a=shift @a;
-			s/^(\S.+)/"$a. ". $1/eg; 
+			s/$patqr/"$a. ". $1/eg; 
 			$curbuf->Set($lnum,$_);
 		}
 		$lnum++;
@@ -37,7 +43,7 @@ function! base#vh#remove_headings (...)
 	let start = get(a:000,0,1)
 	let end   = get(a:000,1,line('$'))
 
-	let head_fmt = input('Heading perl regexp format:','(\w+\.\s+)' )
+	let head_fmt = input('Heading perl regexp format:','^(\w+\.\s+)' )
 
 perl << eof
 	use Vim::Perl qw(VimVar);
@@ -49,7 +55,8 @@ perl << eof
 	my $lines = [ $curbuf->Get( @range ) ];
 	my $lnum=1;
 	my $head_fmt = VimVar('head_fmt');
-	my $pat = qr/^$head_fmt/;
+	my $pat = qr/$head_fmt/;
+	
 	for(@$lines){
 		if(/$pat/){ 
 			s/$pat//g; 

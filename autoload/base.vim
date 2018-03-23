@@ -862,6 +862,9 @@ fun! base#readdatfile(ref,...)
 		call extend(opts,{ 'splitlines' : 0 })
     let res=base#readarr(file,opts)
 
+ else
+ 		let res=[]
+
  endif
 
  return res
