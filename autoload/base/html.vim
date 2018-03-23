@@ -318,11 +318,18 @@ function! base#html#url_load (...)
 
 	let load_as      = base#html#libxml_load_as()
 perl << eof
-	use File::Spec::Functions qw(catfile);
 	use Vim::Perl qw(:vars :funcs);
+	use Base::Util;
+
 	use SQL::SplitStatement;
 
-	my $dir_saved = catfile($ENV{appdata},qw(vim plg base saved_urls ));
+	use File::Path qw(mkpath);
+	use File::Basename qw(basename);
+	use File::Slurp qw(write_file);
+	use File::Spec::Functions qw(catfile);
+
+	my $saved_urls = catfile($ENV{appdata},qw(vim plg base saved_urls ));
+	mkpath $saved_urls unless -d $saved_urls;
 
 	my $ref = VimVar('ref') || {};
 	my $url = $ref->{url} || '';
@@ -330,32 +337,129 @@ perl << eof
 	$HTW->load_html_from_url({
 			url => $url,
 	});
-	my $html = $HTW->htmlstr;
+	my $html  = $HTW->htmlstr;
+	my $stats = $HTW->{html_stats};
+
+	my $baseutil = Base::Util->new;
+
+	my ($file_local_text,$file_local_html);
+	my ($contents_text);
+
+	{ # save to local text file
+		my $cmd = qq{ let save2txt = input("Save to local text file? 1/0:",1) };
+		VimCmd($cmd);
+		my $save2txt = VimVar('save2txt');
+
+		my $vh_tag          = '';
+
+		if ($save2txt) {
+				my $max = $baseutil->get_max_num({ 
+					dir  => $saved_urls,
+					exts => [qw(html)],
+			 	});
+				$max++;
+
+				my $cmd = qq{ let vh_tag = input("VimHelp tag:","$vh_tag") };
+				VimCmd($cmd);
+				$vh_tag = VimVar('vh_tag');
+
+				$file_local_html = catfile($saved_urls,$max . '.html');
+				$file_local_text = catfile($saved_urls,$max . '.txt');
+
+				my $vhref={
+					out_vh_file => $file_local_text,
+					tag         => $vh_tag,
+					actions     => [qw(replace_a replace_pre )],
+					xpath_rm    => [],
+					xpath_cb    => [],
+				};
+			
+				my $lines      = $HTW->save_to_vh($vhref);
+				$contents_text = join("\n",@$lines);
+
+				if (-e $file_local_text) {
+					VimMsg('URL has been written locally (TEXT)');
+				}
+
+				write_file($file_local_html,$html);
+
+				if (-e $file_local_html) {
+					VimMsg('URL has been written locally (HTML)');
+				}
+		}
+	}
 
 	{ # save to DB
-		my $cmd = qq {
-			let save2db = input("Save to DB? 1/0:",1)
-		};
+		my $cmd = qq { let save2db = input("Save to DB? 1/0:",1) };
 		VimCmd($cmd);
 		my $save2db = VimVar('save2db');
+
+		my $title = $stats->{title} || '';
+		my $cmd   = qq{ let title = input("Title:","$title") };
+		VimCmd($cmd);
+		$title = VimVar('title');
+
 		if ($save2db) {
+			my $cmd;
+
 			my $dbh = $vimdbi->dbh;
 			$dbh->do('use docs_sphinx');
+
+			$cmd   = qq{ let doc_id = input("doc_id:","") };
+			VimCmd($cmd);
+			my $doc_id = VimVar('doc_id');
+			my $local_id;
+
+			$cmd   = qq{ let doc_tags= input("doc_tags:","") };
+			VimCmd($cmd);
+			my $doc_tags = VimVar('doc_tags');
+
+			{
+				local $_ = basename($file_local_text); 
+				s/\.txt$//g;
+				$local_id = $_;
+			}
 			
+			my $comma=",";
+			my @ins=qw(
+				title url_remote 
+				doc_id local_id tags
+				file_local_text file_local_html
+				contents_text contents_html
+			);
+			my $ins   = join($comma,@ins);
+			my $qvals = join($comma, map { "?" } ( 1 .. scalar @ins ) );
+
 			my $q = qq{
+				insert into documents ( time_added, $ins ) values ( now(), $qvals)
 			};
+			VimMsg($q);
+			my %bind = (
+				title           => $title,
+				url_remote      => $url,
+				file_local_text => $file_local_text,
+				file_local_html => $file_local_html,
+				doc_id          => $doc_id,
+				    tags        => $doc_tags,
+				local_id        => $local_id,
+				contents_html   => $html,
+				contents_text   => $contents_text,
+			);
+			my @bind = @bind{@ins};
 
 			my $spl      = SQL::SplitStatement->new;
 			my @splitted = $spl->split($q);
 			foreach my $q (@splitted) {
-				# body...
+				$dbh->do($q,undef,@bind) or 
+					VimWarn($q,join(' ',@bind));
 			}
+			$dbh->commit;
 		}
 	}
 
 	{ # split view of the saved html
 		my $cmd = qq {
-			let spl = input("Split contents? 1/0:",1)
+			let spl = input("Split contents? 1/0:",0)
 			if spl | enew | split | endif
 		};
 		VimCmd($cmd);
