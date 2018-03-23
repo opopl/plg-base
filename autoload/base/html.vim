@@ -433,7 +433,6 @@ perl << eof
 			my $q = qq{
 				insert into documents ( time_added, $ins ) values ( now(), $qvals)
 			};
-			VimMsg($q);
 			my %bind = (
 				title           => $title,
 				url_remote      => $url,
