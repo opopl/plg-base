@@ -305,30 +305,69 @@ perl << eof
 	our $HTW ||= HTML::Work->new(
 			sub_log  => sub { VimMsg([@_]) },
 			sub_warn => sub { VimWarn(@_) },
+			load_as  => 'html',
 	);
 eof
 endfunction
 
 function! base#html#url_load (...)
 	let ref=get(a:000,0,{})
+
 	call base#html#htw_init ()
+	call perlmy#dbi#connect()
+
 	let load_as      = base#html#libxml_load_as()
 perl << eof
 	use File::Spec::Functions qw(catfile);
 	use Vim::Perl qw(:vars :funcs);
-	my $dir = catfile($ENV{appdata},qw(vim plg base saved_urls ));
+	use SQL::SplitStatement;
+
+	my $dir_saved = catfile($ENV{appdata},qw(vim plg base saved_urls ));
 
 	my $ref = VimVar('ref') || {};
 	my $url = $ref->{url} || '';
 
 	$HTW->load_html_from_url({
-		url => $url,
+			url => $url,
 	});
 	my $html = $HTW->htmlstr;
-	VimCmd('enew');
-	VimCmd('split');
-	$Vim::Perl::CURBUF=$curbuf;
-	CurBufSet({ $text => $HTW->htmlstr });
+
+	{ # save to DB
+		my $cmd = qq {
+			let save2db = input("Save to DB? 1/0:",1)
+		};
+		VimCmd($cmd);
+		my $save2db = VimVar('save2db');
+		if ($save2db) {
+			my $dbh = $vimdbi->dbh;
+			$dbh->do('use docs_sphinx');
+			
+			my $q = qq{
+			};
+
+			my $spl      = SQL::SplitStatement->new;
+			my @splitted = $spl->split($q);
+			foreach my $q (@splitted) {
+				# body...
+			}
+		}
+	}
+
+	{ # split view of the saved html
+		my $cmd = qq {
+			let spl = input("Split contents? 1/0:",1)
+			if spl | enew | split | endif
+		};
+		VimCmd($cmd);
+		my $spl = VimVar('spl');
+	
+		if ($spl) {
+			CurBufSet({ 
+				curbuf => $curbuf,
+				text   => $html,
+			});
+		}
+	}
 eof
 endfunction
 
