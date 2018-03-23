@@ -1,5 +1,6 @@
 
 let b:comps_BufAct = base#varget('comps_BufAct_idat',[])
+
 if exists("b:idephp_did_ftplugin_idat") | finish | endif
 let b:idephp_did_ftplugin_idat=1
 
@@ -14,6 +15,7 @@ for plg in pall
 	let b:belongs = ( b:cr == plgdir )
 	
 	if b:belongs
+		 let b:plg=plg
 		 call base#tg#add('plg_'.plg)
 		 StatusLine plg
 		 break

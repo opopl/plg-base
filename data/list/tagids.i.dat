@@ -26,6 +26,7 @@ plg_browser
 plg_database_client
 plg_dbext
 plg_emmet
+plg_snipmate
 plg_findstr
 plg_gps
 plg_idephp

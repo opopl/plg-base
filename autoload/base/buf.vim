@@ -161,6 +161,25 @@ function! base#buf#onload ()
 	
 endfunction
 
+function! base#buf#is_plg ()
+	call base#buf#start()
+
+	let pall     = base#varget('plugins_all',[])
+	
+	for plg in pall
+		let plgdir   = base#qw#catpath('plg',plg)
+		
+		let b:cr      = base#file#commonroot([ b:dirname, plgdir ] )
+		let b:belongs = ( b:cr == plgdir )
+		
+		if b:belongs
+			 let b:plg=plg
+			 break
+		endif
+	endfor
+
+endfunction
+
 function! base#buf#start ()
 
 	if exists("b:base_buf_started") | return | endif
@@ -181,4 +200,6 @@ function! base#buf#start ()
 	endif
 
 	let b:base_buf_started=1
+
+	call base#buf#is_plg()
 endfunction
