@@ -435,19 +435,25 @@ fun! base#init#au()
 
 	let datfiles = base#varget('datfiles',{})
 
-	exe 'augroup base_au_datfiles'
-	exe '   au!'
-	for [dat,datfile] in items(datfiles)
-		exe '   autocmd BufWritePost ' 
-			\	. datfile . ' call base#initvars()'
-	endfor
-	exe 'augroup end'
+ " exe 'augroup base_au_datfiles'
+	"exe '   au!'
+	"for [dat,datfile] in items(datfiles)
+		"exe '   autocmd BufWritePost ' 
+			"\	. datfile . ' call base#initvars()'
+	"endfor
+	"exe 'augroup end'
 
 	au BufNewFile,BufWritePost,BufRead,BufWinEnter *.i.dat setf idat
 	au BufRead,BufNewFile,BufWinEnter *.csv		set filetype=csv
 	au BufRead,BufNewFile,BufWinEnter *.tsv		set filetype=tsv
 
-	au BufWritePost *.i.dat BufAct update_var 
+	let plg = base#path('plg')
+	let plgu = base#file#win2unix(plg)
+
+	"au_base_html
+	exe 'au BufRead,BufNewFile,BufWinEnter '.plgu.'/base/autoload/base/html.vim call base#buf#onload() '	
+
+	au BufWritePost *.i.dat call base#buf#au_write_post()
 
 	"au BufRead,BufWinEnter * call base#buf#onload()
   "au FileType  * call base#buf#start() 

@@ -19,7 +19,7 @@ function! base#var#update (varname)
 
   elseif base#inlist(varname,datlist)
     let datfile = get(datfiles,varname,'')
-    let dfu = base#file#win2unix(datfile)
+    let dfu     = base#file#win2unix(datfile)
 
     let typedir = fnamemodify(dfu,':p:h:t')
 		let type    = get(types,typedir,'')

@@ -91,3 +91,5 @@ devdocs
 tlib
 ttags
 phpunitqf
+phpqa
+#msbuild

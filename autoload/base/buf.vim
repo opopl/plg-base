@@ -157,6 +157,23 @@ function! base#buf#onload ()
 		setf tags
 	elseif b:ext == 'nsh'
 		setf nsis
+
+	elseif b:filetype == 'vim'
+		if b:basename == 'html.vim'
+			TgAdd perl_html
+		endif
+
+	elseif b:filetype == 'idat'
+		BufAct update_var 
+	endif
+	
+endfunction
+
+function! base#buf#au_write_post ()
+	call base#buf#start()
+
+	if b:filetype == 'idat'
+		BufAct update_var 
 	endif
 	
 endfunction

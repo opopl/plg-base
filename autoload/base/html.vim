@@ -334,9 +334,19 @@ perl << eof
 	my $ref = VimVar('ref') || {};
 	my $url = $ref->{url} || '';
 
+	my $req;
+	my $http_headers = {
+		  'User-Agent'      => 'Mozilla/4.76 [en] (Win98; U)',
+		  'Accept'          => 'image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, image/png, */*',
+		  'Accept-Charset'  => 'iso-8859-1,*,utf-8',
+		  'Accept-Language' => 'en-US',
+	};
 	$HTW->load_html_from_url({
-			url => $url,
+			url          => $url,
+			req          => $req,
+			http_headers => $http_headers,
 	});
+	VimMsg($HTW->{status_line});
 	my $html  = $HTW->htmlstr;
 	my $stats = $HTW->{html_stats};
 
@@ -369,7 +379,7 @@ perl << eof
 				my $vhref={
 					out_vh_file => $file_local_text,
 					tag         => $vh_tag,
-					actions     => [qw(replace_a replace_pre )],
+					actions     => [qw( replace_a replace_pre )],
 					xpath_rm    => [],
 					xpath_cb    => [],
 				};
