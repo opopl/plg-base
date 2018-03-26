@@ -386,6 +386,7 @@ function! base#tg#update (...)
 				let files = base#file#catfile([ root,'*.tex' ])
 			endif
 
+"""tgupdate_projs_this
 	elseif tgid == 'projs_this'
 		if base#plg#loaded('projs')
 				let proj  = projs#proj#name()
@@ -401,8 +402,6 @@ function! base#tg#update (...)
 				let tfile = projs#path([ proj . '.tags' ])
 		
 				call projs#rootcd()
-				echo files
-				return
 		endif
 
 	elseif tgid == 'ipte_ao'
