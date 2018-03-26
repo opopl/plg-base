@@ -17,7 +17,7 @@ thisfile
 src_vim
 ##########
 projs_this
-projs_tex
+#projs_tex
 ##########
 plg
 plg_ap
