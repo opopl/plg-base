@@ -401,6 +401,8 @@ function! base#tg#update (...)
 				let tfile = projs#path([ proj . '.tags' ])
 		
 				call projs#rootcd()
+				echo files
+				return
 		endif
 
 	elseif tgid == 'ipte_ao'
