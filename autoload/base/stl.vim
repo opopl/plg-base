@@ -228,6 +228,7 @@ function! base#stl#setorders ()
         \   'simple'   :   [ 
 		        \   'buffer_number' ,
 		        \   'line_number'   ,
+		        \   'column_number' ,
 		        \   'file_name'     ,
 		        \   'file_encoding' ,
 		        \   'encoding'      ,
