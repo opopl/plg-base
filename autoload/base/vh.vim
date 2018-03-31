@@ -134,6 +134,7 @@ function! base#vh#heads_handle (...)
 	let index_h2_end   = input('H2 index end:','z')
 
 	let refprefix = input('refprefix:','thisdoc_______')
+
 	let buf_rw    = input('buffer rewrite? (1/0): ',0)
 
 perl << eof
@@ -149,6 +150,8 @@ perl << eof
 	my @indices_h2 = ( $index_h2_start .. $index_h2_end );
 
 	my $lines = [ $curbuf->Get( 1 .. $curbuf->Count ) ];
+
+	my $toc_prefix = "  ";
 
 	my @heads;
 
@@ -214,6 +217,9 @@ perl << eof
 			push @toc, pack($fmt, "  ".$h2 , '|'.$ref.'|' );
 			$target="*".$ref."*";
 
+			s/^\s*//g;
+			s/^/$index /g;
+
 			$last_h2 = { 
 					'lnum'     => $lnum,
 					'index'    => $index,
@@ -242,11 +248,17 @@ perl << eof
 		}
 	}
 
-	my @delim=( '-' x 50 );
-	@toc = ( @delim, 'Table of Contents', @delim, @toc, @delim );
+	my @delim=( ' ' . ( '-' x 50 ) );
+	@toc = ( 
+		@delim, 
+		'_toc_ Table of Contents *_toc_*', 
+		@delim, 
+		map { $toc_prefix . $_ } @toc, 
+		@delim 
+	);
 
 	unshift @nlines,
-		( @before,@toc );
+		( @before,  @toc );
 
 	if ( VimVar('buf_rw') ) {
 		CurBufSet({ curbuf => $curbuf, text => [@nlines]});
