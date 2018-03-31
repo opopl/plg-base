@@ -177,7 +177,7 @@ perl << eof
 	for(@$lines){
 		$target='';
 
-		/^$pats->{head_1}/ && do { 
+		/^$pats->{def_head_1}/ && do { 
 			my ($index,$title) = ($1,$2);
 
 			$before_first_sec=0;
@@ -207,7 +207,7 @@ perl << eof
 			$j_h2=0;
 
 		};
-		/^$pats->{head_2}/ && do { 
+		/^$pats->{undef_head_2}/ && do { 
 			my $title = $1;
 
 			my $sub_index_h2 = $indices_h2[$j_h2];
