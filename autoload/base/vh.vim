@@ -126,8 +126,15 @@ endfunction
 function! base#vh#heads_handle (...)
 
 	let pats = {
-		\ 'head_1' : input('pattern head_1:','^(\w+)\.\s+(.*)$'),
-		\ 'head_2' : input('pattern head_2:','^\s{2,2}(\S.*)$'),
+		\ 'def_head_1'   : '^(\w+)\.\s+(.*)$'  ,
+		\ 'undef_head_1' : '^(\S.*)$'          ,
+		\ 'undef_head_2' : '^\s{2,2}(\S.*)$'   ,
+		\	}
+
+	let pats = {
+		\ 'def_head_1'   : input('pattern def_head_1   : ',pats.def_head_1),
+		\ 'undef_head_1' : input('pattern undef_head_1 : ',pats.undef_head_1),
+		\ 'undef_head_2' : input('pattern undef_head_2 : ',pats.undef_head_2),
 		\	}
 
 	let index_h2_start = input('H2 index start:','a')
