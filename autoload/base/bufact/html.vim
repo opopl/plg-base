@@ -150,7 +150,7 @@ eof
 
 endfunction
 
-"""table_to_txt
+"""replace_a
 function! base#bufact#html#replace_a ()
 	call base#html#htw_load_buf()
 perl << eof

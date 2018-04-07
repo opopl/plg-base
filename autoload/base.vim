@@ -1439,15 +1439,17 @@ fun! base#mapsub_join(array,pat,subpat,subopts,delim)
 
 endf
 
-function! base#varreset(varname,new)
+function! base#varremove(...)
+	let var = get(a:000,0,'')
 
- let varname=substitute(a:varname,'^[g:]*','g:','g')
+  if ! exists("s:basevars")
+    let s:basevars={}
+		return
+  endif
 
- if  exists(varname)
-   exe 'unlet ' . varname
- endif
-
- exe 'let ' . varname . '=a:new'
+	if has_key(s:basevars,var)
+		call remove(s:basevars,var)
+	endif
  
 endfunction
 

@@ -94,3 +94,4 @@ phpunitqf
 phpqa
 #msbuild
 library
+vim-addon-mw-utils

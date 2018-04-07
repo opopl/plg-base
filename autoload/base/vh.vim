@@ -120,6 +120,28 @@ eof
 
 endfunction
 
+function! base#vh#add_to_db (...)
+
+perl << eof
+			use DBI;
+			
+			my ($dsn,$db,$user,$pwd,%attr);
+			my %attr=(
+					RaiseError        => 1,
+					PrintError        => 1,
+					mysql_enable_utf8 => 1,
+			);
+			$user = 'root';
+			$pwd  = '';
+			$db   = 'docs_sphinx';
+			
+			$dsn = "DBI:mysql:database=$db;host=localhost";
+			$dbh = DBI->connect($dsn,$user,$pwd,\%attr);
+			$dbh->disconnect;
+eof
+
+endfunction
+
 "call base#vh#act (act,start,end)
 "call base#vh#act (act)
 "

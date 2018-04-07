@@ -328,6 +328,10 @@ command! -nargs=* -complete=custom,base#complete#omnioptions
 	command! -nargs=* -complete=custom,base#complete#varlist
 	    \   BaseVarEcho call base#varecho(<f-args>) 
 
+"""BaseVarRemove
+	command! -nargs=* -complete=custom,base#complete#varlist
+	    \   BaseVarRemove call base#varremove(<f-args>) 
+
 	command! -nargs=* -complete=custom,base#complete#varlist
 	    \   BaseVarDump call base#var#dump_split(<f-args>) 
 
