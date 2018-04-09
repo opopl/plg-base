@@ -59,6 +59,7 @@ function!  base#stl#setparts ()
   let stlparts['mode']= '%1*\ %{NeatStatusLine_Mode()}\ %0*' 
 
   let stlparts['pathids']= '%3*\ %{base#buf#pathids_str()}\ %0*' 
+  let stlparts['pathid_first']= '%3*\ %{base#buf#pathid_first()}\ %0*' 
 
   let stlparts['fold_level']="%5*%{foldlevel(line('.'))}%0*"
 
@@ -218,8 +219,18 @@ function! base#stl#setorders ()
 		        \   'file_type'        ,
 		        \   'file_encoding'    ,
 		        \   'encoding'         ,
-		        \   'pathids'          ,
+		        \   'pathid_first'     ,
 		        \   'line_number'      ,
+                \           ],
+        \   'javascript'   :   [ 
+		        \   'file_name'    ,
+		        \   'buffer_number'    ,
+		        \   'line_number'      ,
+		        \   'column_number'    ,
+		        \   'file_type'        ,
+		        \   'file_encoding'    ,
+		        \   'encoding'         ,
+		        \   'pathid_first'          ,
                 \           ],
         \   'perl_pl'   :   [ 
 		        \   'file_name',

@@ -151,11 +151,6 @@ fun! base#init#paths(...)
     "" remove / from the end of the directory
 		call base#paths_nice()
 
-    if exists("g:dirs")
-       call base#pathset(g:dirs)
-    endif
-    let g:dirs= base#paths()
-
     call base#pathlist()
 
   call base#echoprefixold()
@@ -451,7 +446,7 @@ fun! base#init#au()
 	au BufRead,BufNewFile,BufWinEnter *.csv		set filetype=csv
 	au BufRead,BufNewFile,BufWinEnter *.tsv		set filetype=tsv
 
-	let plg = base#path('plg')
+	let plg  = base#path('plg')
 	let plgu = base#file#win2unix(plg)
 
 	"au_base_html
@@ -460,7 +455,7 @@ fun! base#init#au()
 	au BufWritePost *.i.dat call base#buf#au_write_post()
 
 	"au BufRead,BufWinEnter * call base#buf#onload()
-  "au FileType  * call base#buf#start() 
+  au BufRead,BufNewFile,BufWinEnter * call base#buf#start() 
      
 endfun
 

@@ -1,4 +1,3 @@
-
 """VH_index_headings
 function! base#vh#index_headings (...)
 	let start = get(a:000,0,1)
@@ -75,7 +74,19 @@ function! base#vh#tag_from_basename (...)
 	let tag = b:basename
 	let tag = substitute(tag,'\.\w\+$','','g')
 
-	call append(line(0),'*'.tag.'*')
+	let prefix = input('Tag prefix:','')
+	let tag    = input('VimHelp Tag:',prefix . tag)
+
+	call append(line(0),"\t".'*'.tag.'*')
+
+endfunction
+
+function! base#vh#tag_insert (...)
+	call base#buf#start()
+
+	let tag    = input('VimHelp Tag:','')
+
+	call append(line(0),"\t".'*'.tag.'*')
 
 endfunction
 
@@ -123,21 +134,59 @@ endfunction
 function! base#vh#add_to_db (...)
 
 perl << eof
-			use DBI;
+			use Base::DBH;
+			use DateTime;
 			
-			my ($dsn,$db,$user,$pwd,%attr);
 			my %attr=(
 					RaiseError        => 1,
 					PrintError        => 1,
 					mysql_enable_utf8 => 1,
 			);
-			$user = 'root';
-			$pwd  = '';
-			$db   = 'docs_sphinx';
 			
-			$dsn = "DBI:mysql:database=$db;host=localhost";
-			$dbh = DBI->connect($dsn,$user,$pwd,\%attr);
-			$dbh->disconnect;
+			my $db   = 'docs_sphinx';
+			our $BD = Base::DBH->new(
+				sub_log  => sub{ VIM::Msg($_) for(@_) },
+				sub_warn => sub{ VIM::Msg($_) for(@_) },
+				connect => { 
+					user => 'root',
+					pwd  => '',
+					db   => $db,
+					attr => \%attr,
+					dsn  => "DBI:mysql:database=$db;host=localhost",
+				}
+			);
+
+      VimCmd( qq{ 
+				let table  = input('DB table:','documents')
+				let title  = input('Document title:','')
+				let tags   = input('Document tags:','')
+				let remote = input('Document url remote:','')
+				
+				let file_local_text = b:file
+
+				let file_local_text = input('Local text file:',file_local_text)
+
+				let pcname = base#envvar('computername')
+				let values = [ title, tags, remote, pcname, file_local_text ]
+			} );
+
+			my $table = VimVar('table');
+
+			my $values = VimVar('values');
+			my $contents_text = join "\n" => $curbuf->Get( 1 .. $curbuf->Count );
+
+			my $q=qq{
+				insert into $table (
+					title,tags,url_remote,pcname,file_local_text,
+					contents_text,
+					time_added
+				) values (?,?,?,?,?,?,now())
+			};
+
+			$BD->{dbh}->do($q,undef,@$values,$contents_text);
+
+			$BD->dbh_disconnect;
+
 eof
 
 endfunction

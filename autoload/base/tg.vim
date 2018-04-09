@@ -112,6 +112,7 @@ function! base#tg#tfile (...)
 
 	call base#mkdir(tdir)
 
+"""_tfile_thisfile
 	if tgid == 'thisfile'
 		let finfo    = base#getfileinfo()
 
@@ -120,12 +121,13 @@ function! base#tg#tfile (...)
 
 		let tfile    = base#file#catfile([ dirname, basename . '.tags' ])
 
+"""_tfile_projs_this
 	elseif tgid == 'projs_this'
 		let proj  = projs#proj#name()
 		let tfile = projs#path([ proj . '.tags' ])
 
+"""_tfile_idephp_help
 	elseif tgid == 'idephp_help'
-
 		let tfile = base#qw#catpath('plg','idephp help tags')
 
 	elseif tgid == 'help_perlmy'
@@ -174,8 +176,11 @@ function! base#tg#update (...)
 
 	if tgid  == ''
 
+"""tgupdate_idephp_help
 	elseif tgid == 'idephp_help'
-		call idephp#help#helptags()
+		call idephp#help#helptags({ 
+			\	'tfile' : tfile 
+			\	})
 
 		let okref = { 
 			\	"tgid" : tgid,
@@ -184,6 +189,20 @@ function! base#tg#update (...)
 			\	}
 
 		let ok= base#tg#ok(okref)
+		return
+
+	elseif tgid == 'help_js'
+		call idephp#help#helptags({ 
+			\ 'topic' : 'javascript',
+			\ })
+
+		let okref = { 
+			\	"tgid" : tgid,
+			\	"ok"   : 1,
+			\	"add"  : 0, 
+			\	}
+
+		call base#tg#ok(okref)
 		return
 
 """tgupdate_help_perlmy
@@ -444,6 +463,7 @@ function! base#tg#update (...)
 		"let libs.=' ' . libs_as
 
 """thisfile
+"""tgupdate_thisfile
 	elseif tgid == 'thisfile'
 		let files.= ' ' . expand('%:p')
 	else 
@@ -484,10 +504,11 @@ function! base#tg#ok (...)
 		echo "CTAGS UPDATE OK: " .  tgid
 		echohl None
 
+		let h = { "update_ifabsent" : 0 }
 		if add 
-			call base#tg#add (tgid,{ "update_ifabsent" : 0 })
+			call base#tg#add (tgid,h)
 		else
-			call base#tg#set (tgid,{ "update_ifabsent" : 0 })
+			call base#tg#set (tgid,h)
 		endif
 
 	else

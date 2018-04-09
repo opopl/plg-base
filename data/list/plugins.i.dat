@@ -15,7 +15,8 @@ mru
 nerdcommenter
 nerdtree
 findstr
-snipmate
+snipmate_2009
+#snipmate
 tagbar
 html5_vim
 emmet
@@ -95,3 +96,4 @@ phpqa
 #msbuild
 library
 vim-addon-mw-utils
+efm_nodejs

@@ -75,7 +75,22 @@ endfunction
 
 function! base#vim#helptags (...)
 	let ref    = get(a:000,0,{})
+
 	let docdir = get(ref,'dir','')
+	let tfile  = get(ref,'tfile','')
+
+	let dirs   = get(ref,'dirs',[])
+
+  if len(dirs)
+		for dir in dirs
+			let path  = get(dir,'path','')
+			let tfile = get(dir,'tfile','')
+			call base#vim#helptags({ 
+				\	'dir'   : path,
+				\	'tfile' : tfile
+				\	})
+		endfor
+	endif
 
   if strlen(docdir)
 
@@ -93,6 +108,15 @@ function! base#vim#helptags (...)
 			call base#log('Vim Error E154: duplicate tag for docdir: '."\n".docdir)
 		finally
 		endtry
+
+		let tfile_old = base#file#catfile([ docdir, 'tags' ])
+		if filereadable(tfile_old)
+			if strlen(tfile)
+				let dirname = fnamemodify(tfile,':p:h')
+				call base#mkdir(dirname)
+				call base#file#copy(tfile_old,tfile)
+			endif
+		endif
 
   endif
 

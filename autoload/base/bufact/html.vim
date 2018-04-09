@@ -186,19 +186,23 @@ function! base#bufact#html#table_to_txt ()
 				\	})
 
 	let vimtext  = []
+
 	let offset   = input('offset:',5)
 	let maxwidth = input('maxwidth:',50)
+	let fmt      = input('pack() fmt:','')
 
 perl << eof
 	my $offset   = VimVar('offset');
 	my $maxwidth = VimVar('maxwidth');
 	my $tblines  = VimVar('tblines');
+	my $fmt      = VimVar('fmt');
 
 	$HTW
 		->init_dom({ htmllines => $tblines })
 		->tables_to_txt({ 
 			offset   => $offset,
 			maxwidth => $maxwidth,
+			fmt      => $fmt,
 		})
 		;
 	my $dbh=$HTW->{dbh_sqlite};

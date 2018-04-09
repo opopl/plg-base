@@ -134,6 +134,12 @@ function! base#buf#pathids_str ()
 
 endfunction
 
+function! base#buf#pathid_first ()
+	let ids = base#buf#pathids()
+	return get(ids,0,'')
+
+endfunction
+
 function! base#buf#pathids ()
 
 	if !exists("b:file")
