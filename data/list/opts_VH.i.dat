@@ -5,3 +5,4 @@ heads_handle
 add_to_db
 tag_from_basename
 tag_insert
+new_file

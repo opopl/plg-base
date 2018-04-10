@@ -55,6 +55,10 @@ function! base#initpaths#perl ()
 	    \ })
 
 	 call base#pathset({ 
+      \ "modperl" : base#file#catfile([ base#path('plg'), 'perlmy','scripts','modperl' ]),
+	    \ })
+
+	 call base#pathset({ 
 			\	"perl_strawberry"  : base#envvar("Perl_Strawberry"),
 			\	"perl_activestate" : base#envvar("Perl_ActiveState"),
 	    \ })
@@ -121,6 +125,7 @@ function! base#initpaths#APOPLAVSKIYNB ()
 
 	 call base#pathset({ 
       \ "ospanel_config" : base#file#catfile(base#qw('c: OSPanel userdata config')),
+	 		\ "apache_24_haus" : 'c:\programs\webserver\Apache24',
 	    \ })
 
 	 call base#pathset({ 

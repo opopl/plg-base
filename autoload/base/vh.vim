@@ -345,6 +345,43 @@ eof
 
 endfunction
 
+function! base#vh#new_file (...)
+	call base#buf#start()
+
+	let in_b_dirname = input('Create new file in b:dirname? (1/0):', 1 )
+
+	if in_b_dirname
+		let dir = b:dirname
+	else
+		let in_cwd = input('Create new file in cwd? (1/0):', 1 )
+		if in_cwd
+			let dir = getcwd()
+		else
+			let dirid = input('Provide dirid:','','custom,base#complete#CD')
+			let dir   = base#path(dirid)
+		endif
+	endif
+
+	let file  = base#file#catfile([ dir, fname ])
+
+	let fname = input('New VimHelp file basename:','')
+	let tag   = input('VimHelp tag:','') 
+
+	let lines = []
+	call add(lines,' ')
+	call add(lines,"\t".'vim:ft=help:foldmethod=indent:fenc=utf8:tw=78:')
+	call add(lines,"\t".'*'.tag.'*')
+	call add(lines,' ')
+
+	call base#file#write_lines({ 
+			\	'lines' : lines, 
+			\	'file'  : file, 
+			\})
+
+	call base#fileopen({'files':[file]})
+
+endfunction
+
 
 function! base#vh#act (...)
 	if !(&ft=='help')

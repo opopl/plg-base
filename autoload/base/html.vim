@@ -494,7 +494,10 @@ perl << eof
 	my $load_as = VimVar('load_as');
 	my $lines = [ $curbuf->Get(1 .. $curbuf->Count) ];
 	$HTW
-		->init_dom({ htmllines => $lines, load_as => $load_as })
+		->init_dom({ 
+			htmllines => $lines,
+			load_as   => $load_as,
+		})
 		;
 eof
 	
@@ -679,8 +682,7 @@ perl << eof
 		->htmlstr;
 
 	if ($ref->{fillbuf}) {
-		$Vim::Perl::CURBUF=$main::curbuf;
-		CurBufSet({ text => $html });
+		CurBufSet({ text => $html, curbuf => $curbuf });
 	}
 	VimLet('htmltext',html);
 	return $html;

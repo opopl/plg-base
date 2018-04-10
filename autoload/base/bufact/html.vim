@@ -1,5 +1,3 @@
-
-
 """BufAct_lynx_dump_split
 function! base#bufact#html#lynx_dump_split ()
 	call base#buf#start()
@@ -16,7 +14,7 @@ endfunction
 function! base#bufact#html#headings ()
 	call base#buf#start()
 
-	let lines = getline(0,'$') 
+	let lines = getline(1,'$') 
 	let h     = base#html#headings({ 
 			\	'lines' : lines 
 			\	})
@@ -104,32 +102,66 @@ function! base#bufact#html#quickfix_xpath ()
 
 endfunction
 
-"""remove_xpath
-function! base#bufact#html#remove_xpath ()
-	call base#buf#start()
+"""remove_extra
+function! base#bufact#html#remove_extra ()
+	let xpaths = [] 
+	call add(xpaths,'//script') 
+	call add(xpaths,'//link') 
+	call add(xpaths,'//meta') 
+	call add(xpaths,'//style') 
 
-	let lines = getline(0,'$')
-	let html  = join(lines,"\n")
+	call add(xpaths,"//*[@id='footer']") 
+	call add(xpaths,"//*[@id='topnav']") 
+	call add(xpaths,"//*[@id='sidenav']") 
+	call add(xpaths,"//*[@id='googleSearch']") 
+	call add(xpaths,"//*[@id='google_translate_element']") 
 
-	let xpath = idephp#hist#input({ 
-			\	'msg'  : 'XPATH:',
-			\	'hist' : 'xpath',
-			\	})
+	call add(xpaths,"//*[@class='sidesection']") 
 
-	let lines = []
-
-	let cleaned = base#html#xpath_remove_nodes({
-				\	'htmltext' : html,
-				\	'xpath'    : xpath,
-				\	'fillbuf'  : 1,
-				\	})
+	call base#bufact#html#remove_xpath({ 'xpaths' : xpaths })
 
 endfunction
 
-"""remove_attr
+"""remove_xpath
+function! base#bufact#html#remove_xpath (...)
+	call base#buf#start()
+	call base#html#htw_load_buf()
+
+	let ref    = get(a:000,0,{})
+	let xpath  = get(ref,'xpath','')
+	let xpaths = get(ref,'xpaths',[])
+
+	if len(xpaths)
+		for xpath in xpaths
+			call base#bufact#html#remove_xpath({ 'xpath' : xpath })
+		endfor
+		return
+	endif
+
+	if ! strlen(xpath)
+		let xpath = idephp#hist#input({ 
+				\	'msg'  : 'XPATH:',
+				\	'hist' : 'xpath',
+				\	})
+	endif
+perl << eof
+	use Vim::Perl qw(:funcs :vars);
+
+	my $xpath = VimVar('xpath') || '';
+	my $ref   = VimVar('ref') || {};
+
+	my $html = $HTW
+		->nodes_remove({ xpath => $xpath })
+		->htmlstr;
+		
+	CurBufSet({ text => $html, curbuf => $curbuf });
+eof
+
+endfunction
+
+"""attr_remove
 function! base#bufact#html#attr_remove ()
 	call base#html#htw_load_buf()
-	let load_as = base#html#libxml_load_as()
 perl << eof
 	use Vim::Perl qw(:funcs :vars);
 
@@ -144,8 +176,7 @@ perl << eof
 	}
 	my $html=$HTW->htmlstr;
 
-	$Vim::Perl::CURBUF=$curbuf;
-	CurBufSet({ text => $html});
+	CurBufSet({ text => $html, curbuf => $curbuf });
 eof
 
 endfunction
@@ -173,20 +204,9 @@ function! base#bufact#html#table_to_txt ()
 	call base#buf#start()
 	call base#html#htw_init()
 
-	let lines = getline(0,'$')
-	let html  = join(lines,"\n")
-
-	let xpath = '//table'
-	let lines = []
-
-	let tblines = base#html#xpath({
-				\	'htmltext' : html,
-				\	'xpath'    : xpath,
-				\	'fillbuf'  : 0,
-				\	})
-
 	let vimtext  = []
 
+	let xpath    = input('xpath:','//table')
 	let offset   = input('offset:',5)
 	let maxwidth = input('maxwidth:',50)
 	let fmt      = input('pack() fmt:','')
@@ -196,13 +216,19 @@ perl << eof
 	my $maxwidth = VimVar('maxwidth');
 	my $tblines  = VimVar('tblines');
 	my $fmt      = VimVar('fmt');
+	my $xpath    = VimVar('xpath');
+
+	my $lines = [ $curbuf->Get(1 .. $curbuf->Count) ];
 
 	$HTW
-		->init_dom({ htmllines => $tblines })
+		->init_dom({ 
+				htmllines => $lines 
+		})
 		->tables_to_txt({ 
 			offset   => $offset,
 			maxwidth => $maxwidth,
 			fmt      => $fmt,
+			xpath    => $xpath,
 		})
 		;
 	my $dbh=$HTW->{dbh_sqlite};

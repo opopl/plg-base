@@ -75,10 +75,10 @@ function! base#append#cwd (...)
 endfunction
 
 function! base#append#envvar (...)
-  let var = input('Environment variable:','')
-  let val = base#envvar(var)
+  let var = input('Environment variable:','','environment')
+  let val_a = base#envvar_a(var)
 
-	call append(line('.'),val)
+	call append(line('.'),val_a)
 
 endfunction
 
