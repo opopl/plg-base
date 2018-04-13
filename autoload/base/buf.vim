@@ -35,6 +35,9 @@ function! base#buf#act(...)
 	"endif
 
 	let ft   = &ft
+	if base#inlist(ft,base#qw('html xhtml'))
+		let ft = 'html'
+	endif
 	let subs = []
 	if base#inlist(ft,base#qw('php html'))
 		for ff in base#qw('html php')
@@ -156,8 +159,12 @@ function! base#buf#pathids ()
 	return ids
 endfunction
 
+""" used in : base#init#au()
+
 function! base#buf#onload ()
 	call base#buf#start()
+
+	StatusLine simple
 
 	if b:ext == 'tags'
 		setf tags

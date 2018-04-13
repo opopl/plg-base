@@ -297,6 +297,15 @@ function! base#tg#update (...)
 		let dir   = base#file#catfile([ base#path('htmltool'), 'lib' ])
 		let libs .= ' ' . dir
 
+	elseif tgid == 'perl_guestbook'
+		let dir   = base#file#catfile([ base#path('repos_git'), 'guestbook', 'lib' ])
+		let libs .= ' ' . dir
+
+	elseif tgid == 'perl_webgui'
+
+		let dir   = 'c:\src\webgui-master\lib'
+		let libs .= ' ' . dir
+
 """tgupdate_perl_as
 	elseif tgid == 'perl_as'
 
