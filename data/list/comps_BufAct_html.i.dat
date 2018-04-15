@@ -10,6 +10,8 @@ quickfix_xpath
 headings
 attr_remove
 remove_extra
+# perl_
+perl_html_formattext
 # htw
 htw_load_buf
 htw_node_print

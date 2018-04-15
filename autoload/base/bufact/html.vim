@@ -26,6 +26,40 @@ function! base#bufact#html#headings ()
 
 endfunction
 
+function! base#bufact#html#perl_html_formattext ()
+	call base#buf#start()
+	let lines=[]
+perl << eof
+	use Vim::Perl qw(:funcs :vars);
+	use String::Escape qw(escape);
+	use HTML::TreeBuilder;
+	use HTML::FormatText;
+
+	my $lines = [ $curbuf->Get(1 .. $curbuf->Count) ];
+
+	my $tree = HTML::TreeBuilder->new_from_content(@$lines);
+
+	VimCmd(qq{
+		let margin_left=input('Left margin:',0)
+		let margin_right=input('Right margin:',100)
+	});
+
+	my $formatter = HTML::FormatText->new(
+		leftmargin  => VimVar('margin_left'),
+		rightmargin => VimVar('margin_right'),
+	);
+  my @txt = split "\n" => $formatter->format($tree);
+	for(@txt){
+		my $l = escape('printable',"$_");
+		s/"/\\"/g;
+		#VimMsg($_);
+		VimCmd(qq{ call add(lines,"$_") });
+	}
+	
+eof
+	call base#buf#open_split({ 'lines' : lines })
+endfunction
+
 """BufAct_pretty_perl_libxml
 function! base#bufact#html#pretty_perl_libxml ()
 	call base#buf#start()
