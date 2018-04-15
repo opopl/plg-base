@@ -1,5 +1,6 @@
 lynx_dump_split
-pretty_libxml
+pretty_perl_libxml
+pretty_beautifulsoup
 remove_xpath
 xpath
 find_style
@@ -7,8 +8,15 @@ find_form
 find_script
 quickfix_xpath
 headings
-table_to_txt
 attr_remove
+remove_extra
+# htw
+htw_load_buf
+htw_node_print
+# tables
+tables_to_txt
+###replace
 replace_a
 replace_pre
-remove_extra
+replace_tables
+replace_with_text

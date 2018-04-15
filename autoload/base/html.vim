@@ -322,6 +322,7 @@ perl << eof
 	use Base::Util;
 
 	use SQL::SplitStatement;
+	use String::Escape qw(escape);
 
 	use File::Path qw(mkpath);
 	use File::Basename qw(basename);
@@ -369,12 +370,25 @@ perl << eof
 			 	});
 				$max++;
 
-				my $cmd = qq{ let vh_tag = input("VimHelp tag:","$vh_tag") };
-				VimCmd($cmd);
-				$vh_tag = VimVar('vh_tag');
+				{
+					my $cmd = qq{ let vh_tag = input("VimHelp tag:","$vh_tag") };
+					VimCmd($cmd);
+					$vh_tag = VimVar('vh_tag');
+				}
 
 				$file_local_html = catfile($saved_urls,$max . '.html');
 				$file_local_text = catfile($saved_urls,$max . '.txt');
+
+				{
+					my ($f_html,$f_text)=map { escape('printable',$_)} ($file_local_html,$file_local_text);
+					my $cmd = qq{ 
+						let file_local_html = input("Local html file:","$f_html") 
+						let file_local_text = input("Local text file:","$f_text") 
+					};
+					VimCmd($cmd);
+					$file_local_html = VimVar('file_local_html');
+					$file_local_text = VimVar('file_local_text');
+				}
 
 				my $vhref={
 					out_vh_file => $file_local_text,
@@ -413,7 +427,12 @@ perl << eof
 			my $cmd;
 
 			my $dbh = $vimdbi->dbh;
-			$dbh->do('use docs_sphinx');
+			my $db;
+			{
+				my $cmd = qq{ let db=input('DB name:','docs_sphinx') };
+				$db     = VimVar('db');
+			}
+			$dbh->do("use $db");
 
 			$cmd   = qq{ let doc_id = input("doc_id:","") };
 			VimCmd($cmd);
@@ -468,7 +487,7 @@ perl << eof
 
 	{ # split view of the saved html
 		my $cmd = qq {
-			let spl = input("Split contents? 1/0:",0)
+			let spl = input("Split contents? 1/0:",1)
 			if spl | enew | split | endif
 		};
 		VimCmd($cmd);
@@ -495,10 +514,11 @@ perl << eof
 	my $lines = [ $curbuf->Get(1 .. $curbuf->Count) ];
 	$HTW
 		->init_dom({ 
-			htmllines => $lines,
-			load_as   => $load_as,
+				htmllines => $lines,
+				load_as   => $load_as,
 		})
 		;
+	our $DOM = $HTW->{dom};
 eof
 	
 endfunction

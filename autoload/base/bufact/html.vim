@@ -5,7 +5,10 @@ function! base#bufact#html#lynx_dump_split ()
 	let lines = getline(0,'$') 
 	let tmp   = tempname()
 	call writefile(lines,tmp)
+
 	let cmd = 'lynx -dump -force_html '.tmp
+	let cmd = input('Conversion cmd:',cmd)
+
 	echo tmp
 	call base#sys({ "cmds" : [cmd], 'split_output' : 1 })
 
@@ -23,8 +26,8 @@ function! base#bufact#html#headings ()
 
 endfunction
 
-"""BufAct_pretty_libxml
-function! base#bufact#html#pretty_libxml ()
+"""BufAct_pretty_perl_libxml
+function! base#bufact#html#pretty_perl_libxml ()
 	call base#buf#start()
 
 	let lines = getline(0,'$')
@@ -39,6 +42,18 @@ function! base#bufact#html#pretty_libxml ()
 			\	})
 
 	"call base#buf#open_split({ 'lines' : html_pp })
+
+endfunction
+
+"""BufAct_pretty_beautifulsoup
+function! base#bufact#html#pretty_beautifulsoup ()
+	call base#buf#start()
+
+	let lines = getline(0,'$')
+	let html  = join(lines,"\n")
+python << eof
+		
+eof
 
 endfunction
 
@@ -102,12 +117,18 @@ function! base#bufact#html#quickfix_xpath ()
 
 endfunction
 
-"""remove_extra
+"""bufact_remove_extra
 function! base#bufact#html#remove_extra ()
 	let xpaths = [] 
 	call add(xpaths,'//script') 
 	call add(xpaths,'//link') 
 	call add(xpaths,'//meta') 
+
+	call add(xpaths,"//meta[not(translate(@http-equiv,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='content-type')]")
+
+	call add(xpaths,"//meta[not(contains(translate(@content,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'text/html; charset=utf-8'))]")
+
+""<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	call add(xpaths,'//style') 
 
 	call add(xpaths,"//*[@id='footer']") 
@@ -122,7 +143,36 @@ function! base#bufact#html#remove_extra ()
 
 endfunction
 
-"""remove_xpath
+"""bufact_htw_load_buf
+function! base#bufact#html#htw_load_buf ()
+	call base#buf#start()
+	call base#html#htw_load_buf()
+endfunction
+
+"""bufact_htw_node_print
+function! base#bufact#html#htw_node_print ()
+	call base#buf#start()
+	call base#html#htw_load_buf()
+	let lines=[]
+perl << eof
+	use String::Escape qw(escape);
+
+	my $cmd = qq{ let xpath=input('Node xpath:','') };
+	VimCmd($cmd);
+	my $xpath = VimVar('xpath');
+
+	my @lines;
+	my $sub = sub{ 
+		my $node = shift;
+		my $line = escape('printable',$node->toString);
+		VimCmd(qq{ call add(lines,"$line") });
+	};
+	$DOM->findnodes($xpath)->map($sub);
+eof
+	call base#buf#open_split({ 'lines' : lines })
+endfunction
+
+"""bufact_remove_xpath
 function! base#bufact#html#remove_xpath (...)
 	call base#buf#start()
 	call base#html#htw_load_buf()
@@ -131,27 +181,23 @@ function! base#bufact#html#remove_xpath (...)
 	let xpath  = get(ref,'xpath','')
 	let xpaths = get(ref,'xpaths',[])
 
-	if len(xpaths)
-		for xpath in xpaths
-			call base#bufact#html#remove_xpath({ 'xpath' : xpath })
-		endfor
-		return
-	endif
-
-	if ! strlen(xpath)
-		let xpath = idephp#hist#input({ 
-				\	'msg'  : 'XPATH:',
-				\	'hist' : 'xpath',
-				\	})
+	if ! len(xpaths)
+		if ! strlen(xpath)
+			let xpath = idephp#hist#input({ 
+					\	'msg'  : 'XPATH:',
+					\	'hist' : 'xpath',
+					\	})
+		endif
+		let xpaths=[xpath]
 	endif
 perl << eof
 	use Vim::Perl qw(:funcs :vars);
 
-	my $xpath = VimVar('xpath') || '';
-	my $ref   = VimVar('ref') || {};
+	my $xpaths = VimVar('xpaths') || [];
+	my $ref    = VimVar('ref') || {};
 
 	my $html = $HTW
-		->nodes_remove({ xpath => $xpath })
+		->nodes_remove({ xpaths => $xpaths })
 		->htmlstr;
 		
 	CurBufSet({ text => $html, curbuf => $curbuf });
@@ -199,8 +245,8 @@ eof
 
 endfunction
 
-"""table_to_txt
-function! base#bufact#html#table_to_txt ()
+"""tablenode_print
+function! base#bufact#html#tables_to_txt ()
 	call base#buf#start()
 	call base#html#htw_init()
 
