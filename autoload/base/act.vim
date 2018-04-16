@@ -12,6 +12,22 @@ function! base#act#envvar_open_split (...)
 
 endfunction
 
+function! base#act#perl_Vim_Plg_Base (...)
+
+perl << eof
+	use Vim::Plg::Base;
+	use Vim::Perl qw(:funcs :vars);
+
+	our $plgbase ||=	Vim::Base::Plg->new;
+
+	VimCmd(qq{ let sub=input('Vim::Base::Plg method:','','custom,base#complete#perl_Vim_Plg_Base' ) });
+	my $sub=VimVar('sub');
+
+	$plgbase->$sub();
+eof
+
+endfunction
+
 
 function! base#act#rtp_helptags (...)
 	call base#rtp#helptags()

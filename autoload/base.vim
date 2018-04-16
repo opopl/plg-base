@@ -3035,7 +3035,7 @@ function! base#init (...)
         call base#init#au()
 
     elseif opt == 'sqlite'
-        call base#init#sqlite()
+        call base#init#sqlite({ 'reload' : 1})
 
     elseif opt == 'files'
         call base#init#files()

@@ -82,6 +82,10 @@ function! base#complete#BaseAppend (...)
   return base#complete#vars([ 'opts_BaseAppend' ])
 endfunction
 
+function! base#complete#perl_Vim_Plg_Base(...)
+  return base#complete#vars([ 'opts_perl_Vim_Plg_Base' ])
+endfunction
+
 function! base#complete#BaseAct (...)
   return base#complete#vars([ 'opts_BaseAct' ])
 endfunction
@@ -92,6 +96,14 @@ function! base#complete#BufAct (...)
 		let comps = b:comps_BufAct
 	endif
 	return join(comps,"\n")
+endfunction
+
+function! base#complete#sqlite_tables (...)
+	"let q = 
+	""select name from sqlite_master where type='table'"
+	"call base#sql#q(q,{ 'type' : 'sqlite' })
+  "return base#complete#vars([ 'sqlite_sql' ])
+	return ""
 endfunction
 
 function! base#complete#sqlite_sql (...)

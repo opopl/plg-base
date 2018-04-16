@@ -42,16 +42,6 @@ eof
 	
 endfunction
 
-function! base#sqlite#tk ()
-perl << eof
-	package main;
-	use base qw( use Vim::Plg::Base::Tk );
-	__PACKAGE__->new( plgbase => $plgbase )->run;
-
-eof
-
-endfunction
-
 function! base#sqlite#info (...)
 	call base#init#sqlite()
 
@@ -72,8 +62,8 @@ function! base#sqlite#info (...)
 endfunction
 
 
-"""sqlite_sql
-function! base#sqlite#info_sql (...)
+"""sqlite_query
+function! base#sqlite#query (...)
 	call base#init#sqlite()
 
 	let q_last = base#varget('base_sqlite_last_sql_query','')
@@ -97,21 +87,43 @@ function! base#sqlite#info_sql (...)
 		call extend(ref,{ 'pack_fmt' : fmt })
 	endif
 
-	let fetch = input('Fetch:','','custom, perlmy#complete#dbi_fetch_methods')
+	let fetch = input('Fetch:','fetchrow_hashref','custom,perlmy#complete#dbi_fetch_methods')
 	if !len(fetch)
 		let fetch=base#getfromchoosedialog({ 
 			\ 'list'        : base#varget('perlmy_dbi_fetch_methods',[]),
-			\ 'startopt'    : 'fetchrow_arrayref',
+			\ 'startopt'    : 'fetchrow_hashref',
 			\ 'header'      : "Available fetch methods are: ",
 			\ 'numcols'     : 1,
 			\ 'bottom'      : "Choose fetch by number: ",
 			\ })
 	endif
 
-	call extend(ref,{ 'dbtype' : 'sqlite' })
+	call extend(ref,{ 
+		\	'fetch'  : fetch,
+		\	'dbtype' : 'sqlite',
+		\	})
+
 	let lines = base#sql#q(q,ref)
 	call base#buf#open_split({ 'lines' : lines })
 	return 1
+
+endfunction
+
+"""sqlite_table_describe
+function! base#sqlite#table_describe ()
+	call base#init#sqlite()
+
+	let ref = {
+			\	'fetch'     : 'fetchrow_arrayref',
+			\	'opt_print' : 'perlpack',
+			\	'dbtype'    : 'sqlite',
+			\	}
+	let table = input('table:','','custom,base#complete#sqlite_tables')
+	let q 		= "select * from sqlite_master where type='table' and name='".table."'"
+	let lines = base#sql#q(q,ref)
+
+	call base#buf#open_split({ 'lines' : lines })
+
 
 endfunction
 

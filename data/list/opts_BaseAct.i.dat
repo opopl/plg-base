@@ -2,10 +2,13 @@ list_vim_commands
 envvar_open_split
 open_split_list
 rtp_helptags
-###sqlite
+###sqlite ( using Vim::Plg::Base methods)
 sqlite_list_plugins
 sqlite_list_datfiles
 sqlite_list_keys_datfiles
 sqlite_reload_from_fs
 sqlite_drop_tables
-sqlite_tk
+sqlite_query
+sqlite_table_describe
+#
+perl_Vim_Plg_Base

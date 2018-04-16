@@ -408,9 +408,13 @@ function! base#init#tagids ()
 	
 endfunction
 
-fun! base#init#sqlite()
+fun! base#init#sqlite(...)
+	let ref = get(a:000,0,{})
+
+	let reload = get(ref,'reload',0)
+
 	let done = base#varget('done_base_init_sqlite',0)
-	if done 
+	if done && !reload
 		return 
 	endif
 
@@ -420,9 +424,13 @@ fun! base#init#sqlite()
 			\	],prf)
 
 perl << eof
+	use Vim::Perl qw(:funcs :vars);
 	use Vim::Plg::Base;
 
-	our $plgbase=Vim::Plg::Base->new;
+	our $plgbase = Vim::Plg::Base->new(
+		sub_log  => sub { VimMsg([@_]) },
+		sub_warn => sub { VimWarn(@_)  },
+	);
 eof
 
 	call base#varset('done_base_init_sqlite',1)

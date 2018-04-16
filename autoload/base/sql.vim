@@ -55,6 +55,8 @@ perl << eof
 	my $fetch     = VimVar('fetch');
 	my $method    = $fetch;
 
+	VimMsg($sql_query);
+
   my $ss    = SQL::SplitStatement->new;
 	my @stats = $ss->split($sql_query);
 
@@ -121,29 +123,35 @@ perl << eof
 #		}
 
 		my $fetchrow = sub { 
-			my $nrow=undef;
-			my $row=undef;
+			my $nrow = undef;
+			my $row  = undef;
 			eval { $row = $sth->$method; }; 
 			unless($row){ return; }
 
-			@$nrow=@$row;
-			if ($@) {
-				my @m;
-					push @m,
-					'base#sql#q: errors while $sth->fetchrow...',
-					'$dbh->errstr=',$errstr->(),
-					$@;
-				VimWarn(@m);
-				return undef;
+			if (ref $row eq 'ARRAY') {
+				if ($@) {
+					my @m;
+						push @m,
+						'base#sql#q: errors while $sth->fetchrow...',
+						'$dbh->errstr=',$errstr->(),
+						$@;
+					VimWarn(@m);
+					return undef;
+				}
+				for($method){
+					@$nrow=@$row;
+
+					/^fetchrow_arrayref$/ && do {
+						@$nrow = map { encode('utf8',$_) } @$row;
+						next;
+					};
+
+					last;
+				}
+			}elsif(ref $row eq 'HASH'){
+				$nrow = { %$row };
 			}
-			for($method){
-				/^fetchrow_arrayref$/ && do {
-					@$nrow = map { encode('utf8',$_) } @$row;
-					next;
-				};
-				last;
-			}
-			
+					
 			return $nrow;
 		};
 	
