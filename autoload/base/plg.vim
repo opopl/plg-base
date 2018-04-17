@@ -200,26 +200,47 @@ function! base#plg#grep(...)
 	if a:0
 		let plg = a:1
 	else
-		let plg = input('Plugin name:','projs','custom,base#complete#plg')
+		let plg = ''
+		while !strlen(plg)
+			let plg = input('Plugin name:','base','custom,base#complete#plg')
+		endw
 	endif
 
 	let plgdir = base#catpath('plg',plg)
 
+	let exts_s = 'vim dat'
+	let exts_s = input('Extensions:',exts_s)
+
 	let files = base#find({ 
-		\	'dirs' : [ plgdir ]             ,
-		\	'exts' : base#qw('vim dat')     ,
-		\	'subdirs' : 1                   ,
+		\	'dirs' 		: [ plgdir ]      ,
+		\	'exts' 		: base#qw(exts_s) ,
+		\	'subdirs' : 1               ,
 		\	})
 
-	let pat = input('GREP pattern:','')
+	let pat = ''
 
-	let opt = base#grepopt()
+	while !strlen(pat)
+		let pat = input('GREP pattern:','','custom,base#complete#grep_history')
+		call base#va#add('grep_history',pat)
+	endw
 
-	let grepopt = input('GREP opt:',opt,'custom,ap#complete#grepopt')
+	"let grepprg=base#getfromchoosedialog({ 
+		"\ 'list'        : base#where('grep'),
+		"\ 'startopt'    : '',
+		"\ 'header'      : "Available grep esxe are: ",
+		"\ 'numcols'     : 1,
+		"\ 'bottom'      : "Choose grep by number: ",
+		"\ })
+
+	let grepprg=''
+	let opt     = base#grepopt()
+	"let grepopt = input('GREP opt:',opt,'custom,ap#complete#grepopt')
+
 	call base#grep({ 
-		\	"pat"   : pat     ,
-		\	"files" : files   ,
-		\	"opt"   : grepopt ,
+		\	"pat"     : pat     ,
+		\	"files"   : files   ,
+		\	"opt"     : grepopt ,
+		\	"grepprg" : grepprg ,
  		\	})
 
 endfunction

@@ -90,6 +90,10 @@ function! base#complete#BaseAct (...)
   return base#complete#vars([ 'opts_BaseAct' ])
 endfunction
 
+function! base#complete#grep_history (...)
+  return base#complete#vars([ 'grep_history' ])
+endfunction
+
 function! base#complete#BufAct (...)
 	let comps = []
 	if exists("b:comps_BufAct")

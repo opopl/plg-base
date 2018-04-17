@@ -2970,6 +2970,21 @@ function! base#varlist ()
     return varlist
 endfunction
 
+function! base#where (file)
+	if base#noperl() | return | endif
+
+	let paths=[]
+perl << eof
+	use File::Which qw(where);
+	my $file=VimVar('a:file');
+
+	my @paths=where($file);
+	VimListExtend('paths',[@paths]);
+eof
+	return paths
+
+endfunction
+
   
 function! base#act (...)
   let act = get(a:000,0,'')
@@ -3197,11 +3212,17 @@ function! base#grep (...)
     let files = get(ref,'files',[])
     let opt   = get(ref,'opt',opt)
 
+		let grepprg = get(ref,'grepprg','')
+
     let rootdir = get(ref,'rootdir','')
 
     if strlen(rootdir)
         call map(files,'base#file#catfile([ rootdir, v:val ])')
     endif
+
+    call map(files,'base#file#win2unix(v:val)')
+
+		let cmds = []
 
     if opt == 'plg_findstr'
 
@@ -3214,24 +3235,40 @@ function! base#grep (...)
             \  "use_startdir" : 0              ,
             \}
 
-        let cmd = 'call findstr#ap#run(gref)'
+        call add(cmds,'call findstr#ap#run(gref)')
 
     elseif opt == 'vimgrep'
-        let cmd = 'vimgrep /'.pat.'/ '. join(files,' ') 
+        call add(cmds, 'vimgrep /'.pat.'/ '. join(files,' ') )
 
     elseif opt == 'grep'
-				let patq = '"'.pat.'"'
+				let patq = "'".pat."'"
 				let a    = []
 
-				call extend(a,['grep',patq])
-				call extend(a,files)
+				if strlen(grepprg)
+					call add(cmds,'let &grepprg='."'".escape(grepprg,' ')."'")
+				endif
 
-	   		let cmd = join(a,' ')
+				let q ="'"
+
+				call add(cmds, 'call setqflist([])' )
+				for f in files
+					let a=[]
+					call extend(a,['silent grepadd!',patq])
+					call extend(a,[f])
+	   			let cmd = join(a,' ')
+					call add(cmds, cmd )
+				endfor
     endif
-		"echo '----'
-		"echo cmd
 
-    exe cmd
+		for cmd in cmds
+			let cmde = strpart(cmd,0,50)
+			"echo 'Executing: ' . cmde
+			exe cmd
+			"try
+			"catch 
+				"echoerr 'Errors while executing: ' . cmde 
+			"endtry
+		endfor
     
 endfunction
 
