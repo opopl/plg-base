@@ -85,16 +85,10 @@ perl << eof
 		my $fileid = VimVar('fileid');
 		my $pc     = VimVar('pc');
 
-		my($dbh,$sth);
+		$plgbase
+			->db_prepare('insert into exefiles ( fileid, file, pc ) values(?,?,?)')
+			->db_execute($fileid,$file,$pc);
 
-		$dbh = $plgbase->dbh;
-		$plgbase->db_create_tables;
-
-		eval { $sth = $dbh->prepare('insert into exefiles ( fileid, file, pc ) values(?,?)'); };
-		if ($@) { $plgbase->warn($@); return; }
-
-		eval { $sth->execute($fileid,$file,$pc); };
-		if ($@) { $plgbase->warn($@); return;}
 eof
 		 endif
 

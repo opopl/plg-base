@@ -208,15 +208,6 @@ function! base#plg#grep(...)
 
 	let plgdir = base#catpath('plg',plg)
 
-	let exts_s = 'vim dat'
-	let exts_s = input('Extensions:',exts_s)
-
-	let files = base#find({ 
-		\	'dirs' 		: [ plgdir ]      ,
-		\	'exts' 		: base#qw(exts_s) ,
-		\	'subdirs' : 1               ,
-		\	})
-
 	let pat = ''
 
 	while !strlen(pat)
@@ -224,23 +215,12 @@ function! base#plg#grep(...)
 		call base#va#add('grep_history',pat)
 	endw
 
-	"let grepprg=base#getfromchoosedialog({ 
-		"\ 'list'        : base#where('grep'),
-		"\ 'startopt'    : '',
-		"\ 'header'      : "Available grep esxe are: ",
-		"\ 'numcols'     : 1,
-		"\ 'bottom'      : "Choose grep by number: ",
-		"\ })
-
-	let grepprg=''
-	let opt     = base#grepopt()
-	"let grepopt = input('GREP opt:',opt,'custom,ap#complete#grepopt')
+	let grepopt     = base#grepopt()
 
 	call base#grep({ 
 		\	"pat"     : pat     ,
-		\	"files"   : files   ,
+		\	"files"   : [plgdir] ,
 		\	"opt"     : grepopt ,
-		\	"grepprg" : grepprg ,
  		\	})
 
 endfunction
