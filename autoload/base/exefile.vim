@@ -85,9 +85,15 @@ perl << eof
 		my $fileid = VimVar('fileid');
 		my $pc     = VimVar('pc');
 
-		$plgbase
-			->db_prepare('insert into exefiles ( fileid, file, pc ) values(?,?,?)')
-			->db_execute($fileid,$file,$pc);
+		my $a = $plgbase
+			->dbh
+			->selectall_arrayref('select fileid from exefiles where fileid=?',undef,$fileid);
+		unless(@$a) {
+			$plgbase
+				->db_prepare('insert into exefiles ( fileid, file, pc ) values(?,?,?)')
+				->db_execute($fileid,$file,$pc);
+		}
+
 
 eof
 		 endif
