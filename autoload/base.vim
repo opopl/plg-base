@@ -2473,15 +2473,7 @@ function! base#info (...)
 
 """info_perl
    elseif topic == 'perl'
-        let perllib = base#envvar('PERLLIB')
-        let perllib = join(split(perllib,";"),"\n\t")
-
-        call base#echo({ 'text' : "Perl-related: " } )
-        call base#echo({ 'text' : "$PERLLIB => \n\t" . perllib  } )
-
-        let perlexes=join(base#exefile#path('perl'),"\n\t")
-        call base#echo({ 'text' : "Perl Executables:"   } )
-        call base#echo({ 'text' : "  perlexes => \n\t" . perlexes } )
+				PERLMY info
 
 """info_proj
    elseif topic == 'proj'

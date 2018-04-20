@@ -158,7 +158,7 @@ function! base#bufact#html#remove_extra ()
 	call add(xpaths,'//link') 
 	call add(xpaths,'//meta') 
 
-	call add(xpaths,"//meta[not(translate(@http-equiv,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='content-type')]")
+	call add(xpaths,"//meta[ not(translate(@http-equiv,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz') = 'content-type' )]")
 
 	call add(xpaths,"//meta[not(contains(translate(@content,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'text/html; charset=utf-8'))]")
 
