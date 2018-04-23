@@ -310,6 +310,76 @@ perl << eof
 eof
 endfunction
 
+function! base#html#fetch_url_source (...)
+	let ref = get(a:000,0,{})
+	let url = get(ref,'url','')
+
+	let save_dir = base#qw#catpath('appdata','vim plg base saved_urls')
+	let save_dir = input('URL save dir: ',save_dir)
+
+	"let save_db = base#qw#catpath('appdata','vim plg base saved_urls saved.db')
+	"let save_db = input('URL save SQLite db: ',save_db)
+	
+perl << eof
+	use File::Fetch;
+	use Vim::Perl qw(VimVar VimMsg CurBufSet);
+	use File::Spec::Functions qw(catfile);
+	use Tie::File;
+
+	my $url      = VimVar('url');
+	my $save_dir = VimVar('save_dir');
+
+	my $ff;
+	eval { $ff = File::Fetch->new(uri => $url); };
+	if ($@) { VimWarn($@); }
+
+	### fetch the uri to cwd() ###
+	eval { $ff->fetch( to => $save_dir ) || die $ff->error; };
+	if ($@) { VimWarn($@); }
+
+	my $out_file = $ff->output_file;
+	my $f        = catfile($save_dir,$out_file);
+	if (-e $f) {
+		my $cmd = qq{ let f='$f' | exe 'edit ' . f  };
+		VimCmd($cmd);
+	}
+eof
+
+endfunction
+
+function! base#html#download_site (...)
+	call base#html#htw_init()
+
+	let ref      = get(a:000,0,{})
+
+	" required
+	let save_dir = get(ref,'save_dir','')
+	let root     = get(ref,'root','')
+	let bname    = get(ref,'bname','')
+
+	let site     = get(ref,'site','')
+
+	" optional
+	let proto    = get(ref,'proto','http')
+
+perl << eof
+	my $save_dir = VimVar('save_dir');
+	my $root     = VimVar('root');
+	my $bname    = VimVar('bname');
+	my $proto    = VimVar('proto');
+
+	$HTW->download_site({
+			savedir     => $save_dir,
+			root        => $root,
+			bname       => 'index',
+			bnames_find => 1,
+			proto       => $proto,
+	});
+eof
+
+endfunction
+
+
 function! base#html#url_load (...)
 	let ref=get(a:000,0,{})
 
