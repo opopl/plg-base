@@ -3191,7 +3191,7 @@ endfun
 "call base#grep({ "pat" : pat, "files" : files })
 "
 "call base#grep({ "pat" : pat, "files" : files, "opt" : 'plg_findstr' })
-"call base#grep({ "pat" : pat, "files" : files, "opt" : 'grep' }) - todo 
+"call base#grep({ "pat" : pat, "files" : files, "opt" : 'grep' })
 "call base#grep({ "pat" : pat, "files" : files, "opt" : 'vimgrep' }) -todo
 
 function! base#grep (...)
@@ -3211,6 +3211,15 @@ function! base#grep (...)
     if strlen(rootdir)
         call map(files,'base#file#catfile([ rootdir, v:val ])')
     endif
+
+    let cd_to_dir = get(ref,'cd_to_dir','')
+		if strlen(cd_to_dir) 
+			if !isdirectory(cd_to_dir)
+				call base#mkdir(cd_to_dir)
+			endif
+
+			call base#cd(cd_to_dir)
+		endif
 
     call map(files,'base#file#win2unix(v:val)')
 
@@ -3236,9 +3245,9 @@ function! base#grep (...)
 				let patq = "'".pat."'"
 				let a    = []
 
-				if strlen(grepprg)
-					call add(cmds,'let &grepprg='."'".escape(grepprg,' ')."'")
-				endif
+				"if strlen(grepprg)
+					"call add(cmds,'let &grepprg='."'".escape(grepprg,' ')."'")
+				"endif
 
 				let q ="'"
 
@@ -3250,17 +3259,29 @@ function! base#grep (...)
 	   			let cmd = join(a,' ')
 					call add(cmds, cmd )
 				endfor
+
     endif
 
 		for cmd in cmds
 			let cmde = strpart(cmd,0,50)
-			"echo 'Executing: ' . cmde
 			exe cmd
-			"try
-			"catch 
-				"echoerr 'Errors while executing: ' . cmde 
-			"endtry
 		endfor
+
+		let matches = len(getqflist())
+
+		redraw!
+		if matches
+			echohl MoreMsg
+			echo 'base#grep() has found ' . matches . ' matches'
+			echohl None
+			copen
+		else
+			echohl DiffText
+			echo 'base#grep() has found no matches '
+			echohl None
+		endif
+
+		return 1
     
 endfunction
 

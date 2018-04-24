@@ -218,9 +218,9 @@ function! base#plg#grep(...)
 	let grepopt     = base#grepopt()
 
 	call base#grep({ 
-		\	"pat"     : pat     ,
+		\	"pat"     : pat      ,
 		\	"files"   : [plgdir] ,
-		\	"opt"     : grepopt ,
+		\	"opt"     : grepopt  ,
  		\	})
 
 endfunction

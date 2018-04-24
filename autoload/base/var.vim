@@ -35,7 +35,7 @@ function! base#var#update (varname)
 
 	redraw!
 	echohl MoreMsg
-	echo 'Updated: ' . varname 
+	echo '(base#var#update) updated: ' . varname
 	echohl None
 	return
 
