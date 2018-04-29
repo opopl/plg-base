@@ -44,6 +44,10 @@ function! base#plg#runtime (...)
 	endif
 endf	
 
+""" call base#plg#loadvars (plg)
+""" call base#plg#loadvars (plg,{ 'opts_readarr' : { ... } })
+""" call base#plg#loadvars (plg,{ 'opts_readdict' : { ... } })
+
 function! base#plg#loadvars (...)
 
 	if a:0

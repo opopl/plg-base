@@ -191,20 +191,6 @@ function! base#tg#update (...)
 		let ok= base#tg#ok(okref)
 		return
 
-	elseif tgid == 'help_js'
-		call idephp#help#helptags({ 
-			\ 'topic' : 'javascript',
-			\ })
-
-		let okref = { 
-			\	"tgid" : tgid,
-			\	"ok"   : 1,
-			\	"add"  : 0, 
-			\	}
-
-		call base#tg#ok(okref)
-		return
-
 """tgupdate_help_perlmy
 	elseif tgid == 'help_perlmy'
 		call perlmy#help#helptags()
@@ -246,7 +232,6 @@ function! base#tg#update (...)
 			\ })
 
 		let files = join(files_arr,' ')
-
 
 """tgupdate_php_adminer_src
 	elseif tgid == 'php_adminer_src'

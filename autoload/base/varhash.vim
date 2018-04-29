@@ -27,15 +27,24 @@ function! base#varhash#extend (...)
 
 endfunction
 
+"base#varhash#get ()
+"base#varhash#get (hash)
+"base#varhash#get (hash,key)
+"base#varhash#get (hash,key,default)
+
 function! base#varhash#get (...)
 
 	let hashname = get(a:000,0,'')
+	let val = base#varget(hashname,{})
+
+	if a:0 == 1
+			return val
+	endif
+
 	let key      = get(a:000,1,'')
 	let default  = get(a:000,2,{})
 
 	if !strlen(hashname) | return default | endif
-
-	let val = base#varget(hashname,{})
 
 	if base#type(val) == "Dictionary"
 		let hash = val

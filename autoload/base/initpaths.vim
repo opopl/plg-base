@@ -125,6 +125,10 @@ function! base#initpaths#APOPLAVSKIYNB ()
 	    \ })
 
 	 call base#pathset({ 
+      \ "php_taskman" : base#file#catfile([ base#path('repos_git'), 'taskmanager'  ]),
+	    \ })
+
+	 call base#pathset({ 
       \ "ospanel_config" : base#file#catfile(base#qw('c: OSPanel userdata config')),
 	 		\ "apache_24_haus" : 'c:\programs\webserver\Apache24',
 	    \ })

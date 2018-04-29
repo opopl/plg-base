@@ -2,8 +2,8 @@
 function! base#var#update (varname)
 	let varname = a:varname
 
-  let datlist  = base#varget('datlist',[])
-  let datfiles = base#varget('datfiles',{})
+  let datfiles = base#varhash#get('datfiles')
+  let datlist  = base#varhash#keys('datfiles')
 
 	let types = {
 			\	'dict'      : 'Dictionary',
@@ -28,16 +28,17 @@ function! base#var#update (varname)
         \   "file" : datfile ,
         \   "type" : type ,
         \   })
+
     call base#varset(varname,data)
 	else
 		return
 	endif
 
-	redraw!
-	echohl MoreMsg
-	echo '(base#var#update) updated: ' . varname
-	echohl None
-	return
+	"redraw!
+	"echohl MoreMsg
+	"echo '(base#var#update) updated: ' . varname
+	"echohl None
+	"return
 
 endfunction
 

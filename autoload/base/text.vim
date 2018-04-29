@@ -23,6 +23,24 @@ function! base#text#bufsee (...)
 
 endfunction
 
+function! base#text#table (...)
+	let ref    = get(a:000,0,{})
+	let data   = get(ref,'data',[])
+	let header = get(ref,'header',[])
+
+perl << eof
+	use Vim::Perl qw(VimVar);
+	use Text::TabularDisplay;
+	our $data = [ VimVar('data') ]; our $header = [ VimVar('header') ];
+
+	my $t = Text::TabularDisplay->new(@$header);
+	foreach my $row (@$data) {
+		$t->add(@$row);
+	}
+	return $t->render;
+eof
+endfunction
+
 function! base#text#append (...)
 	let refdef = {}
 	let ref    = refdef

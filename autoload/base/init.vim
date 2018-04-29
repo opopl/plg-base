@@ -459,7 +459,6 @@ fun! base#init#au()
 
 	"au_base_html
 	exe 'au BufRead,BufNewFile,BufWinEnter '.plgu.'/base/autoload/base/html.vim call base#buf#onload() '	
-
 	au BufWritePost *.i.dat call base#buf#au_write_post()
 
 	"au BufRead,BufWinEnter * call base#buf#onload()

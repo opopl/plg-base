@@ -177,7 +177,7 @@ function! base#buf#onload ()
 		endif
 
 	elseif b:filetype == 'idat'
-		BufAct update_var 
+		"BufAct update_var 
 	endif
 	
 endfunction
