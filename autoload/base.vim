@@ -1618,7 +1618,7 @@ function! base#findwin(ref)
 							let found .= globpath(dir,'**/*.'.ext)
 						endfor
 				else
-	
+
 		        for ext in exts 
 		            if strlen(ext) | let ext = '.'.ext | endif
 		
