@@ -57,21 +57,26 @@ fun! base#init#paths(...)
     let ref = {}
     if a:0 | let ref = a:1 | endif
 
+    let home     = base#envvar( (has('win32')) ? 'USERPROFILE' : 'HOME' )
+    let hm       = base#envvar('hm',home)
 
-    let hm       = base#envvar('hm')
-    let home     = base#envvar('USERPROFILE')
-    let pf       = base#envvar('PROGRAMFILES')
+    let pc       = base#envvar((has('win32')) ? 'USERPROFILE' : get(split(system('hostname'),"\n"),0) )
+
+	if has('win32')
+        let pf       = base#envvar('PROGRAMFILES')
+
+		call base#pathset({ 
+            \ 'pf'            : pf ,
+	        \ 'include_win_sdk'   : base#envvar('INCLUDE_WIN_SDK'),
+			\}
+	endif
+
     let vrt      = base#envvar('VIMRUNTIME')
-    let pc       = base#envvar('COMPUTERNAME')
-    let confdir  = base#envvar('CONFDIR')
-    let mrc      = base#envvar('MYVIMRC')
     let projsdir = base#envvar('PROJSDIR')
 
     call base#pathset({ 
         \ 'home'          : home ,
         \ 'hm'            : hm ,
-        \ 'pf'            : pf ,
-        \ 'conf'          : confdir ,
         \ 'vrt'           : vrt,
         \ 'vim'           : base#envvar('VIM'),
         \ 'src_vim'       : base#envvar('SRC_VIM'),
@@ -80,9 +85,8 @@ fun! base#init#paths(...)
         \ 'p'             : base#envvar('TexPapersRoot'),
         \ 'phd_p'         : base#envvar('TexPapersRoot'),
         \ 'tagdir'        : base#file#catfile([ hm,'tags' ]),
-        \ 'appdata'       : base#envvar('appdata'),
-        \ 'appdata_local' : base#envvar('localappdata'),
-        \ 'include_win_sdk'   : base#envvar('INCLUDE_WIN_SDK'),
+		\ 'appdata'       : base#envvar('APPDATA'),
+		\ 'appdata_local' : base#envvar('LOCALAPPDATA'),
         \ })
 
     call base#pathset({ 
@@ -102,17 +106,16 @@ fun! base#init#paths(...)
         \ 'progs'  : base#file#catfile([ base#path('hm'),'programs' ]),
         \ })
 
-		let pc = $COMPUTERNAME
+	let pc = base#pcname()
     if pc == 'APOPLAVSKIYNB'
         call base#initpaths#APOPLAVSKIYNB()
-		elseif pc == 'RESTPC'
+	elseif pc == 'RESTPC'
         call base#initpaths#RESTPC()
     endif
 
-
-
-    let mkvimrc  = base#file#catfile([ base#path('conf'), 'mk', 'vimrc' ])
-    let mkbashrc = base#file#catfile([ base#path('conf'), 'mk', 'bashrc' ])
+	call base#pathset({ 
+      \ "repos_git" : base#file#catfile([ base#path('hm'), 'repos', 'git'  ]),
+	  \ })
 
     call base#pathset({
         \   'pdfout'      : base#envvar('PDFOUT'),
@@ -128,15 +131,8 @@ fun! base#init#paths(...)
 
     call base#pathset({
         \   'desktop'     : base#file#catfile([ hm, base#qw("Desktop") ]),
-        \   'mkvimrc'     : mkvimrc,
-        \   'mkbashrc'    : mkbashrc,
-        \   'coms'        : base#file#catfile([ mkvimrc, '_coms_' ]) ,
-        \   'funs'        : base#file#catfile([ mkvimrc, '_fun_' ]) ,
         \   'projs'       : projsdir,
-        \   'perlmod'     : base#file#catfile([ hm, base#qw("repos git perlmod") ]),
-        \   'perlscripts' : base#file#catfile([ hm, base#qw("scripts perl") ]),
-        \   'scripts'     : base#file#catfile([ hm, base#qw("scripts") ]),
-        \   'projs_my'    : base#file#catfile([ hm, base#qw("repos git projs_my") ]),
+        \   'perlmod'     : base#file#catfile([ base#path('repos_git'), base#qw("perlmod") ]),
         \   'projs_da'    : base#file#catfile([ hm, base#qw("repos git projs_da") ]),
         \   })
 

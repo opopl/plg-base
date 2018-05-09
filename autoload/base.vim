@@ -2384,6 +2384,7 @@ function! base#envvar_a (varname,...)
 
 endf    
 
+
 function! base#envvar_open_split (varname,...)
 	let a = base#envvar_a(a:varname)
 	call base#buf#open_split({'lines' : a})
@@ -2673,15 +2674,11 @@ function! base#act (...)
 
 endf    
 
-function! base#pcname ()
-	if has('win32')
-		let pc = base#envvar('COMPUTERNAME')
-	else
-		let pc = base#envvar('HOSTNAME')
-	endif
-	return pc 
-	
-endfunction
+function! base#pcname()
+	let pc  =(has('win32')) ? base#envvar('USERPROFILE') : get(split(system('hostname'),"\n"),0)
+	return pc
+endf    
+
 
 function! base#init (...)
 

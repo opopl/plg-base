@@ -11,6 +11,8 @@ let s:opt = 'rtp_base'
 let s:opt = 'simple'
 let s:opt = 'all'
 
+let g:snippets_dir=expand("$VIMRUNTIME/plg/snipmate/snippets")
+
 
 """""""""""""""""""""""""
 """opt_all

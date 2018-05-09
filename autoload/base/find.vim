@@ -55,6 +55,7 @@ function! base#find#withperl (...)
 perl << EOF
   use File::Find ();
   use Vim::Perl qw(:funcs :vars);
+  use File::Spec::Functions qw(catfile);
 
   my $ref = VimVar('ref');
 
@@ -77,7 +78,7 @@ perl << EOF
 			my $max_depth = 1;
 			$pp =	sub {
     			my $depth = $File::Find::dir =~ tr[/][];
-					return grep { -d } @_ if $depth < $max_depth;
+				return grep { -d } @_ if $depth < $max_depth;
     			return;
 		   	};
 		}
@@ -89,6 +90,7 @@ perl << EOF
 		$qr{exts} = qr/$s/;
 	}
 
+	my $D;
   my $w = sub { 
 		my $name  = $File::Find::name;
 
@@ -104,12 +106,19 @@ perl << EOF
 		if($pat_exclude && /$pat_exclude/){
 			$add=0;
 		}
+		$name=~s/\.\///g;
+		return if $name eq '.';
 
-    push(@files,$name) if $add;
+		push(@files,catfile($D,$name)) if $add;
   };
 
-  File::Find::find({ wanted => $w, preprocess => $pp }, @$dirs );
-	VimListExtend('files',[@files]);
+  for my $dir (@$dirs){
+      $D=$dir;
+      next unless -d $dir;
+	  chdir $dir;
+	  File::Find::find({ wanted => $w, preprocess => $pp}, "." );
+  }
+  VimListExtend('files',[@files]);
 EOF
 
 	if has('win32')
