@@ -8,6 +8,7 @@ perl << eof
 	use Data::Dumper;
 	use String::Escape qw(escape);
 	use Encode qw(decode encode);
+	use DBI;
 
 	my $lines = [ $curbuf->Get( 1 .. $curbuf->Count ) ];
 
@@ -43,10 +44,15 @@ perl << eof
 		chomp;
 		s/^\s*//g; s/\s*$//g;
 		s/^\s*\n//g;
+		s/\n//g;
 		s/\\\\hline//g;
 		s/\\\\textbf{(.*)}/$1/g;
 		
 		$_;
+	};
+
+	my $tex2row=sub { 
+		my $t=shift; map { $strip_latex->($_) } split('&',$t); 
 	};
 
 	foreach my $table (keys %tables) {
@@ -54,10 +60,17 @@ perl << eof
 		#my @rows = map { escape('printable',decode('utf-8',$_)) } split( "\\\\", $t );
 		my @rows_t = map { s/\\/\\\\/g; $_ } split( '\\\\\\\\', $t );
 		my $header_t = shift @rows_t;
+		my @data;
 
-		my @header = map { $strip_latex->($_) } split('&',$header_t);
+		my @header = $tex2row->($header_t);
 
-		VimMsg(Dumper([@header]));
+		my $j=0;
+		foreach my $row_t (@rows_t) {
+			my @row = $tex2row->($row_t);
+			VimMsg(Dumper([@row]));
+			$j++;
+		}
+
 	}
 eof
 
