@@ -83,7 +83,9 @@ function! base#bufact#tex#set_tag_file ()
 perl << eof
 	use Vim::Perl qw(:funcs :vars);
 	use Data::Dumper;
-	my $lines = $curbuf->Get( 1 .. $curbuf->Count );
+	my $lines = [ $curbuf->Get( 1 .. $curbuf->Count ) ];
+
+	my $secname = VimVar('sec');
 
 	my $has=0;
 	for(@$lines){
