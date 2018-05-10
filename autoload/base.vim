@@ -1476,43 +1476,6 @@ fun! base#readdictdat(ref)
  return dict
 endfun
 
-function! base#findbyperl(ref)
-	if base#noperl() | return | endif
-
-  let dirstr = join(a:ref.dirs,':')
-  let extstr = join(a:ref.exts,':')
-
-  " list of found files to be returned
-  let files = []
-
-perl << EOF
-  use File::Find ();
-  use Vim::Perl qw(:funcs :vars);
-
-  my @dirs=split(":", VIM::Eval('dirstr'));
-  my @exts=split(":", VIM::Eval('extstr'));
-  my @files=();
-
-  my $w = sub { 
-    if (/\.(\w+)$/){
-      my $ext = $1 ;
-
-      if ( grep { /^$ext$/ } @exts ){
-        push(@files,$File::Find::name);
-      }
-    }
-  };
-  File::Find::find({ wanted => $w }, @dirs );
-  my $filestr=join(":",@files);
-  VIM::DoCommand('let filestr="' . $filestr . '"');
-
-EOF
-
-  let files=split(filestr,":")
-  return files
-
-endf
-
 """base_find
 function! base#find(ref)
 
@@ -1520,9 +1483,10 @@ function! base#find(ref)
     let files = []
 
     if has('win32')
-      let files = base#findwin(a:ref)
-    else
-      let files = base#findunix(a:ref)
+      "let files = base#find#win(a:ref)
+      let files = base#find#withperl(a:ref)
+    elseif has('perl')
+      let files = base#find#withperl(a:ref)
     endif
 
     return files
@@ -1531,182 +1495,6 @@ endf
 
 """base_findwin 
 
-" echo base#find({ "cwd" : 1, "exts" : [ "vim" ]})
-" echo base#find({ "cwd" : 1, "exts" : [ "vim" ]})
-" echo base#find({ "subdirs" : 1, "exts" : [ "vim" ]})
-" echo base#find({ "subdirs" : 1})
-" echo base#find({ "subdirs" : 1, "pat": "^a" })
-" echo base#find({ "subdirs" : 1, "dirs_only": 1 })
-"
-" 	use vim built-in functions glob(), globpath()
-" echo base#find({ "do_glob" : 1 })
-"
-" echo base#find({ ... , 'mapsub' : ['\.xml$','','g'] })
-"
-function! base#findwin(ref)
-    let ref = a:ref
-
-    let dirs     = []
-    let exts_def = [ '' ]
-
-    let do_subdirs   = get(ref,'subdirs',1)
-    let do_dirs_only = get(ref,'dirs_only',0)
-
-		let do_glob=get(ref,'do_glob',0)
-
-    let exts = get(ref,'exts',exts_def)
-    if ! len(exts) | let exts=exts_def | endif
-
-    let qw_exts = get(ref,'qw_exts','')
-    if len(qw_exts)
-      let exts = base#qw(qw_exts)
-    endif
-
-    let dirs = get(ref,'dirs',dirs)
-    
-    let searchopts = ' /b '
-
-    if get(ref,'cwd')
-        call add(dirs,getcwd())
-    endif
-
-    let dirids    = []
-    let qw_dirids = get(ref,'qw_dirids','')
-
-    if len(qw_dirids)
-      let dirids = base#qw(qw_dirids)
-    endif
-
-    let dirids = get(ref,'dirids',dirids)
-    for id in dirids
-        let dir = base#path(id)
-        if len(dir)
-          call add(dirs,dir)
-        endif
-    endfor
-
-    if do_subdirs 
-        let searchopts .= ' /s '
-    endif
-
-    if do_dirs_only
-        let searchopts .= ' /a:d '
-		else
-        let searchopts .= ' /a:-d '
-    endif
-
-    " list of found files to be returned
-    let foundfiles = []
-
-    let olddir = getcwd()
-    
-    for dir in dirs
-        let found = ''
-        let dir = substitute(dir,'/','\','g')
-
-        let dir = base#file#std(dir)
-
-        if !isdirectory(dir)
-            continue
-        else
-            exe 'cd ' . dir
-        endif
-
-				if do_glob
-						"let extstr = base#mapsub_join(exts,'^','*.','g',' ') 
-						for ext in exts
-							let found .= globpath(dir,'**/*.'.ext)
-						endfor
-				else
-
-		        for ext in exts 
-		            if strlen(ext) | let ext = '.'.ext | endif
-		
-		            	let searchcmd  = 'dir *'.ext.searchopts 
-		
-			            let ok  = base#sys( { 
-			              \ "cmds"        : [ searchcmd ],
-			              \ "skip_errors" : 1,
-			              \ })
-			            let res = base#varget('sysoutstr','')
-			
-			            if ( ok && ( res !~ '^File Not Found' ) )
-			                let found .= res . "\n"
-			            endif
-		        endfor
-
-				endif
-
-        let files=split(found,"\n")
-        call filter(files,'v:val != ""')
-
-        if ! do_subdirs
-            call map(files,'base#file#catfile([dir, v:val])')
-        endif
-
-        let diru     = base#file#win2unix(dir)
-        let newfiles = []
-
-        for file in files
-            let add = 1
-            let cf  = copy(file)
-
-            let cfunix    = base#file#win2unix(cf)
-            let cfrelunix = substitute(cfunix,'^' . diru . '[/]*','','g')
-            let cfrel     = base#file#unix2win(cfrelunix)
-
-            if get(ref,'relpath')
-                let cf = cfrel
-            endif
-
-            if get(ref,'rmext')
-                for ext in exts
-                    let cf = substitute(cf,'\.'.ext.'$','','g') 
-                endfor
-            endif
-
-            let fnm = get(ref,'fnamemodify','')
-            if strlen(fnm)
-                let cf = fnamemodify(cf,fnm)
-            endif
-
-            let cfname = fnamemodify(cf,':p:t')
-
-            let pat = get(ref,'pat','')
-            if strlen(pat)
-                if ( cfname !~ pat )
-                    let add=0
-                endif
-            endif
-
-            if add
-                call add(newfiles,cf)
-            endif
-        endfor
-
-        let map = get(ref,'map','')
-        if strlen(map)
-            call filter(newfiles,"'" . map . "'")
-        endif
-
-        let mapsub = get(ref,'mapsub',[])
-        if len(mapsub)
-						let [pat,subpat,subopts]      = base#list#get(mapsub,'0:2')
-
-						let newfiles = base#mapsub(newfiles,pat,subpat,subopts)
-
-            call filter(newfiles,"'" . map . "'")
-        endif
-
-        let files = newfiles
-        call extend(foundfiles,files)
-    endfor
-
-    exe 'cd ' . olddir
-
-    return foundfiles
-
-endf
 
 """base_findunix
  
@@ -2898,6 +2686,7 @@ function! base#datafiles (id)
         \ "subdirs" : 1,
         \ "pat"     : '^'.file.'$',
         \   })
+
 
     return files
 
