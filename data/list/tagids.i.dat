@@ -1,6 +1,3 @@
-ipte_client
-ipte_ao
-ipte_wt
 ###php
 php_urltotxt
 php_adminer_src
@@ -32,7 +29,6 @@ plg_snipmate
 plg_findstr
 plg_gps
 plg_idephp
-plg_ipte
 plg_lasu
 plg_make
 plg_taskman

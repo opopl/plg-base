@@ -11,9 +11,7 @@ function! base#tg#set (...)
 
 	let tfile = base#tg#tfile(tgid)
 
-	if tgid     == 'ipte_ao'
-	elseif tgid == 'ipte_client'
-	elseif tgid == 'this'
+	if tgid == 'this'
 	elseif tgid == 'thisfile'
 	endif
 
@@ -416,34 +414,6 @@ function! base#tg#update (...)
 		
 				call projs#rootcd()
 		endif
-
-	elseif tgid == 'ipte_ao'
-		call base#CD(tgid)
-
-		let libs=join( [ 
-			\	ap#file#win( base#catpath(tgid,'iPTE') ), 
-			\	] ," ")
-
-	elseif tgid == 'ipte_client'
-		let id = 'ipte_lib_client'
-
-		call base#CD(id)
-
-		let libs=join( [ 
-			\	ap#file#win( base#catpath(id,'iPTE') ), 
-			\	] ," ")
-
-
-	elseif tgid == 'ipte_wt'
-		let id = 'ipte_lib_client'
-		call base#CD(id)
-
-		let libs=join( [ 
-			\	ap#file#win( base#catpath(id,'iPTE\WT') ), 
-			\	ap#file#win( base#catpath(id,'iPTE\Base') ), 
-			\	] ," ")
-
-		"let libs.=' ' . libs_as
 
 	elseif tgid == 'perlmod'
 		let id = tgid

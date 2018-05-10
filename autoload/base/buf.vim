@@ -1,7 +1,5 @@
 
 
-"function! base#buf#in('ipte_lib_client')
-"function! base#buf#in('ipte_ao')
 "
 function! base#buf#type(...)
 		let aa=a:000
@@ -149,7 +147,7 @@ function! base#buf#pathids ()
 		call base#buf#start()
 	endif
 
-	let fi = 'home hm vim vrt ipte_clients'
+	let fi = 'home hm vim vrt'
 	let fis = base#qw(fi)
 
 	let ids = base#pathids(b:file)
