@@ -507,11 +507,13 @@ function! base#DIR(...)
 			\	"dirs"    : [dir],
 			\	"exts"    : exts,
 			\	"cwd"     : 1,
-			\	"relpath" : rlp,
 			\	"subdirs" : 1,
 			\	"pat"     : pat,
 			\	"fnamemodify" : '',
 			\	})
+		if rlp
+			let ff = map(ff,'base#file#reldir(v:val,dir)')
+		endif
 
 		call base#buf#open_split({ 'lines' : ff })
 
@@ -815,10 +817,6 @@ fun! base#choosefromprompt(dialog, list, sep, ...)
  return res
 
 endfunction 
-
- 
-
-
 
 fun! base#readdatalist(id)
     
@@ -1479,15 +1477,7 @@ endfun
 """base_find
 function! base#find(ref)
 
-    " list of found files to be returned
-    let files = []
-
-    if has('win32')
-      "let files = base#find#win(a:ref)
-      let files = base#find#withperl(a:ref)
-    elseif has('perl')
-      let files = base#find#withperl(a:ref)
-    endif
+    let files = base#find#withperl(a:ref)
 
     return files
 
@@ -2681,11 +2671,12 @@ function! base#datafiles (id)
     let datadir = base#datadir()
     let file    = a:id . ".i.dat"
 
+		let pat   = '^'.file.'$'
     let files = base#find({
         \ "dirs"    : [ datadir ],
         \ "subdirs" : 1,
-        \ "pat"     : '^'.file.'$',
-        \   })
+        \ "pat"     : pat,
+        \  })
 
 
     return files
@@ -2704,7 +2695,6 @@ function! base#initvarsfromdat ()
     let datfiles = base#varget('datfiles',{})
     let datlist  = base#varget('datlist',[])
 
-		
     let dir = base#datadir()
     let dir = get(ref,'dir',dir)
 
@@ -2719,8 +2709,9 @@ function! base#initvarsfromdat ()
             \   "dirs"    : [ dir ],
             \   "exts"    : [ "i.dat" ],
             \   "subdirs" : 1,
-            \   "relpath" : 1,
             \   "rmext"   : 1, })
+				let vars = map(vars,'base#file#reldir(v:val,dir)')
+
         let tp = mp[type]
         for v in vars
             call base#varsetfromdat(v,tp)

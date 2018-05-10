@@ -2,7 +2,7 @@
 function! base#find#withperl (...)
     let ref = get(a:000,0,{})
 
-    let exts_def = [ '' ]
+    let exts_def = []
 
     let do_subdirs   = get(ref,'subdirs',1)
 		let do_dirs_only = get(ref,'dirs_only',0)
@@ -49,13 +49,15 @@ perl << EOF
   use File::Find ();
   use Vim::Perl qw(:funcs :vars);
 
-  my @dirs       = VimVar('dirs');
-  my @exts       = VimVar('exts');
+  my $dirs       = [ VimVar('dirs') ];
+  my $exts       = [ VimVar('exts') ];
 
   my $pat        = VimVar('pat');
   my $do_subdirs = VimVar('do_subdirs');
 
   my @files=();
+
+	my $pp = ($do_subdirs) ? sub { @_ } : sub { return grep { -f  } @_; };
 
   my $w = sub { 
     my ($ext) = (/\.(\w+)$/);
@@ -63,11 +65,7 @@ perl << EOF
 
 		my $add=1;
 
-		return unless -e $name; 
-
-		$File::Find::prune = ($do_subdirs) ? 0 : 1;
-
-    if ( @exts && ! grep { /^$ext$/ } @exts ){
+    if ( @$exts && ! grep { /^$ext$/ } @$exts ){
 			$add=0;
     }
 
@@ -78,7 +76,7 @@ perl << EOF
     push(@files,$name) if $add;
   };
 
-  File::Find::find({ wanted => $w }, @dirs );
+  File::Find::find({ wanted => $w, preprocess => $pp }, @$dirs );
 	VimListExtend('files',[@files]);
 EOF
 
