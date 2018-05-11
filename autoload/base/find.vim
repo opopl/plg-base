@@ -63,6 +63,8 @@ perl << EOF
     my ($ext) = (/\.(\w+)$/);
 		my $name = $File::Find::name;
 
+		return if -d;
+
 		my $add=1;
 
     if ( @$exts && ! grep { /^$ext$/ } @$exts ){

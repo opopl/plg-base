@@ -99,6 +99,7 @@ function! base#vim#helptags (...)
 		endif
 
 		let ff = base#find({ "dirs" : [docdir] })
+		echo ff
 
 		if !len(ff) | return | endif
 		"let dire = shellescape(dir)

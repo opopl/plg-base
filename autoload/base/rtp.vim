@@ -59,8 +59,6 @@ endf
 function! base#rtp#update(...)
 	call base#init#plugins()
 
-	"let dirs=	get
-
 	for plg in base#varget('plugins',[])
 		call base#rtp#add_plugin(plg)
 	endfor
