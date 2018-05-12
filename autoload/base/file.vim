@@ -248,7 +248,7 @@ function! base#file#std( filename,... )
 
 	let fname = base#file#ossep(fname)
 
-
+	let pref = matchstr(fname,'\zs'.escape(sep,'\').'*\ze')
 	let pc = split(fname,sep)
 	call filter(pc,'v:val != ""')
 
@@ -273,6 +273,7 @@ function! base#file#std( filename,... )
 	let pc = reverse(npc)
 
 	let fname = join(pc,sep)
+	let fname = pref . fname
 	return fname
 
 endf
