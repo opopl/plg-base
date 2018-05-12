@@ -325,6 +325,7 @@ perl << eof
 	use Vim::Perl qw(VimVar VimMsg CurBufSet);
 	use File::Spec::Functions qw(catfile);
 	use Tie::File;
+	use File::Copy qw(move);
 
 	my $url      = VimVar('url');
 	my $save_dir = VimVar('save_dir');
@@ -334,14 +335,30 @@ perl << eof
 	if ($@) { VimWarn($@); }
 
 	### fetch the uri to cwd() ###
+	VimMsg("\n".'Fetching');
 	eval { $ff->fetch( to => $save_dir ) || die $ff->error; };
 	if ($@) { VimWarn($@); }
 
-	my $out_file = $ff->output_file;
-	my $f        = catfile($save_dir,$out_file);
-	if (-e $f) {
-		my $cmd = qq{ let f='$f' | exe 'edit ' . f  };
-		VimCmd($cmd);
+	{
+			my $of;
+			local $_ = $of = $ff->output_file;
+			s/$/\.htm/g unless /\.(html|htm)$/;
+			s/\.php$/\.htm/g;
+		
+			my $f_old        = catfile($save_dir,$of);
+			my $f_new        = catfile($save_dir,$_);
+
+			VimMsg("\n".$f_new);
+			VimMsg("\n".$_);
+			VimMsg("\n".$f_old);
+			VimMsg("\n".$of);
+
+			eval { move($f_old,$f_new); };
+			if ($@) { VimWarn($@); }
+			if (-e $f_new) {
+					my $cmd = qq{ let f='$f_new' | exe 'edit ' . f  };
+					VimCmd($cmd);
+			}
 	}
 eof
 
