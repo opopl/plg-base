@@ -130,6 +130,13 @@ EOF
 		call filter(newfiles,"'" . map . "'")
 	endif
 
+	if get(ref,'relpath',0) && len(dirs)
+		let dir = get(dirs,0,'')
+		if isdirectory(dir)
+			let newfiles = map(newfiles,'base#file#reldir(v:val,dir)')
+		endif
+	endif
+
 	let files = newfiles
 	call extend(foundfiles,files)
 

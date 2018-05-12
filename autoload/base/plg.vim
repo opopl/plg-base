@@ -55,6 +55,11 @@ function! base#plg#loadvars (...)
 		let ref = get(a:000,1,{})
 	endif
 
+	let prf={ 'prf' : 'base#plg#loadvars' }
+	call base#log([
+		\	'plg => ' . plg,
+		\	],prf )
+
 	let opts_readarr  = get(ref,'opts_readarr',{})
 	let opts_readdict = get(ref,'opts_readdict',{})
 
