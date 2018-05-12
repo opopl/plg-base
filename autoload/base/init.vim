@@ -381,10 +381,6 @@ command! -nargs=* -complete=custom,base#complete#omnioptions
 """BuffersWipeAll
 	command! -nargs=*  BuffersWipeAll
 		\	call base#buffers#wipeall(<f-args>)
-
-"""PP
-	command! -nargs=* -complete=custom,base#complete#paplist PP
-		\	call base#pap#import(<f-args>)
 	 
 
 endfun

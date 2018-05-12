@@ -1,8 +1,13 @@
 function! base#rtp#add_plugin(plg)
 
-	let plg = base#catpath('plg', a:plg )
+	let plgdir = base#catpath('plg', a:plg )
 
-	let dirs=[ plg, base#file#catfile([ plg , 'after' ]) ]
+	let prf={ 'prf' : 'base#rtp#add_plugin' }
+	call base#log([
+		\	'Adding plugin:' . a:plg,
+		\	],prf)
+
+	let dirs=[ plgdir, base#file#catfile([ plgdir , 'after' ]) ]
 
 	let rtp = []
 	for dir in dirs 
@@ -38,7 +43,6 @@ function! base#rtp#helptags(...)
 	let list = base#rtp#list()
 
 	for rtp in list
-
 		let docdir=base#file#catfile([ rtp , 'doc' ])
 		call base#vim#helptags({ 'dir' : docdir})
 	endfor

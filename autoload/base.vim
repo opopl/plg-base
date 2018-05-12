@@ -2708,9 +2708,12 @@ function! base#initvarsfromdat ()
         let vars= base#find({ 
             \   "dirs"    : [ dir ],
             \   "exts"    : [ "i.dat" ],
-            \   "subdirs" : 1,
             \   "rmext"   : 1, })
+            "\   "subdirs" : 1,
+				echo dir
+				echo vars
 				let vars = map(vars,'base#file#reldir(v:val,dir)')
+				echo vars
 
         let tp = mp[type]
         for v in vars
@@ -2839,8 +2842,6 @@ function! base#init (...)
     elseif opt == 'tagids'
         call base#init#tagids()
 
-"---------------------------
-
     elseif opt == 'menus'
         call base#menus#init()
 
@@ -2850,17 +2851,11 @@ function! base#init (...)
     elseif opt == 'env'
         call base#env#init()
 
-
-
-
     elseif opt == 'paths_apoplavskiynb'
         call base#initpaths#apoplavskiynb()
 
     elseif opt == 'omni'
         call base#omni#init()
-
-    elseif opt == 'paplist'
-   		call base#pap#list()
 
     elseif opt == 'rtp'
   		call base#rtp#update()

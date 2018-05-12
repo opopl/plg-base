@@ -99,12 +99,18 @@ function! base#vim#helptags (...)
 		endif
 
 		let ff = base#find({ "dirs" : [docdir] })
-		echo ff
 
 		if !len(ff) | return | endif
-		"let dire = shellescape(dir)
+
+		let prf = { 'prf' : 'base#vim#helptags' }
+		let cmd = 'helptags ' . docdir
+
+		call base#log([
+			\	'try: ' . cmd,
+			\	],prf)
+
 		try
-			silent exe 'helptags ' . docdir
+			silent exe cmd
 		catch /^Vim\%((\a\+)\)\=:E154/	
 			call base#log('Vim Error E154: duplicate tag for docdir: '."\n".docdir)
 		finally
