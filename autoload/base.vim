@@ -2701,19 +2701,16 @@ function! base#initvarsfromdat ()
     let mp = { 
 			\	"list"      : "List",
 			\	"dict"      : "Dictionary",
-			\	"listlines" : "ListLines"
+			\	"listlines" : "ListLines",
 			\	}
     for type in base#qw("list listlines dict")
         let dir = base#file#catfile([ base#datadir(), type ])
         let vars= base#find({ 
             \   "dirs"    : [ dir ],
             \   "exts"    : [ "i.dat" ],
+            \   "subdirs" : 1,
             \   "rmext"   : 1, })
-            "\   "subdirs" : 1,
-				echo dir
-				echo vars
 				let vars = map(vars,'base#file#reldir(v:val,dir)')
-				echo vars
 
         let tp = mp[type]
         for v in vars

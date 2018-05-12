@@ -59,16 +59,21 @@ perl << EOF
 
 	my $pp = ($do_subdirs) ? sub { @_ } : sub { return grep { -f  } @_; };
 
+	my (%qr,$s);
+	if ($exts && @$exts) {
+		$s  = '('. join('|',@$exts) . ')$';
+		$qr{exts} = qr/$s/;
+	}
+
   my $w = sub { 
-    my ($ext) = (/\.(\w+)$/);
-		my $name = $File::Find::name;
+		my $name  = $File::Find::name;
 
 		return if -d;
 
 		my $add=1;
 
-    if ( @$exts && ! grep { /^$ext$/ } @$exts ){
-			$add=0;
+    if ($qr{exts}){
+			$add   = 0 unless /$qr{exts}/;
     }
 
     if ( $pat && ! /$pat/ ){
@@ -83,6 +88,9 @@ perl << EOF
 EOF
 
   call filter(files,'v:val != ""')
+	if has('win32')
+		let files = map(files,'base#file#ossep(v:val)')
+	endif
 
 	let newfiles = []
 

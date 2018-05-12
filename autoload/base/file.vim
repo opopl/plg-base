@@ -246,6 +246,9 @@ function! base#file#std( filename,... )
 		let sep = base#file#sep()
 	endif
 
+	let fname = base#file#ossep(fname)
+
+
 	let pc = split(fname,sep)
 	call filter(pc,'v:val != ""')
 
