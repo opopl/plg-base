@@ -2,6 +2,11 @@
 function! base#find#withperl (...)
     let ref = get(a:000,0,{})
 
+		let prf={ 'prf' : 'base#find#withperl' }
+		call base#log([
+			\	'ref => ' . base#dump(ref),
+			\	],prf)
+
     let exts_def = []
 
     let do_subdirs   = get(ref,'subdirs',1)
@@ -38,6 +43,8 @@ function! base#find#withperl (...)
         endif
     endfor
 
+	let dirs = map(dirs,'base#file#ossep(v:val)')
+
     " list of found files to be returned
     let foundfiles = []
 
@@ -49,15 +56,32 @@ perl << EOF
   use File::Find ();
   use Vim::Perl qw(:funcs :vars);
 
+  my $ref = VimVar('ref');
+
   my $dirs       = [ VimVar('dirs') ];
   my $exts       = [ VimVar('exts') ];
 
-  my $pat        = VimVar('pat');
+  my $pat                = VimVar('pat');
+  my $pat_exclude        = $ref->{pat_exclude};
+
   my $do_subdirs = VimVar('do_subdirs');
+  my $dirs_only  = VimVar('do_dirs_only');
 
   my @files=();
 
-	my $pp = ($do_subdirs) ? sub { @_ } : sub { return grep { -f  } @_; };
+	my $pp = sub { @_ };
+	unless ($do_subdirs) {
+		unless ( $dirs_only) {
+			$pp =	sub { return grep { -f  } @_; };
+		}else{
+			my $max_depth = 1;
+			$pp =	sub {
+    			my $depth = $File::Find::dir =~ tr[/][];
+					return grep { -d } @_ if $depth < $max_depth;
+    			return;
+		   	};
+		}
+	}
 
 	my (%qr,$s);
 	if ($exts && @$exts) {
@@ -68,8 +92,6 @@ perl << EOF
   my $w = sub { 
 		my $name  = $File::Find::name;
 
-		return if -d;
-
 		my $add=1;
 
     if ($qr{exts}){
@@ -79,6 +101,9 @@ perl << EOF
     if ( $pat && ! /$pat/ ){
 			$add=0;
     }
+		if($pat_exclude && /$pat_exclude/){
+			$add=0;
+		}
 
     push(@files,$name) if $add;
   };
@@ -87,7 +112,6 @@ perl << EOF
 	VimListExtend('files',[@files]);
 EOF
 
-  call filter(files,'v:val != ""')
 	if has('win32')
 		let files = map(files,'base#file#ossep(v:val)')
 	endif
@@ -138,7 +162,10 @@ EOF
 	endif
 
 	let files = newfiles
+
 	call extend(foundfiles,files)
+
+  call filter(foundfiles,'v:val != ""')
 
 	exe 'cd ' . olddir
 

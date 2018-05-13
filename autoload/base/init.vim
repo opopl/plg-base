@@ -488,12 +488,11 @@ function! base#init#vars (...)
 
 		let plugins_all = base#find({ 
 			\	"dirids"    : ['plg'],
-			\	"cwd"       : 1,
 			\	"relpath"   : 1,
 			\	"subdirs"   : 0,
 			\	"dirs_only" : 1,
+			\	"pat_exclude" : '^.git',
 			\	})
-		call filter(plugins_all,'v:val !~ "^.git"')
     call base#varset('plugins_all',plugins_all)
 
     call base#echoprefixold()
