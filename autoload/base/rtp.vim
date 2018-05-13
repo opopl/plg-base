@@ -69,15 +69,8 @@ function! base#rtp#update(...)
 
 	for dir in split(&rtp,',')
 		let docdir=base#file#catfile([ dir , 'doc' ])
-		
-		if ( isdirectory(docdir) )
 
-			let ff = base#find({ "dirs" : [docdir] })
-
-			if len(ff)
-				call base#vim#helptags({ 'dir' : docdir})
-			endif
-		endif
+		call base#vim#helptags({ 'dir' : docdir})
 	endfor
 
 	call base#rtp#uniq()

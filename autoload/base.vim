@@ -2460,6 +2460,11 @@ function! base#dump (...)
 
     if exists("*PrettyPrint")
         let dump = PrettyPrint(val)
+   "     else
+				"redir	=> v
+				"silent echo val
+				"redir END
+				"return v
     endif
 
     if base#type(val) == 'Dictionary'
