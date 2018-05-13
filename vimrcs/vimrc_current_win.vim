@@ -1,25 +1,51 @@
 set nocompatible
 
-set gfn=Lucida_Console:h15:cANSI
+if has('win32')
+	set gfn=Lucida_Console:h15:cANSI
+else
+	set gfn=Monospace\ 20
+endif
 colors koehler
 
-set rtp+=$VIMRUNTIME/plg/base
-set rtp+=$VIMRUNTIME/plg/ap
+let s:opt = 'rtp_base'
+let s:opt = 'simple'
+let s:opt = 'all'
 
-call ap#startup()
-call base#init()
 
-TgAdd plg_base
-TgAdd plg_ap
+"""""""""""""""""""""""""
+"""opt_all
+if s:opt == 'all'
+"""""""""""""""""""""""""
+	set rtp+=$VIMRUNTIME/plg/vim_prettyprint
+	set rtp+=$VIMRUNTIME/plg/mru
+	"set rtp+=$VIMRUNTIME/plg/nerdtree
+	"set rtp+=$VIMRUNTIME/plg/nerdcommenter
+	"set rtp+=$VIMRUNTIME/plg/tagbar
 
-"
-"call base#rtp#update()
-"
-"PlgRuntime nerdcommenter
-"PlgRuntime nerdtree
-"PlgRuntime tagbar
-"PlgRuntime idephp
-"PlgRuntime txtmy
-"
+	set rtp+=$VIMRUNTIME/plg/base
+	set rtp+=$VIMRUNTIME/plg/ap
+	call ap#startup()
+	call base#init()
+	TgAdd plg_base
+	TgAdd plg_ap
+"""""""""""""""""""""""""
+"""opt_simple
+elseif s:opt == 'simple'
+"""""""""""""""""""""""""
+	set rtp+=$VIMRUNTIME/plg/ap
+	set rtp+=$VIMRUNTIME/plg/mru
+	set rtp+=$VIMRUNTIME/plg/nerdtree
+	set rtp+=$VIMRUNTIME/plg/nerdcommenter
+	set rtp+=$VIMRUNTIME/plg/tagbar
+	set rtp+=$VIMRUNTIME/plg/vim_prettyprint
+	call ap#startup()
+
+"""""""""""""""""""""""""
+elseif s:opt == 'rtp_base'
+"""""""""""""""""""""""""
+	set rtp+=$VIMRUNTIME/plg/base
+endif
+
+
 
 
