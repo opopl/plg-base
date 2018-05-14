@@ -2675,9 +2675,14 @@ function! base#act (...)
 endf    
 
 function! base#pcname()
-	let pc  =(has('win32')) ? base#envvar('USERPROFILE') : get(split(system('hostname'),"\n"),0)
+	let pc  = (has('win32')) ? base#envvar('COMPUTERNAME') : get(split(system('hostname'),"\n"),0)
 	return pc
 endf    
+
+function! base#home()
+	let pc  = (has('win32')) ? base#envvar('USERPROFILE') : base#envvar('HOME')
+	return pc
+endf  
 
 
 function! base#init (...)
