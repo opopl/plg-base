@@ -62,14 +62,14 @@ fun! base#init#paths(...)
 
     let pc       = base#envvar((has('win32')) ? 'USERPROFILE' : get(split(system('hostname'),"\n"),0) )
 
-	if has('win32')
-        let pf       = base#envvar('PROGRAMFILES')
+		if has('win32')
+			let pf       = base#envvar('PROGRAMFILES')
 
-		call base#pathset({ 
-            \ 'pf'            : pf ,
+			call base#pathset({ 
+          \ 'pf'            : pf ,
 	        \ 'include_win_sdk'   : base#envvar('INCLUDE_WIN_SDK'),
-			\}
-	endif
+					\})
+		endif
 
     let vrt      = base#envvar('VIMRUNTIME')
     let projsdir = base#envvar('PROJSDIR')
@@ -85,8 +85,8 @@ fun! base#init#paths(...)
         \ 'p'             : base#envvar('TexPapersRoot'),
         \ 'phd_p'         : base#envvar('TexPapersRoot'),
         \ 'tagdir'        : base#file#catfile([ hm,'tags' ]),
-		\ 'appdata'       : base#envvar('APPDATA'),
-		\ 'appdata_local' : base#envvar('LOCALAPPDATA'),
+				\ 'appdata'       : base#envvar('APPDATA'),
+				\ 'appdata_local' : base#envvar('LOCALAPPDATA'),
         \ })
 
     call base#pathset({ 

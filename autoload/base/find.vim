@@ -43,7 +43,9 @@ function! base#find#withperl (...)
         endif
     endfor
 
-	let dirs = map(dirs,'base#file#ossep(v:val)')
+		if has('win32')
+			let dirs = map(dirs,'base#file#win2unix(v:val)')
+		endif
 
     " list of found files to be returned
     let foundfiles = []
@@ -77,10 +79,10 @@ perl << EOF
 		}else{
 			my $max_depth = 1;
 			$pp =	sub {
-    			my $depth = $File::Find::dir =~ tr[/][];
+    		my $depth = $File::Find::dir =~ tr[/][];
 				return grep { -d } @_ if $depth < $max_depth;
-    			return;
-		   	};
+				return;
+			};
 		}
 	}
 
@@ -109,14 +111,14 @@ perl << EOF
 		$name=~s/\.\///g;
 		return if $name eq '.';
 
-		push(@files,catfile($D,$name)) if $add;
+		push(@files, $D . '/' . $name ) if $add;
   };
 
   for my $dir (@$dirs){
       $D=$dir;
       next unless -d $dir;
-	  chdir $dir;
-	  File::Find::find({ wanted => $w, preprocess => $pp}, "." );
+	  	chdir $dir;
+	  	File::Find::find({ wanted => $w, preprocess => $pp}, "." );
   }
   VimListExtend('files',[@files]);
 EOF
