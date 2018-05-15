@@ -502,16 +502,21 @@ fun! base#init#files(...)
     let ref = {}
     if a:0 | let ref = a:1 | endif
 
-    let evince =  base#file#catfile([ 
-      \ base#path('home'),
-      \ '\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe' 
-      \ ])
+	if	has('win32')
+	    let evince =  base#file#catfile([ 
+	      \ base#path('home'),
+	      \ '\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe' 
+	      \ ])
+	else
+		let evince='/usr/bin/evince'
+    endif
 
     if filereadable(evince)
         call base#exefile#set({  'evince' : evince })
     endif
 
-    if $COMPUTERNAME == 'APOPLAVSKIYNB'
+	let pc = base#pcname()
+    if pc == 'APOPLAVSKIYNB'
 
       let cv  = base#file#catfile([ base#path('imagemagick'), 'convert.exe' ])
       let idn = base#file#catfile([ base#path('imagemagick'), 'identify.exe' ])
