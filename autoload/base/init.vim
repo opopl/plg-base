@@ -174,8 +174,9 @@ fun! base#init#cmds()
 	command! -nargs=* -complete=custom,base#complete#basesys BaseSYS
 		\	call base#sys_split_output(<f-args>) 
 
-	command! -nargs=0 BaseLog
-		\	call base#log#view_split(<f-args>) 
+	command! -nargs=* -complete=custom,base#complete#baselog BaseLog
+		\	call base#log#cmd(<f-args>) 
+
 
 """ImageAct
 	command! -nargs=*  -complete=custom,base#complete#imageact ImageAct 

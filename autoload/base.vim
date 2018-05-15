@@ -421,7 +421,8 @@ function! base#log (msg,...)
 	let ref = get(a:000,0,{})
 	let log = base#varget('base_log',[])
 
-	let prf     = get(ref,'prf','')
+	let prf = base#varget('base_log_prf','')
+	let prf = get(ref,'prf',prf)
 	let do_echo = get(ref,'echo',0)
 
 	if base#type(a:msg) == 'String'

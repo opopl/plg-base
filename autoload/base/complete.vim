@@ -122,6 +122,10 @@ function! base#complete#imageact (...)
   return base#complete#vars([ 'opts_ImageAct' ])
 endfunction
 
+function! base#complete#baselog (...)
+  return base#complete#vars([ 'baselog_cmds' ])
+endfunction
+
 function! base#complete#basesys (...)
   return base#complete#vars([ 'hist_basesys' ])
 endfunction

@@ -49,3 +49,27 @@ perl << eof
 
 eof
 endf
+
+function! base#bufact#perl#ppi_list_subs ()
+	call base#buf#start()
+	let file = b:file
+	let subs = []
+perl << eof
+	use PPI;
+	use Data::Dumper;
+
+	use Vim::Perl qw(:funcs :vars);
+	$Vim::Perl::CURBUF = $curbuf;
+
+	my $file = VimVar('file');
+
+	my $lines = [ $curbuf->Get(1 .. $curbuf->Count) ];
+
+    my $DOC = PPI::Document->new($file);
+
+	my $f = sub { $_[1]->isa( 'PPI::Statement::Sub' ) };
+	my @subs = sort map { $_->name } @{ $DOC->find( $f ) };
+	VimListExtend('subs',\@subs);
+eof
+	call base#buf#open_split({ 'lines' : subs })
+endf

@@ -10,3 +10,14 @@ function! base#log#view_split ()
 	call base#buf#open_split({ 'lines' : lines })
 	
 endfunction
+
+function! base#log#clear ()
+	call base#varset('base_log',[])
+endfunction
+
+function! base#log#cmd (...)
+	let cmd = get(a:000,0,'view_split')
+	let sub = 'base#log#'.cmd
+	exe 'call ' . sub . '()'
+
+endfunction
