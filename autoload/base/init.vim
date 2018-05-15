@@ -62,14 +62,14 @@ fun! base#init#paths(...)
 
     let pc       = base#envvar((has('win32')) ? 'USERPROFILE' : get(split(system('hostname'),"\n"),0) )
 
-	if has('win32')
-        let pf       = base#envvar('PROGRAMFILES')
+		if has('win32')
+			let pf       = base#envvar('PROGRAMFILES')
 
-		call base#pathset({ 
-            \ 'pf'            : pf ,
+			call base#pathset({ 
+          \ 'pf'            : pf ,
 	        \ 'include_win_sdk'   : base#envvar('INCLUDE_WIN_SDK'),
-			\}
-	endif
+					\})
+		endif
 
     let vrt      = base#envvar('VIMRUNTIME')
     let projsdir = base#envvar('PROJSDIR')
@@ -85,38 +85,37 @@ fun! base#init#paths(...)
         \ 'p'             : base#envvar('TexPapersRoot'),
         \ 'phd_p'         : base#envvar('TexPapersRoot'),
         \ 'tagdir'        : base#file#catfile([ hm,'tags' ]),
-		\ 'appdata'       : base#envvar('APPDATA'),
-		\ 'appdata_local' : base#envvar('LOCALAPPDATA'),
+				\ 'appdata'       : base#envvar('APPDATA'),
+				\ 'appdata_local' : base#envvar('LOCALAPPDATA'),
         \ })
 
     call base#pathset({ 
         \ 'appdata_plg_base'  : base#qw#catpath('appdata','vim plg base'),
         \ 'appdata_plg_perlmy'  : base#qw#catpath('appdata','vim plg perlmy'),
         \ })
-
+		
 		let evbin = base#file#catfile([ 
 			\	base#path('appdata_local'), 'Apps', 'Evince-2.32.0.145', 'bin' ])
-
+			
     if isdirectory(evbin)
       call base#pathset({  'evince_bin' : evbin })
     endif
-
-
+		
     call base#pathset({ 
         \ 'progs'  : base#file#catfile([ base#path('hm'),'programs' ]),
         \ })
-
+		
 	let pc = base#pcname()
-    if pc == 'APOPLAVSKIYNB'
-        call base#initpaths#APOPLAVSKIYNB()
+	if pc == 'APOPLAVSKIYNB'
+		call base#initpaths#APOPLAVSKIYNB()
 	elseif pc == 'RESTPC'
-        call base#initpaths#RESTPC()
-    endif
-
+		call base#initpaths#RESTPC()
+	endif
+	
 	call base#pathset({ 
       \ "repos_git" : base#file#catfile([ base#path('hm'), 'repos', 'git'  ]),
 	  \ })
-
+		
     call base#pathset({
         \   'pdfout'      : base#envvar('PDFOUT'),
         \   'htmlout'     : base#envvar('HTMLOUT'),
