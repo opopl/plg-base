@@ -67,34 +67,9 @@ perl << eof
 
 	my $lines = [ $curbuf->Get(1 .. $curbuf->Count) ];
 
-  my $DOC = PPI::Document->new($file);
-	$DOC->index_locations;
-
-	my $f = sub { $_[1]->isa( 'PPI::Statement::Sub' ) || $_[1]->isa( 'PPI::Statement::Package' ) };
-	my @packs_and_subs = @{ $DOC->find( $f ) };
-
-	my $ns;
-	for my $node (@packs_and_subs){
-		$node->isa( 'PPI::Statement::Sub' ) && do { 
-				push @subs, { 
-						'full_name'   => $ns.'::'.$node->name,
-						'name'        => $node->name,
-						'line_number' => $node->line_number,
-						'file'        => $file,
-				};
-		};
-		$node->isa( 'PPI::Statement::Package' ) && do { $ns = $node->namespace; };
-	}
-	VimListExtend('subs',[ map { $_->{full_name} } @subs ]);
-
-	my @lines_tags;
-	foreach my $sub (@subs) {
-		my @ta = @{$sub}{ qw(full_name file line_number ) };
-		my $t = join("\t",@ta);
-		push @lines_tags, $t;
-	}
-
+ 
 	VimListExtend('lines_tags',\@lines_tags);
+	VimListExtend('subs',[ map { $_->{full_name} } @subs ]);
 eof
 	"call base#buf#open_split({ 'lines' : subs })
 	call base#buf#open_split({ 'lines' : lines_tags })
