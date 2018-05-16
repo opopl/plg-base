@@ -54,6 +54,8 @@ function! base#bufact#perl#ppi_list_subs ()
 	call base#buf#start()
 	let file = b:file
 	let subs = []
+
+	let lines_tags=[]
 perl << eof
 	use PPI;
 	use Data::Dumper;
@@ -66,24 +68,28 @@ perl << eof
 	my $lines = [ $curbuf->Get(1 .. $curbuf->Count) ];
 
   my $DOC = PPI::Document->new($file);
+	$DOC->index_locations;
 
 	my $f = sub { $_[1]->isa( 'PPI::Statement::Sub' ) || $_[1]->isa( 'PPI::Statement::Package' ) };
 	my @packs_and_subs = @{ $DOC->find( $f ) };
 
 	my $ns;
 	for my $node (@packs_and_subs){
-		$node->isa( 'PPI::Statement::Sub' ) && do { push @subs, $ns.'::'.$node->name; };
+		$node->isa( 'PPI::Statement::Sub' ) && do { 
+				push @subs, { 
+						'fullname' => $ns.'::'.$node->name, 
+						'name'     => $node->name,
+				} };
 		$node->isa( 'PPI::Statement::Package' ) && do { $ns = $node->namespace; };
 	}
-	VimListExtend('subs',\@subs);
-eof
+	VimListExtend('subs',[ map { $_->fullname} @subs ]);
 
-	let lines_tags=[]
-	for sub in subs
-			let ta = [ sub, b:file, ]
-	endfor
+	my @lines_tags;
+	foreach my $sub (@subs) {
+		my @ta = ($sub, $file, '/^sub' )
+	}
+eof
 	call base#buf#open_split({ 'lines' : subs })
 endf
 
-
-"Mail::Mailer	/home/mmedevel/mailspect/branches/opopl/mppserver/lib/Mail/Mailer.pm	/^package Mail::Mailer;$/;"	p
+"htmllines	/home/mmedevel/repos/git/htmltool/lib/HTML/Work.pm	/^sub htmllines {$/;"	s
