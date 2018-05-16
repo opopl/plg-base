@@ -46,6 +46,9 @@ sub ppi_list_subs {
 		push @lines_tags, $t;
 	}
 
+	$self->{subnames} = [ map { $_->{full_name} } @subs ];
+	$self->{tags}     = [@lines_tags];
+
 }
 
 1;

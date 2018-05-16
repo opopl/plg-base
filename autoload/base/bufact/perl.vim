@@ -61,15 +61,18 @@ perl << eof
 	use Data::Dumper;
 
 	use Vim::Perl qw(:funcs :vars);
-	$Vim::Perl::CURBUF = $curbuf;
-
-	my $file = VimVar('file');
+	use Base::PerlFile;
 
 	my $lines = [ $curbuf->Get(1 .. $curbuf->Count) ];
 
- 
-	VimListExtend('lines_tags',\@lines_tags);
-	VimListExtend('subs',[ map { $_->{full_name} } @subs ]);
+	$Vim::Perl::CURBUF = $curbuf;
+
+	my $file = VimVar('file');
+	my $pf = Base::PerlFile->new;
+	$pf->ppi_list_subs({ file => $file });
+
+	VimListExtend('lines_tags',$pf->{lines_tags});
+	VimListExtend('subnames',$pf->{subnames});
 eof
 	"call base#buf#open_split({ 'lines' : subs })
 	call base#buf#open_split({ 'lines' : lines_tags })
