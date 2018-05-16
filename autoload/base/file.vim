@@ -249,6 +249,8 @@ function! base#file#std( filename,... )
 	let fname = base#file#ossep(fname)
 
 	let pref = matchstr(fname,'\zs'.escape(sep,'\').'*\ze')
+	let pref = strlen(pref) ? sep : ''
+
 	let pc = split(fname,sep)
 	call filter(pc,'v:val != ""')
 
@@ -317,7 +319,16 @@ function! base#file#ossplit( filename )
 	let fname = a:filename
 
 	let sep = base#file#sep()
-	let spt = split(fname,sep)
+
+	let spt = []
+
+	let start = matchstr(fname,'^\zs'.escape(sep,'\/').'*\ze')
+
+	if strlen(start)
+		call add( spt, start )
+	endif
+
+	call extend( spt,split(fname,sep) )
 
 	return spt
 
