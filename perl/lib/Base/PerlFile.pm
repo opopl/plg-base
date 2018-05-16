@@ -16,26 +16,41 @@ sub new
 	return $self;
 }
 
-sub make_tags {
+sub init {
 	my $self=shift;
 
-	use File::Find qw(find);
-	
+	my $h={};
+		
+	my @k=keys %$h;
+
+	for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
+}
+
+sub make_tags {
+	my($self,$ref)=@_;
+
+	my $dirs = $ref->{dirs} || $self->{dirs} || [];
+	my $exts = $ref->{exts} || $self->{exts} || [];
+
 	my @files;
-	my @exts=qw();
-	my @dirs;
-	push @dirs,;
 	
-	find({ 
-		wanted => sub { 
-		foreach my $ext (@exts) {
-			if (/\.$ext$/) {
-				push @files,$File::Find::name;
-			}
-		}
-		} 
-	},@dirs
-	);
+	foreach my $dir (@$dirs) {
+		next unless -d $dir;
+		chdir $dir;
+
+		find({ 
+			wanted => sub { 
+				foreach my $ext (@$exts) {
+					if (/\.$ext$/) {
+						push @files,$File::Find::name;
+					}
+				}
+			} 
+		},'.'
+		);
+	}
+
+	$self;
 }
 
 sub ppi_list_subs {
