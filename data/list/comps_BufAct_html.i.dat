@@ -17,9 +17,10 @@ htw_load_buf
 htw_node_print
 # tables
 tables_to_txt
+tb_to_tex
+tb_to_txt
 ###replace
 replace_a
 replace_pre
 replace_tables
 replace_with_text
-cpan_table_extract

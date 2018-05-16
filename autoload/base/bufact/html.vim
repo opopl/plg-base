@@ -320,12 +320,10 @@ eof
 
 endfunction
 
-function! base#bufact#html#cpan_table_extract ()
+function! base#bufact#html#tb_to_tex ()
 	call base#buf#start()
 	call base#html#htw_init()
 
-	"let depth =  input('depth:',2)
-	"let cnt =  input('count:',2)
 	let texlines = []
 
 perl << eof
@@ -367,6 +365,57 @@ eof
 	call base#buf#open_split({ 
 		\	'lines' : texlines, 
 		\	'cmds_pre' : ['setlocal ft=tex'] 
+		\	})
+
+endfunction
+
+function! base#bufact#html#tb_to_txt ()
+	call base#buf#start()
+	call base#html#htw_init()
+
+	let lines_txt = []
+
+	let colwidth_max = input('Max colwidth:',50)
+
+perl << eof
+ use HTML::TableExtract;
+ use Vim::Perl qw(VimVar);
+ use String::Util qw(trim);
+
+ my $file = VimVar('b:file');
+
+ my $colwidth_max = VimVar('colwidth_max');
+
+ my %opts = ( depth => $depth, count => $count );
+ %opts=();
+ my $te = HTML::TableExtract->new( %opts );
+ $te->parse_file($file);
+
+ my $fmt = sub { my $r=shift; ('A'.$colwidth_max.' ') x scalar @$r; }; 
+
+	 # Examine all matching tables
+	 my @lines_txt;
+	 my $delim = '-' x 50;
+	 my $i=0;
+	 foreach my $ts ($te->tables) {
+	 	 $i++;
+
+	 	 push @lines_txt, 
+		 		'table #'.$i , $delim;
+
+	   foreach my $row ($ts->rows) {
+		 		my @r = map { s/\n//g; trim($_); s/\s+/ /g; $_; } @$row;
+				my $ncols = scalar @r;
+		 		my $r = pack($fmt->(\@r), @r );
+
+	      push @lines_txt, 
+						$r, $delim;
+	   }
+	 }
+	 VimListExtend('lines_txt',\@lines_txt);
+eof
+	call base#buf#open_split({ 
+		\	'lines' : lines_txt, 
 		\	})
 
 endfunction
