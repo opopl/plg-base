@@ -53,7 +53,7 @@ endf
 function! base#bufact#perl#ppi_list_subs ()
 	call base#buf#start()
 	let file = b:file
-	let subs = []
+	let subnames = []
 
 	let lines_tags=[]
 perl << eof

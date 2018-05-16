@@ -2,7 +2,9 @@ package Base::PerlFile;
 
 use strict;
 use warnings;
+
 use PPI;
+use File::Find qw(find);
 
 sub new
 {
@@ -12,6 +14,28 @@ sub new
 	$self->init if $self->can('init');
 
 	return $self;
+}
+
+sub make_tags {
+	my $self=shift;
+
+	use File::Find qw(find);
+	
+	my @files;
+	my @exts=qw();
+	my @dirs;
+	push @dirs,;
+	
+	find({ 
+		wanted => sub { 
+		foreach my $ext (@exts) {
+			if (/\.$ext$/) {
+				push @files,$File::Find::name;
+			}
+		}
+		} 
+	},@dirs
+	);
 }
 
 sub ppi_list_subs {
@@ -47,8 +71,9 @@ sub ppi_list_subs {
 	}
 
 	$self->{subnames} = [ map { $_->{full_name} } @subs ];
-	$self->{tags}     = [@lines_tags];
+	$self->{lines_tags}     = [@lines_tags];
 
+	$self;
 }
 
 1;
