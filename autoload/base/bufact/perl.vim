@@ -65,11 +65,25 @@ perl << eof
 
 	my $lines = [ $curbuf->Get(1 .. $curbuf->Count) ];
 
-    my $DOC = PPI::Document->new($file);
+  my $DOC = PPI::Document->new($file);
 
-	my $f = sub { $_[1]->isa( 'PPI::Statement::Sub' ) };
-	my @subs = sort map { $_->name } @{ $DOC->find( $f ) };
+	my $f = sub { $_[1]->isa( 'PPI::Statement::Sub' ) || $_[1]->isa( 'PPI::Statement::Package' ) };
+	my @packs_and_subs = @{ $DOC->find( $f ) };
+
+	my $ns;
+	for my $node (@packs_and_subs){
+		$node->isa( 'PPI::Statement::Sub' ) && do { push @subs, $ns.'::'.$node->name; };
+		$node->isa( 'PPI::Statement::Package' ) && do { $ns = $node->namespace; };
+	}
 	VimListExtend('subs',\@subs);
 eof
+
+	let lines_tags=[]
+	for sub in subs
+			let ta = [ sub, b:file, ]
+	endfor
 	call base#buf#open_split({ 'lines' : subs })
 endf
+
+
+"Mail::Mailer	/home/mmedevel/mailspect/branches/opopl/mppserver/lib/Mail/Mailer.pm	/^package Mail::Mailer;$/;"	p
