@@ -2667,6 +2667,11 @@ function! base#act (...)
 	elseif act =~ '^sqlite_'
 		let cmd = substitute(act,'^sqlite_\(.*\)$','\1','g')
   	let sub = 'base#sqlite#'.cmd
+
+	elseif act =~ '^svn_'
+		let cmd = substitute(act,'^svn_\(.*\)$','\1','g')
+  	let sub = 'base#svn#'.cmd
+
 	else
   	let sub = 'base#act#'.act
 	endif

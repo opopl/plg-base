@@ -44,10 +44,10 @@ if b:is_plgvim
 	call base#tg#set("plg_".b:plg)
 	StatusLine plg
 	
-	let b:aucmds = [ ]
-		"\	'StatusLine plg'                            ,
-		"\	'call base#tg#set("plg_'.b:plg.'")'         ,
-		"\	] 
+	let b:aucmds = [ 
+		\	'StatusLine plg'                            ,
+		\	'call base#tg#add("plg_'.b:plg.'")'         ,
+		\	] 
 	
 	let fr = '  autocmd BufWinEnter,BufRead,BufEnter,BufWritePost '
 	

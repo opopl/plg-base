@@ -12,3 +12,7 @@ sqlite_query
 sqlite_table_describe
 #
 perl_Vim_Plg_Base
+###svn
+svn_ls
+svn_status
+svn_commit
