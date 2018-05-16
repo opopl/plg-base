@@ -2680,6 +2680,11 @@ function! base#pcname()
 	return pc
 endf    
 
+function! base#username()
+	let pc  = (has('win32')) ? base#envvar('USER') : base#envvar('USER')
+	return pc
+endf    
+
 function! base#home()
 	let pc  = (has('win32')) ? base#envvar('USERPROFILE') : base#envvar('HOME')
 	return pc

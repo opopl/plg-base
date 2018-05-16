@@ -122,6 +122,8 @@ function!  base#stl#setparts ()
 
   let stlparts['plg_name'] = '%1*\ %{base#plg#name()}\ %0*'
 
+  let stlparts['user_name'] = '%1*\ %{base#username()}\ %0*'
+
   " percentage done
   let stlparts['percentage_done']='(%-3.p%%)'
 
@@ -214,6 +216,7 @@ function! base#stl#setorders ()
                 \   'file_encoding' ,
                 \       ],
         \   'perl_pm'   :   [ 
+		        \   'user_name' ,
 		        \   'perl_module_name' ,
 		        \   'buffer_number'    ,
 		        \   'file_type'        ,
@@ -237,6 +240,7 @@ function! base#stl#setorders ()
 		        \   'file_dir',
                 \       ],
         \   'simple'   :   [ 
+		        \   'user_name' ,
 		        \   'buffer_number' ,
 		        \   'line_number'   ,
 		        \   'column_number' ,
