@@ -320,4 +320,53 @@ eof
 
 endfunction
 
+function! base#bufact#html#cpan_table_extract ()
+	call base#buf#start()
+	call base#html#htw_init()
 
+	"let depth =  input('depth:',2)
+	"let cnt =  input('count:',2)
+	let texlines = []
+
+perl << eof
+ use HTML::TableExtract;
+ use Vim::Perl qw(VimVar);
+ use String::Util qw(trim);
+
+ my $file=VimVar('b:file');
+
+ my $depth = VimVar('depth');
+ my $count = VimVar('cnt');
+
+ my %opts = ( depth => $depth, count => $count );
+ %opts=();
+ my $te = HTML::TableExtract->new( %opts );
+ $te->parse_file($file);
+
+	 # Examine all matching tables
+	 my @texlines;
+	 my $eol = '\\\\';
+	 my $sol = '\\hline ';
+	 foreach my $ts ($te->tables) {
+
+	 	 push @texlines,
+		 	' ','\\begin{longtable}{}',
+			;
+			#"%Table (", join(',', $ts->coords), "):\n";
+
+	   foreach my $row ($ts->rows) {
+		 		my $r = join(' & ', map { s/\n//g; trim($_); s/\s+/ /g; $_; } @$row);
+				$r = $sol . $r . $eol; 
+	      push @texlines, $r;
+	   }
+
+	 	 push @texlines,'\\end{longtable}',' ';
+	 }
+	 VimListExtend('texlines',\@texlines);
+eof
+	call base#buf#open_split({ 
+		\	'lines' : texlines, 
+		\	'cmds_pre' : ['setlocal ft=tex'] 
+		\	})
+
+endfunction
