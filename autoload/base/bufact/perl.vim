@@ -50,6 +50,33 @@ perl << eof
 eof
 endf
 
+function! base#bufact#perl#ppi_vars ()
+	call base#buf#start()
+	let file = b:file
+	let vars = []
+
+	let lines_tags=[]
+perl << eof
+	use PPI;
+	use Data::Dumper;
+
+	use Vim::Perl qw(:funcs :vars);
+	use Base::PerlFile;
+
+	my $lines = [ $curbuf->Get(1 .. $curbuf->Count) ];
+
+	$Vim::Perl::CURBUF = $curbuf;
+
+	my $file = VimVar('file');
+ 	my $DOC = PPI::Document->new($file);
+	$DOC->index_locations;
+
+	my $f = sub { $_[1]->isa( 'PPI::Statement::Variable' ) };
+	my @v = @{ $DOC->find( $f ) || [] };
+eof
+	call base#buf#open_split({ 'lines' : lines_tags })
+endf
+
 function! base#bufact#perl#ppi_list_subs ()
 	call base#buf#start()
 	let file = b:file
