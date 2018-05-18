@@ -5,6 +5,21 @@ use warnings;
 
 use PPI;
 use File::Find qw(find);
+use DBI;
+
+our $dbh = DBI->connect("dbi:SQLite:dbname=:memory:","","");
+my @q;
+push @q,
+	qq{
+		create table `tags` (
+			filename varchar(1024),
+			namespace varchar(1024),
+			subname_short varchar(1024),
+			subname_full varchar(1024),
+			line_number varchar(1024)
+		)
+	},
+	;
 
 sub new
 {
@@ -19,14 +34,18 @@ sub new
 sub init {
 	my $self=shift;
 
-	my $h={};
+	my $h={
+		exts => [qw(pl pm t)],
+	};
 		
 	my @k=keys %$h;
 
 	for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
+
+		
 }
 
-sub make_tags {
+sub load_files_source {
 	my($self,$ref)=@_;
 
 	my $dirs = $ref->{dirs} || $self->{dirs} || [];
@@ -39,7 +58,9 @@ sub make_tags {
 		chdir $dir;
 
 		find({ 
+			preprocess => sub { @_ },
 			wanted => sub { 
+				return unless -f;
 				foreach my $ext (@$exts) {
 					if (/\.$ext$/) {
 						push @files,$File::Find::name;
@@ -50,12 +71,18 @@ sub make_tags {
 		);
 	}
 
+	$self->{files_source}=[@files];
+
 	$self;
 }
 
 sub ppi_list_subs {
 	my ($self,$ref)=@_;
+
 	my $file = $ref->{file};
+	unless (-f $file) {
+		return $self;
+	}
 
  	my $DOC = PPI::Document->new($file);
 	$DOC->index_locations;
@@ -69,10 +96,11 @@ sub ppi_list_subs {
 	for my $node (@packs_and_subs){
 		$node->isa( 'PPI::Statement::Sub' ) && do { 
 				push @subs, { 
-						'full_name'   => $ns.'::'.$node->name,
-						'name'        => $node->name,
+						'subname_full'   => $ns.'::'.$node->name,
+						'subname_short'  => $node->name,
 						'line_number' => $node->line_number,
-						'file'        => $file,
+						'filename'    => $file,
+						'namespace'   => $ns,
 				};
 		};
 		$node->isa( 'PPI::Statement::Package' ) && do { $ns = $node->namespace; };
@@ -86,7 +114,7 @@ sub ppi_list_subs {
 	}
 
 	$self->{subnames} = [ map { $_->{full_name} } @subs ];
-	$self->{lines_tags}     = [@lines_tags];
+	$self->{lines_tags} = [@lines_tags];
 
 	$self;
 }

@@ -7,8 +7,6 @@ perlmy
 my
 make
 idephp
-tex
-projs
 #
 perlsupport
 mru
@@ -30,7 +28,6 @@ simpledb
 sqhell
 #
 vim_prettyprint
-vim-latex
 vim-misc
 xmledit
 xmlparser
@@ -102,3 +99,8 @@ grep
 taskman
 vcscommand
 svnj
+###tex
+vim-latex
+vimtex
+tex
+projs

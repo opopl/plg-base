@@ -320,6 +320,50 @@ eof
 
 endfunction
 
+function! base#bufact#html#toc_generate ()
+	call base#buf#start()
+	call base#html#htw_load_buf()
+perl << eof
+    use HTML::Toc;
+    use HTML::TocGenerator;
+
+		use Vim::Perl qw(VimVar CurBufSet);
+		
+		my $file = VimVar('b:file');
+
+#    my $toc          = HTML::Toc->new();
+#    my $tocGenerator = HTML::TocGenerator->new();
+#
+#    $tocGenerator->generateFromFile($toc, $file);
+#    my $html_toc = $toc->format();
+#
+#		my $xpath = '//html/body';
+#		my $el_toc = XML::LibXML->load_html(string => $html_toc);
+#		my $sub = sub{ 
+#				my $node = shift;
+#				$node->appendChild($el_toc);
+#		};
+#		$DOM->findnodes($xpath)->map($sub);
+#		my $html=$DOM->toString;
+
+#        $tocInsertor->insertIntoFile($toc, $file);
+
+		use HTML::Toc;
+		use HTML::TocInsertor;
+		
+		my $toc         = HTML::Toc->new();
+		my $tocInsertor = HTML::TocInsertor->new();
+		
+		my $lines = [ $curbuf->Get(1 .. $curbuf->Count) ];
+		my $html = join("\n",@$lines);
+		
+		$tocInsertor->insert($toc, $html, {'output' => \$html});
+		print $html;
+
+		CurBufSet({ text => $html, curbuf => $curbuf });
+eof
+endfunction
+
 function! base#bufact#html#tb_to_tex ()
 	call base#buf#start()
 	call base#html#htw_init()
