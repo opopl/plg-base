@@ -11,10 +11,6 @@ function! base#tg#set (...)
 
 	let tfile = base#tg#tfile(tgid)
 
-	if tgid == 'this'
-	elseif tgid == 'thisfile'
-	endif
-
 	if get(ref,'update_ifabsent',1)
 		if !filereadable(tfile)
 			call base#tg#update(tgid)
@@ -119,6 +115,9 @@ function! base#tg#tfile (...)
 
 		let tfile    = base#file#catfile([ dirname, basename . '.tags' ])
 
+	elseif tgid == '_this_tagfile_'
+		let tfile = expand('%:p')
+
 """_tfile_projs_this
 	elseif tgid == 'projs_this'
 		let proj  = projs#proj#name()
@@ -216,7 +215,7 @@ function! base#tg#update (...)
 			let lib = base#file#catfile([ dir, 'lib' ])
 
 			let ref = {
-					\	'dirs' : [lib],
+					\	'dirs'  : [lib],
 					\	'tfile' : tfile,
 					\	}
 			let ok = base#ty#make(ref)
@@ -227,7 +226,7 @@ function! base#tg#update (...)
 				\	"add"  : 0, 
 				\	}
 	
-			let ok= base#tg#ok(okref)
+			let ok = base#tg#ok(okref)
 			return
 
 """tgupdate_help_perlmy
@@ -542,6 +541,11 @@ function! base#tg#view (...)
 		for tgid in tgs
 			call base#tg#view(tgid)
 		endfor
+		return
+	endif
+
+	if tgid == '_tagfiles_'
+		call base#tags#view()
 		return
 	endif
 

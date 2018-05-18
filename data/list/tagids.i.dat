@@ -1,3 +1,6 @@
+# reserved variables
+_tagfiles_
+_this_tagfile_
 ###php
 php_urltotxt
 php_adminer_src
