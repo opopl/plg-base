@@ -4,7 +4,10 @@ use strict;
 use warnings;
 
 use PPI;
+
 use File::Find qw(find);
+use File::Slurp qw(write_file);
+
 use DBI;
 
 our $dbh;
@@ -102,7 +105,7 @@ sub ppi_list_subs {
 
 	if (@$files) {
 		foreach my $file (@$files) {
-			$self->ppi_list_subs({ file => $file });
+			$self->ppi_list_subs({ file => $file, files => [] });
 		}
 	}
 
@@ -142,7 +145,34 @@ sub ppi_list_subs {
 		$node->isa( 'PPI::Statement::Package' ) && do { $ns = $node->namespace; };
 	}
 
-	$self;
+	return $self;
+}
+
+sub write_tags {
+	my ($self,$ref)=@_;
+
+	my $tagfile = $ref->{tagfile} || $self->{tagfile} || '';
+	unless ($tagfile) {
+		return $self;
+	}
+
+	my $sth = $dbh->prepare(qq{ 
+		SELECT 
+			`subname_full`,`filename`,`line_number`
+		FROM
+			`tags`
+	});
+	$sth->execute;
+	
+	my $fetch='fetchrow_arrayref';
+	my @lines;
+	while(my $row=$sth->$fetch()){
+		push @lines, join("\t",@$row);
+	}
+	write_file($tagfile,join("\n",@lines) . "\n");
+
+
+	return $self;
 }
 
 1;

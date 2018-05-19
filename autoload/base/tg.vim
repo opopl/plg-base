@@ -201,7 +201,9 @@ perl << eof
 	my $pf =  Base::PerlFile->new;
 	$pf
 		->load_files_source({dirs => [$lib]})
-		->ppi_list_subs;
+		->ppi_list_subs
+		->write_tags({ tagfile => $tagfile })
+		;
 	
 eof
 
