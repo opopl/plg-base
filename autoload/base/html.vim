@@ -324,7 +324,6 @@ perl << eof
 	use File::Copy qw(move);
 	use File::Path qw(mkpath);
 
-	use File::Download;
 
 	my $url      = VimVar('url');
 	my $save_dir = VimVar('save_dir');
@@ -342,6 +341,7 @@ perl << eof
 	eval { $ff->fetch( to => $save_dir ) || VimWarn($ff->error); };
 	if ($@) { VimWarn($@); }
 
+	#use File::Download;
 #	my $dwn;
 #	eval { 
 #		$dwn = File::Download->new({

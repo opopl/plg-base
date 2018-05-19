@@ -189,6 +189,31 @@ function! base#tg#update (...)
 		let ok= base#tg#ok(okref)
 		return
 
+	elseif tgid == 'ty_perl_htmltool'
+			let dir = base#path('htmltool')
+			let lib = base#file#catfile([ dir, 'lib' ])
+
+perl << eof
+	use Base::PerlFile;
+
+	my $lib = VimVar('lib');
+
+	my $pf =  Base::PerlFile->new;
+	$pf
+		->load_files_source({dirs => [$lib]})
+		->ppi_list_subs;
+	
+eof
+
+		let okref = { 
+			\	"tgid" : tgid,
+			\	"ok"   : 1,
+			\	"add"  : 0, 
+			\	}
+
+		let ok= base#tg#ok(okref)
+		return
+
 """tgupdate_help_perlmy
 	elseif tgid == 'help_perlmy'
 		call perlmy#help#helptags()

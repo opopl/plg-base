@@ -9,8 +9,6 @@ use DBI;
 
 our $dbh;
 
-
-
 sub new
 {
 	my ($class, %opts) = @_;
@@ -28,7 +26,7 @@ sub init_db {
 	my @q;
 	push @q,
 		qq{
-			create table `tags` (
+			create table if not exists `tags` (
 				`id` int auto_increment,
 				`filename` varchar(1024),
 				`namespace` varchar(1024),
@@ -60,6 +58,8 @@ sub init {
 
 	$self->init_db;
 
+	return $self;
+
 		
 }
 
@@ -82,6 +82,7 @@ sub load_files_source {
 				foreach my $ext (@$exts) {
 					if (/\.$ext$/) {
 						push @files,$File::Find::name;
+						last;
 					}
 				}
 			} 
@@ -97,10 +98,16 @@ sub load_files_source {
 sub ppi_list_subs {
 	my ($self,$ref)=@_;
 
-	my $file = $ref->{file};
-	unless (-f $file) {
-		return $self;
+	my $files = $ref->{files} || $self->{files_source} || [];
+
+	if (@$files) {
+		foreach my $file (@$files) {
+			$self->ppi_list_subs({ file => $file });
+		}
 	}
+
+	my $file = $ref->{file};
+	unless ($file && -f $file) { return $self; }
 
  	my $DOC = PPI::Document->new($file);
 	$DOC->index_locations;
@@ -122,28 +129,18 @@ sub ppi_list_subs {
 				};
 
 				push @subs, $h;
-				my $ph = join ',' => map { '?'} keys %$h;
+				my $ph = join ',' => map { '?' } keys %$h;
 				my @f = keys %$h;
 				my @v = map { $h->{$_} } @f ;
 				my $e = q{`};
 				my $f = join ',' => map { $e . $_ . $e } @f;
 				my $q = qq| 
-					insert into `tags` ($f) values($ph) 
+					insert into `tags` ($f) values ($ph) 
 				|;
 				$dbh->do($q,undef,@v);
 		};
 		$node->isa( 'PPI::Statement::Package' ) && do { $ns = $node->namespace; };
 	}
-
-	my @lines_tags;
-	foreach my $sub (@subs) {
-		my @ta = @{$sub}{ qw(full_name file line_number ) };
-		my $t = join("\t",@ta);
-		push @lines_tags, $t;
-	}
-
-	$self->{subnames} = [ map { $_->{full_name} } @subs ];
-	$self->{lines_tags} = [@lines_tags];
 
 	$self;
 }
