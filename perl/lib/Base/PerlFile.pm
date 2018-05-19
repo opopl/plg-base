@@ -29,13 +29,14 @@ sub init_db {
 	my @q;
 	push @q,
 		qq{
-			create table if not exists `tags` (
+			create table `tags` (
 				`id` int auto_increment,
 				`filename` varchar(1024),
 				`namespace` varchar(1024),
 				`subname_short` varchar(1024),
 				`subname_full` varchar(1024),
 				`line_number` varchar(1024),
+				`type` varchar(1024),
 				primary key(`id`)
 			);
 		},
@@ -76,7 +77,7 @@ sub load_files_source {
 	
 	foreach my $dir (@$dirs) {
 		next unless -d $dir;
-		chdir $dir;
+		#chdir $dir;
 
 		find({ 
 			preprocess => sub { @_ },
@@ -89,7 +90,7 @@ sub load_files_source {
 					}
 				}
 			} 
-		},'.'
+		},$dir
 		);
 	}
 
@@ -129,6 +130,7 @@ sub ppi_list_subs {
 						'line_number' => $node->line_number,
 						'filename'    => $file,
 						'namespace'   => $ns,
+						'type'   => 'sub',
 				};
 
 				push @subs, $h;

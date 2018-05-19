@@ -196,13 +196,14 @@ function! base#tg#update (...)
 perl << eof
 	use Base::PerlFile;
 
-	my $lib = VimVar('lib');
+	my $lib     = VimVar('lib');
+	my $tfile   = VimVar('tfile');
 
 	my $pf =  Base::PerlFile->new;
 	$pf
 		->load_files_source({dirs => [$lib]})
 		->ppi_list_subs
-		->write_tags({ tagfile => $tagfile })
+		->write_tags({ tagfile => $tfile })
 		;
 	
 eof
