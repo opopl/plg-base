@@ -299,6 +299,11 @@ function! base#tg#update (...)
 		let dir   = base#file#catfile([ base#path('plg'), 'browser', 'perl' ])
 		let libs .= ' ' . dir
 
+	elseif tgid == 'perl_inc_plg_base'
+
+		let dir   = base#file#catfile([ base#path('plg'), 'base', 'perl', 'lib' ])
+		let libs .= ' ' . dir
+
 """tgupdate_perl_inc_select
 	elseif tgid == 'perl_inc_select'
 		let mods = base#varget('perlmy_mods_perl_inc_select',[])
@@ -437,6 +442,7 @@ function! base#tg#update (...)
 
 """tgupdate_cmd_ctags
 	let cmd = 'ctags -R -o "' . ap#file#win( tfile ) . '" ' . libs . ' ' . files
+	call base#varset('last_ctags_cmd',cmd)
 
 	echo "Calling ctags command for: " . tgid 
 

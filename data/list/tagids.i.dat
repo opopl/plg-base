@@ -5,6 +5,7 @@ php_adminer_src
 perl_inc
 perl_inc_select
 perl_inc_plg_browser
+perl_inc_plg_base
 perl_htmltool
 perl_as
 perl_webgui

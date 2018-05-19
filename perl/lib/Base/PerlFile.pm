@@ -7,19 +7,9 @@ use PPI;
 use File::Find qw(find);
 use DBI;
 
-our $dbh = DBI->connect("dbi:SQLite:dbname=:memory:","","");
-my @q;
-push @q,
-	qq{
-		create table `tags` (
-			filename varchar(1024),
-			namespace varchar(1024),
-			subname_short varchar(1024),
-			subname_full varchar(1024),
-			line_number varchar(1024)
-		)
-	},
-	;
+our $dbh;
+
+
 
 sub new
 {
@@ -27,6 +17,32 @@ sub new
 	my $self = bless (\%opts, ref ($class) || $class);
 
 	$self->init if $self->can('init');
+
+	return $self;
+}
+
+sub init_db {
+	my $self=shift;
+
+	$dbh = DBI->connect("dbi:SQLite:dbname=:memory:","","");
+	my @q;
+	push @q,
+		qq{
+			create table `tags` (
+				`id` int auto_increment,
+				`filename` varchar(1024),
+				`namespace` varchar(1024),
+				`subname_short` varchar(1024),
+				`subname_full` varchar(1024),
+				`line_number` varchar(1024),
+				primary key(`id`)
+			);
+		},
+		;
+	
+	foreach my $q (@q) {
+		$dbh->do($q);
+	}
 
 	return $self;
 }
@@ -41,6 +57,8 @@ sub init {
 	my @k=keys %$h;
 
 	for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
+
+	$self->init_db;
 
 		
 }
@@ -95,13 +113,24 @@ sub ppi_list_subs {
 	my @subs;
 	for my $node (@packs_and_subs){
 		$node->isa( 'PPI::Statement::Sub' ) && do { 
-				push @subs, { 
+				my $h = { 
 						'subname_full'   => $ns.'::'.$node->name,
 						'subname_short'  => $node->name,
 						'line_number' => $node->line_number,
 						'filename'    => $file,
 						'namespace'   => $ns,
 				};
+
+				push @subs, $h;
+				my $ph = join ',' => map { '?'} keys %$h;
+				my @f = keys %$h;
+				my @v = map { $h->{$_} } @f ;
+				my $e = q{`};
+				my $f = join ',' => map { $e . $_ . $e } @f;
+				my $q = qq| 
+					insert into `tags` ($f) values($ph) 
+				|;
+				$dbh->do($q,undef,@v);
 		};
 		$node->isa( 'PPI::Statement::Package' ) && do { $ns = $node->namespace; };
 	}
