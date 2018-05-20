@@ -56,6 +56,8 @@ sub init_db {
 				`subname_short` varchar(1024),
 				`subname_full` varchar(1024),
 				`line_number` varchar(1024),
+				`var_full` varchar(1024),
+				`var_short` varchar(1024),
 				`type` varchar(1024),
 				primary key(`id`)
 			);
@@ -141,8 +143,12 @@ sub ppi_list_subs {
  	my $DOC = PPI::Document->new($file);
 	$DOC->index_locations;
 
-	my $f = sub { $_[1]->isa( 'PPI::Statement::Sub' ) || $_[1]->isa( 'PPI::Statement::Package' ) };
-	my @packs_and_subs = @{ $DOC->find( $f ) };
+	my $f = sub { 
+		$_[1]->isa( 'PPI::Statement::Sub' ) 
+		|| $_[1]->isa( 'PPI::Statement::Package' )
+		|| $_[1]->isa( 'PPI::Statement::Variable' )
+	};
+	my @packs_and_subs = @{ $DOC->find( $f ) || [] };
 
 	my $ns;
 
@@ -162,17 +168,17 @@ sub ppi_list_subs {
 
 		};
 		$node->isa( 'PPI::Statement::Variable' ) && do { 
-				my $h = { 
-						'filename'    => $file,
-						'line_number' => $node->line_number,
-						######################
-						'var_full' 	  => $ns.'::'.$node->name,
-						'var_short'	  => $node->name,
-						'namespace'   => $ns,
-						'type'   	  => 'var_'.($node->type || ''),
-				};
+   #             my $h = { 
+						#'filename'    => $file,
+						#'line_number' => $node->line_number,
+						#######################
+						#'var_full' 	  => $ns.'::'.$node->name,
+						#'var_short'	  => $node->name,
+						#'namespace'   => $ns,
+						#'type'   	  => 'var_'.($node->type || ''),
+				#};
 
-				$self->dbh_insert_hash({ h => $h });
+				#$self->dbh_insert_hash({ h => $h });
 
 		};
 		$node->isa( 'PPI::Statement::Package' ) && do { 

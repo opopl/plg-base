@@ -189,61 +189,46 @@ function! base#tg#update (...)
 		let ok= base#tg#ok(okref)
 		return
 
+	elseif tgid == 'ty_perl_inc'
+
+		let dirs = perlmy#perl#inc_a()
+
+		let cnt = input('(TgUpdate perl_inc) Continue? 1/0: ',0)
+		if !cnt | return | endif
+
+		let ref = {
+					\	'dirs' : dirs,
+					\	'tfile' : tfile,
+					\	}
+		let ok = base#ty#make(ref)
+
+		let okref = { 
+				\	"tgid" : tgid,
+				\	"ok"   : ok,
+				\	"add"  : 0, 
+				\	}
+	
+		let ok= base#tg#ok(okref)
+		return
+
 	elseif tgid == 'ty_perl_htmltool'
 			let dir = base#path('htmltool')
 			let lib = base#file#catfile([ dir, 'lib' ])
 
-perl << eof
-	use String::Escape qw(escape);
+			let ref = {
+					\	'dirs' : [lib],
+					\	'tfile' : tfile,
+					\	}
+			let ok = base#ty#make(ref)
 
-	my $lib     = VimVar('lib');
-	my $tfile   = VimVar('tfile');
-
-	my $ok=1;
-
-	my %o = (
-		dirs    => [$lib],
-		tagfile => $tfile,
-		sub_log  => sub { 
-			VimLog(@_); 
-			#VimMsg([@_]); 
-		},
-		sub_warn => sub { 
-			VimLog(@_); 
-			VimWarn(@_); 
-		},
-	);
-
-	eval { 
-		use Base::PerlFile;
-
-		VimLog('Running Base::PerlFile...');
-
-		my $pf =  Base::PerlFile->new(%o);
-		$pf
-			->load_files_source
-			->ppi_list_subs
-			->tagfile_rm
-			->write_tags
-			;
-	};
-	if($@){
-		VimWarn($@);
-		my $s = escape('printable',$@);
-		VimCmd(qq{ call base#log("$s") });
-		$ok=0;
-	}
-	VimLet('ok',$ok);
-eof
-
-		let okref = { 
-			\	"tgid" : tgid,
-			\	"ok"   : ok,
-			\	"add"  : 0, 
-			\	}
-
-		let ok= base#tg#ok(okref)
-		return
+			let okref = { 
+				\	"tgid" : tgid,
+				\	"ok"   : ok,
+				\	"add"  : 0, 
+				\	}
+	
+			let ok= base#tg#ok(okref)
+			return
 
 """tgupdate_help_perlmy
 	elseif tgid == 'help_perlmy'
