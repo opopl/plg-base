@@ -194,6 +194,7 @@ function! base#tg#update (...)
 			let lib = base#file#catfile([ dir, 'lib' ])
 
 perl << eof
+	use String::Escape qw(escape);
 
 	my $lib     = VimVar('lib');
 	my $tfile   = VimVar('tfile');
@@ -203,6 +204,8 @@ perl << eof
 	my %o = (
 		dirs    => [$lib],
 		tagfile => $tfile,
+		sub_log  => sub { VimLog(@_); VimMsg([@_]); },
+		sub_warn => sub { VimLog(@_); VimWarn(@_); },
 	);
 
 	eval { 
@@ -218,10 +221,11 @@ perl << eof
 	};
 	if($@){
 		VimWarn($@);
+		my $s = escape('printable',$@);
+		VimCmd(qq{ call base#log("$s") });
 		$ok=0;
 	}
 	VimLet('ok',$ok);
-	
 eof
 
 		let okref = { 
@@ -230,7 +234,7 @@ eof
 			\	"add"  : 0, 
 			\	}
 
-		"let ok= base#tg#ok(okref)
+		let ok= base#tg#ok(okref)
 		return
 
 """tgupdate_help_perlmy

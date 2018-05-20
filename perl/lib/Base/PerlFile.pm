@@ -8,6 +8,7 @@ use PPI;
 use File::Find qw( find );
 use File::Slurp qw( write_file append_file );
 use File::Path qw(rmtree);
+use Data::Dumper;
 
 use DBI;
 
@@ -19,6 +20,24 @@ sub new
 	my $self = bless (\%opts, ref ($class) || $class);
 
 	$self->init if $self->can('init');
+
+	return $self;
+}
+
+sub warn {
+	my ($self,@args)=@_;
+
+	my $sub = $self->{sub_warn} || $self->{sub_log} ||undef;
+	$sub && $sub->(@args);
+
+	return $self;
+}
+
+sub log {
+	my ($self,@args)=@_;
+
+	my $sub = $self->{sub_log} ||undef;
+	$sub && $sub->(@args);
 
 	return $self;
 }
@@ -174,7 +193,10 @@ sub dbh_insert_hash {
 	my $q = qq| 
 		insert into `tags` ($f) values ($ph) 
 	|;
-	$dbh->do($q,undef,@v);
+	eval {$dbh->do($q,undef,@v); };
+	if ($@) {
+		$self->warn($@,$q,$dbh->errstr);
+	}
 
 	return $self;
 }
@@ -274,7 +296,12 @@ sub tags_add {
 	}
 
 	my $sth = $dbh->prepare($query);
-	$sth->execute(@$params);
+	eval { $sth->execute(@$params); };
+
+	if ($@) {
+		$self->warn($@,$query,Dumper($params),$dbh->errstr);
+		return $self;
+	}
 	
 	my $fetch='fetchrow_arrayref';
 	my @lines;
