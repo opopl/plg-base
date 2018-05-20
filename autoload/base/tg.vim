@@ -204,12 +204,20 @@ perl << eof
 	my %o = (
 		dirs    => [$lib],
 		tagfile => $tfile,
-		sub_log  => sub { VimLog(@_); VimMsg([@_]); },
-		sub_warn => sub { VimLog(@_); VimWarn(@_); },
+		sub_log  => sub { 
+			VimLog(@_); 
+			#VimMsg([@_]); 
+		},
+		sub_warn => sub { 
+			VimLog(@_); 
+			VimWarn(@_); 
+		},
 	);
 
 	eval { 
 		use Base::PerlFile;
+
+		VimLog('Running Base::PerlFile...');
 
 		my $pf =  Base::PerlFile->new(%o);
 		$pf
@@ -559,5 +567,8 @@ function! base#tg#view (...)
 	endif
 
 	call base#fileopen(tfile)
+
+	let tfile=escape(tfile,' \')
+	exe 'setlocal tags+='.tfile
 	
 endfunction

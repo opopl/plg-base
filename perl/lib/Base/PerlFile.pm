@@ -136,6 +136,7 @@ sub ppi_list_subs {
 
 	unless ($file && -f $file) { return $self; }
 
+	$self->log('ppi_list_subs: ' . Dumper($ref));
 
  	my $DOC = PPI::Document->new($file);
 	$DOC->index_locations;
@@ -145,19 +146,18 @@ sub ppi_list_subs {
 
 	my $ns;
 
-	my @subs;
 	for my $node (@packs_and_subs){
 		$node->isa( 'PPI::Statement::Sub' ) && do { 
 				my $h = { 
+						'filename'    => $file,
+						'line_number' => $node->line_number,
+						######################
 						'subname_full'   => $ns.'::'.$node->name,
 						'subname_short'  => $node->name,
-						'line_number' => $node->line_number,
-						'filename'    => $file,
 						'namespace'   => $ns,
 						'type'   	  => 'sub',
 				};
 
-				push @subs, $h;
 				$self->dbh_insert_hash({ h => $h });
 
 		};
@@ -165,7 +165,9 @@ sub ppi_list_subs {
 			$ns = $node->namespace; 
 
 			my $h = { 
+						'filename'    => $file,
 						'line_number' => $node->line_number,
+						######################
 						'namespace'   => $ns,
 						'type'   	  => 'package',
 			};
@@ -208,6 +210,8 @@ sub write_tags {
 	unless ($tagfile) {
 		return $self;
 	}
+
+	$self->log('write_tags: ' . $tagfile);
 
 	my $queries = [ 
 		{ 	q => qq{ 
@@ -286,7 +290,7 @@ sub tags_add {
 
 	$queries = [] if ($query);
 	if ($queries && @$queries) {
-		foreach my $query (@$queries) {
+		foreach (@$queries) {
 			$self->tags_add({ 
 				query  => $_->{q},
 				params => $_->{params},
@@ -294,6 +298,8 @@ sub tags_add {
 		}
 		return $self;
 	}
+
+	$self->log('tags_add: ' . Dumper($ref));
 
 	my $sth = $dbh->prepare($query);
 	eval { $sth->execute(@$params); };
