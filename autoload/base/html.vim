@@ -324,9 +324,12 @@ perl << eof
 	use File::Copy qw(move);
 	use File::Path qw(mkpath);
 
+	my $ref      = VimVar('ref');
 
 	my $url      = VimVar('url');
 	my $save_dir = VimVar('save_dir');
+
+
 	mkpath $save_dir;
 
 	# File::Fetch block
@@ -357,11 +360,16 @@ perl << eof
 #
 #	VimMsg($dwn->status);
 
+	my $file_local    = $ref->{file_local};
 	eval {
 			my $of;
 			local $_ = $of = $ff->output_file;
 			s/$/\.htm/g unless /\.(html|htm)$/;
 			s/\.php$/\.htm/g;
+
+			if ($file_local) {
+				$_ = $file_local;
+			}
 		
 			my $f_old        = catfile($save_dir,$of);
 			my $f_new        = catfile($save_dir,$_);
