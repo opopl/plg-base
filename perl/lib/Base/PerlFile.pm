@@ -161,6 +161,20 @@ sub ppi_list_subs {
 				$self->dbh_insert_hash({ h => $h });
 
 		};
+		$node->isa( 'PPI::Statement::Variable' ) && do { 
+				my $h = { 
+						'filename'    => $file,
+						'line_number' => $node->line_number,
+						######################
+						'var_full' 	  => $ns.'::'.$node->name,
+						'var_short'	  => $node->name,
+						'namespace'   => $ns,
+						'type'   	  => 'var_'.($node->type || ''),
+				};
+
+				$self->dbh_insert_hash({ h => $h });
+
+		};
 		$node->isa( 'PPI::Statement::Package' ) && do { 
 			$ns = $node->namespace; 
 
@@ -243,6 +257,26 @@ sub write_tags {
 					`type` = ?
 			},
 			params => [qw(package)],
+		},
+		{ 	q => qq{ 
+				SELECT 
+					`var_full`,`filename`,`line_number`
+				FROM
+					`tags`
+				WHERE
+					`type` = ?
+			},
+			params => [qw( var_our )],
+		},
+		{ 	q => qq{ 
+				SELECT 
+					`var_short`,`filename`,`line_number`
+				FROM
+					`tags`
+				WHERE
+					`type` = ?
+			},
+			params => [qw( var_our )],
 		},
 	];
 
