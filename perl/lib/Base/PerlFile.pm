@@ -5,8 +5,9 @@ use warnings;
 
 use PPI;
 
-use File::Find qw(find);
-use File::Slurp qw(write_file);
+use File::Find qw( find );
+use File::Slurp qw( write_file append_file );
+use File::Path qw(rmtree);
 
 use DBI;
 
@@ -104,14 +105,18 @@ sub ppi_list_subs {
 
 	my $files = $ref->{files} || $self->{files_source} || [];
 
+	my $file = $ref->{file};
+
+	$files=[] if $file;
+
 	if (@$files) {
 		foreach my $file (@$files) {
-			$self->ppi_list_subs({ file => $file, files => [] });
+			$self->ppi_list_subs({ file => $file });
 		}
 	}
 
-	my $file = $ref->{file};
 	unless ($file && -f $file) { return $self; }
+
 
  	my $DOC = PPI::Document->new($file);
 	$DOC->index_locations;
@@ -130,22 +135,46 @@ sub ppi_list_subs {
 						'line_number' => $node->line_number,
 						'filename'    => $file,
 						'namespace'   => $ns,
-						'type'   => 'sub',
+						'type'   	  => 'sub',
 				};
 
 				push @subs, $h;
-				my $ph = join ',' => map { '?' } keys %$h;
-				my @f = keys %$h;
-				my @v = map { $h->{$_} } @f ;
-				my $e = q{`};
-				my $f = join ',' => map { $e . $_ . $e } @f;
-				my $q = qq| 
-					insert into `tags` ($f) values ($ph) 
-				|;
-				$dbh->do($q,undef,@v);
+				$self->dbh_insert_hash({ h => $h });
+
 		};
-		$node->isa( 'PPI::Statement::Package' ) && do { $ns = $node->namespace; };
+		$node->isa( 'PPI::Statement::Package' ) && do { 
+			$ns = $node->namespace; 
+
+			my $h = { 
+						'line_number' => $node->line_number,
+						'namespace'   => $ns,
+						'type'   	  => 'package',
+			};
+
+			$self->dbh_insert_hash({ h => $h });
+		};
 	}
+
+	return $self;
+}
+
+sub dbh_insert_hash {
+	my ($self,$ref)=@_;
+
+	my $h = $ref->{h} || {};
+	unless (keys %$h) {
+		return $self;
+	}
+
+	my $ph = join ',' => map { '?' } keys %$h;
+	my @f = keys %$h;
+	my @v = map { $h->{$_} } @f ;
+	my $e = q{`};
+	my $f = join ',' => map { $e . $_ . $e } @f;
+	my $q = qq| 
+		insert into `tags` ($f) values ($ph) 
+	|;
+	$dbh->do($q,undef,@v);
 
 	return $self;
 }
@@ -158,21 +187,102 @@ sub write_tags {
 		return $self;
 	}
 
-	my $sth = $dbh->prepare(qq{ 
-		SELECT 
-			`subname_full`,`filename`,`line_number`
-		FROM
-			`tags`
+	my $queries = [ 
+		{ 	q => qq{ 
+				SELECT 
+					`subname_full`,`filename`,`line_number`
+				FROM
+					`tags`
+				WHERE
+					`type` = ?
+			},
+			params => [qw(sub)],
+		},
+		{ 	q => qq{ 
+				SELECT 
+					`subname_short`,`filename`,`line_number`
+				FROM
+					`tags`
+				WHERE
+					`type` = ?
+			},
+			params => [qw(sub)],
+		},
+		{ 	q => qq{ 
+				SELECT 
+					`namespace`,`filename`,`line_number`
+				FROM
+					`tags`
+				WHERE
+					`type` = ?
+			},
+			params => [qw(package)],
+		},
+	];
+
+	$self->tags_add({ queries => $queries });
+
+	return $self;
+}
+
+sub tagfile_rm {
+	my ($self,$ref)=@_;
+
+	my $tagfile = $ref->{tagfile} || $self->{tagfile} || '';
+	rmtree $tagfile if -e $tagfile;
+
+	return $self;
+}
+
+=head2 tags_add
+
+=head3 Usage
+
+	# single query:
+	$pf->tags_add({ 
+		tagfile => $tagfile,
+		query => q{...},
+		params => [...],
 	});
-	$sth->execute;
+
+	# iterate over queries:
+	my $queries = [ { q => q{...}, params => [...] }, { ... }, ];
+
+	$pf->tags_add({ 
+		tagfile => $tagfile,
+		queries => $queries,
+	});
+
+=cut
+
+sub tags_add {
+	my ($self,$ref)=@_;
+
+	my ($query,$queries,$params)=@{$ref}{qw( query queries params )};
+
+	my $tagfile = $ref->{tagfile} || $self->{tagfile} || '';
+
+	$queries = [] if ($query);
+	if ($queries && @$queries) {
+		foreach my $query (@$queries) {
+			$self->tags_add({ 
+				query  => $_->{q},
+				params => $_->{params},
+			});
+		}
+		return $self;
+	}
+
+	my $sth = $dbh->prepare($query);
+	$sth->execute(@$params);
 	
 	my $fetch='fetchrow_arrayref';
 	my @lines;
 	while(my $row=$sth->$fetch()){
 		push @lines, join("\t",@$row);
 	}
-	write_file($tagfile,join("\n",@lines) . "\n");
 
+	append_file($tagfile,join("\n",@lines) . "\n");
 
 	return $self;
 }

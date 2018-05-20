@@ -194,27 +194,43 @@ function! base#tg#update (...)
 			let lib = base#file#catfile([ dir, 'lib' ])
 
 perl << eof
-	use Base::PerlFile;
 
 	my $lib     = VimVar('lib');
 	my $tfile   = VimVar('tfile');
 
-	my $pf =  Base::PerlFile->new;
-	$pf
-		->load_files_source({dirs => [$lib]})
-		->ppi_list_subs
-		->write_tags({ tagfile => $tfile })
-		;
+	my $ok=1;
+
+	my %o = (
+		dirs    => [$lib],
+		tagfile => $tfile,
+	);
+
+	eval { 
+		use Base::PerlFile;
+
+		my $pf =  Base::PerlFile->new(%o);
+		$pf
+			->load_files_source
+			->ppi_list_subs
+			->tagfile_rm
+			->write_tags
+			;
+	};
+	if($@){
+		VimWarn($@);
+		$ok=0;
+	}
+	VimLet('ok',$ok);
 	
 eof
 
 		let okref = { 
 			\	"tgid" : tgid,
-			\	"ok"   : 1,
+			\	"ok"   : ok,
 			\	"add"  : 0, 
 			\	}
 
-		let ok= base#tg#ok(okref)
+		"let ok= base#tg#ok(okref)
 		return
 
 """tgupdate_help_perlmy
