@@ -402,7 +402,10 @@ perl << eof
 	      push @texlines, $r;
 	   }
 
-	 	 push @texlines,'\\end{longtable}',' ';
+	 	 push @texlines,
+		 		'\\hline', 
+				'\\end{longtable}',
+				' ';
 	 }
 	 VimListExtend('texlines',\@texlines);
 eof
