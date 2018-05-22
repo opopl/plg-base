@@ -199,10 +199,12 @@ sub ppi_list_subs {
 
 	my $node_count = 0;
 	my $max_node_count = $self->{max_node_count};
+
 	my $add = { map { $_ => 1 } @{$self->{add} || []} };
+
 	for my $node (@nodes){
 		$node_count++;
-		last if ( defined $max_node_count && ( $node_count == $max_node_count ) );
+		last if ( $max_node_count && ( $node_count == $max_node_count ) );
 
 		$node->isa( 'PPI::Statement::Sub' ) && do { 
 			next unless $add->{subs};

@@ -15,7 +15,8 @@ perl << eof
 	my $dirs           = VimVar('dirs');
 	my $tfile          = VimVar('tfile');
 
-	my $max_node_count = VimVar('max_node_count');
+	my $max_node_count = int ( VimVar('max_node_count') || 0 );
+	$max_node_count = 10;
 
 	my $ok=1;
 
@@ -30,7 +31,7 @@ perl << eof
 			VimLog(@_); 
 			VimWarn(@_); 
 		},
-		add => [qw(subs packs)],
+		add => [qw( subs packs )],
 	);
 
 	$o{max_node_count} = $max_node_count if $max_node_count; 
