@@ -316,6 +316,8 @@ function! base#html#fetch_url_source (...)
 
 	let save_dir = base#qw#catpath('appdata','vim plg base saved_urls')
 	let save_dir = input('URL save dir: ',save_dir)
+
+	let file_local = get(ref,'file_local','')
 	
 perl << eof
 	use Vim::Perl qw(VimVar VimMsg CurBufSet);
@@ -328,6 +330,8 @@ perl << eof
 
 	my $url      = VimVar('url');
 	my $save_dir = VimVar('save_dir');
+
+	my $file_local = VimVar('file_local');
 
 
 	mkpath $save_dir;
@@ -360,7 +364,6 @@ perl << eof
 #
 #	VimMsg($dwn->status);
 
-	my $file_local    = $ref->{file_local};
 	eval {
 			my $of;
 			local $_ = $of = $ff->output_file;

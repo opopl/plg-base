@@ -93,6 +93,10 @@ fun! base#init#paths(...)
         \ 'appdata_plg_base'  : base#qw#catpath('appdata','vim plg base'),
         \ 'appdata_plg_perlmy'  : base#qw#catpath('appdata','vim plg perlmy'),
         \ })
+
+    call base#pathset({ 
+        \ 'saved_urls'  : base#qw#catpath('appdata_plg_base','saved_urls'),
+        \ })
 		
 		let evbin = base#file#catfile([ 
 			\	base#path('appdata_local'), 'Apps', 'Evince-2.32.0.145', 'bin' ])
