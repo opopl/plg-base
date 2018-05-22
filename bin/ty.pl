@@ -37,7 +37,7 @@ sub get_opt {
 	
 	@OPTSTR=( 
 		"tfile=s",
-		"dir=s@" 
+		"dir=s@" ,
 	);
 	
 	%OPTDESC=(
