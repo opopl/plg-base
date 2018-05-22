@@ -185,7 +185,11 @@ sub ppi_list_subs {
 
 	$self->log('ppi_list_subs: ' . Dumper($ref));
 
- 	my $DOC = PPI::Document->new($file);
+ 	my $DOC; 
+	
+	eval { $DOC = PPI::Document->new($file); };
+	if ($@) { $self->warn($@); return $self; }
+
 	$DOC->index_locations;
 
 	my $f = sub { 

@@ -58,15 +58,8 @@ perl << eof
 		}
 		VimLet('ok',$ok);
 	};
+	$s->();
 
-	eval { 
-	    local $SIG{ALRM} = sub { die "alarm clock restart" };
-	    alarm 10;                   # schedule alarm in 10 seconds 
-	    eval { $s->(); };
-	    alarm 0;                    # cancel the alarm
-	};
-	alarm 0;                        # race condition protection
-	die if $@ && $@ !~ /alarm clock restart/; # reraise	
 eof
 
 	return ok
