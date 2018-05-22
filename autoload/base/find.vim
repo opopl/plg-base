@@ -111,7 +111,14 @@ perl << EOF
 		$name=~s/\.\///g;
 		return if $name eq '.';
 
-		push(@files, $D . '/' . $name ) if $add;
+		my $full_path = $D . '/' . $name ;
+		if ($add){
+			if ($ref->{relpath}) {
+				push(@files,$name);
+			}else{
+				push(@files,$full_path);
+			}
+		}
   };
 
   for my $dir (@$dirs){
@@ -165,12 +172,12 @@ EOF
 		call filter(newfiles,"'" . map . "'")
 	endif
 
-	if get(ref,'relpath',0) && len(dirs)
-		let dir = get(dirs,0,'')
-		if isdirectory(dir)
-			let newfiles = map(newfiles,'base#file#reldir(v:val,dir)')
-		endif
-	endif
+	"if get(ref,'relpath',0) && len(dirs)
+		"let dir = get(dirs,0,'')
+		"if isdirectory(dir)
+			"let newfiles = map(newfiles,'base#file#reldir(v:val,dir)')
+		"endif
+	"endif
 
 	let files = newfiles
 

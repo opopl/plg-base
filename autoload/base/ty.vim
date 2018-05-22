@@ -7,16 +7,11 @@ function! base#ty#make (...)
 
 	let ok = 1
 
-	let max_node_count = input('max_node_count:','')
-
 perl << eof
 	use String::Escape qw(escape);
 
 	my $dirs           = VimVar('dirs');
 	my $tfile          = VimVar('tfile');
-
-	my $max_node_count = int ( VimVar('max_node_count') || 0 );
-	$max_node_count = 10;
 
 	my $ok=1;
 
@@ -25,7 +20,6 @@ perl << eof
 		tagfile => $tfile,
 		sub_log  => sub { 
 			VimLog(@_); 
-			#VimMsg([@_]); 
 		},
 		sub_warn => sub { 
 			VimLog(@_); 
@@ -33,8 +27,6 @@ perl << eof
 		},
 		add => [qw( subs packs )],
 	);
-
-	$o{max_node_count} = $max_node_count if $max_node_count; 
 
 	my $s = sub {
 		eval { 
