@@ -6,11 +6,15 @@ function! base#ty#make (...)
 	let tfile = get(ref,'tfile','')
 
 	let ok = 1
+
+	let max_node_count = input('max_node_count:','')
+
 perl << eof
 	use String::Escape qw(escape);
 
 	my $dirs    = VimVar('dirs');
 	my $tfile   = VimVar('tfile');
+	my $max_node_count = VimVar('max_node_count');
 
 	my $ok=1;
 
@@ -26,6 +30,7 @@ perl << eof
 			VimWarn(@_); 
 		},
 	);
+	$o->{max_node_count} = $max_node_count if $max_node_count; 
 
 	eval { 
 		use Base::PerlFile;

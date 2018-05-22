@@ -182,7 +182,12 @@ sub ppi_list_subs {
 
 	my $ns;
 
+	my $node_count = 0;
+	my $max_node_count = $self->{max_node_count};
 	for my $node (@packs_and_subs){
+		$node_count++;
+		last if ( defined $max_node_count && ( $node_count == $max_node_count ) );
+
 		$node->isa( 'PPI::Statement::Sub' ) && do { 
 				my $h = { 
 						'filename'    => $file,
