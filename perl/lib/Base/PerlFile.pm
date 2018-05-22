@@ -59,6 +59,7 @@ sub init_db {
 				`var_full` varchar(1024),
 				`var_short` varchar(1024),
 				`type` varchar(1024),
+				`content` text,
 				primary key(`id`)
 			);
 		},
@@ -121,6 +122,35 @@ sub load_files_source {
 	$self;
 }
 
+sub process_var {
+	my ($self,$node,$ns)=@_;
+
+	$ns ||= 'main';
+
+    my @tokens = $node->children;
+    foreach my $token ( @tokens )
+    {
+        # список или выражение - ищем имена рекурсивно:
+        $self->process_var( $token,$ns ), next if $token->class eq 'PPI::Structure::List';
+        $self->process_var( $token,$ns ), next if $token->class eq 'PPI::Statement::Expression';
+          
+		if ( $token->class eq 'PPI::Token::Symbol'){
+			my $var = $token->content;
+			my $h = {
+				'line_number' => $node->line_number,
+				'var_short'	  => $var,
+				'var_full'	  => $ns . '::' . $var,
+				'namespace'   => $ns,
+				'type'   	  => 'var_our',
+			};
+	
+			$self->dbh_insert_hash({ h => $h });
+		}
+
+    }
+	$self;
+}
+
 sub ppi_list_subs {
 	my ($self,$ref)=@_;
 
@@ -168,6 +198,7 @@ sub ppi_list_subs {
 
 		};
 		$node->isa( 'PPI::Statement::Variable' ) && do { 
+				$self->process_var($node,$ns);
    #             my $h = { 
 						#'filename'    => $file,
 						#'line_number' => $node->line_number,
