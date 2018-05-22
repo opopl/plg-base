@@ -10,6 +10,8 @@ use File::Slurp qw( write_file append_file );
 use File::Path qw(rmtree);
 use Data::Dumper;
 
+use Base::DB;
+
 use DBI;
 
 our $dbh;
@@ -46,6 +48,9 @@ sub init_db {
 	my $self=shift;
 
 	$dbh = DBI->connect("dbi:SQLite:dbname=:memory:","","");
+
+	$Base::DB::dbh=$dbh;
+
 	my @q;
 	push @q,
 		qq{
@@ -63,6 +68,15 @@ sub init_db {
 				primary key(`id`)
 			);
 		},
+		qq{
+			create table `tags_write` (
+				`id` int auto_increment,
+				`tag` varchar(1024),
+				`file` varchar(1024),
+				`address` varchar(1024),
+				primary key(`id`)
+			);
+		},
 		;
 	
 	foreach my $q (@q) {
@@ -77,6 +91,7 @@ sub init {
 
 	my $h={
 		exts => [qw(pl pm t)],
+		add  => [qw(subs packages)],
 	};
 		
 	my @k=keys %$h;
@@ -178,17 +193,20 @@ sub ppi_list_subs {
 		|| $_[1]->isa( 'PPI::Statement::Package' )
 		|| $_[1]->isa( 'PPI::Statement::Variable' )
 	};
-	my @packs_and_subs = @{ $DOC->find( $f ) || [] };
+	my @nodes = @{ $DOC->find( $f ) || [] };
 
 	my $ns;
 
 	my $node_count = 0;
 	my $max_node_count = $self->{max_node_count};
-	for my $node (@packs_and_subs){
+	my $add = { map { $_ => 1 } @{$self->{add} || []} };
+	for my $node (@nodes){
 		$node_count++;
 		last if ( defined $max_node_count && ( $node_count == $max_node_count ) );
 
 		$node->isa( 'PPI::Statement::Sub' ) && do { 
+			next unless $add->{subs};
+
 				my $h = { 
 						'filename'    => $file,
 						'line_number' => $node->line_number,
@@ -203,22 +221,13 @@ sub ppi_list_subs {
 
 		};
 		$node->isa( 'PPI::Statement::Variable' ) && do { 
-				$self->process_var($node,$ns);
-   #             my $h = { 
-						#'filename'    => $file,
-						#'line_number' => $node->line_number,
-						#######################
-						#'var_full' 	  => $ns.'::'.$node->name,
-						#'var_short'	  => $node->name,
-						#'namespace'   => $ns,
-						#'type'   	  => 'var_'.($node->type || ''),
-				#};
-
-				#$self->dbh_insert_hash({ h => $h });
-
+			next unless $add->{vars};
+			$self->process_var($node,$ns);
 		};
 		$node->isa( 'PPI::Statement::Package' ) && do { 
 			$ns = $node->namespace; 
+
+			next unless $add->{packs};
 
 			my $h = { 
 						'filename'    => $file,
@@ -324,6 +333,31 @@ sub write_tags {
 
 	$self->tags_add({ queries => $queries });
 
+	my $q = q{
+		SELECT 
+			`tag`,`file`,`address`
+		FROM 
+			`tags_write`
+		ORDER BY 
+			`tag`
+		ASC
+	};
+	my $sth = $dbh->prepare($q);
+	eval { $sth->execute(); };
+
+	if ($@) {
+		$self->warn($@,$q,$dbh->errstr);
+		return $self;
+	}
+
+	my $fetch='fetchrow_arrayref';
+	my @lines;
+	while(my $row=$sth->$fetch()){
+		push @lines, join("\t",@$row);
+	}
+
+	append_file($tagfile,join("\n",@lines) . "\n");
+
 	return $self;
 }
 
@@ -384,14 +418,18 @@ sub tags_add {
 		$self->warn($@,$query,Dumper($params),$dbh->errstr);
 		return $self;
 	}
-	
-	my $fetch='fetchrow_arrayref';
-	my @lines;
-	while(my $row=$sth->$fetch()){
-		push @lines, join("\t",@$row);
-	}
 
-	append_file($tagfile,join("\n",@lines) . "\n");
+	my $fetch='fetchrow_arrayref';
+	while(my $row=$sth->$fetch()){
+		my @v = @$row;
+
+		my $q = q{
+			INSERT INTO 
+				`tags_write` (`tag`,`file`,`address`)
+			VALUES (?,?,?)
+		};
+		$dbh->do($q,undef,@v);
+	}
 
 	return $self;
 }
