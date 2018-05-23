@@ -242,7 +242,10 @@ sub ppi_list_subs {
 		};
 		$node->isa( 'PPI::Statement::Variable' ) && do { 
 			next unless $add->{vars};
+
 			my $type = $node->type;
+			next unless $type eq 'our';
+
 			my @a = ($ns,$file,$type);
 
 			$self->process_var($node,@a);
