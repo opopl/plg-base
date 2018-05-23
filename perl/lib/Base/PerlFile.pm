@@ -159,19 +159,24 @@ sub process_var {
           
 		if ( $token->class eq 'PPI::Token::Symbol'){
 			my $var = $token->content;
+			my $var_full = $ns . '::' . $var;
+
+			my ($sign,$varname) = ( $var_full =~ /::([\$\@\%])(\w+)$/g );
+			$var_full = $sign . $ns . '::' . $varname;
+
 			my $h = {
 				'filename'    => $file,
 				'line_number' => $node->line_number,
 				'var_type'	  => $type,
 				'var_short'	  => $var,
-				'var_full'	  => $ns . '::' . $var,
+				'var_full'	  => $var_full,
 				#'var_decl'	  => $node->content,
 				'var_parent_class'	  => $node->parent->class,
 				'var_parent_lineno'	  => $node->parent->line_number,
 				'namespace'   => $ns,
 				'type'   	  => 'var_'.( $type || 'undef' ),
 			};
-			$self->log(Dumper($h));
+			#$self->log(Dumper($h));
 	
 			$self->dbh_insert_hash({ h => $h });
 		}
@@ -247,6 +252,9 @@ sub ppi_list_subs {
 			next unless $type eq 'our';
 
 			my @a = ($ns,$file,$type);
+
+			my $vars = [ $node->variables ];
+			#$self->log(Dumper($vars));
 
 			$self->process_var($node,@a);
 		};
