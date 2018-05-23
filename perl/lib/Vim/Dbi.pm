@@ -15,12 +15,12 @@ use open qw(:std :utf8);
 
 use base qw( Class::Accessor::Complex );
 
-if (-t) 
-{
-	binmode(STDIN, ":encoding(console_in)");
-	binmode(STDOUT, ":encoding(console_out)");
-	binmode(STDERR, ":encoding(console_out)");
-}
+#if (-t) 
+#{
+	#binmode(STDIN, ":encoding(console_in)");
+	#binmode(STDOUT, ":encoding(console_out)");
+	#binmode(STDERR, ":encoding(console_out)");
+#}
 
 use Encode;
 
@@ -244,13 +244,19 @@ sub list_from_query_index {
 	my $ref=shift || {};
 
 	my ($index,$query,$listvar)=@{$ref}{qw(index query listvar)};
+
 	my $list;
 	my $res;
 	
 	my $dbh=$self->dbh;
+	unless ($dbh) {
+		$self->warn('dbh not defined!');
+		return $self;
+	}
 	eval { $res = $dbh->selectall_arrayref($query); };
-	if ($@) { $self->log($@); }
-	unless(defined $res){ $self->log($dbh->errstr); return; }
+	if ($@) { $self->log($@,$query); }
+
+	unless(defined $res){ $self->warn($dbh->errstr); return; }
 
 	@$list  = map { (defined $_->[$index]) ? encode('utf8',$_->[$index]) : () } @$res;
 

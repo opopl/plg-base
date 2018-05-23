@@ -93,6 +93,19 @@ eof
 
 endfunction
 
+function! base#bufact#perl#extract_subs ()
+	call base#buf#start()
+	let file = b:file
+perl << eof
+	use Base::Tg::ExtractSubs qw($FILE @LINES);
+	$FILE=VimVar('file');
+
+	Base::Tg::ExtractSubs::main();
+
+eof
+	
+endfunction
+
 function! base#bufact#perl#ppi_list_subs ()
 	call base#buf#start()
 	let file = b:file

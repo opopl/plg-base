@@ -67,5 +67,5 @@ sub _is_sub_var_decl {
         ($_[1]->isa('PPI::Token::Word') && $_[1]->content eq 'shift') ||
         ($_[1]->isa('PPI::Token::Magic') && $_[1]->content eq '@_')
     });
-return scalar @$variables;
+	return scalar @$variables;
 }
