@@ -96,13 +96,16 @@ endfunction
 function! base#bufact#perl#extract_subs ()
 	call base#buf#start()
 	let file = b:file
+	let lines = []
 perl << eof
 	use Base::Tg::ExtractSubs qw($FILE @LINES);
 	$FILE=VimVar('file');
 
 	Base::Tg::ExtractSubs::main();
 
+	VimListExtend('lines',[@LINES]);
 eof
+	call base#buf#open_split({ 'lines' : lines })
 	
 endfunction
 

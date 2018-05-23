@@ -47,7 +47,7 @@ our @EXPORT  = qw( );
 
 our $VERSION = '0.01';
 
-sub main {
+sub main() {
 	my $doc = PPI::Document->new($FILE);
 	
 	$doc->prune('PPI::Token::Whitespace');
