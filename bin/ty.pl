@@ -13,6 +13,10 @@ use FindBin qw($Script $Bin);
 use lib "$Bin/../perl/lib";
 use Base::PerlFile;
 use Getopt::Long qw(GetOptions);
+use File::Spec::Functions qw(catfile);
+use File::Slurp qw(append_file);
+
+use Cwd qw(abs_path getcwd);
 
 my $dirs = [];
 my $tfile = '';
@@ -28,6 +32,26 @@ sub new
 	$self->init if $self->can('init');
 
 	return $self;
+}
+
+sub init {
+	my $self=shift;
+
+	my $h={};
+		
+	my @k=keys %$h;
+
+	for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
+
+
+}
+
+sub logfile {
+	my $self=shift;
+
+	my $logfile = catfile(getcwd(),'ty.log');
+
+	return $logfile;
 }
       
 sub get_opt {
@@ -66,7 +90,7 @@ sub dhelp {
 		--help
 
 		--tfile     FILE         (string)
-		--tdir DIR1 --dir DIR2   (array)
+		--dir DIR1 --dir DIR2   (array)
 
 S
 	print $s . "\n";
@@ -74,24 +98,35 @@ S
 	$self;
 }
 
-my %o = (
-		dirs    => $dirs,
+sub run_pf {
+	my $self=shift;
+
+	my @dirs = map { abs_path($_) } @{ $OPT{dirs} || [] };
+	my $tfile = $OPT{tfile} || catfile('.','tygs');
+
+	unless ($dirs) {
+		$self->warn('no dirs!'); return $self;
+	}
+
+	unless ($tfile) {
+		$self->warn('no tfile!'); return $self;
+	}
+
+	my $logfile = $self->logfile;
+	my %o = (
+		dirs    => \@dirs,
 		tagfile => $tfile,
 		sub_log  => sub { 
-			print $_ . "\n" for(@_);
+			append_file($logfile,join("\n",@_) . "\n");
 		},
 		sub_warn => sub { 
+			append_file($logfile,join("\n",map { 'WARN ' . $_ } @_) . "\n");
 			warn $_ . "\n" for(@_);
 		},
 		add => [qw( subs packs )],
-);
+	);
 
-sub main {
-	my $self=shift;
-
-	$self->get_opt;
-
-	my $pf =  Base::PerlFile->new(%o);
+	my $pf = Base::PerlFile->new(%o);
 
 	$pf
 		->load_files_source
@@ -99,6 +134,16 @@ sub main {
 		->tagfile_rm
 		->write_tags
 	;
+
+	$self;
+}
+
+sub main {
+	my $self=shift;
+
+	$self
+		->get_opt
+		->run_pf;
 
 	$self;
 
