@@ -15,11 +15,9 @@ use Base::PerlFile;
 use Getopt::Long qw(GetOptions);
 use File::Spec::Functions qw(catfile);
 use File::Slurp qw(append_file);
+use File::Path qw(rmtree);
 
 use Cwd qw(abs_path getcwd);
-
-my $dirs = [];
-my $tfile = '';
 
 our(%OPT,@OPTSTR,%OPTDESC);
 our($CMDLINE);
@@ -105,7 +103,7 @@ sub run_pf {
 	my @dirs = map { abs_path($_) } @{ $OPT{dir} || [] };
 	my $tfile = $OPT{tfile} || catfile(getcwd(),'tygs');
 
-	unless ($dirs) {
+	unless (@dirs) {
 		$self->warn('no dirs!'); return $self;
 	}
 
@@ -114,13 +112,14 @@ sub run_pf {
 	}
 
 	my $logfile = $self->logfile;
+	rmtree $logfile if -e $logfile;
 
 	print 'logfile:   ' . $logfile ."\n";
 	print 'tagfile:   ' . $tfile ."\n";
 
 	my %o = (
-		dirs    => \@dirs,
-		tagfile => $tfile,
+		dirs     => \@dirs,
+		tagfile  => $tfile,
 		sub_log  => sub { 
 			append_file($logfile,join("\n",@_) . "\n");
 		},
@@ -128,7 +127,7 @@ sub run_pf {
 			append_file($logfile,join("\n",map { 'WARN ' . $_ } @_) . "\n");
 			warn $_ . "\n" for(@_);
 		},
-		add => [qw( subs packs )],
+		add => [qw( subs packs vars )],
 	);
 
 	my $pf = Base::PerlFile->new(%o);

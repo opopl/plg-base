@@ -63,6 +63,10 @@ sub init_db {
 				`line_number` varchar(1024),
 				`var_full` varchar(1024),
 				`var_short` varchar(1024),
+				`var_decl` varchar(1024),
+				`var_parent_class` varchar(1024),
+				`var_parent_lineno` int,
+				`var_type` varchar(1024),
 				`type` varchar(1024),
 				`content` text,
 				primary key(`id`)
@@ -138,26 +142,36 @@ sub load_files_source {
 }
 
 sub process_var {
-	my ($self,$node,$ns)=@_;
+	my ($self,$node,@a)=@_;
+
+	my ($ns,$file,$type) = @a;
 
 	$ns ||= 'main';
+	@a = ($ns,$file,$type);
 
     my @tokens = $node->children;
+
     foreach my $token ( @tokens )
     {
         # список или выражение - ищем имена рекурсивно:
-        $self->process_var( $token,$ns ), next if $token->class eq 'PPI::Structure::List';
-        $self->process_var( $token,$ns ), next if $token->class eq 'PPI::Statement::Expression';
+        $self->process_var( $token,@a ), next if $token->class eq 'PPI::Structure::List';
+        $self->process_var( $token,@a ), next if $token->class eq 'PPI::Statement::Expression';
           
 		if ( $token->class eq 'PPI::Token::Symbol'){
 			my $var = $token->content;
 			my $h = {
+				'filename'    => $file,
 				'line_number' => $node->line_number,
+				'var_type'	  => $type,
 				'var_short'	  => $var,
 				'var_full'	  => $ns . '::' . $var,
+				#'var_decl'	  => $node->content,
+				'var_parent_class'	  => $node->parent->class,
+				'var_parent_lineno'	  => $node->parent->line_number,
 				'namespace'   => $ns,
-				'type'   	  => 'var_our',
+				'type'   	  => 'var_'.( $type || 'undef' ),
 			};
+			$self->log(Dumper($h));
 	
 			$self->dbh_insert_hash({ h => $h });
 		}
@@ -228,7 +242,10 @@ sub ppi_list_subs {
 		};
 		$node->isa( 'PPI::Statement::Variable' ) && do { 
 			next unless $add->{vars};
-			$self->process_var($node,$ns);
+			my $type = $node->type;
+			my @a = ($ns,$file,$type);
+
+			$self->process_var($node,@a);
 		};
 		$node->isa( 'PPI::Statement::Package' ) && do { 
 			$ns = $node->namespace; 
