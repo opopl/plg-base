@@ -77,6 +77,7 @@ sub get_opt {
 		$CMDLINE=join(' ',@ARGV);
 		GetOptions(\%OPT,@OPTSTR);
 	}
+	
 	$self;
 }
 
@@ -101,8 +102,8 @@ S
 sub run_pf {
 	my $self=shift;
 
-	my @dirs = map { abs_path($_) } @{ $OPT{dirs} || [] };
-	my $tfile = $OPT{tfile} || catfile('.','tygs');
+	my @dirs = map { abs_path($_) } @{ $OPT{dir} || [] };
+	my $tfile = $OPT{tfile} || catfile(getcwd(),'tygs');
 
 	unless ($dirs) {
 		$self->warn('no dirs!'); return $self;
@@ -113,6 +114,10 @@ sub run_pf {
 	}
 
 	my $logfile = $self->logfile;
+
+	print 'logfile:   ' . $logfile ."\n";
+	print 'tagfile:   ' . $tfile ."\n";
+
 	my %o = (
 		dirs    => \@dirs,
 		tagfile => $tfile,
