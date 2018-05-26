@@ -5,6 +5,8 @@ function! base#bufact#sql#file_exec ()
 
 	let db = 'information_schema'
 	let db = input('db:',db)
+	
+	let fail = 1
 
 perl << eof
 	use DBI;

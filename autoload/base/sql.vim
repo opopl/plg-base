@@ -14,9 +14,8 @@ function! base#sql#q (sql_query,...)
 perl << eof
 	use Vim::Perl qw(:funcs :vars);
 	use Vim::Dbi;
+	use Base::DB;
 	use SQL::SplitStatement;
-
-#	$Vim::Perl::SILENT=1;
 
 	use utf8;
 	use open qw(:std :utf8);
