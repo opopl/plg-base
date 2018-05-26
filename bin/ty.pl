@@ -134,7 +134,7 @@ sub run_pf {
 
 	$pf
 		->load_files_source
-		->ppi_list_subs
+		->ppi_process
 		->tagfile_rm
 		->write_tags
 	;

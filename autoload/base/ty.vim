@@ -37,7 +37,7 @@ perl << eof
 			my $pf =  Base::PerlFile->new(%o);
 			$pf
 				->load_files_source
-				->ppi_list_subs
+				->ppi_process
 				->tagfile_rm
 				->write_tags
 				;

@@ -68,6 +68,9 @@ sub init_db {
 				`var_parent_lineno` int,
 				`var_type` varchar(1024),
 				`type` varchar(1024),
+				`include_module` varchar(1024),
+				`include_type` varchar(1024),
+				`include_arguments` varchar(1024),
 				`content` text,
 				primary key(`id`)
 			);
@@ -237,6 +240,7 @@ sub ppi_process {
 
 		$node->isa( 'PPI::Statement::Sub' ) && do { 
 			next unless $add->{subs};
+				$ns ||= 'main'; 
 
 				my $h = { 
 						'filename'    => $file,
@@ -270,15 +274,38 @@ sub ppi_process {
 
 			my $type = $node->type;
 
-			my $h = { 
-						'filename'    => $file,
-						'line_number' => $node->line_number,
-						######################
-						'namespace'   => $ns,
-						'type'   	  => 'include',
-			};
+			my @a = $node->arguments;
+			my $a = join(' ',@a);
+			my $module = $node->module;
 
+			my $h = { 
+					'filename'    => $file,
+					'line_number' => $node->line_number,
+					######################
+					'namespace'   => $ns,
+					'type'   	  => 'include_'.$node->type,
+					'include_module'   	  => $module ,
+					'include_arguments'   => $a,
+			};
+	
 			$self->dbh_insert_hash({ h => $h, t => 'tags' });
+
+			if ($module eq 'vars') {
+				my @v = split(/\s+/,$a);
+				for(@v){
+					my $h = { 
+							'filename'    => $file,
+							'line_number' => $node->line_number,
+							######################
+							'namespace'   => $ns,
+							'type'   	  => 'include_'.$node->type,
+							'var_short'   => $_,
+							'var_full'    => $ns . '::' .$_,
+					};
+	
+					$self->dbh_insert_hash({ h => $h, t => 'tags' });
+				}
+			}
 
 		};
 		$node->isa( 'PPI::Statement::Package' ) && do { 
@@ -337,6 +364,8 @@ sub write_tags {
 
 	$self->log('write_tags: ' . $tagfile);
 
+	my $add = $ref->{add} || $self->{add} || [];
+
 	my $queries = [ 
 		{ 	q => qq{ 
 				SELECT 
@@ -388,7 +417,30 @@ sub write_tags {
 			},
 			params => [qw( var_our )],
 		},
+
 	];
+
+	for(@$add){
+		/^include$/ && do { 
+			push @$queries,
+				{ 	q => qq{ 
+						SELECT 
+							`var_full`,`filename`,`line_number`
+						FROM
+							`tags`
+						WHERE
+								`type` = ? 
+							AND 
+								`include_module` = ? 
+					},
+					params => [qw( 
+						include_use 
+						vars
+					)],
+				};
+			next;
+		};
+	}
 
 	$self->tags_add({ queries => $queries });
 
