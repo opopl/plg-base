@@ -95,7 +95,12 @@ sub init {
 
 	my $h={
 		exts => [qw(pl pm t)],
-		add  => [qw(subs packages)],
+		add  => [qw(
+				include
+				packages 
+				subs 
+				vars 
+		)],
 	};
 		
 	my @k=keys %$h;
@@ -185,7 +190,7 @@ sub process_var {
 	$self;
 }
 
-sub ppi_list_subs {
+sub ppi_process {
 	my ($self,$ref)=@_;
 
 	my $files = $ref->{files} || $self->{files_source} || [];
@@ -196,13 +201,13 @@ sub ppi_list_subs {
 
 	if (@$files) {
 		foreach my $file (@$files) {
-			$self->ppi_list_subs({ file => $file });
+			$self->ppi_process({ file => $file });
 		}
 	}
 
 	unless ($file && -f $file) { return $self; }
 
-	$self->log('ppi_list_subs: ' . Dumper($ref));
+	$self->log('ppi_process: ' . Dumper($ref));
 
  	my $DOC; 
 	
@@ -215,6 +220,7 @@ sub ppi_list_subs {
 		$_[1]->isa( 'PPI::Statement::Sub' ) 
 		|| $_[1]->isa( 'PPI::Statement::Package' )
 		|| $_[1]->isa( 'PPI::Statement::Variable' )
+		|| $_[1]->isa( 'PPI::Statement::Include' )
 	};
 	my @nodes = @{ $DOC->find( $f ) || [] };
 
@@ -257,6 +263,22 @@ sub ppi_list_subs {
 			#$self->log(Dumper($vars));
 
 			$self->process_var($node,@a);
+		};
+		$node->isa( 'PPI::Statement::Include' ) && do { 
+			next unless $add->{include};
+
+			my $type = $node->type;
+
+			my $h = { 
+						'filename'    => $file,
+						'line_number' => $node->line_number,
+						######################
+						'namespace'   => $ns,
+						'type'   	  => 'include',
+			};
+
+			$self->dbh_insert_hash({ h => $h, t => 'tags' });
+
 		};
 		$node->isa( 'PPI::Statement::Package' ) && do { 
 			$ns = $node->namespace; 

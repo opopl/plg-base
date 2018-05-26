@@ -127,8 +127,9 @@ perl << eof
 	$Vim::Perl::CURBUF = $curbuf;
 
 	my $file = VimVar('file');
-	my $pf = Base::PerlFile->new;
-	$pf->ppi_list_subs({ file => $file });
+	my %o = ();
+	my $pf = Base::PerlFile->new(%o);
+	$pf->ppi_process({ file => $file });
 
 	VimListExtend('lines_tags',$pf->{lines_tags});
 	VimListExtend('subnames',$pf->{subnames});
