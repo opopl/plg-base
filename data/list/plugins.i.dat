@@ -104,3 +104,5 @@ vim-latex
 vimtex
 tex
 projs
+asynccommand
+asyncmakegreen
