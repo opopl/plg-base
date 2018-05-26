@@ -262,6 +262,7 @@ sub ppi_process {
 			my $vars = [ $node->variables ];
 			#$self->log(Dumper($vars));
 
+
 			$self->process_var($node,@a);
 		};
 		$node->isa( 'PPI::Statement::Include' ) && do { 
