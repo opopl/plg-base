@@ -112,8 +112,8 @@ endfunction
 function! base#bufact#perl#ppi_list_subs ()
 	call base#buf#start()
 	let file = b:file
-	let subnames = []
 
+	let subnames = []
 	let lines_tags=[]
 perl << eof
 	use PPI;
@@ -134,7 +134,7 @@ perl << eof
 	VimListExtend('subnames',$pf->{subnames});
 eof
 	"call base#buf#open_split({ 'lines' : subs })
-	call base#buf#open_split({ 'lines' : lines_tags })
+	call base#buf#open_split({ 'lines' : subnames })
 endf
 
 "htmllines	/home/mmedevel/repos/git/htmltool/lib/HTML/Work.pm	/^sub htmllines {$/;"	s

@@ -178,7 +178,7 @@ sub process_var {
 			};
 			#$self->log(Dumper($h));
 	
-			$self->dbh_insert_hash({ h => $h });
+			$self->dbh_insert_hash({ h => $h, t => 'tags' });
 		}
 
     }
@@ -242,7 +242,7 @@ sub ppi_list_subs {
 						'type'   	  => 'sub',
 				};
 
-				$self->dbh_insert_hash({ h => $h });
+				$self->dbh_insert_hash({ h => $h, t => 'tags' });
 
 		};
 		$node->isa( 'PPI::Statement::Variable' ) && do { 
@@ -271,7 +271,7 @@ sub ppi_list_subs {
 						'type'   	  => 'package',
 			};
 
-			$self->dbh_insert_hash({ h => $h });
+			$self->dbh_insert_hash({ h => $h, t => 'tags' });
 		};
 	}
 
@@ -282,6 +282,8 @@ sub dbh_insert_hash {
 	my ($self,$ref)=@_;
 
 	my $h = $ref->{h} || {};
+	my $t = $ref->{t} || '';
+
 	unless (keys %$h) {
 		return $self;
 	}
@@ -292,7 +294,7 @@ sub dbh_insert_hash {
 	my $e = q{`};
 	my $f = join ',' => map { $e . $_ . $e } @f;
 	my $q = qq| 
-		insert into `tags` ($f) values ($ph) 
+		insert into `$t` ($f) values ($ph) 
 	|;
 	eval {$dbh->do($q,undef,@v); };
 	if ($@) {
