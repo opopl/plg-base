@@ -153,6 +153,9 @@ function! base#tg#update (...)
 		return
 	endif
 
+	" use asynccommand plugin commands
+	let async=0
+
 	let refsys = {}
 
 	"" stored in the corresponding dat-file
@@ -295,8 +298,9 @@ function! base#tg#update (...)
 
 		echo "Calling ctags command for: " . tgid 
 
-		call extend(refsys,{ 'cmds' : [ cmd ] })
-		let ok = base#sys(refsys)
+
+
+			let ok = base#sys(refsys)
 
 		let okref = { 
 				\	"cmd"  : cmd,
@@ -372,6 +376,8 @@ function! base#tg#update (...)
 		if !cnt
 			return
 		endif
+
+		let async = input('Use async? 1/0: ',1)
 
 """basetg_update_mkvimrc
 	elseif tgid =~ 'mkvimrc'
@@ -486,8 +492,14 @@ function! base#tg#update (...)
 
 	echo "Calling ctags command for: " . tgid 
 
-	call extend(refsys,{ 'cmds' : [ cmd ] })
-	let ok = base#sys(refsys)
+	if async && ( exists(':AsyncCommand') == 2 )
+		call asynccommand#run(cmd)
+		let ok = 1
+	else
+		call extend(refsys,{ 'cmds' : [ cmd ] })
+		let ok = base#sys(refsys)
+	endif
+
 
 	let okref = { 
 			\	"cmd"  : cmd,

@@ -59,22 +59,25 @@ function! base#file#move(old,new)
 endfunction
 
 function! base#file#delete( ... )
-	let def = {
-		\	'echo' : 0,
-		\	}
-	let ref  = get(a:000,0,def)
-
+	let ref  = get(a:000,0,{})
 	let file = get(ref,'file','')
-	let ech  = get(ref,'echo',0)
+
+	let ok = 0
 
 	if !filereadable(file) 
-			if ech
-					call base#echo({'text': 'file does not exist'})
-			endif
+			let prf={ 'prf' : 'base#file#delete' }
+			call base#log([
+				\	'file does not exist',
+				\	],prf)
 			return
 	endif
 
 	call delete(file)
+	if !filereadable(file) 
+		let ok = 1
+	endif
+
+	return ok
 
 endfunction
 

@@ -592,6 +592,11 @@ fun! base#fileopen(ref)
    
  endif
 
+ let prf={ 'prf' : 'base#fileopen' }
+ call base#log([
+ 	\	'opening files => ' . base#dump(files),
+ 	\	],prf)
+
  if strlen(a) | let action = a | endif
 
  let open_if_exist=get(opts,'open_if_exist',1)
