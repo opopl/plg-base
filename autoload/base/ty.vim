@@ -25,7 +25,7 @@ perl << eof
 			VimLog(@_); 
 			VimWarn(@_); 
 		},
-		add => [qw( subs packs vars )],
+		add => [qw( subs packs vars include )],
 	);
 
 	my $s = sub {
