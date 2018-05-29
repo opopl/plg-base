@@ -282,7 +282,7 @@ sub ppi_process {
 					'line_number' => $node->line_number,
 					######################
 					'namespace'   => $ns,
-					'type'   	  => 'include',
+					'type'   	  => 'include_'.$node->type,
 					'include_module'   	  => $module ,
 					'include_arguments'   => $a,
 			};
