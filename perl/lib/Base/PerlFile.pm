@@ -14,7 +14,7 @@ use Base::DB;
 
 use DBI;
 
-our $dbh;
+use vars qw($dbh);
 
 sub new
 {
@@ -69,7 +69,6 @@ sub init_db {
 				`var_type` varchar(1024),
 				`type` varchar(1024),
 				`include_module` varchar(1024),
-				`include_type` varchar(1024),
 				`include_arguments` varchar(1024),
 				`content` text,
 				primary key(`id`)
@@ -283,7 +282,7 @@ sub ppi_process {
 					'line_number' => $node->line_number,
 					######################
 					'namespace'   => $ns,
-					'type'   	  => 'include_'.$node->type,
+					'type'   	  => 'include',
 					'include_module'   	  => $module ,
 					'include_arguments'   => $a,
 			};
@@ -291,16 +290,23 @@ sub ppi_process {
 			$self->dbh_insert_hash({ h => $h, t => 'tags' });
 
 			if ($module eq 'vars') {
-				my @v = split(/\s+/,$a);
-				for(@v){
+				local $_ = $a;
+				my @v;
+
+				/^\s*qw\((.*)\)/ms && do { @v = map { ($_) ? $_ : () } split /\s+/, $1;  };
+
+				my $pat = qr/([\$\@\%])(\w+)$/;
+				for (@v){
+					my ($sign,$varname) = ( /$pat/g );
+
 					my $h = { 
 							'filename'    => $file,
 							'line_number' => $node->line_number,
 							######################
 							'namespace'   => $ns,
-							'type'   	  => 'include_'.$node->type,
+							'type'   	  => 'var_our',
 							'var_short'   => $_,
-							'var_full'    => $ns . '::' .$_,
+							'var_full'    => $sign . $ns . '::' .$varname,
 					};
 	
 					$self->dbh_insert_hash({ h => $h, t => 'tags' });
@@ -421,25 +427,25 @@ sub write_tags {
 	];
 
 	for(@$add){
-		/^include$/ && do { 
-			push @$queries,
-				{ 	q => qq{ 
-						SELECT 
-							`var_full`,`filename`,`line_number`
-						FROM
-							`tags`
-						WHERE
-								`type` = ? 
-							AND 
-								`include_module` = ? 
-					},
-					params => [qw( 
-						include_use 
-						vars
-					)],
-				};
-			next;
-		};
+   #     /^include$/ && do { 
+			#push @$queries,
+				#{ 	q => qq{ 
+						#SELECT 
+							#`var_full`,`filename`,`line_number`
+						#FROM
+							#`tags`
+						#WHERE
+								#`type` = ? 
+							#AND 
+								#`include_module` = ? 
+					#},
+					#params => [qw( 
+						#include_use 
+						#vars
+					#)],
+				#};
+			#next;
+		#};
 	}
 
 	$self->tags_add({ queries => $queries });
@@ -464,6 +470,7 @@ sub write_tags {
 	my $fetch='fetchrow_arrayref';
 	my @lines;
 	while(my $row=$sth->$fetch()){
+		#push @lines, join("\t",map { defined ($_) ? $_ : 'undef' }@$row);
 		push @lines, join("\t",@$row);
 	}
 

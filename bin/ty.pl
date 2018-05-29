@@ -19,8 +19,11 @@ use File::Path qw(rmtree);
 
 use Cwd qw(abs_path getcwd);
 
-our(%OPT,@OPTSTR,%OPTDESC);
-our($CMDLINE);
+our(%OPTDESC);
+use vars qw(
+	$CMDLINE %OPT
+	@OPTSTR
+);
 
 sub new
 {
@@ -60,6 +63,7 @@ sub get_opt {
 	@OPTSTR=( 
 		"tfile=s",
 		"dir=s@" ,
+		"add=s@" ,
 	);
 	
 	%OPTDESC=(
@@ -127,8 +131,11 @@ sub run_pf {
 			append_file($logfile,join("\n",map { 'WARN ' . $_ } @_) . "\n");
 			warn $_ . "\n" for(@_);
 		},
-		add => [qw( subs packs vars )],
+		add => [qw( subs packs vars include )],
 	);
+
+	@{$o{add}}=split(',', join(',' , @{ $OPT{add} } )) if $OPT{add};
+
 
 	my $pf = Base::PerlFile->new(%o);
 
