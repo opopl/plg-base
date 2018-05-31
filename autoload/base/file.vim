@@ -191,15 +191,17 @@ function! base#file#write_lines(...)
 			\	])
 
 	" -1 fail code for writefile()
-	let ec=-1
+	let ec        = -1
+
+	let filelines = []
+
 	try
-		if mode=='append'
-			let ec = writefile(lines,file,'a')
-
-		elseif mode=='rewrite'
-			let ec = writefile(lines,file)
-
+		if ( (mode == 'append') && (filereadable(file) ) )
+			let filelines = readfile(file)
 		endif
+
+		call extend(filelines,lines)
+		let ec = writefile(filelines,file)
 	catch 
 		call base#log([
 			\	'base#file#write_lines errors while writing to file!',
