@@ -29,3 +29,5 @@ sqlite
 #sqlite_prompt
 sqlite_sql
 leaders
+snippets
+dictionaries

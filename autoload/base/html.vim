@@ -333,15 +333,15 @@ perl << eof
 
 	my $file_local = VimVar('file_local');
 
-
 	mkpath $save_dir;
 
 	# File::Fetch block
 	use File::Fetch;
-	my $ff;
 
+	my $ff;
 	eval { $ff = File::Fetch->new(uri => $url); };
 	if ($@) { VimWarn($@); }
+	unless($ff) { VimWarn('File::Fetch undefined for: ',  $url); }
 
 	### fetch the uri to cwd() ###
 	VimMsg("\n".'Fetching...');
@@ -367,6 +367,7 @@ perl << eof
 	eval {
 			my $of;
 			local $_ = $of = $ff->output_file;
+			VimMsg($_);
 			s/$/\.htm/g unless /\.(html|htm)$/;
 			s/\.php$/\.htm/g;
 

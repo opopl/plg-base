@@ -224,6 +224,7 @@ function! base#stl#setorders ()
 		        \   'encoding'         ,
 		        \   'pathid_first'     ,
 		        \   'line_number'      ,
+		        \   'column_number'      ,
                 \           ],
         \   'javascript'   :   [ 
 		        \   'file_name'    ,

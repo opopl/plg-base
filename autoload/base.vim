@@ -1933,6 +1933,18 @@ function! base#info (...)
 	 if topic == ''
 	 elseif topic == 'dbext'
 			call base#info#dbext()
+
+	 elseif topic == 'dictionaries'
+			 let lines=[]
+			 call add(lines,'--------------------')
+			 call add(lines,'Dictionaries INFO')
+			 call add(lines,'--------------------')
+			 call add(lines,'&dictionary:')
+			 call extend(lines,base#mapsub(split(&dictionary,','),'^','\t','g'))
+
+			 call base#buf#open_split({ 'lines' : lines })
+			 return
+
 """info_file
 	 elseif topic == 'file'
        call base#echo({ 'text' : "Current file: " } )
@@ -1969,6 +1981,17 @@ function! base#info (...)
 			 		call base#echo({ 'text' : line })
 			 endfor
 
+   elseif topic == 'snippets'
+			 let lines=[]
+			 call add(lines,'--------------------')
+			 call add(lines,'Snippets INFO')
+			 call add(lines,'--------------------')
+			 call add(lines,'g:snippets_dir:')
+			 call extend(lines,base#mapsub(split(g:snippets_dir,','),'^','\t','g'))
+
+			 call base#buf#open_split({ 'lines' : lines })
+			 return
+           
 """info_git
    elseif topic == 'git'
        call base#echo({ 'text' : "Git: " } )

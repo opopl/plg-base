@@ -129,7 +129,9 @@ perl << eof
 	my $file = VimVar('file');
 	my %o = ();
 	my $pf = Base::PerlFile->new(%o);
-	$pf->ppi_process({ file => $file });
+	$pf
+		->ppi_process({ file => $file })
+		;
 
 	VimListExtend('lines_tags',$pf->{lines_tags});
 	VimListExtend('subnames',$pf->{subnames});

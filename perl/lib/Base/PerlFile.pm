@@ -192,6 +192,16 @@ sub process_var {
 	$self;
 }
 
+sub ppi_get_sub_block {
+	my ($self,$ref)=@_;
+
+	my $block;
+	my $sub_full = $ref->{sub_full};
+
+
+	return $block;
+}
+
 sub ppi_process {
 	my ($self,$ref)=@_;
 
@@ -203,7 +213,9 @@ sub ppi_process {
 
 	if (@$files) {
 		foreach my $file (@$files) {
-			$self->ppi_process({ file => $file });
+			my $r = $ref;
+			$r->{file}=$file;
+			$self->ppi_process($r);
 		}
 	}
 
@@ -264,7 +276,6 @@ sub ppi_process {
 
 			my $vars = [ $node->variables ];
 			#$self->log(Dumper($vars));
-
 
 			$self->process_var($node,@a);
 		};
@@ -336,6 +347,12 @@ sub ppi_process {
 
 sub dbh_insert_hash {
 	my ($self,$ref)=@_;
+
+	my $db_insert = $ref->{db_insert} || $self->{db_insert} || 1;
+
+	unless ($db_insert) {
+		return $self;
+	}
 
 	my $h = $ref->{h} || {};
 	my $t = $ref->{t} || '';
