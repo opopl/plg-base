@@ -79,6 +79,7 @@ fun! base#init#paths(...)
         \ 'hm'            : hm ,
         \ 'vrt'           : vrt,
         \ 'vim'           : base#envvar('VIM'),
+        \ 'conf'          : base#envvar('CONFDIR'),
         \ 'src_vim'       : base#envvar('SRC_VIM'),
         \ 'texdocs'       : projsdir,
         \ 'texinputs'     : base#envvar('texinputs'),
