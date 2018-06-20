@@ -8,11 +8,9 @@ use utf8;
 ###use
 use Data::Dumper qw(Dumper);
 use File::Spec::Functions qw(catfile);
-use File::Path qw(mkpath rmtree);
-use File::Basename qw(dirname basename);
-use File::Slurp qw(read_file write_file);
-use File::Copy qw(copy move);
-use FindBin qw($Script $Bin);
+use File::Path qw(mkpath);
+use File::Basename qw(basename);
+
 use HTML::Work;
 
 use File::Find qw(find);
@@ -25,6 +23,8 @@ sub run {
 
 	my $dir    = $ref->{dir} || '';
 	my $tagsub = $ref->{tagsub} || sub { my $file = shift; basename($file); };
+
+	my $code_filename = $ref->{code_filename} || sub {};
 
 	find({ 
 		wanted => sub { 
@@ -46,6 +46,8 @@ sub run {
 	
 	foreach my $file (@files) {
 		local $_ = basename( $file );
+
+		$code_filename->();
 	
 		print $_ . "\n";
 	
@@ -63,7 +65,7 @@ sub run {
 		push @$xpath_cb, { 
 			'xpath' => '//pre[@class="code"]', 
 			cb => sub { 
-				my $n=shift; 
+				my $n = shift; 
 				my $code = $n->textContent;
 			},
 		};
