@@ -2163,14 +2163,24 @@ function! base#info (...)
 
 """info_tags
    elseif topic == 'tags'
-       let tags = join(split(&tags,","),"\n\t")
+			let tags = split(&tags,",")
+			
+			let tgs = base#tg#ids_comma()
 
-       let tgs = base#tg#ids_comma()
+			let info = []
 
-       call base#echo({ 'text' : "Tags: " } )
-       call base#echo({ 'text' : " &tags => \n\t" . tags } )
-       call base#echo({ 'text' : "Tag ID: " } )
-       call base#echo({ 'text' : " tgids => \n\t\t" . tgs } )
+			call add(info,"Tag ID: ")
+			call add(info," tgids => \t" . tgs)
+			
+			call add(info,'Tags: ')
+			call add(info," &tags => ")
+
+			for t in tags
+				call add(info,"\t" . t )
+			endfor
+
+					
+			call base#buf#open_split({ 'lines' : info })
 
 """info_perl
    elseif topic == 'perl'
