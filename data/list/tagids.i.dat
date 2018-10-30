@@ -16,6 +16,7 @@ perl_guestbook
 perlmod
 ##
 thisfile
+dir_this
 ##########
 src_vim
 ##########

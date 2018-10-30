@@ -466,6 +466,13 @@ function! base#tg#update (...)
 				call projs#rootcd()
 		endif
 
+	elseif tgid == 'dir_this'
+     let dir = expand('%:p:h')
+     let files_a = base#find({ 
+        \ 'dirs' : [dir] 
+        \ })
+		 let files = join(files_a,' ')
+
 	elseif tgid == 'perlmod'
 		let id = tgid
 
