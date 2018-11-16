@@ -7,3 +7,4 @@ envvar
 buf_full_path
 hist_cmd
 csv_headers_numeric
+makeprg

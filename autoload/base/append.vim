@@ -41,6 +41,11 @@ function! base#append#csv_headers_numeric (...)
 
 endfunction
 
+function! base#append#makeprg (...)
+	let lnum = line('.')
+	call append(lnum,&makeprg)
+endfunction
+
 function! base#append#hist_cmd (...)
 	let nrr   = input('History item range:','-1')
 	let a     = split(nrr,':')
