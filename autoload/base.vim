@@ -1711,8 +1711,10 @@ fun! base#sys(...)
     endif
  endif
 
+ let use_vimproc = get(opts,'use_vimproc',0)
+
  for cmd in cmds 
-		if get(opts,'use_vimproc',0)
+		if use_vimproc
     	let outstr = vimproc#system(cmd)
 		else
     	let outstr = system(cmd)
