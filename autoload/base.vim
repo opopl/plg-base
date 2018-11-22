@@ -1667,6 +1667,7 @@ fun! base#sys(...)
     \   'skip_errors'  : 0          ,
     \   'split_output' : 0         ,
     \   'write_to_bat' : ''        ,
+    \   'use_vimproc'  : 0        ,
     \   }
 
  if a:0 
@@ -1711,7 +1712,12 @@ fun! base#sys(...)
  endif
 
  for cmd in cmds 
-    let outstr = system(cmd)
+		if get(opts,'use_vimproc',0)
+    	let outstr = vimproc#system(cmd)
+		else
+    	let outstr = system(cmd)
+		endif
+
     let out    = split(outstr,"\n")
 
     call extend(output,out)
