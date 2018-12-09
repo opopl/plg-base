@@ -455,17 +455,19 @@ function! base#tg#update (...)
 				let exts  = base#qw('tex vim bib')
 		
 				let files_arr = projs#proj#files({ 
-					\	"exts"         : exts,
-					\	"exclude_dirs" : [ 'joins', 'builds' ],
-					\	})
+						\	"exts"         : exts,
+						\	"exclude_dirs" : [ 'joins', 'builds' ],
+						\	})
 		
-				let files = join(files_arr,' ')
+				"let files = join(files_arr,' ')
+				let files = proj . '.*.tex'
 		
 				let tfile = projs#path([ proj . '.tags' ])
 		
 				call projs#rootcd()
 		endif
 
+"""tgupdate_dir_this
 	elseif tgid == 'dir_this'
      let dir = expand('%:p:h')
      let files_a = base#find({ 
@@ -506,7 +508,6 @@ function! base#tg#update (...)
 		call extend(refsys,{ 'cmds' : [ cmd ] })
 		let ok = base#sys(refsys)
 	endif
-
 
 	let okref = { 
 			\	"cmd"  : cmd,
