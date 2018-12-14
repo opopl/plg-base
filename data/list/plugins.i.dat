@@ -32,7 +32,7 @@ vim-misc
 xmledit
 xmlparser
 vim-perl
-syntastic
+#syntastic
 #browser
 #bufexplorer
 #ctags
