@@ -1939,6 +1939,8 @@ function! base#info (...)
  else
 
 	 if topic == ''
+					 "
+"""info_dbext
 	 elseif topic == 'dbext'
 			call base#info#dbext()
 
@@ -2174,11 +2176,14 @@ function! base#info (...)
 			let tags = split(&tags,",")
 			
 			let tgs = base#tg#ids_comma()
+			let tgids = split(tgs,',')
 
 			let info = []
 
-			call add(info,"Tag ID: ")
-			call add(info," tgids => \t" . tgs)
+			call add(info, "Tag ID: ")
+			for tgid in tgids 
+				call add(info," " . tgid)
+			endfor
 			
 			call add(info,'Tags: ')
 			call add(info," &tags => ")

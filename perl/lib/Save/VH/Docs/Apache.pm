@@ -17,7 +17,7 @@ use HTML::Work;
 use File::Find qw(find);
 
 my @files;
-my @exts=qw(html htm);
+my @exts = qw(html htm);
 my @dirs;
 
 use base qw(Save::VH::Docs);
@@ -32,7 +32,10 @@ sub run {
 		s/\.(\w*)$//g;
 		s/^mod_//g;
 	};
+
+	# where to save VimHelp files
 	$ref->{vhdir} = catfile($ENV{plg},qw(idephp help apache httpd_docs ));
+
 	$ref->{tagsub} = sub { 
 		local $_=shift; 
 		return 'httpd_'.$_ 
