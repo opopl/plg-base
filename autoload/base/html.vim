@@ -302,6 +302,7 @@ endfunction
 function! base#html#htw_init ()
 perl << eof
 	use HTML::Work;
+
 	our $HTW ||= HTML::Work->new(
 			sub_log  => sub { VimMsg([@_]) },
 			sub_warn => sub { VimWarn(@_) },

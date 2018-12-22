@@ -460,7 +460,7 @@ function! base#tg#update (...)
 						\	})
 		
 				"let files = join(files_arr,' ')
-				let files = proj . '.*.tex'
+				let files = proj . '.*.tex' . ' ' . proj . '.tex'
 		
 				let tfile = projs#path([ proj . '.tags' ])
 		
