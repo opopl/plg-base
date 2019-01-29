@@ -17,3 +17,13 @@ function! base#bufact#python#exe ()
   endif
 		
 endfunction
+
+function! base#bufact#python#local_settings ()
+	call base#buf#start()
+
+	let start = base#varget('bufact_start',0)
+	let end   = base#varget('bufact_end',line('$'))
+
+	setlocal ts=2
+		
+endfunction
