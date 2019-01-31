@@ -101,6 +101,17 @@ S
 	$self;
 }
 
+sub main {
+	my $self=shift;
+
+	$self
+		->get_opt
+		->run_pf;
+
+	$self;
+
+}
+
 sub run_pf {
 	my $self=shift;
 
@@ -149,16 +160,7 @@ sub run_pf {
 	$self;
 }
 
-sub main {
-	my $self=shift;
 
-	$self
-		->get_opt
-		->run_pf;
-
-	$self;
-
-}
 
 package main;
 
