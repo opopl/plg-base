@@ -1957,22 +1957,35 @@ function! base#info (...)
 
 """info_file
 	 elseif topic == 'file'
-       call base#echo({ 'text' : "Current file: " } )
-       echo indent . expand('%:p')
 
-       call base#echo({ 'text' : "Current directory: " })
-       echo indent . expand('%:p:h')
+			let info = []
+			
 
-       call base#echo({ 'text' : "Filetype: " } )
-       echo indent . &ft
 
-       call base#echo({ 'text' : "Other variables: " } )
-       call base#echovar({ 'var' : 'b:dirname', 'indent' : indentlev })
-       call base#echovar({ 'var' : 'b:file', 'indent' : indentlev })
-       call base#echovar({ 'var' : 'b:ext' , 'indent' : indentlev })
-       call base#echovar({ 'var' : 'b:bufnr' , 'indent' : indentlev })
+			let info_a = [
+			\ [ 'Current file:', expand('%:p') ],
+			\ [ 'Current directory:', expand('%:p:h') ],
+			\ [ 'Filetype:', &ft ],
+			\ ]
 
-       call base#echo({ 'text' : "Directories which this file belongs to: " } )
+			for x in info_a
+				 call add(info,get(x,0,''))
+				 call add(info,indent . get(x,1,''))
+			endfor
+			call add(info,'Other variables:')
+			let var_names  = base#qw("b:dirname b:file b:ext b:bufnr")
+
+			for var_name in var_names
+				let var_value = exists(var_name) ? eval(var_name) : ''
+				let s = indent . var_name . '=' . var_value 
+				call add(info,s)
+			endfor
+
+			call add(info,'Directories which this file belongs to:')
+			let dirs_belong = base#buf#pathids_str()
+			call add(info,indent . dirs_belong)
+
+			call base#buf#open_split({ 'lines' : info })
 
 """info_perlapp
    elseif topic == 'perlapp'

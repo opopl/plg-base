@@ -18,6 +18,14 @@ use File::Find qw(find);
 my @files;
 my @exts=qw(html htm);
 
+=head2 METHODS
+
+=cut
+
+=head3 run
+
+=cut
+
 sub run {
 	my ($self,$ref) = @_;
 

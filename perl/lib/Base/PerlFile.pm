@@ -8,9 +8,8 @@ use PPI;
 use File::Find qw( find );
 use File::Slurp qw( write_file append_file );
 use File::Path qw(rmtree);
-use Data::Dumper;
 
-use Base::DB;
+use Data::Dumper;
 
 use DBI;
 
