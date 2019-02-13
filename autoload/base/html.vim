@@ -316,16 +316,23 @@ function! base#html#fetch_url_source (...)
 	let url = get(ref,'url','')
 
 	let save_dir = base#qw#catpath('appdata','vim plg base saved_urls')
+	let save_dir = base#qw#catpath('saved_urls','')
 	let save_dir = input('URL save dir: ',save_dir)
+
+	let save_db = base#qw#catpath('saved_urls','saved_urls.sqlite')
 
 	let file_local = get(ref,'file_local','')
 	
 perl << eof
 	use Vim::Perl qw(VimVar VimMsg CurBufSet);
-	use File::Spec::Functions qw(catfile);
+
 	use Tie::File;
+
+	use File::Spec::Functions qw(catfile);
 	use File::Copy qw(move);
 	use File::Path qw(mkpath);
+
+	my $save_db  = VimVar('save_db');
 
 	my $ref      = VimVar('ref');
 
@@ -334,7 +341,7 @@ perl << eof
 
 	my $file_local = VimVar('file_local');
 
-	mkpath $save_dir;
+	mkpath $save_dir unless -d $save_dir;
 
 	# File::Fetch block
 	use File::Fetch;
@@ -348,22 +355,6 @@ perl << eof
 	VimMsg("\n".'Fetching...');
 	eval { $ff->fetch( to => $save_dir ) || VimWarn($ff->error); };
 	if ($@) { VimWarn($@); }
-
-	#use File::Download;
-#	my $dwn;
-#	eval { 
-#		$dwn = File::Download->new({
-#  			outfile   => $save_dir,
-# 		 	overwrite => 1,
-#  			mode      => 'a',
-#		}); 
-#	};
-#	if ($@) { VimWarn($@); }
-#
-#	eval { $dwn->download($url); };
-#	if ($@) { VimWarn($@); }
-#
-#	VimMsg($dwn->status);
 
 	eval {
 			my $of;
@@ -387,8 +378,6 @@ perl << eof
 			eval { move($f_old,$f_new); };
 			if ($@) { VimWarn($@); }
 
-#			my $f_new = $dwn->outfile;
-#			VimMsg("\n".$f_new);
 			if (-e $f_new) {
 					my $cmd = qq{ let f='$f_new' | exe 'edit ' . f  };
 					VimCmd($cmd);

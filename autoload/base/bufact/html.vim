@@ -305,13 +305,12 @@ perl << eof
 				htmllines => $lines 
 		})
 		->tables_to_txt({ 
-			offset   => $offset,
-			maxwidth => $maxwidth,
-			fmt      => $fmt,
-			xpath    => $xpath,
+				offset   => $offset,
+				maxwidth => $maxwidth,
+				fmt      => $fmt,
+				xpath    => $xpath,
 		})
 		;
-	my $dbh=$HTW->{dbh_sqlite};
 
 	VimLet('vimtext',$HTW->{tables_txt});
 eof

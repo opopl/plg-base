@@ -1902,16 +1902,16 @@ endfunction
 "  base#warn({ "text" : "aaa", "prefix" : ">>> " })
 "
 function! base#warn (ref)
-    let text   = get(a:ref,'text','')
-  	let prefix = base#echoprefix()
+		let text   = get(a:ref,'text','')
+		let prefix = base#echoprefix()
 		let prefix = get(a:ref,'prefix',prefix)
 		let hl     = get(a:ref,'hl','WarningMsg')
 
-    let text = prefix . text
-
-    exe 'echohl '.hl
-    echo text
-    echohl None
+		let text = prefix . text
+		
+		exe 'echohl '.hl
+		echo text
+		echohl None
 
 		call base#log([text])
     
@@ -1972,6 +1972,7 @@ function! base#info (...)
 				 call add(info,get(x,0,''))
 				 call add(info,indent . get(x,1,''))
 			endfor
+
 			call add(info,'Other variables:')
 			let var_names  = base#qw("b:dirname b:file b:ext b:bufnr")
 
@@ -2260,22 +2261,25 @@ function! base#info (...)
 
 """info_make
    elseif topic == 'make'
-       call base#echo({ 'text' : "MAKE: " } )
-       call base#echovar({ 'var' : '&makeprg', 'indent' : indentlev })
-       call base#echovar({ 'var' : '&efm', 'indent' : indentlev })
-       call base#echovar({ 'var' : '&makeef', 'indent' : indentlev })
+			
+			let info = []
+			call add(info,'MAKE:')
+			
+			let info_a = [
+			\ [ 'cwd', getcwd() ],
+			\ [ '&makeprg', &makeprg ],
+			\ [ '&efm', &efm ],
+			\ [ '&makeef:', &makeef ],
+			\ [ 'makeprg id', make#varget('makeprg','') ],
+			\ [ 'efm id', make#varget('efm','') ],
+			\ ]
 
-       call base#echo({ 
-        \   'text' : "makeprg id =>  " 
-        \   . make#var('makeprg') }) 
+			for x in info_a
+				 call add(info,get(x,0,''))
+				 call add(info,indent . get(x,1,''))
+			endfor
 
-       call base#echo({ 
-        \   'text' : "efm id     =>  " 
-        \   . make#var('efm') }) 
-
-       call base#echo({ 
-        \   'text' : "cwd        =>  " 
-        \   . getcwd() }) 
+			call base#buf#open_split({ 'lines' : info })
 
 """info_opts
    elseif topic == 'opts'
