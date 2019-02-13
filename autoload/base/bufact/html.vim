@@ -270,7 +270,7 @@ perl << eof
 eof
 endfunction
 
- function! base#bufact#html#replace_pre ()
+function! base#bufact#html#replace_pre ()
 	call base#html#htw_load_buf()
 perl << eof
 	$HTW->replace_pre;
