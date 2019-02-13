@@ -4,12 +4,10 @@ function! base#bufact#vim#insert_perl ()
 
 	let ft_old = exists('g:snippet_ft') ? g:snippet_ft : ''
 
-	let g:snippet_ft='perl'
+	let g:snippet_ft = 'perl'
 	let snip = input('perl snippet:','','custom,snipMate#complete#snippetNames')
 
 	let g:snippet_ft = ft_old
 
-
 endfunction
-
 
