@@ -1,13 +1,18 @@
 
 package Base::DB;
 
+=head1 NAME
+
+Base::DB
+
+=head1  SYNOPSIS
+
+	use Base::DB qw(:funcs :vars);
+
+=cut
+
 use strict;
 use warnings;
-
-our $DBH;
-
-use warnings;
-use strict;
 
 use Exporter ();
 
@@ -30,15 +35,34 @@ my %EXPORT_TAGS = (
 );
 
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
-
 our @EXPORT  = qw( );
-
 our $VERSION = '0.01';
+
+our $DBH;
+
+=head1 EXPORTED VARS
+
+	$DBH
+
+=head1 EXPORTED FUNCTIONS
+
+=head2 dbh_insert_hash 
+
+=head3 Usage
+
+	dbh_insert_hash({ dbh => $dbh, h => $hash, t => $table });
+
+=head3 Purpose
+
+	insert hash of value into table.
+
+=cut
 
 sub dbh_insert_hash {
 	my ($ref)=@_;
 
 	my $dbh = $ref->{dbh} || $DBH;
+	my $warn = $ref->{warn} || sub {  warn $_ for(@_); };
 
 	my $h = $ref->{h} || {};
 	my $t = $ref->{t} || '';
@@ -55,11 +79,13 @@ sub dbh_insert_hash {
 	my $q = qq| 
 		insert into `$t` ($f) values ($ph) 
 	|;
-	eval {$dbh->do($q,undef,@v); };
+	my $ok = eval {$dbh->do($q,undef,@v); };
 	if ($@) {
-		#$warn($@,$q,$dbh->errstr);
+		$warn->($@,$q,$dbh->errstr);
+		return;
 	}
 
+	return $ok;
 }
 
 1;

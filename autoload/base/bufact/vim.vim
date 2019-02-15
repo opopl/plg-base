@@ -7,6 +7,8 @@ function! base#bufact#vim#insert_perl ()
 	let g:snippet_ft = 'perl'
 	let snip = input('perl snippet:','','custom,snipMate#complete#snippetNames')
 
+	call snipMate#SnippetInsert(snip)
+
 	let g:snippet_ft = ft_old
 
 endfunction

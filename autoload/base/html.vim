@@ -311,17 +311,22 @@ perl << eof
 eof
 endfunction
 
+"used in : idephp_cmd_fetch_url_source
+
 function! base#html#fetch_url_source (...)
 	let ref = get(a:000,0,{})
 	let url = get(ref,'url','')
 
-	let save_dir = base#qw#catpath('appdata','vim plg base saved_urls')
 	let save_dir = base#qw#catpath('saved_urls','')
-	let save_dir = input('URL save dir: ',save_dir)
+	let save_dir = get(ref,'save_dir',save_dir)
+
+	let tags  = get(ref,'tags','')
+	let title = get(ref,'title','')
 
 	let save_db = base#qw#catpath('saved_urls','saved_urls.sqlite')
+	let save_db = get(ref,'save_db',save_db)
 
-	let file_local = get(ref,'file_local','')
+	let saved_bname = get(ref,'saved_bname','')
 	
 perl << eof
 	use Vim::Perl qw(VimVar VimMsg CurBufSet);
@@ -332,14 +337,50 @@ perl << eof
 	use File::Copy qw(move);
 	use File::Path qw(mkpath);
 
+	use DBI;
+	use Base::DB qw(dbh_insert_hash);
+
 	my $save_db  = VimVar('save_db');
+
+	my $warn = sub { VimWarn($_) for(@_) };
+
+	my $dsn      = "dbi:SQLite:dbname=$save_db";
+	
+	my $user     = "";
+	my $password = "";
+	my $dbh = DBI->connect($dsn, $user, $password, {
+		PrintError       => 0,
+		RaiseError       => 1,
+		AutoCommit       => 1,
+		FetchHashKeyName => 'NAME_lc',
+	});
+	my $q = qq{
+		CREATE TABLE IF NOT EXISTS pages  (
+			id INTEGER AUTO_INCREMENT PRIMARY KEY,
+			url TEXT,
+			saved_file TEXT UNIQUE,
+			saved_bname TEXT,
+			saved_urls TEXT,
+			tags TEXT,
+			title TEXT,
+			source_html TEXT,
+			converted_text TEXT
+		);
+	};
+	$dbh->do($q)
+		or do { $warn->($DBI::errstr); return; };
+ 
+	#$dbh->disconnect;
 
 	my $ref      = VimVar('ref');
 
 	my $url      = VimVar('url');
+	my $tags      = VimVar('tags');
+	my $title      = VimVar('title');
+
 	my $save_dir = VimVar('save_dir');
 
-	my $file_local = VimVar('file_local');
+	my $saved_bname = VimVar('saved_bname');
 
 	mkpath $save_dir unless -d $save_dir;
 
@@ -357,31 +398,51 @@ perl << eof
 	if ($@) { VimWarn($@); }
 
 	eval {
-			my $of;
-			local $_ = $of = $ff->output_file;
-			VimMsg($_);
-			s/$/\.htm/g unless /\.(html|htm)$/;
-			s/\.php$/\.htm/g;
+			my $of_bname;
+			local $_ = $of_bname = $ff->output_file;
+			VimMsg($of_bname);
 
-			if ($file_local) {
-				$_ = $file_local;
+			{
+				s/$/\.htm/g unless /\.(html|htm)$/;
+				s/\.php$/\.htm/g;
+			}
+
+			if ($saved_bname) {
+				$_ = $saved_bname;
 			}
 		
-			my $f_old        = catfile($save_dir,$of);
-			my $f_new        = catfile($save_dir,$_);
+			my $f_old      = catfile($save_dir,$of_bname);
+			my $saved_file = catfile($save_dir,$_);
 
-			VimMsg("\n".$f_new);
+			VimMsg("\n".$saved_file);
 			VimMsg("\n".$_);
 			VimMsg("\n".$f_old);
 			VimMsg("\n".$of);
 
-			eval { move($f_old,$f_new); };
+			eval { move($f_old,$saved_file); };
 			if ($@) { VimWarn($@); }
 
-			if (-e $f_new) {
-					my $cmd = qq{ let f='$f_new' | exe 'edit ' . f  };
+			my $h = { 
+				url         => $url,
+				saved_urls  => $saved_urls,
+				saved_bname => $saved_bname,
+				saved_file  => $saved_file,
+				tags        => $tags,
+				title       => $title,
+			};
+			dbh_insert_hash({ 
+				dbh  => $dbh,
+				warn => $warn,
+				t    => 'pages',
+				h    => $h,
+			});
+			
+			if (-e $saved_file) {
+					my $cmd = qq{ let f='$saved_file' | exe 'edit ' . f  };
 					VimCmd($cmd);
 			}
+
+			$dbh->disconnect;
 	};
 	if ($@) { VimWarn($@); }
 eof
