@@ -55,6 +55,7 @@ function! base#sqlite#info (...)
 		call extend(info,base#sqlite#info_dbfile())
 		call extend(info,base#sqlite#info_commands())
 		call extend(info,base#sqlite#info_tables())
+		call extend(info,base#sqlite#info_dbfiles())
 	endif
 
 	call base#buf#open_split({ 'lines' : info })
@@ -157,6 +158,24 @@ eof
 endfunction
 
 function! base#sqlite#info_dbfiles ()
+	call base#init#sqlite()
+
+	let info = []
+perl << eof
+	my $info=[];
+	my $dbfiles = $plgbase->dbfiles;
+
+	push @$info,'AVAILABLE DBFILES: ';
+	while (my ($k,$v) = each(%$dbfiles)) {
+					#push @$info, "\t" . 
+		my $s = pack("A20xA*", $k, $v );
+		push @$info,$s;
+		VimMsg($s);
+	}
+
+	VimListExtend('info',$info);
+eof
+	return info
 
 endfunction
 

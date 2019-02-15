@@ -128,11 +128,12 @@ sub init {
 }
 
 sub init_dbfiles {
-	my $self=shift;
+	my $self = shift;
 
 	my $dbfiles = {
 		main       => catfile($self->dirs('appdata'),'main.db'),
-		saved_urls => catfile($self->dirs('appdata'),qw(saved_urls saved_urls.db )),
+		saved_urls => catfile($self->dirs('appdata'),
+			qw(saved_urls saved_urls.db )),
 	};
 	$self->dbfiles($dbfiles);
 
@@ -472,10 +473,10 @@ sub db_create_tables {
 	my $dbopts = $self->dbopts;
 	my @s;
 
-	my $tb_reset=$dbopts->{tb_reset} || {};
-	my $tb_order=$dbopts->{tb_order} || [];
+	my $tb_reset = $dbopts->{tb_reset} || {};
+	my $tb_order = $dbopts->{tb_order} || [];
 
-	my $dbh=$self->dbh;
+	my $dbh = $self->dbh;
 
 	foreach my $tb (@$tb_order) {
 		push @s,$self->sqlstm('create_table_'.$tb);
