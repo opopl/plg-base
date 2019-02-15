@@ -147,8 +147,10 @@ function! base#sqlite#info_dbfile ()
 perl << eof
 	use File::stat;
 	my $info=[];
+	my $dbfile = $plgbase->dbfile || '';
 
-	push @$info,'DBFILE: ',map { "\t" . $_ } ( $plgbase->dbfile || '');
+	push @$info,'DBFILE PATH: ',map { "\t" . $_ } ( $dbfile );
+	push @$info,'DBFILE EXISTS: ', "\t" . ((-e $dbfile) ? 'YES' : 'NO' ) ;
 	push @$info,'DBNAME: ',map { "\t" . $_ } ( $plgbase->dbname || '');
 	push @$info,'SIZE:   ',map { "\t" . $_ } ( $plgbase->db_dbfile_size || 0);
 
@@ -205,7 +207,9 @@ perl << eof
 
 	my $dbh = $plgbase->dbh;
 
-	push @$info,'TABLES: ', map { "\t".$_ } $plgbase->db_tables;
+	push @$info,
+		'TABLES: ', 
+		map { "\t".$_ } $plgbase->db_tables;
 
 	VimListExtend('info',$info);
 eof

@@ -133,7 +133,7 @@ sub init_dbfiles {
 	my $dbfiles = {
 		main       => catfile($self->dirs('appdata'),'main.db'),
 		saved_urls => catfile($self->dirs('appdata'),
-			qw(saved_urls saved_urls.db )),
+			qw(saved_urls saved_urls.sqlite )),
 	};
 	$self->dbfiles($dbfiles);
 
