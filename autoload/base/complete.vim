@@ -102,6 +102,14 @@ function! base#complete#BufAct (...)
 	return join(comps,"\n")
 endfunction
 
+function! base#complete#sqlite_dbfiles (...)
+	let dbfiles = base#varget('sqlite_dbfiles',{})
+
+	let comps = sort(keys(dbfiles))
+	return join(comps,"\n")
+
+endfunction
+
 function! base#complete#sqlite_tables (...)
 	"let q = 
 	""select name from sqlite_master where type='table'"

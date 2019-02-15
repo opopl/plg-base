@@ -53,11 +53,23 @@ function! base#sqlite#info (...)
 	if prompt
 	else
 		call extend(info,base#sqlite#info_dbfile())
+		call extend(info,base#sqlite#info_commands())
 		call extend(info,base#sqlite#info_tables())
 	endif
 
 	call base#buf#open_split({ 'lines' : info })
 	return 1
+
+endfunction
+
+function! base#sqlite#db_connect (...)
+	call base#init#sqlite()
+
+	let dbfile = input('dbfile:','')
+perl << eof
+	my $dbfile = VimVar('dbfile');
+	$plgbase->db_connect($dbfile);
+eof
 
 endfunction
 
@@ -135,8 +147,29 @@ perl << eof
 	use File::stat;
 	my $info=[];
 
-	push @$info,'DBFILE: '.( $plgbase->dbfile || '');
-	push @$info,'SIZE:   '.( $plgbase->db_dbfile_size || 0);
+	push @$info,'DBFILE: ',map { "\t" . $_ } ( $plgbase->dbfile || '');
+	push @$info,'SIZE:   ',map { "\t" . $_ } ( $plgbase->db_dbfile_size || 0);
+
+	VimListExtend('info',$info);
+eof
+	return info
+
+endfunction
+
+function! base#sqlite#info_dbfiles ()
+
+endfunction
+
+function! base#sqlite#info_commands ()
+	call base#init#sqlite()
+
+	let info=[]
+perl << eof
+	my $info=[];
+
+	push @$info,
+		'COMMANDS: ', 
+		map { "\t" . $_ } ( 'BaseAct sqlite_*' );
 
 	VimListExtend('info',$info);
 eof
@@ -152,7 +185,7 @@ perl << eof
 	use File::stat;
 	my $info=[];
 
-	my $dbh=$plgbase->dbh;
+	my $dbh = $plgbase->dbh;
 
 	push @$info,'TABLES: ', map { "\t".$_ } $plgbase->db_tables;
 
@@ -162,6 +195,21 @@ eof
 
 endfunction
 
+function! base#sqlite#dbfiles ()
+	call base#init#sqlite()
+
+	let dbfiles = {}
+perl << eof
+	my $dbfiles = $plgbase->dbfiles;
+	foreach my $x (keys %$dbfiles) {
+		my $v = $dbfiles->{$x};
+		VimLet('x',$x);
+		VimLet('v',$v);
+		VimCmd("call extend(dbfiles,{ x : v })");
+	}
+eof
+
+endfunction
 
 function! base#sqlite#drop_tables ()
 	call base#init#sqlite()

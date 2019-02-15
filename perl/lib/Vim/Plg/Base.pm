@@ -10,16 +10,20 @@ Vim::Plg::Base
 use strict;
 use warnings;
 
-use Vim::Perl qw(VimMsg);
-
 use File::Spec::Functions qw(catfile);
 use File::Find qw(find);
 use File::Dat::Utils qw(readarr);
-use DBD::SQLite;
-use DBI;
 use Data::Dumper;
 
+use Vim::Perl qw(VimMsg);
+
+use DBD::SQLite;
+use DBI;
+
+use Base::DB qw(dbh_insert_hash);
+
 use base qw( Class::Accessor::Complex );
+
 use File::Path qw(mkpath);
 use File::stat qw(stat);
 
@@ -59,9 +63,12 @@ sub init {
 	foreach my $type (@types) {
 		$dirs->{'dat_'.$type} = catfile($dirs->{plgroot},qw(data),$type);
 	}
+	$self->dirs($dirs);
 
-	my $dbname = 'main';
-	my $dbfile = catfile($dirs->{appdata},$dbname.'.db');
+	$self->init_dbfiles;
+
+	my $dbname='main';
+	my $dbfile = $self->dbfiles($dbname);
 
 	my $h={
 		withvim      => $self->_withvim(),
@@ -120,6 +127,18 @@ sub init {
 
 }
 
+sub init_dbfiles {
+	my $self=shift;
+
+	my $dbfiles = {
+		main       => catfile($self->dirs('appdata'),'main.db'),
+		saved_urls => catfile($self->dirs('appdata'),qw(saved_urls saved_urls.db )),
+	};
+	$self->dbfiles($dbfiles);
+
+	$self;
+}
+
 =head2 db_init 
 
 =over
@@ -147,6 +166,21 @@ sub db_init {
 
 	$self;
 
+}
+
+sub db_connect {
+	my $self=shift;
+
+	my $dbfile=shift;
+
+	eval { $self->dbh->disconnect; };
+
+	my $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile","","");
+
+	$self->dbfile($dbfile);
+	$self->dbh($dbh);
+
+	$self;
 }
 
 sub update {
@@ -726,6 +760,7 @@ BEGIN {
 	###__ACCESSORS_HASH
 	our @hash_accessors=qw(
 		dirs
+		dbfiles
 		datfiles
 		vars
 		dbopts

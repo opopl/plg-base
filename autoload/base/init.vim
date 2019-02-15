@@ -410,6 +410,7 @@ fun! base#init#sqlite(...)
 
 	let reload = get(ref,'reload',0)
 
+
 	let done = base#varget('done_base_init_sqlite',0)
 	if done && !reload
 		return 
@@ -429,6 +430,9 @@ perl << eof
 		sub_warn => sub { VimWarn(@_)  },
 	)->init;
 eof
+
+	"let dbfiles = {}
+	"call extend(dbfiles,{ 'main' : })
 
 	call base#varset('done_base_init_sqlite',1)
 
