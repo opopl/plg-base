@@ -32,17 +32,6 @@ use File::stat qw(stat);
 
 =cut
 
-
-sub new
-{
-	my ($class, %opts) = @_;
-	my $self = bless (\%opts, ref ($class) || $class);
-
-	$self->init if $self->can('init');
-
-	return $self;
-}
-
 =head2 init 
 
 =over

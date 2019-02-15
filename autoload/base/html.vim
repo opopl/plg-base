@@ -370,8 +370,6 @@ perl << eof
 	$dbh->do($q)
 		or do { $warn->($DBI::errstr); return; };
  
-	#$dbh->disconnect;
-
 	my $ref      = VimVar('ref');
 
 	my $url      = VimVar('url');
@@ -435,6 +433,7 @@ perl << eof
 				warn => $warn,
 				t    => 'pages',
 				h    => $h,
+				i    => qq{INSERT OR IGNORE},
 			});
 			
 			if (-e $saved_file) {

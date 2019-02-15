@@ -14,7 +14,7 @@ Base::DB
 use strict;
 use warnings;
 
-use Exporter ();
+use base qw(Exporter);
 
 ###export_vars_scalar
 my @ex_vars_scalar=qw(
@@ -67,6 +67,8 @@ sub dbh_insert_hash {
 	my $h = $ref->{h} || {};
 	my $t = $ref->{t} || '';
 
+	my $INSERT = $ref->{i} || 'INSERT';
+
 	unless (keys %$h) {
 		return;
 	}
@@ -77,7 +79,7 @@ sub dbh_insert_hash {
 	my $e = q{`};
 	my $f = join ',' => map { $e . $_ . $e } @f;
 	my $q = qq| 
-		insert into `$t` ($f) values ($ph) 
+		$INSERT INTO `$t` ($f) VALUES ($ph) 
 	|;
 	my $ok = eval {$dbh->do($q,undef,@v); };
 	if ($@) {

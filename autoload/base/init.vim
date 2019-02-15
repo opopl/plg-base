@@ -427,7 +427,7 @@ perl << eof
 	our $plgbase = Vim::Plg::Base->new(
 		sub_log  => sub { VimMsg([@_]) },
 		sub_warn => sub { VimWarn(@_)  },
-	);
+	)->init;
 eof
 
 	call base#varset('done_base_init_sqlite',1)
