@@ -103,7 +103,7 @@ function! base#complete#BufAct (...)
 endfunction
 
 function! base#complete#sqlite_dbfiles (...)
-	let dbfiles = base#varget('sqlite_dbfiles',{})
+	let dbfiles = base#sqlite#dbfiles()
 
 	let comps = sort(keys(dbfiles))
 	return join(comps,"\n")

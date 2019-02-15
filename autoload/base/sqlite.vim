@@ -48,14 +48,14 @@ function! base#sqlite#info (...)
 	let ref    = get(a:000,0,{})
 	let prompt = get(ref,'prompt',0)
 
-	let info=[]
+	let info = []
 
 	if prompt
 	else
 		call extend(info,base#sqlite#info_dbfile())
+		call extend(info,base#sqlite#info_dbfiles())
 		call extend(info,base#sqlite#info_commands())
 		call extend(info,base#sqlite#info_tables())
-		call extend(info,base#sqlite#info_dbfiles())
 	endif
 
 	call base#buf#open_split({ 'lines' : info })
@@ -66,7 +66,7 @@ endfunction
 function! base#sqlite#db_connect (...)
 	call base#init#sqlite()
 
-	let dbfile = input('dbfile:','')
+	let dbfile = input('dbfile:','','custom,base#complete#sqlite_dbfiles')
 perl << eof
 	my $dbfile = VimVar('dbfile');
 	$plgbase->db_connect($dbfile);
@@ -149,6 +149,7 @@ perl << eof
 	my $info=[];
 
 	push @$info,'DBFILE: ',map { "\t" . $_ } ( $plgbase->dbfile || '');
+	push @$info,'DBNAME: ',map { "\t" . $_ } ( $plgbase->dbname || '');
 	push @$info,'SIZE:   ',map { "\t" . $_ } ( $plgbase->db_dbfile_size || 0);
 
 	VimListExtend('info',$info);
@@ -167,10 +168,8 @@ perl << eof
 
 	push @$info,'AVAILABLE DBFILES: ';
 	while (my ($k,$v) = each(%$dbfiles)) {
-					#push @$info, "\t" . 
 		my $s = pack("A20xA*", $k, $v );
-		push @$info,$s;
-		VimMsg($s);
+		push @$info,"\t" . $s;
 	}
 
 	VimListExtend('info',$info);
@@ -227,6 +226,7 @@ perl << eof
 		VimCmd("call extend(dbfiles,{ x : v })");
 	}
 eof
+	return dbfiles
 
 endfunction
 

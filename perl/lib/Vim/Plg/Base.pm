@@ -67,7 +67,7 @@ sub init {
 
 	$self->init_dbfiles;
 
-	my $dbname='main';
+	my $dbname = 'main';
 	my $dbfile = $self->dbfiles($dbname);
 
 	my $h={
@@ -172,13 +172,19 @@ sub db_init {
 sub db_connect {
 	my $self=shift;
 
-	my $dbfile=shift;
+	my $dbname = shift;
+	my $dbfile = $self->dbfiles($dbname);
 
-	eval { $self->dbh->disconnect; };
+	eval { $self->dbh->disconnect;  };
+	if ($@) { $self->warn('Failure to disconnect db!'); return $self; }
 
-	my $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile","","");
+	my $dbh;
+	
+	eval { $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile","",""); };
+	if ($@) { $self->warn('Failure to connect to db:',$dbname); return $self; }
 
 	$self->dbfile($dbfile);
+	$self->dbname($dbname);
 	$self->dbh($dbh);
 
 	$self;
@@ -401,7 +407,7 @@ sub db_table_exists {
 sub db_dbfile_size {
 	my $self=shift;
 
-	my $dbfile=$self->dbfile;
+	my $dbfile =  $self->dbfile;
 
 	my $st;
     eval{ $st = stat($dbfile)};

@@ -1433,10 +1433,12 @@ sub VimListExtend {
     my ($vimlist,$arrayref) = @_;
 
 	for my $l(@$arrayref){
-		local $_=$l;
+		local $_ = $l;
 		s/\\/\\\\/g;
 		s/"/\\"/g;
-		my $cmd = 'call add('.$vimlist.',"'.$_.'")';
+
+		VimLet('xx',$_);
+		my $cmd = 'call add(' . $vimlist . ',xx)';
 		VimCmd($cmd);
 	}
 }
