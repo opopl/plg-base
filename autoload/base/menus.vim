@@ -120,7 +120,7 @@ function! base#menus#init ()
             \ }
 
 		call extend(allmenus,menus)
-		call base#var('allmenus',allmenus)
+		call base#varset('allmenus',allmenus)
 
 endfunction
 

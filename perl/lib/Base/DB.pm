@@ -30,6 +30,7 @@ my %EXPORT_TAGS = (
 ###export_funcs
 'funcs' => [qw( 
 	dbh_insert_hash
+	dbh_select
 )],
 'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -45,6 +46,48 @@ our $DBH;
 	$DBH
 
 =head1 EXPORTED FUNCTIONS
+
+=cut
+
+sub dbh_select {
+	my ($ref)=@_;
+
+	my $dbh = $ref->{dbh} || $DBH;
+	my $warn = $ref->{warn} || sub {  warn $_ for(@_); };
+
+	# fields
+	my @f = @{$ref->{f} || []};
+
+	# params
+	my @p = @{$ref->{p} || []};
+
+	# table
+	my $t = $ref->{t} || '';
+
+	# additional conditions
+	my $cond = $ref->{cond} || '';
+
+	my $e = q{`};
+	my $f = join ',' => map { $e . $_ . $e } @f;
+	my $q = qq| 
+		SELECT `$f` FROM `$t` $cond
+	|;
+	# query if input
+	$q = $ref->{q} if $ref->{q};
+
+	my $sth;
+ 	eval { $sth	= $dbh->prepare($q); };
+	if($@){ $warn->($@,$dbh->errstr,$q);  }
+	
+	eval { $sth->execute(@p) or do { $warn->($dbh->errstr,$q,@p); }; };
+	if($@){ $warn->($@,$dbh->errstr,$q,@p); }
+
+	my $rows=[];
+	while (my $row=$sth->fetchrow_hashref()) {
+		push @$rows,$row;
+	}
+	return $rows;
+}
 
 =head2 dbh_insert_hash 
 

@@ -146,13 +146,16 @@ function! base#sqlite#info_dbfile ()
 	let info=[]
 perl << eof
 	use File::stat;
+
 	my $info=[];
 	my $dbfile = $plgbase->dbfile || '';
 
-	push @$info,'DBFILE PATH: ',map { "\t" . $_ } ( $dbfile );
-	push @$info,'DBFILE EXISTS: ', "\t" . ((-e $dbfile) ? 'YES' : 'NO' ) ;
-	push @$info,'DBNAME: ',map { "\t" . $_ } ( $plgbase->dbname || '');
-	push @$info,'SIZE:   ',map { "\t" . $_ } ( $plgbase->db_dbfile_size || 0);
+	push @$info,
+		'DBFILE PATH:', ( map { "\t" . $_ } ( $dbfile ) ),
+		'DBFILE EXISTS:', "\t" . ((-e $dbfile) ? 'YES' : 'NO' ),
+		'DBNAME: ',(map { "\t" . $_ } ( $plgbase->dbname || '')),
+		'DBID:'   ,(map { "\t" . $_ } ( $plgbase->dbid || '')),
+		'SIZE:'   ,(map { "\t" . $_ } ( $plgbase->db_dbfile_size || 0));
 
 	VimListExtend('info',$info);
 eof

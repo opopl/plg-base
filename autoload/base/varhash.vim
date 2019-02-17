@@ -16,6 +16,16 @@ function! base#varhash#keys (var)
 	
 endfunction
 
+function! base#varhash#new (...)
+	let hashname = get(a:000,0,'')
+	let value = get(a:000,1,{})
+	let hash = value
+
+	call base#varset(hashname,value)
+	return value
+
+endfunction
+
 function! base#varhash#extend (...)
 	let hashname = get(a:000,0,'')
 	let exd      = get(a:000,1,{})

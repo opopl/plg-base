@@ -19,15 +19,20 @@ function! base#menu#remove(...)
 
 endfunction
 
-"call base#menu#add(menuopt)
-"call base#menu#add(menuopt,{})
+"Purpose: 
+"		add menu 
+"Usage: 
+"	call base#menu#add(menuopt)
+"	call base#menu#add(menuopt,{})
+"	call base#menu#add(menuopt,{ 'action' : 'add' })
+"	call base#menu#add(menuopt,{ 'action' : 'reset' })
 
 function! base#menu#add(...)
 
  let opts={ 'action' : 'add' }
 
  if a:0
-    let menuopt=a:1
+    let menuopt = get(a:000,0,'')
     if a:0 >= 2 
       call extend(opts,a:2)
     endif
@@ -41,32 +46,34 @@ function! base#menu#add(...)
         \ })
  endif
 
- if opts.action == 'reset'
+	if opts.action == 'reset'
 
-  let menus_rm=[]
+		let menus_rm = []
+		
+		call extend(menus_rm,base#varget('menus_remove',[]))
+		
+		call extend(menus_rm,
+		\   base#mapsub(base#varget('menus_toolbar_remove_items',[]),
+		\   '^','ToolBar.','g'))
+		
+		call extend(menus_rm,keys(base#varget('allmenus',{}) ))
+		
+		let menus_rm = base#uniq(menus_rm)
+		
+		for m in menus_rm
+				try
+					exe 'aunmenu ' . m 
+				catch
+				endtry
+		endfor
 
-  call extend(menus_rm,base#varget('menus_remove',[]))
+		call base#varhash#extend('isloaded',{ 'menus' : [ menuopt ] })
 
-  call extend(menus_rm,
-    \   base#mapsub(base#varget('menus_toolbar_remove_items',[]),
-    \   '^','ToolBar.','g'))
-
-  call extend(menus_rm,keys(base#varget('allmenus',{}) ))
-
-  let menus_rm=base#uniq(menus_rm)
-
-  for m in menus_rm
-    try
-        exe 'aunmenu ' . m 
-    catch
-    endtry
-  endfor
-
-  let g:isloaded.menus=[ menuopt ] 
-
- elseif opts.action == 'add'
- 	 call base#list#add('g:isloaded.menus',menuopt)
- endif
+	elseif opts.action == 'add'
+		let menus = base#varhash#get('isloaded','menus',[])
+		call add(menus,menuopt)
+		call base#varhash#extend('isloaded',{ 'menus' : menus })
+	endif
 
 """_menuopt
  let menusbefore= [ 'menus', 'omni', 'buffers' ]
@@ -326,7 +333,7 @@ endfunction
 
 function! base#menu#additem (ref)
 
- let cmd='an '
+ let cmd='anoremenu '
  let cmds=[]
 
  let ref={
@@ -341,7 +348,7 @@ function! base#menu#additem (ref)
  call extend(ref,a:ref)
 
  if len(ref.icon)
-	 let iconfile=base#catpath('menuicons',ref.icon . '.png')
+	 let iconfile = base#catpath('menuicons',ref.icon . '.png')
 	 if filereadable(iconfile)
 	 		let cmd.='icon=' . iconfile . ' '
 	 else

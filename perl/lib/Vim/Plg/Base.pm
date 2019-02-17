@@ -13,6 +13,8 @@ use warnings;
 use File::Spec::Functions qw(catfile);
 use File::Find qw(find);
 use File::Dat::Utils qw(readarr);
+use File::Basename qw(basename dirname);
+
 use Data::Dumper;
 
 use Vim::Perl qw(VimMsg);
@@ -20,12 +22,17 @@ use Vim::Perl qw(VimMsg);
 use DBD::SQLite;
 use DBI;
 
-use Base::DB qw(dbh_insert_hash);
+use Base::DB qw(
+	dbh_insert_hash
+	dbh_select
+);
 
 use base qw( Class::Accessor::Complex );
 
 use File::Path qw(mkpath);
 use File::stat qw(stat);
+
+our @TYPES = qw(list dict listlines );
 
 
 =head1 SYNOPSIS
@@ -51,35 +58,54 @@ sub init {
 
 	return unless $^O eq 'MSWin32';
 
-	my $dirs = {
-		plgroot => catfile($ENV{VIMRUNTIME},qw(plg base)),
-		appdata => catfile($ENV{APPDATA},qw(vim plg base)),
-	};
+	$self
+		->init_dirs
+		->init_dbfiles
+		->init_sqlstm
+		->init_vars
+		->db_connect
+		->db_drop_tables
+		->db_create_tables
+		->init_dat;
 
-	my $d=$dirs->{appdata};
-	mkpath $d unless -d $d;
+	$self;
 
-	my @types=qw(list dict listlines );
-	foreach my $type (@types) {
-		$dirs->{'dat_'.$type} = catfile($dirs->{plgroot},qw(data),$type);
-	}
-	$self->dirs($dirs);
+}
 
-	$self->init_dbfiles;
+sub init_vars {
+	my $self=shift;
 
 	my $dbname = 'main';
-	my $dbfile = $self->dbfiles($dbname);
+	my $dbid   = $dbname;
+
+	my $dbfile = $self->dbfiles($dbid);
+
+	$self->dbid($dbid);
 
 	my $h={
 		withvim      => $self->_withvim(),
 		dbname       => $dbname,
+		dbid         => $dbid,
 		dbfile       => $dbfile,
-		dattypes     => [@types],
-		dirs         => $dirs,
+		dattypes     => [@TYPES],
 		dbopts       => {
 			tb_reset => {},
 			tb_order => [qw(plugins datfiles files exefiles)],
 		},
+
+	};
+
+	my @k=keys %$h;
+
+	for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
+
+	$self;
+}
+
+sub init_sqlstm {
+	my ($self) = @_;
+
+	my $h = {
 		sqlstm => {
 			create_table_plugins => qq{
 				create table if not exists plugins (
@@ -114,21 +140,16 @@ sub init {
 			},
 		},
 	};
-		
+
 	my @k=keys %$h;
 
 	for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
 
-	$self
-		->db_init
-		->init_dat;
-
 	$self;
-
 }
 
 sub init_dbfiles {
-	my $self = shift;
+	my $self=shift;
 
 	my $dbfiles = {
 		main       => catfile($self->dirs('appdata'),'main.db'),
@@ -140,51 +161,55 @@ sub init_dbfiles {
 	$self;
 }
 
-=head2 db_init 
+sub init_dirs {
+	my $self = shift;
 
-=over
+	my $dirs = {
+		plgroot => catfile($ENV{VIMRUNTIME},qw(plg base)),
+		appdata => catfile($ENV{APPDATA},qw(vim plg base)),
+	};
 
-=item Usage
+	my $d = $dirs->{appdata};
+	mkpath $d unless -d $d;
 
-	$plgbase->db_init();
-
-=back
-
-=cut
-
-sub db_init {
-	my $self=shift;
-
-	my $d=$self->dirs('appdata');
-
-	my $dbfile=$self->dbfile;
-
-	my $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile","","");
-	$self->dbh($dbh);
-
-	$self->db_drop_tables
-		 ->db_create_tables;
+	foreach my $type (@TYPES) {
+		$dirs->{'dat_'.$type} = catfile($dirs->{plgroot},qw(data),$type);
+	}
+	$self->dirs($dirs);
 
 	$self;
-
 }
 
 sub db_connect {
-	my $self=shift;
+	my ($self, $dbid) = @_;
 
-	my $dbname = shift;
-	my $dbfile = $self->dbfiles($dbname);
+	my ($dbfile, $dbname);
+   
+	$dbfile	= $self->dbfile;
+	$dbname = $self->dbname;
+	
+	if ($dbid) {
+		$dbfile = $self->dbfiles($dbid) || $dbfile;
+		$dbname = basename($dbfile);
+		$dbname =~ s/\.(\w+)//g;
+	}else{
+		$dbid = $self->dbid;
+	}
 
 	eval { $self->dbh->disconnect;  };
-	if ($@) { $self->warn('Failure to disconnect db!'); return $self; }
+	#if ($@) { $self->warn('Failure to disconnect db!'); }
 
 	my $dbh;
 	
 	eval { $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile","",""); };
-	if ($@) { $self->warn('Failure to connect to db:',$dbname); return $self; }
+	if ($@) { 
+		my $w = 'Failure to connect to database with dbid =' . $dbid .' and dbname =' . $dbname;
+		$self->warn($w); return $self; 
+	}
 
 	$self->dbfile($dbfile);
 	$self->dbname($dbname);
+	$self->dbid($dbid);
 	$self->dbh($dbh);
 
 	$self;
@@ -209,7 +234,12 @@ sub reload_from_fs {
 			tb_order => [qw(plugins datfiles)],
 		},
 	);
-	$self->update(%o)->db_init->init_dat;
+	$self
+		->update(%o)
+		->db_connect
+		->db_drop_tables
+		->db_create_tables
+		->init_dat;
 
 	$self;
 }
@@ -373,8 +403,34 @@ sub db_tables {
 	my $dbname = $self->dbname;
 	my $dbh    = $self->dbh;
 
-	my $pat    = qr/"$dbname"\."(\w+)"/;
-    my @tables = map { /$pat/ ? $1 : () } $dbh->tables;
+	my $sub_warn = $self->{sub_warn} || sub {};
+	my $q = qq{  
+		SELECT 
+			name 
+		FROM 
+			sqlite_master
+		WHERE 
+			type IN ('table','view') AND name NOT LIKE 'sqlite_%'
+		UNION ALL
+		SELECT 
+			name 
+		FROM 
+			sqlite_temp_master
+		WHERE 
+			type IN ('table','view')
+		ORDER BY 1
+			};
+
+	my $rows = dbh_select({ 
+		dbh  => $dbh,
+		warn => $sub_warn,
+		q    => $q,
+	});
+
+	my @tables = map { $_->{name} }  @$rows;
+
+	#my $pat    = qr/"$dbname"\."(\w+)"/;
+    #my @tables = map { /$pat/ ? $1 : () } $dbh->tables;
 
 	wantarray ? @tables : \@tables ;
 }
@@ -436,7 +492,10 @@ sub db_drop_tables {
 
 	my $dbopts = $ref->{dbopts} || $self->dbopts;
 
+	# which tables to drop 
 	my $tb_reset=$ref->{tb_reset} || $dbopts->{tb_reset} || {};
+
+	# order of tables to be dropped
 	my $tb_order=$ref->{tb_order} || $dbopts->{tb_order} || [];
 
 	my $dbh=$self->dbh;
@@ -444,7 +503,7 @@ sub db_drop_tables {
 	my @s;
 	foreach my $tb (@$tb_order) {
 		if ($ref->{all} || $tb_reset->{$tb}) {
-			push @s, qq{ drop table if exists $tb; };
+			push @s, qq{ DROP TABLE IF EXISTS $tb; };
 		}
 	}
 
@@ -758,6 +817,7 @@ BEGIN {
 		sth
 		dbfile
 		dbname
+		dbid
 		withvim
 		sub_warn
 		sub_log

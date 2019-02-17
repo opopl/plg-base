@@ -356,8 +356,8 @@ perl << eof
 	});
 	my $q = qq{
 		CREATE TABLE IF NOT EXISTS pages  (
-			id INTEGER AUTO_INCREMENT PRIMARY KEY,
-			url TEXT,
+			id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+			url TEXT NOT NULL,
 			saved_file TEXT UNIQUE,
 			saved_bname TEXT,
 			saved_urls TEXT,
@@ -372,9 +372,9 @@ perl << eof
  
 	my $ref      = VimVar('ref');
 
-	my $url      = VimVar('url');
-	my $tags      = VimVar('tags');
-	my $title      = VimVar('title');
+	my $url   = VimVar('url');
+	my $tags  = VimVar('tags');
+	my $title = VimVar('title');
 
 	my $save_dir = VimVar('save_dir');
 
@@ -417,7 +417,7 @@ perl << eof
 			VimMsg("\n".$f_old);
 			VimMsg("\n".$of);
 
-			eval { move($f_old,$saved_file); };
+			eval { move($f_old, $saved_file); };
 			if ($@) { VimWarn($@); }
 
 			my $h = { 
@@ -428,6 +428,7 @@ perl << eof
 				tags        => $tags,
 				title       => $title,
 			};
+
 			dbh_insert_hash({ 
 				dbh  => $dbh,
 				warn => $warn,
