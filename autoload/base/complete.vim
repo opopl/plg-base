@@ -111,11 +111,10 @@ function! base#complete#sqlite_dbfiles (...)
 endfunction
 
 function! base#complete#sqlite_tables (...)
-	"let q = 
-	""select name from sqlite_master where type='table'"
-	"call base#sql#q(q,{ 'type' : 'sqlite' })
-  "return base#complete#vars([ 'sqlite_sql' ])
-	return ""
+	let tables = base#sqlite#tables()
+
+	let comps = sort(tables)
+	return join(comps,"\n")
 endfunction
 
 function! base#complete#sqlite_sql (...)

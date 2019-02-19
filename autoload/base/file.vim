@@ -242,6 +242,17 @@ function! base#file#sep ()
 	
 endfunction
 
+function! base#file#parts( filename,... )
+	let filename = a:filename
+
+	let sep      = base#file#sep()
+	let filename = base#file#std(filename)
+	let parts    = split(filename,sep)
+
+	return parts
+
+endfunction
+
 function! base#file#std( filename,... )
 	let fname = a:filename
 

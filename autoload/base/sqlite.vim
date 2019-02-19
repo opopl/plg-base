@@ -203,20 +203,34 @@ endfunction
 function! base#sqlite#info_tables ()
 	call base#init#sqlite()
 
-	let info=[]
+	let tables = base#sqlite#tables()
+	let info = []
+
+	call add(info,'TABLES: ')
+	call map(tables,'substitute(v:val,"^","\t","g")')
+	call extend(info,tables)
+
+	return info
+
+endfunction
+
+function! base#sqlite#tables ()
+	call base#init#sqlite()
+
+	let tables=[]
 perl << eof
 	use File::stat;
-	my $info=[];
+
+	my $tables=[];
 
 	my $dbh = $plgbase->dbh;
 
-	push @$info,
-		'TABLES: ', 
-		map { "\t".$_ } $plgbase->db_tables;
+	push @$tables,
+		$plgbase->db_tables;
 
-	VimListExtend('info',$info);
+	VimListExtend('tables',$tables);
 eof
-	return info
+	return tables
 
 endfunction
 

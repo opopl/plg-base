@@ -15,6 +15,13 @@ function! base#menu#remove(...)
 
  if menuopt == 'projs'
 		call projs#menus#remove()
+
+ elseif menuopt == 'sqlite'
+		try 
+			exe 'aunmenu &SQLITE.&COMMANDS'
+			exe 'aunmenu &SQLITE'
+		catch
+ 		endtry
  endif
 
 endfunction
@@ -116,6 +123,21 @@ function! base#menu#add(...)
                         \   })
     
      endfor
+
+"""menuopt_sqlite
+ elseif menuopt == 'sqlite'
+		let cmds = base#varget('opts_BaseAct',[])
+		call filter(cmds,'len(matchlist(v:val,"^sqlite_"))')
+		call map(cmds,'substitute(v:val,"^sqlite_","","g")')
+
+		for cmd in cmds
+         call base#menu#additem({
+							\   'item'      : '&SQLITE.&COMMANDS.&' . cmd,
+							\   'tab'       :  cmd,
+							\   'cmd'       :  'BaseAct sqlite_'.cmd,
+							\   })
+		endfor
+
 
 """menuopt_dat
  elseif menuopt == 'dat'

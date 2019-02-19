@@ -356,7 +356,7 @@ perl << eof
 	});
 	my $q = qq{
 		CREATE TABLE IF NOT EXISTS pages  (
-			id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+			id INTEGER AUTO_INCREMENT PRIMARY KEY,
 			url TEXT NOT NULL,
 			saved_file TEXT UNIQUE,
 			saved_bname TEXT,

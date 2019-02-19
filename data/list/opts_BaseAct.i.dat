@@ -11,6 +11,7 @@ sqlite_drop_tables
 sqlite_query
 sqlite_table_describe
 sqlite_db_connect
+sqlite_info
 #
 perl_Vim_Plg_Base
 ###svn

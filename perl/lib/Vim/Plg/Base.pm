@@ -216,11 +216,10 @@ sub db_connect {
 }
 
 sub update {
-	my $self=shift;
-	my %o=@_;
+	my ($self,%o) = @_;
 
 	foreach my $k (keys %o) {
-		$self->{$k}=$o{$k};
+		$self->{$k} = $o{$k};
 	}
 	$self;
 }
@@ -419,7 +418,7 @@ sub db_tables {
 		WHERE 
 			type IN ('table','view')
 		ORDER BY 1
-			};
+	};
 
 	my $rows = dbh_select({ 
 		dbh  => $dbh,
