@@ -17,7 +17,19 @@ function! base#buf#act(...)
 	let end   = get(a:000,1,getline('$'))
 	let act   = get(a:000,2,'')
 
-	if !strlen(act) | return | endif
+	if !strlen(act) 
+		if exists("b:comps_BufAct")
+			let comps = b:comps_BufAct
+			let act = base#getfromchoosedialog({ 
+				\ 'list'        : comps,
+				\ 'startopt'    : get(comps,0),
+				\ 'header'      : "Available actions for BufAct are: ",
+				\ 'numcols'     : 1,
+				\ 'bottom'      : "Choose BufAct action by number: ",
+				\ })
+		endif
+	endif
+
 	if !strlen(&ft) 
 		echoerr 'No filetype!'
 		return 
