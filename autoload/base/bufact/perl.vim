@@ -113,14 +113,14 @@ function! base#bufact#perl#ppi_list_subs ()
 	call base#buf#start()
 	let file = b:file
 
-	let subnames = []
-	let lines_tags=[]
+	let lines = []
 perl << eof
 	use PPI;
 	use Data::Dumper;
 
 	use Vim::Perl qw(:funcs :vars);
 	use Base::PerlFile;
+	use YAML qw(Dump Bless);
 
 	my $lines = [ $curbuf->Get(1 .. $curbuf->Count) ];
 
@@ -135,16 +135,21 @@ perl << eof
 
 #	VimListExtend('lines_tags',$pf->{lines_tags});
 	my $subnames = $pf->subnames;
+	my $namespaces = $pf->namespaces;
+
+	eval { Bless($subnames)->keys($namespaces); };
+	my @sb_yaml = split("\n",Dump($subnames));
+
 	my $skip = { map { $_ => 1 } qw(undefined spaces) };
 	my $opts = {
 		skip => $skip,
 	};
-	VimListExtend('subnames',$subnames,$opts);
+	VimListExtend('lines',[@sb_yaml],$opts);
 
-	VimMsg(Dumper($pf->{subnames}));
+	VimMsg(Dumper($subnames));
+	VimMsg(Dumper($namespaces));
 eof
-	"call base#buf#open_split({ 'lines' : subs })
-	call base#buf#open_split({ 'lines' : subnames })
+	call base#buf#open_split({ 'lines' : lines })
 endf
 
 "htmllines	/home/mmedevel/repos/git/htmltool/lib/HTML/Work.pm	/^sub htmllines {$/;"	s

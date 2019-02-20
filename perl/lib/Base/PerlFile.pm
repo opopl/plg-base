@@ -1,5 +1,11 @@
 package Base::PerlFile;
 
+=head1 NAME
+
+Base::PerlFile - module for processing perl module (*.pm), script (*.pl) files
+
+=cut
+
 use strict;
 use warnings;
 
@@ -10,6 +16,7 @@ use File::Slurp qw( write_file append_file );
 use File::Path qw(rmtree);
 
 use Data::Dumper;
+use List::MoreUtils qw(uniq);
 
 use DBI;
 use Base::DB qw(
@@ -18,6 +25,10 @@ use Base::DB qw(
 );
 
 use vars qw($dbh);
+
+=head1 METHODS 
+
+=cut
 
 sub new
 {
@@ -30,7 +41,7 @@ sub new
 }
 
 sub warn {
-	my ($self,@args)=@_;
+	my ($self, @args) = @_;
 
 	my $sub = $self->{sub_warn} || $self->{sub_log} || undef;
 	$sub && $sub->(@args);
@@ -39,13 +50,19 @@ sub warn {
 }
 
 sub log {
-	my ($self,@args)=@_;
+	my ($self, @args) = @_;
 
 	my $sub = $self->{sub_log} ||undef;
 	$sub && $sub->(@args);
 
 	return $self;
 }
+
+=head2 subnames
+
+=head3 Usage 
+
+=cut
 
 sub subnames {
 	my ($self,$ref)=@_;
@@ -54,24 +71,63 @@ sub subnames {
 	my $pat = $ref->{pat} || '';
 
 	my $rows = dbh_select({ 
-			f => [qw(subname_short)], 
-			t => 'tags'});
-	my $subnames=[];
+		f => [qw(namespace subname_short)], 
+		t => 'tags',
+	});
+
+	my $subnames = {};
 
 	for my $row (@$rows){
-		push @$subnames,$row->{subname_short};
+		my $ns = $row->{namespace};
+
+		my $subs = $subnames->{$ns} || [];
+
+		my $sub = $row->{subname_short};
+		next unless $sub;
+
+		next unless $sub =~ /$pat/;
+
+		push @$subs, $sub;
+		$subnames->{$ns} = $subs;
 	}
 	return $subnames;
 }
 
+sub namespaces {
+	my ($self,$ref)=@_;
+	#
+	# matching pattern
+	my $pat = $ref->{pat} || '';
+
+	my $rows = dbh_select({ 
+		f => [qw(namespace)], 
+		t => 'tags',
+	});
+
+	my ($ns_h,$ns_a) = ( {},[] );
+	for my $row (@$rows){
+		my $ns = $row->{namespace};
+
+		next unless $ns;
+		next unless $ns =~ /$pat/;
+		next if $ns_h->{$ns};
+
+		$ns_h->{$ns}=1;
+		push @$ns_a,$ns;
+	}
+	
+	return $ns_a;
+}
+
 sub init_db {
-	my $self=shift;
+	my $self = shift;
 
 	$dbh = DBI->connect("dbi:SQLite:dbname=:memory:","","");
 
 	$Base::DB::DBH = $dbh;
 
 	my @q;
+###t_tags
 	push @q,
 		qq{
 			create table `tags` (
@@ -364,6 +420,20 @@ sub ppi_process {
 
 	return $self;
 }
+
+=head2 write_tags
+
+=head3 Usage 
+
+	my $ref={
+		# full path to the tagfile which will be written
+		tagfile => $tagfile,
+	};
+
+	# $pf is a Base::PerlFile instance
+	$pf->write_tags($ref);
+
+=cut
 
 sub write_tags {
 	my ($self,$ref)=@_;
