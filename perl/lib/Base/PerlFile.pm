@@ -12,6 +12,10 @@ use File::Path qw(rmtree);
 use Data::Dumper;
 
 use DBI;
+use Base::DB qw(
+	dbh_insert_hash
+	dbh_select
+);
 
 use vars qw($dbh);
 
@@ -28,7 +32,7 @@ sub new
 sub warn {
 	my ($self,@args)=@_;
 
-	my $sub = $self->{sub_warn} || $self->{sub_log} ||undef;
+	my $sub = $self->{sub_warn} || $self->{sub_log} || undef;
 	$sub && $sub->(@args);
 
 	return $self;
@@ -43,12 +47,29 @@ sub log {
 	return $self;
 }
 
+sub subnames {
+	my ($self,$ref)=@_;
+
+	# matching pattern
+	my $pat = $ref->{pat} || '';
+
+	my $rows = dbh_select({ 
+			f => [qw(subname_short)], 
+			t => 'tags'});
+	my $subnames=[];
+
+	for my $row (@$rows){
+		push @$subnames,$row->{subname_short};
+	}
+	return $subnames;
+}
+
 sub init_db {
 	my $self=shift;
 
 	$dbh = DBI->connect("dbi:SQLite:dbname=:memory:","","");
 
-	$Base::DB::dbh=$dbh;
+	$Base::DB::DBH = $dbh;
 
 	my @q;
 	push @q,
@@ -184,7 +205,7 @@ sub process_var {
 			};
 			#$self->log(Dumper($h));
 	
-			$self->dbh_insert_hash({ h => $h, t => 'tags' });
+			dbh_insert_hash({ h => $h, t => 'tags' });
 		}
 
     }
@@ -262,7 +283,7 @@ sub ppi_process {
 						'type'   	  => 'sub',
 				};
 
-				$self->dbh_insert_hash({ h => $h, t => 'tags' });
+				dbh_insert_hash({ h => $h, t => 'tags' });
 
 		};
 		$node->isa( 'PPI::Statement::Variable' ) && do { 
@@ -297,7 +318,7 @@ sub ppi_process {
 					'include_arguments'   => $a,
 			};
 	
-			$self->dbh_insert_hash({ h => $h, t => 'tags' });
+			dbh_insert_hash({ h => $h, t => 'tags' });
 
 			if ($module eq 'vars') {
 				local $_ = $a;
@@ -319,7 +340,7 @@ sub ppi_process {
 							'var_full'    => $sign . $ns . '::' .$varname,
 					};
 	
-					$self->dbh_insert_hash({ h => $h, t => 'tags' });
+					dbh_insert_hash({ h => $h, t => 'tags' });
 				}
 			}
 
@@ -337,40 +358,8 @@ sub ppi_process {
 						'type'   	  => 'package',
 			};
 
-			$self->dbh_insert_hash({ h => $h, t => 'tags' });
+			dbh_insert_hash({ h => $h, t => 'tags' });
 		};
-	}
-
-	return $self;
-}
-
-sub dbh_insert_hash {
-	my ($self,$ref)=@_;
-
-	my $db_insert = $ref->{db_insert} || $self->{db_insert} || 1;
-
-	unless ($db_insert) {
-		return $self;
-	}
-
-	my $h = $ref->{h} || {};
-	my $t = $ref->{t} || '';
-
-	unless (keys %$h) {
-		return $self;
-	}
-
-	my $ph = join ',' => map { '?' } keys %$h;
-	my @f = keys %$h;
-	my @v = map { $h->{$_} } @f ;
-	my $e = q{`};
-	my $f = join ',' => map { $e . $_ . $e } @f;
-	my $q = qq| 
-		insert into `$t` ($f) values ($ph) 
-	|;
-	eval {$dbh->do($q,undef,@v); };
-	if ($@) {
-		$self->warn($@,$q,$dbh->errstr);
 	}
 
 	return $self;

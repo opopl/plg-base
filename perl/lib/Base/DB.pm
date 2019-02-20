@@ -47,6 +47,10 @@ our $DBH;
 
 =head1 EXPORTED FUNCTIONS
 
+=head2 dbh_select 
+
+=head3 Usage
+
 =cut
 
 sub dbh_select {
@@ -70,7 +74,7 @@ sub dbh_select {
 	my $e = q{`};
 	my $f = join ',' => map { $e . $_ . $e } @f;
 	my $q = qq| 
-		SELECT `$f` FROM `$t` $cond
+		SELECT $f FROM `$t` $cond
 	|;
 	# query if input
 	$q = $ref->{q} if $ref->{q};
@@ -83,7 +87,7 @@ sub dbh_select {
 	if($@){ $warn->($@,$dbh->errstr,$q,@p); }
 
 	my $rows=[];
-	while (my $row=$sth->fetchrow_hashref()) {
+	while (my $row = $sth->fetchrow_hashref()) {
 		push @$rows,$row;
 	}
 	return $rows;
@@ -93,11 +97,29 @@ sub dbh_select {
 
 =head3 Usage
 
-	dbh_insert_hash({ dbh => $dbh, h => $hash, t => $table });
+	dbh_insert_hash({ 
+		# database handle
+		dbh => $dbh, 
+
+		# input hash of values
+		h => $hash, 
+
+		# table name
+		t => $table,
+
+		# insert command (optional)
+		# 	default is 'INSERT'
+		i => 'INSERT OR IGNORE',
+
+		# subroutine for warnings (optional)
+		# 	default is:
+		# 		sub { warn $_ for(@_); }
+		warn => sub { ... },
+	});
 
 =head3 Purpose
 
-	insert hash of value into table.
+	insert hash of values into table.
 
 =cut
 
@@ -105,7 +127,7 @@ sub dbh_insert_hash {
 	my ($ref)=@_;
 
 	my $dbh = $ref->{dbh} || $DBH;
-	my $warn = $ref->{warn} || sub {  warn $_ for(@_); };
+	my $warn = $ref->{warn} || sub { warn $_ for(@_); };
 
 	my $h = $ref->{h} || {};
 	my $t = $ref->{t} || '';

@@ -133,8 +133,15 @@ perl << eof
 		->ppi_process({ file => $file })
 		;
 
-	VimListExtend('lines_tags',$pf->{lines_tags});
-	VimListExtend('subnames',$pf->{subnames});
+#	VimListExtend('lines_tags',$pf->{lines_tags});
+	my $subnames = $pf->subnames;
+	my $skip = { map { $_ => 1 } qw(undefined spaces) };
+	my $opts = {
+		skip => $skip,
+	};
+	VimListExtend('subnames',$subnames,$opts);
+
+	VimMsg(Dumper($pf->{subnames}));
 eof
 	"call base#buf#open_split({ 'lines' : subs })
 	call base#buf#open_split({ 'lines' : subnames })

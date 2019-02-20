@@ -1430,10 +1430,24 @@ sub VimBufSplit {
 }
 
 sub VimListExtend {
-    my ($vimlist,$arrayref) = @_;
+    my ($vimlist,$arrayref,$opts) = @_;
 
-	for my $l(@$arrayref){
+	$opts||={};
+
+	for my $l (@$arrayref){
 		local $_ = $l;
+
+		unless(defined){
+			$_ = '';
+			if ($opts->{skip}->{undefined}) {
+				next;
+			}
+		}
+
+		if ($opts->{skip}->{spaces}) {
+			next if /^\s*$/;
+		}
+
 		s/\\/\\\\/g;
 		s/"/\\"/g;
 
