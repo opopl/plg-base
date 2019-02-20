@@ -94,8 +94,8 @@ sub subnames {
 }
 
 sub namespaces {
-	my ($self,$ref)=@_;
-	#
+	my ($self, $ref)=@_;
+	
 	# matching pattern
 	my $pat = $ref->{pat} || '';
 
@@ -104,8 +104,8 @@ sub namespaces {
 		t => 'tags',
 	});
 
-	my ($ns_h,$ns_a) = ( {},[] );
-	for my $row (@$rows){
+	my ($ns_h,$ns_a) = ( {}, [] );
+	for my $row ( @$rows ){
 		my $ns = $row->{namespace};
 
 		next unless $ns;

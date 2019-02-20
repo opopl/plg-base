@@ -128,6 +128,7 @@ perl << eof
 
 	my $file = VimVar('file');
 	my %o = ();
+
 	my $pf = Base::PerlFile->new(%o);
 	$pf
 		->ppi_process({ file => $file })
@@ -145,9 +146,6 @@ perl << eof
 		skip => $skip,
 	};
 	VimListExtend('lines',[@sb_yaml],$opts);
-
-	VimMsg(Dumper($subnames));
-	VimMsg(Dumper($namespaces));
 eof
 	call base#buf#open_split({ 'lines' : lines })
 endf
