@@ -21,6 +21,7 @@ use List::MoreUtils qw(uniq);
 use DBI;
 use File::stat;
 
+
 use Base::DB qw(
 	dbh_insert_hash
 	dbh_select
@@ -218,10 +219,15 @@ sub load_files_source {
 sub process_var {
 	my ($self,$node,@a)=@_;
 
-	my ($ns,$file,$type) = @a;
+	my ($ns,$file,$type,$file_mtime) = @a;
+
+	unless ($file_mtime) {
+		my $st = stat($file);
+		$file_mtime = $st->mtime;
+	}
 
 	$ns ||= 'main';
-	@a = ($ns,$file,$type);
+	@a = ($ns,$file,$type,$file_mtime);
 
     my @tokens = $node->children;
 
@@ -242,6 +248,7 @@ sub process_var {
 
 			my $h = {
 				'filename'    => $file,
+				'file_mtime'  => $file_mtime,
 				'line_number' => $node->line_number,
 				'var_type'	  => $type,
 				'var_short'	  => $var,
@@ -276,9 +283,14 @@ sub ppi_process {
 
 	my $files = $ref->{files} || $self->{files_source} || [];
 
-	my $file = $ref->{file};
+	my ($file, $file_mtime);
 
-	$files=[] if $file;
+	$file = $ref->{file};
+
+	my $st         = stat($file);
+	my $file_mtime = $st->mtime;
+
+	$files = [] if $file;
 
 	if (@$files) {
 		foreach my $file (@$files) {
@@ -322,6 +334,7 @@ sub ppi_process {
 
 				my $h = { 
 						'filename'    => $file,
+						'file_mtime'  => $file_mtime,
 						'line_number' => $node->line_number,
 						######################
 						'subname_full'   => $ns.'::'.$node->name,
@@ -359,6 +372,7 @@ sub ppi_process {
 
 			my $h = { 
 					'filename'    => $file,
+					'file_mtime'  => $file_mtime,
 					'line_number' => $node->line_number,
 					######################
 					'namespace'   => $ns,
@@ -385,6 +399,7 @@ sub ppi_process {
 
 					my $h = { 
 							'filename'    => $file,
+							'file_mtime'  => $file_mtime,
 							'line_number' => $node->line_number,
 							######################
 							'namespace'   => $ns,
@@ -406,6 +421,7 @@ sub ppi_process {
 
 			my $h = { 
 						'filename'    => $file,
+						'file_mtime'  => $file_mtime,
 						'line_number' => $node->line_number,
 						######################
 						'namespace'   => $ns,
