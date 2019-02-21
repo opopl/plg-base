@@ -308,7 +308,7 @@ endf
 """base_uniq
 fun! base#uniq(...)
 
- let ref=a:1
+ let ref = a:1
  let opts={     
         \   'var' : 'local', 
         \   'sort' : 0,
@@ -2726,13 +2726,23 @@ eof
 
 endfunction
 
-  
 function! base#act (...)
   let act = get(a:000,0,'')
 
-	if act == ''
-		return
-	elseif act =~ '^sqlite_'
+	if ! strlen(act) 
+		let comps_n = base#complete#BaseAct()
+		let comps   = split(comps_n,"\n")
+
+		let act = base#getfromchoosedialog({ 
+						\ 'list'        : comps,
+						\ 'startopt'    : get(comps,0,''),
+						\ 'header'      : "Available BaseAct commands are: ",
+						\ 'numcols'     : 2,
+						\ 'bottom'      : "Choose BaseAct command by number: ",
+						\ })
+	endif
+
+	if act =~ '^sqlite_'
 		let cmd = substitute(act,'^sqlite_\(.*\)$','\1','g')
   	let sub = 'base#sqlite#'.cmd
 

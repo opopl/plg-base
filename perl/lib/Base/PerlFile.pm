@@ -23,6 +23,7 @@ use Base::DB qw(
 	dbh_insert_hash
 	dbh_select
 );
+use base qw(Base::Logging);
 
 use vars qw($dbh);
 
@@ -40,23 +41,6 @@ sub new
 	return $self;
 }
 
-sub warn {
-	my ($self, @args) = @_;
-
-	my $sub = $self->{sub_warn} || $self->{sub_log} || undef;
-	$sub && $sub->(@args);
-
-	return $self;
-}
-
-sub log {
-	my ($self, @args) = @_;
-
-	my $sub = $self->{sub_log} ||undef;
-	$sub && $sub->(@args);
-
-	return $self;
-}
 
 =head2 subnames
 
@@ -297,10 +281,7 @@ sub ppi_process {
 
 	unless ($file && -f $file) { return $self; }
 
-	$self->log('ppi_process: ' . Dumper($ref));
-
  	my $DOC; 
-	
 	eval { $DOC = PPI::Document->new($file); };
 	if ($@) { $self->warn($@); return $self; }
 

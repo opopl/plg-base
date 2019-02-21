@@ -11,13 +11,17 @@ use Data::Dumper qw(Dumper);
 use FindBin qw($Script $Bin);
 
 use lib "$Bin/../perl/lib";
-use Base::PerlFile;
+
 use Getopt::Long qw(GetOptions);
 use File::Spec::Functions qw(catfile);
 use File::Slurp qw(append_file);
 use File::Path qw(rmtree);
 
+use Base::PerlFile;
+
 use Cwd qw(abs_path getcwd);
+
+use base qw(Base::Logging);
 
 our(%OPTDESC);
 use vars qw(
@@ -64,6 +68,7 @@ sub get_opt {
 		"tfile=s",
 		"dir=s@" ,
 		"add=s@" ,
+		"inc",
 	);
 	
 	%OPTDESC=(
@@ -94,6 +99,9 @@ sub dhelp {
 
 		--tfile     FILE         (string)
 		--dir DIR1 --dir DIR2   (array)
+		--inc 
+	EXAMPLES
+		$Script --inc
 
 S
 	print $s . "\n";
@@ -101,7 +109,7 @@ S
 	$self;
 }
 
-sub main {
+sub run {
 	my $self=shift;
 
 	$self
@@ -117,6 +125,11 @@ sub run_pf {
 
 	my @dirs = map { abs_path($_) } @{ $OPT{dir} || [] };
 	my $tfile = $OPT{tfile} || catfile(getcwd(),'tygs');
+
+	if ($OPT{inc}) {
+		push @dirs,
+			@INC;
+	}
 
 	unless (@dirs) {
 		$self->warn('no dirs!'); return $self;
@@ -145,8 +158,7 @@ sub run_pf {
 		add => [qw( subs packs vars include )],
 	);
 
-	@{$o{add}}=split(',', join(',' , @{ $OPT{add} } )) if $OPT{add};
-
+	@{$o{add}} = split(',', join(',' , @{ $OPT{add} } )) if $OPT{add};
 
 	my $pf = Base::PerlFile->new(%o);
 
@@ -164,4 +176,4 @@ sub run_pf {
 
 package main;
 
-ty->new->main;
+ty->new->run;
