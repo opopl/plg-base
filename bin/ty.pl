@@ -66,6 +66,7 @@ sub get_opt {
 	
 	@OPTSTR=( 
 		"tfile=s",
+		"db=s",
 		"dir=s@" ,
 		"add=s@" ,
 		"inc",
@@ -100,6 +101,8 @@ sub dhelp {
 		--tfile     FILE         (string)
 		--dir DIR1 --dir DIR2   (array)
 		--inc 
+
+		--db DBFILE
 	EXAMPLES
 		$Script --inc
 
@@ -121,11 +124,12 @@ sub run {
 }
 
 sub run_pf {
-	my $self=shift;
+	my $self = shift;
 
 	my @dirs = map { abs_path($_) } @{ $OPT{dir} || [] };
 	my $tfile = $OPT{tfile} || catfile(getcwd(),'tygs');
 
+	my $dbfile = $OPT{db} || ':memory:';
 	if ($OPT{inc}) {
 		push @dirs,
 			@INC;
@@ -142,12 +146,23 @@ sub run_pf {
 	my $logfile = $self->logfile;
 	rmtree $logfile if -e $logfile;
 
-	print 'logfile:   ' . $logfile ."\n";
-	print 'tagfile:   ' . $tfile ."\n";
+	my @m;
+	push @m,
+		'logfile:   ',
+			"\t" . $logfile,
+		'tagfile:   ',
+			"\t" . $tfile,
+		'dirs:   ',
+			( map { "\t" . $_ } @dirs ),
+		'dbfile:   ',
+			$dbfile
+		;
+	$self->log(@m);
 
 	my %o = (
 		dirs     => \@dirs,
 		tagfile  => $tfile,
+		dbfile   => $dbfile,
 		sub_log  => sub { 
 			append_file($logfile,join("\n",@_) . "\n");
 		},

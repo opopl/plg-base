@@ -19,6 +19,8 @@ use Data::Dumper;
 use List::MoreUtils qw(uniq);
 
 use DBI;
+use File::stat;
+
 use Base::DB qw(
 	dbh_insert_hash
 	dbh_select
@@ -96,8 +98,8 @@ sub namespaces {
 		next unless $ns =~ /$pat/;
 		next if $ns_h->{$ns};
 
-		$ns_h->{$ns}=1;
-		push @$ns_a,$ns;
+		$ns_h->{$ns} = 1;
+		push @$ns_a, $ns;
 	}
 	
 	return $ns_a;
@@ -106,7 +108,9 @@ sub namespaces {
 sub init_db {
 	my $self = shift;
 
-	$dbh = DBI->connect("dbi:SQLite:dbname=:memory:","","");
+	my $dbfile = $self->{dbfile} || ':memory:';
+
+	$dbh = DBI->connect("dbi:SQLite:dbname=$dbfile","","");
 
 	$Base::DB::DBH = $dbh;
 
@@ -117,6 +121,7 @@ sub init_db {
 			create table `tags` (
 				`id` int auto_increment,
 				`filename` varchar(1024),
+				`file_mtime` varchar(1024),
 				`namespace` varchar(1024),
 				`subname_short` varchar(1024),
 				`subname_full` varchar(1024),
@@ -134,6 +139,7 @@ sub init_db {
 				primary key(`id`)
 			);
 		},
+###t_tags_write
 		qq{
 			create table `tags_write` (
 				`id` int auto_increment,
@@ -155,7 +161,7 @@ sub init_db {
 sub init {
 	my $self=shift;
 
-	my $h={
+	my $h = {
 		exts => [qw(pl pm t)],
 		add  => [qw(
 				include
@@ -165,19 +171,18 @@ sub init {
 		)],
 	};
 		
-	my @k=keys %$h;
+	my @k = keys %$h;
 
 	for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
 
 	$self->init_db;
 
 	return $self;
-
 		
 }
 
 sub load_files_source {
-	my($self,$ref)=@_;
+	my($self, $ref) = @_;
 
 	my $dirs = $ref->{dirs} || $self->{dirs} || [];
 	my $exts = $ref->{exts} || $self->{exts} || [];
@@ -194,7 +199,9 @@ sub load_files_source {
 				return unless -f;
 				foreach my $ext (@$exts) {
 					if (/\.$ext$/) {
-						push @files,$File::Find::name;
+						my $file = $File::Find::name;
+						
+						push @files,$file;
 						last;
 					}
 				}
@@ -221,15 +228,17 @@ sub process_var {
     foreach my $token ( @tokens )
     {
         # список или выражение - ищем имена рекурсивно:
-        $self->process_var( $token,@a ), next if $token->class eq 'PPI::Structure::List';
-        $self->process_var( $token,@a ), next if $token->class eq 'PPI::Statement::Expression';
+        $self->process_var( $token, @a ), next if $token->class eq 'PPI::Structure::List';
+        $self->process_var( $token, @a ), next if $token->class eq 'PPI::Statement::Expression';
           
 		if ( $token->class eq 'PPI::Token::Symbol'){
 			my $var = $token->content;
 			my $var_full = $ns . '::' . $var;
 
-			my ($sign,$varname) = ( $var_full =~ /::([\$\@\%])(\w+)$/g );
-			$var_full = $sign . $ns . '::' . $varname;
+			my $sign = $token->symbol_type;
+			my $varname = $var;
+
+			$var_full = $sign  . $ns . '::' . $varname;
 
 			my $h = {
 				'filename'    => $file,
@@ -306,6 +315,7 @@ sub ppi_process {
 		$node_count++;
 		last if ( $max_node_count && ( $node_count == $max_node_count ) );
 
+###PPI_Statement_Sub
 		$node->isa( 'PPI::Statement::Sub' ) && do { 
 			next unless $add->{subs};
 				$ns ||= 'main'; 
@@ -323,6 +333,7 @@ sub ppi_process {
 				dbh_insert_hash({ h => $h, t => 'tags' });
 
 		};
+###PPI_Statement_Variable
 		$node->isa( 'PPI::Statement::Variable' ) && do { 
 			next unless $add->{vars};
 
@@ -336,6 +347,7 @@ sub ppi_process {
 
 			$self->process_var($node,@a);
 		};
+###PPI_Statement_Include
 		$node->isa( 'PPI::Statement::Include' ) && do { 
 			next unless $add->{include};
 
@@ -367,6 +379,10 @@ sub ppi_process {
 				for (@v){
 					my ($sign,$varname) = ( /$pat/g );
 
+					unless (defined $sign) {
+						$self->warn('PPI::Statement::Include: $sign zero!');
+					}
+
 					my $h = { 
 							'filename'    => $file,
 							'line_number' => $node->line_number,
@@ -374,7 +390,7 @@ sub ppi_process {
 							'namespace'   => $ns,
 							'type'   	  => 'var_our',
 							'var_short'   => $_,
-							'var_full'    => $sign . $ns . '::' .$varname,
+							'var_full'    => ( $sign || '' ). $ns . '::' . $varname,
 					};
 	
 					dbh_insert_hash({ h => $h, t => 'tags' });
@@ -382,6 +398,7 @@ sub ppi_process {
 			}
 
 		};
+###PPI_Statement_Package
 		$node->isa( 'PPI::Statement::Package' ) && do { 
 			$ns = $node->namespace; 
 
@@ -607,6 +624,7 @@ sub tags_add {
 
 	return $self;
 }
+
 
 1;
  
