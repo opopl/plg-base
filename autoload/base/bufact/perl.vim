@@ -52,6 +52,7 @@ endf
 
 function! base#bufact#perl#ppi_vars ()
 	call base#buf#start()
+
 	let file = b:file
 	let vars = []
 
@@ -73,6 +74,8 @@ perl << eof
 
 	my $f = sub { $_[1]->isa( 'PPI::Statement::Variable' ) };
 	my @v = @{ $DOC->find( $f ) || [] };
+
+	VimMsg(Dumper \@v);
 eof
 	call base#buf#open_split({ 'lines' : lines_tags })
 endf

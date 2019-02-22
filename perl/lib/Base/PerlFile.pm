@@ -21,7 +21,6 @@ use List::MoreUtils qw(uniq);
 use DBI;
 use File::stat;
 
-
 use Base::DB qw(
 	dbh_insert_hash
 	dbh_select
@@ -111,18 +110,45 @@ sub init_db {
 
 	my $dbfile = $self->{dbfile} || ':memory:';
 
-	$dbh = DBI->connect("dbi:SQLite:dbname=$dbfile","","");
+	my $o = {
+		PrintError       => 0,
+		RaiseError       => 1,
+		AutoCommit       => 1,
+		FetchHashKeyName => 'NAME_lc',
+	};
+
+	$dbh = DBI->connect("dbi:SQLite:dbname=$dbfile","","",$o);
 
 	$Base::DB::DBH = $dbh;
 
 	my @q;
-###t_tags
+	my @drop;
+
+	push @drop,
+		qq{ DROP TABLE IF EXISTS `files` } ,
+		#qq{ DROP TABLE IF EXISTS `tags` } ,
+		#qq{ DROP TABLE IF EXISTS `tags_write` } 
+	;
+	push @q, @drop;
+
+###t_files
 	push @q,
 		qq{
-			create table `tags` (
+			CREATE TABLE IF NOT EXISTS `files` (
+				`id` INT AUTO_INCREMENT,
+				`file` VARCHAR(1024) NOT NULL UNIQUE,
+				`file_mtime` VARCHAR(1024) NOT NULL,
+				`dir` VARCHAR(1024) NOT NULL,
+				PRIMARY KEY(`id`)
+			);
+		},
+###t_tags
+		qq{
+			create table if not exists `tags` (
 				`id` int auto_increment,
 				`filename` varchar(1024),
 				`file_mtime` varchar(1024),
+				`dir` varchar(1024),
 				`namespace` varchar(1024),
 				`subname_short` varchar(1024),
 				`subname_full` varchar(1024),
@@ -142,7 +168,7 @@ sub init_db {
 		},
 ###t_tags_write
 		qq{
-			create table `tags_write` (
+			create table if not exists `tags_write` (
 				`id` int auto_increment,
 				`tag` varchar(1024),
 				`file` varchar(1024),
@@ -153,7 +179,15 @@ sub init_db {
 		;
 	
 	foreach my $q (@q) {
-		$dbh->do($q);
+		eval { $dbh->do($q); };
+		if ($@) { 
+			my @m; 
+			push @m,
+				'FAIL: dbh->do(...)',
+				'q:',$q,
+				'dbh->errstr:',$dbh->errstr; 
+			die join "\n" => @m;
+		}
 	}
 
 	return $self;
@@ -192,7 +226,6 @@ sub load_files_source {
 	
 	foreach my $dir (@$dirs) {
 		next unless -d $dir;
-		#chdir $dir;
 
 		find({ 
 			preprocess => sub { @_ },
@@ -200,9 +233,25 @@ sub load_files_source {
 				return unless -f;
 				foreach my $ext (@$exts) {
 					if (/\.$ext$/) {
-						my $file = $File::Find::name;
+						my ($file, $file_mtime);
 						
-						push @files,$file;
+						$file = $File::Find::name;
+
+						my ($st, $file_mtime);
+						$st         = stat($file);
+						$file_mtime = $st->mtime;
+
+						my $h = {
+							file       => $file,
+							file_mtime => $file_mtime,
+							dir        => $dir,
+						};
+						dbh_insert_hash({
+							i => 'INSERT OR IGNORE',
+							t => 'files',
+							h => $h,
+						});
+						
 						last;
 					}
 				}
@@ -210,8 +259,6 @@ sub load_files_source {
 		},$dir
 		);
 	}
-
-	$self->{files_source}=[@files];
 
 	$self;
 }
@@ -278,29 +325,45 @@ sub ppi_get_sub_block {
 	return $block;
 }
 
+sub files_source {
+	my ($self)=@_;
+
+	my $rows = dbh_select({ 
+		f => [qw(file file_mtime)], 
+		t => 'files', 
+	});
+	return $rows;
+}
+
 sub ppi_process {
 	my ($self,$ref)=@_;
 
-	my $files = $ref->{files} || $self->{files_source} || [];
+	my $files = $ref->{files} || $self->files_source || [];
 
-	my ($file, $file_mtime);
-
-	$file = $ref->{file};
-
-	my $st         = stat($file);
-	my $file_mtime = $st->mtime;
-
+	my ($file,$file_mtime) = @{$ref}{qw(file file_mtime)};
 	$files = [] if $file;
 
 	if (@$files) {
-		foreach my $file (@$files) {
-			my $r = $ref;
-			$r->{file}=$file;
-			$self->ppi_process($r);
+		foreach my $f (@$files) {
+			$self->ppi_process($f);
 		}
 	}
 
+
 	unless ($file && -f $file) { return $self; }
+
+	my $rows = dbh_select({
+		s    => 'SELECT DISTINCT',
+		f    => [qw(file_mtime)],
+		t    => 'tags',
+		cond => qq{ where filename = ? },
+		p    => [$file],
+	});
+	my ($mtime_db) = map { $_->{file_mtime} } @$rows;
+	# file is modified compared to its data stored in database
+	if (defined $mtime_db && ($file_mtime == $mtime_db)) {
+		return $self;
+	}
 
  	my $DOC; 
 	eval { $DOC = PPI::Document->new($file); };
@@ -568,8 +631,21 @@ sub write_tags {
 	return $self;
 }
 
+sub generate_from_source {
+	my ($self)=@_;
+
+	$self
+		->load_files_source
+		->ppi_process
+		->tagfile_rm
+		->write_tags
+		;
+	
+	return $self;
+}
+
 sub tagfile_rm {
-	my ($self,$ref)=@_;
+	my ($self,$ref) = @_;
 
 	my $tagfile = $ref->{tagfile} || $self->{tagfile} || '';
 	rmtree $tagfile if -e $tagfile;

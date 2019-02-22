@@ -71,10 +71,12 @@ sub dbh_select {
 	# additional conditions
 	my $cond = $ref->{cond} || '';
 
+	my $SELECT = $ref->{s} || 'SELECT';
+
 	my $e = q{`};
 	my $f = join ',' => map { $e . $_ . $e } @f;
 	my $q = qq| 
-		SELECT $f FROM `$t` $cond
+		$SELECT $f FROM `$t` $cond
 	|;
 	# query if input
 	$q = $ref->{q} if $ref->{q};
@@ -82,14 +84,21 @@ sub dbh_select {
 	my $sth;
  	eval { $sth	= $dbh->prepare($q); };
 	if($@){ $warn->($@,$dbh->errstr,$q);  }
+
+	if (not defined $sth) {
+		$warn->('sth undefined!','query:',$q,'params:',@p,'dbh->errstr=',$dbh->errstr);
+		return [];
+	}
 	
 	eval { $sth->execute(@p) or do { $warn->($dbh->errstr,$q,@p); }; };
 	if($@){ $warn->($@,$dbh->errstr,$q,@p); }
 
 	my $rows=[];
+
 	while (my $row = $sth->fetchrow_hashref()) {
 		push @$rows,$row;
 	}
+
 	return $rows;
 }
 

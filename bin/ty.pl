@@ -155,7 +155,7 @@ sub run_pf {
 		'dirs:   ',
 			( map { "\t" . $_ } @dirs ),
 		'dbfile:   ',
-			$dbfile
+			"\t" . $dbfile,
 		;
 	$self->log(@m);
 
@@ -177,12 +177,7 @@ sub run_pf {
 
 	my $pf = Base::PerlFile->new(%o);
 
-	$pf
-		->load_files_source
-		->ppi_process
-		->tagfile_rm
-		->write_tags
-	;
+	$pf->generate_from_source;
 
 	$self;
 }
