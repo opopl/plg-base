@@ -599,11 +599,13 @@ fun! base#fileopen(ref)
 
  if strlen(a) | let action = a | endif
 
- let open_if_exist=get(opts,'open_if_exist',1)
+ let anew_if_absent = get(opts,'anew_if_absent',0)
 
  for file in files
-	if (open_if_exist && !filereadable(file))
-		continue
+	if ! filereadable(file)
+		if ! anew_if_absent
+			continue
+		endif
 	endif
 
   exe action . ' ' . file
