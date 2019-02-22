@@ -1,4 +1,8 @@
 
+function! base#bufact#perl#insert_snip ()
+	call base#buf#insert_snip ()
+endf
+
 function! base#bufact#perl#pod_process ()
 	call base#buf#start()
 perl << eof

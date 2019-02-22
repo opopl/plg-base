@@ -192,6 +192,20 @@ function! base#buf#onload ()
 	
 endfunction
 
+function! base#buf#insert_snip ()
+	call base#buf#start()
+
+	let ft_old = exists('g:snippet_ft') ? g:snippet_ft : ''
+
+	let g:snippet_ft = input('snippet ft:','','custom,snipMate#complete#snips')
+
+	let snip = input('snippet:','','custom,snipMate#complete#snippetNames')
+
+	call snipMate#SnippetInsert(snip)
+
+	let g:snippet_ft = ft_old
+endfunction
+
 function! base#buf#au_write_post ()
 	call base#buf#start()
 
