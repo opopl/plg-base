@@ -16,6 +16,7 @@ use Getopt::Long qw(GetOptions);
 use File::Spec::Functions qw(catfile);
 use File::Slurp qw(append_file);
 use File::Path qw(rmtree);
+use List::MoreUtils qw(uniq);
 
 use Base::PerlFile;
 
@@ -126,7 +127,7 @@ sub run {
 sub run_pf {
 	my $self = shift;
 
-	my @dirs = map { abs_path($_) } @{ $OPT{dir} || [] };
+	my @dirs =  @{ $OPT{dir} || [] };
 	my $tfile = $OPT{tfile} || catfile(getcwd(),'tygs');
 
 	my $dbfile = $OPT{db} || ':memory:';
@@ -138,6 +139,10 @@ sub run_pf {
 	unless (@dirs) {
 		$self->warn('no dirs!'); return $self;
 	}
+
+	@dirs = map { abs_path($_) } @dirs;
+	@dirs = uniq(@dirs);
+
 
 	unless ($tfile) {
 		$self->warn('no tfile!'); return $self;
@@ -177,7 +182,11 @@ sub run_pf {
 
 	my $pf = Base::PerlFile->new(%o);
 
+	my $start = time();
 	$pf->generate_from_source;
+	my $end = time();
+
+	$self->log('TIME SPENT:',"\t" . ($end-$start));
 
 	$self;
 }

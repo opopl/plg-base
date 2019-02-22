@@ -138,7 +138,7 @@ sub init_db {
 				`id` INT AUTO_INCREMENT,
 				`file` VARCHAR(1024) NOT NULL UNIQUE,
 				`file_mtime` VARCHAR(1024) NOT NULL,
-				`dir` VARCHAR(1024) NOT NULL,
+				`dir` VARCHAR(1024) NOT NULL UNIQUE,
 				PRIMARY KEY(`id`)
 			);
 		},
@@ -223,6 +223,8 @@ sub load_files_source {
 	my $exts = $ref->{exts} || $self->{exts} || [];
 
 	my @files;
+
+	@$dirs = uniq(@$dirs);
 	
 	foreach my $dir (@$dirs) {
 		next unless -d $dir;
