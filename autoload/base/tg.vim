@@ -245,6 +245,7 @@ function! base#tg#update (...)
 		let ok= base#tg#ok(okref)
 		return
 
+"""tgupdate_help_python
 	elseif tgid == 'help_python'
 		call pymy#help#helptags()
 

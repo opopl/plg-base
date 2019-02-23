@@ -63,6 +63,7 @@ import vim
 import sqlite3
 
 from tabulate import tabulate
+from collections import deque
 
 dbfile = vim.eval('dbfile')
 query = vim.eval('query')
@@ -73,16 +74,17 @@ c = conn.cursor()
 c.execute(query)
 rows = c.fetchall()
 desc = map(lambda x: x[0], c.description)
-t = tabulate(rows)
-print desc
-#print t
+t = tabulate(rows,headers = desc)
+lines = deque(t.split("\n"))
+
+lines.extendleft([ 'Query:', "\t" + query ])
 
 conn.commit()
 conn.close()
 
-#for table in tables:
-#	vim.command("let table = '" + table + "'")
-#	vim.command('call add(lines,table)')
+for line in lines:
+	vim.command("let line = '" + line + "'")
+	vim.command('call add(lines,line)')
 	
 eof
 	call base#buf#open_split({ 'lines' : lines })
