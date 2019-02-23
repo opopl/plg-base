@@ -136,44 +136,44 @@ sub init_db {
 		qq{
 			CREATE TABLE IF NOT EXISTS `files` (
 				`id` INT AUTO_INCREMENT,
-				`file` VARCHAR(1024) NOT NULL UNIQUE,
-				`file_mtime` VARCHAR(1024) NOT NULL,
-				`dir` VARCHAR(1024) NOT NULL,
+				`file` TEXT NOT NULL UNIQUE,
+				`file_mtime` TEXT NOT NULL,
+				`dir` TEXT NOT NULL,
 				PRIMARY KEY(`id`)
 			);
 		},
 ###t_tags
 		qq{
-			create table if not exists `tags` (
-				`id` int auto_increment,
-				`filename` varchar(1024),
-				`file_mtime` varchar(1024),
-				`dir` varchar(1024),
-				`namespace` varchar(1024),
-				`subname_short` varchar(1024),
-				`subname_full` varchar(1024),
-				`line_number` varchar(1024),
-				`var_full` varchar(1024),
-				`var_short` varchar(1024),
-				`var_decl` varchar(1024),
-				`var_parent_class` varchar(1024),
+			CREATE TABLE IF NOT EXISTS `tags` (
+				`id` INT AUTO_INCREMENT,
+				`filename` TEXT,
+				`file_mtime` TEXT,
+				`dir` TEXT,
+				`namespace` TEXT,
+				`subname_short` TEXT,
+				`subname_full` TEXT,
+				`line_number` TEXT,
+				`var_full` TEXT,
+				`var_short` TEXT,
+				`var_decl` TEXT,
+				`var_parent_class` TEXT,
 				`var_parent_lineno` int,
-				`var_type` varchar(1024),
-				`type` varchar(1024),
-				`include_module` varchar(1024),
-				`include_arguments` varchar(1024),
-				`content` text,
+				`var_type` TEXT,
+				`type` TEXT,
+				`include_module` TEXT,
+				`include_arguments` TEXT,
+				`content` TEXT,
 				primary key(`id`)
 			);
 		},
 ###t_tags_write
 		qq{
 			create table if not exists `tags_write` (
-				`id` int auto_increment,
-				`tag` varchar(1024),
-				`file` varchar(1024),
-				`address` varchar(1024),
-				primary key(`id`)
+				`id` INT AUTO_INCREMENT,
+				`tag` TEXT,
+				`file` TEXT,
+				`address` TEXT,
+				PRIMARY KEY(`id`)
 			);
 		},
 		;
