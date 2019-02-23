@@ -86,6 +86,7 @@ endf
 
 function! base#bufact#perl#knutov ()
 	call base#buf#start()
+
 	let file = b:file
 	
 	let LINES=[]
@@ -100,8 +101,14 @@ eof
 
 endfunction
 
+function! base#bufact#perl#pod_to_text ()
+	call base#buf#start()
+
+endfunction
+
 function! base#bufact#perl#extract_subs ()
 	call base#buf#start()
+
 	let file = b:file
 	let lines = []
 perl << eof
@@ -116,8 +123,40 @@ eof
 	
 endfunction
 
+"""ppi_load
+function! base#bufact#perl#ppi_process ()
+	call base#buf#start()
+
+	let file = b:file
+
+	let lines = []
+perl << eof
+	use Vim::Perl qw(VimVar);
+	use Base::PerlFile;
+
+	my $lines = [ $curbuf->Get(1 .. $curbuf->Count) ];
+
+	$Vim::Perl::CURBUF = $curbuf;
+
+	my $file = VimVar('file');
+	my %o = (
+		sub_log  => sub { VimMsg(@_); },
+		sub_warn => sub { VimWarn(@_); },
+		dbfile	 => ':memory:',
+	);
+
+	our $PF = Base::PerlFile->new(%o);
+	$PF
+		->ppi_process({ file => $file });
+eof
+
+endfunction
+
+
+"""ppi_list_subs
 function! base#bufact#perl#ppi_list_subs ()
 	call base#buf#start()
+
 	let file = b:file
 
 	let lines = []

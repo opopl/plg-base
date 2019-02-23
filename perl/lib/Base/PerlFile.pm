@@ -124,12 +124,12 @@ sub init_db {
 	my @q;
 	my @drop;
 
-	push @drop,
-		qq{ DROP TABLE IF EXISTS `files` } ,
-		#qq{ DROP TABLE IF EXISTS `tags` } ,
-		#qq{ DROP TABLE IF EXISTS `tags_write` } 
+	push @drop,qw(files),
+		#qw(tags),
+		#qw(tags_write),
+		;
 	;
-	push @q, @drop;
+	push @q, map { qq{DROP TABLE IF EXIST `$_`} } @drop;
 
 ###t_files
 	push @q,
@@ -233,9 +233,7 @@ sub load_files_source {
 				return unless -f;
 				foreach my $ext (@$exts) {
 					if (/\.$ext$/) {
-						my ($file, $file_mtime);
-						
-						$file = $File::Find::name;
+						my $file = $File::Find::name;
 
 						my ($st, $file_mtime);
 						$st         = stat($file);

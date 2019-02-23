@@ -2,18 +2,16 @@
 function! base#bufact#sqlite#show_tables ()
 	call base#buf#start()
 
-	let db_file = b:file
-	let tables = []
+	let dbfile = b:file
+	let lines = []
 
 python << eof
 
-import sqlite3
-import re
-import os
 import vim
+import sqlite3
 
-db_file = vim.eval('db_file')
-conn = sqlite3.connect(db_file)
+dbfile = vim.eval('dbfile')
+conn = sqlite3.connect(dbfile)
 c = conn.cursor()
 
 q='''
@@ -33,15 +31,49 @@ q='''
 		ORDER BY 1'''
 
 c.execute(q)
-tables = c.fetchall()
+tables = [r[0] for r in c.fetchall()]
 
 conn.commit()
 conn.close()
 
 for table in tables:
 	vim.command("let table = '" + table + "'")
-	vim.command('call add(tables,table)')
+	vim.command('call add(lines,table)')
 	
 eof
-	call base#buf#open_split({ 'lines' : tables })
+	call base#buf#open_split({ 'lines' : lines })
+endfunction
+
+function! base#bufact#sqlite#query ()
+	call base#buf#start()
+
+	let dbfile = b:file
+	let query = input('query:','')
+
+	let lines = []
+
+python << eof
+
+import vim
+import sqlite3
+
+dbfile = vim.eval('dbfile')
+query = vim.eval('query')
+
+conn = sqlite3.connect(dbfile)
+c = conn.cursor()
+
+c.execute(query)
+tables = [r[0] for r in c.fetchall()]
+
+conn.commit()
+conn.close()
+
+for table in tables:
+	vim.command("let table = '" + table + "'")
+	vim.command('call add(lines,table)')
+	
+eof
+	call base#buf#open_split({ 'lines' : lines })
+
 endfunction

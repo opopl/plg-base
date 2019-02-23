@@ -103,7 +103,7 @@ sub dhelp {
 		--dir DIR1 --dir DIR2   (array)
 		--inc 
 
-		--db DBFILE
+		--db dbfile
 	EXAMPLES
 		$Script --inc
 

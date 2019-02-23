@@ -435,15 +435,15 @@ sub db_tables {
 }
 
 #VimMsg($plgbase->db_table_exists('datfiles'));
+#
 
 sub db_table_exists {
-	my $self=shift;
-
-	my $tb=shift;
+	my ($self, $tb) = @_;
 
 	my %tables = map { (defined $_) ? ($_ => 1 ) : () } $self->db_tables;
-	$tables{$tb} ? 1 : 0;
+	my $ex = $tables{$tb} ? 1 : 0;
 
+	return $ex;
 
 }
 
