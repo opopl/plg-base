@@ -49,6 +49,11 @@ function! base#bufact#sqlite#query ()
 
 	let dbfile = b:file
 	let query = input('query:','')
+	let limit = input('limit:','10')
+
+	if strlen(limit)
+		let query .= ' limit ' . limit 
+	endif
 
 	let lines = []
 
@@ -57,6 +62,8 @@ python << eof
 import vim
 import sqlite3
 
+from tabulate import tabulate
+
 dbfile = vim.eval('dbfile')
 query = vim.eval('query')
 
@@ -64,14 +71,18 @@ conn = sqlite3.connect(dbfile)
 c = conn.cursor()
 
 c.execute(query)
-tables = [r[0] for r in c.fetchall()]
+rows = c.fetchall()
+desc = map(lambda x: x[0], c.description)
+t = tabulate(rows)
+print desc
+#print t
 
 conn.commit()
 conn.close()
 
-for table in tables:
-	vim.command("let table = '" + table + "'")
-	vim.command('call add(lines,table)')
+#for table in tables:
+#	vim.command("let table = '" + table + "'")
+#	vim.command('call add(lines,table)')
 	
 eof
 	call base#buf#open_split({ 'lines' : lines })

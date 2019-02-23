@@ -245,6 +245,17 @@ function! base#tg#update (...)
 		let ok= base#tg#ok(okref)
 		return
 
+	elseif tgid == 'help_python'
+		call pymy#help#helptags()
+
+		let okref = { 
+			\	"tgid" : tgid,
+			\	"ok"   : 1,
+			\	"add"  : 0, 
+			\	}
+
+		let ok = base#tg#ok(okref)
+
 """tgupdate_help_plg_perlmy
 	elseif tgid == 'help_plg_perlmy'
  "   call idephp#help#helptags()

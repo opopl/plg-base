@@ -43,6 +43,7 @@ plg_jde
 plg_pdoc
 plg_perlsupport
 plg_perlmy
+plg_pymy
 plg_projs
 plg_tagbar
 plg_tex
@@ -54,5 +55,7 @@ plg_vim-php-manual
 mkvimrc
 idephp_help
 help_perlmy
+# python
+help_python
 ty_perl_htmltool
 ty_perl_inc
