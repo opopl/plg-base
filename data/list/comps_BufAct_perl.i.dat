@@ -5,7 +5,7 @@ ppi_list_subs
 ppi_vars
 ppi_process
 ####
-pod_to_text
+pod_to_vimhelp
 ###other
 #knutov
 #extract_subs

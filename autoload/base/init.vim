@@ -491,14 +491,9 @@ function! base#init#vars (...)
     		call base#varset('pdfviewer',v)
     endif
 
-		let plugins_all = base#find({ 
-			\	"dirids"    : ['plg'],
-			\	"relpath"   : 1,
-			\	"subdirs"   : 0,
-			\	"dirs_only" : 1,
-			\	"pat_exclude" : '^.git',
-			\	})
-    call base#varset('plugins_all',plugins_all)
+		call base#var#update('plugins_all')
+
+
 
     call base#echoprefixold()
 endf    

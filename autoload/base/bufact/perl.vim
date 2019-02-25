@@ -3,6 +3,13 @@ function! base#bufact#perl#insert_snip ()
 	call base#buf#insert_snip ()
 endf
 
+function! base#bufact#perl#pod_to_vimhelp ()
+	call base#buf#start()
+perl << eof
+	use Vim::Perl qw(:funcs :vars);
+eof
+endf
+
 function! base#bufact#perl#pod_process ()
 	call base#buf#start()
 perl << eof

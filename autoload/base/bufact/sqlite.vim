@@ -14,24 +14,36 @@ dbfile = vim.eval('dbfile')
 conn = sqlite3.connect(dbfile)
 c = conn.cursor()
 
+#q='''
+#		SELECT 
+#			name 
+#		FROM 
+#			sqlite_master
+#		WHERE 
+#			type IN ('table','view') AND name NOT LIKE 'sqlite_%'
+#		UNION ALL
+#		SELECT 
+#			name 
+#		FROM 
+#			sqlite_temp_master
+#		WHERE 
+#			type IN ('table','view')
+#		ORDER BY 1'''
 q='''
 		SELECT 
-			name 
+			name
 		FROM 
 			sqlite_master
 		WHERE 
 			type IN ('table','view') AND name NOT LIKE 'sqlite_%'
-		UNION ALL
-		SELECT 
-			name 
-		FROM 
-			sqlite_temp_master
-		WHERE 
-			type IN ('table','view')
-		ORDER BY 1'''
+'''
 
 c.execute(q)
 tables = [r[0] for r in c.fetchall()]
+
+for table in tables:
+	q='''SELECT * FROM ''' + table 
+
 
 conn.commit()
 conn.close()
@@ -77,7 +89,8 @@ desc = map(lambda x: x[0], c.description)
 t = tabulate(rows,headers = desc)
 lines = deque(t.split("\n"))
 
-lines.extendleft([ 'Query:', "\t" + query ])
+h = [ 'DATABASE', "\t" + dbfile, 'QUERY:', "\t" + query, 'OUTPUT:' ]
+lines.extendleft(reversed(h))
 
 conn.commit()
 conn.close()

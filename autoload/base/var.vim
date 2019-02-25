@@ -11,11 +11,23 @@ function! base#var#update (varname)
 			\	'listlines' : 'ListLines',
 			\	}
 
+"""var_update_fileids
 	if varname == 'fileids'
 		let files = base#exefile#files()
 
 		let fileids = sort(keys(files))
 		call base#varset('exefileids',fileids)
+
+"""var_update_plugins_all
+	elseif varname == 'plugins_all'
+		let var = base#find({ 
+			\	"dirids"    : ['plg'],
+			\	"relpath"   : 1,
+			\	"subdirs"   : 0,
+			\	"dirs_only" : 1,
+			\	"pat_exclude" : '^.git',
+			\	})
+    call base#varset(varname,var)
 
   elseif base#inlist(varname,datlist)
     let datfile = get(datfiles,varname,'')
