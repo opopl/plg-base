@@ -1911,11 +1911,11 @@ function! base#warn (ref)
 
 		let text = prefix . text
 		
-		exe 'echohl '.hl
-		echo text
-		echohl None
+		"exe 'echohl '.hl
+		"echo text
+		"echohl None
 
-		call base#log([text])
+		call base#log([text],'WARNING')
     
 endfunction
 

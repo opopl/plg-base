@@ -46,10 +46,10 @@ function! base#var#update (varname)
 		return
 	endif
 
-	redraw!
-	echohl MoreMsg
-	echo '(base#var#update) updated: ' . varname
-	echohl None
+	let prf={ 'prf' : '(base#var#update)' }
+	call base#log([
+		\	'updated: ' . varname,
+		\	],prf)
 	return
 
 endfunction

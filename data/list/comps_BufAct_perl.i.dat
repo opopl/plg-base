@@ -1,10 +1,10 @@
 insert_snip
-pod_process
 ###ppi
 ppi_list_subs
 ppi_vars
 ppi_process
-####
+###pod
+pod_process
 pod_to_vimhelp
 ###other
 #knutov
