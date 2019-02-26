@@ -10,6 +10,23 @@ perl << eof
 eof
 endf
 
+function! base#bufact#perl#execute ()
+	call base#buf#start()
+
+	let cmds = []
+	let cmd = 'perl ' . b:file
+
+	call add(cmds,cmd)
+
+	let ok = base#sys({ 
+		\	"cmds"         : cmds,
+		\	"split_output" : 1,
+		\	})
+	let out    = base#varget('sysout',[])
+	let outstr = base#varget('sysoutstr','')
+
+endf
+
 function! base#bufact#perl#pod_process ()
 	call base#buf#start()
 perl << eof

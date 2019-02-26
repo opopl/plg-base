@@ -1915,7 +1915,7 @@ function! base#warn (ref)
 		"echo text
 		"echohl None
 
-		call base#log([text],'WARNING')
+		call base#log([text],{ 'prf' : 'WARNING' })
     
 endfunction
 

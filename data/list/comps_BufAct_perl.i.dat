@@ -6,6 +6,7 @@ ppi_process
 ###pod
 pod_process
 pod_to_vimhelp
+execute
 ###other
 #knutov
 #extract_subs
