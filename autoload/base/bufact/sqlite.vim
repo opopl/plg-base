@@ -73,6 +73,7 @@ python << eof
 
 import vim
 import sqlite3
+import re
 
 from tabulate import tabulate
 from collections import deque
@@ -96,7 +97,8 @@ conn.commit()
 conn.close()
 
 for line in lines:
-	vim.command("let line = '" + line + "'")
+	line_e = re.escape(line)
+	vim.command("let line = " + '"' + line_e + '"')
 	vim.command('call add(lines,line)')
 	
 eof
