@@ -391,14 +391,18 @@ function! base#cd(dir,...)
     let ref = {}
     if a:0 | let ref = a:1 | endif
 
+		let dir = a:dir
+
     let ech = get(ref,'echo',1)
 
     if ech
 				try 
-        	exe 'cd ' . a:dir
-	        echohl MoreMsg
-	        echo 'Changed to: ' . a:dir
-	        echohl None
+					if isdirectory(dir)
+	        	silent exe 'cd ' . dir
+		        echohl MoreMsg
+		        echo 'Changed to: ' . dir
+		        echohl None
+					endif
 				endtry
 
 				let cwd = getcwd()

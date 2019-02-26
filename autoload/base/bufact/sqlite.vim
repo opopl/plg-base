@@ -97,7 +97,7 @@ conn.commit()
 conn.close()
 
 for line in lines:
-	line_e = re.escape(line)
+	line_e = re.escape(line).replace('\\\\', '\\')
 	vim.command("let line = " + '"' + line_e + '"')
 	vim.command('call add(lines,line)')
 	
