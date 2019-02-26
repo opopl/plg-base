@@ -394,10 +394,15 @@ function! base#cd(dir,...)
     let ech = get(ref,'echo',1)
 
     if ech
-        exe 'cd ' . a:dir
-        echohl MoreMsg
-        echo 'Changed to: ' . a:dir
-        echohl None
+				try 
+        	exe 'cd ' . a:dir
+	        echohl MoreMsg
+	        echo 'Changed to: ' . a:dir
+	        echohl None
+				endtry
+
+				let cwd = getcwd()
+
     endif
 endf
 

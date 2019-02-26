@@ -31,6 +31,7 @@ my %EXPORT_TAGS = (
 'funcs' => [qw( 
 	dbh_insert_hash
 	dbh_select
+	dbh_do
 )],
 'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -39,7 +40,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 our @EXPORT  = qw( );
 our $VERSION = '0.01';
 
-our $DBH;
+our ($DBH,$WARN);
 
 =head1 EXPORTED VARS
 
@@ -161,6 +162,40 @@ sub dbh_insert_hash {
 		return;
 	}
 
+	return $ok;
+}
+
+=head2 dbh_do
+
+=head3 Usage
+
+=cut
+
+sub dbh_do  {
+	my ($ref)=@_;
+
+	my $dbh = $ref->{dbh} || $DBH;
+	my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
+
+	my $q = $ref->{q} || '';
+	my $p = $ref->{p} || [];
+
+	my $ok;
+	eval { $ok = $dbh->do($q); };
+	if ($@) {
+		my @w; 
+		push @w,
+			'Query:',
+				"\t".$q,
+			'Query parameters:',
+				"\t".Dumper($p),
+			'DBI $dbh->errstr:',
+				"\t".$dbh->errstr,
+			'Captured error output:',
+				"\t".$@
+			;
+		$warn->(@w);
+	}
 	return $ok;
 }
 

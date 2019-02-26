@@ -21,7 +21,23 @@ function! base#cmd#FIND (...)
 			\	'lines' : ff })
 		call base#CD(dirid)
 
-	elseif opt == 'perl_exts'
+	elseif opt == 'cwd_perl_exts'
+		let exts_a = base#qw('pm pl t')
+		let dir = getcwd()
+
+		let dirs = []
+		call add(dirs,dir)
+
+		let pat    = input('Pattern:','')
+
+		let ff = base#find({ 
+			\	"dirs"  : [dir],
+			\	"exts"    : exts_a,
+			\	"relpath" : 1,
+			\	"pat"     : pat,
+			\	})
+		call base#buf#open_split({ 
+			\	'lines' : ff })
 
 	endif
 	

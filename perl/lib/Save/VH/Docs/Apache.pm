@@ -33,6 +33,8 @@ sub run {
 		s/^mod_//g;
 	};
 
+	$ref->{dir} = $dir;
+
 	# where to save VimHelp files
 	$ref->{vhdir} = catfile($ENV{plg},qw(idephp help apache httpd_docs ));
 

@@ -18,11 +18,35 @@ use File::Find qw(find);
 my @files;
 my @exts=qw(html htm);
 
-=head2 METHODS
+=head1 NAME
+
+Save::VH::Docs - vimhelp converter from HTML files
+
+=head1 METHODS
 
 =cut
 
-=head3 run
+=head2 run
+
+=head3 Usage
+
+	my $sv = Base::VH::Docs->new;
+
+	my $ref = {
+		# input directory with html files
+		dir => $dir,
+
+		# callback which returns vimhelp tag to be
+		# 	store as *tag* inside the generated vimhelp file 
+		tagsub => sub { ... },
+
+		code_filename => sub { ... },
+	 
+		# where to store vimhelp files
+		vhdir => $vhdir,
+	};
+
+	$sv->run($ref);
 
 =cut
 
@@ -33,6 +57,17 @@ sub run {
 	my $tagsub = $ref->{tagsub} || sub { my $file = shift; basename($file); };
 
 	my $code_filename = $ref->{code_filename} || sub {};
+
+	my $vhdir = $ref->{vhdir} || '';
+
+	return unless $vhdir;
+	mkpath $vhdir unless -d $vhdir;
+
+	my($actions,$xpath_rm,$xpath_cb);
+
+	$actions  = $ref->{actions} || [qw(replace_a replace_pre)];
+	$xpath_rm = $ref->{xpath_rm} || undef;
+	$xpath_cb = $ref->{xpath_cb} || [ ];
 
 	find({ 
 		wanted => sub { 
@@ -46,11 +81,7 @@ sub run {
 	},$dir
 	);
 
-	our $htw = HTML::Work->new;
-	our $vhdir = $ref->{vhdir} || '';
-
-	return unless $vhdir;
-	mkpath $vhdir unless -d $vhdir;
+	my $htw = HTML::Work->new;
 	
 	foreach my $file (@files) {
 		local $_ = basename( $file );
@@ -59,16 +90,13 @@ sub run {
 	
 		print $_ . "\n";
 	
-		my ($in_html,$out_vh,$tag,$actions,$xpath_rm,$xpath_cb);
+		my ($in_html,$out_vh,$tag);
 
 		$tag      = $tagsub->($_);
 		
 		$in_html  = $file;
 		$out_vh   = catfile($vhdir,$_ . '.txt');
 
-		$actions  = $ref->{actions} || [qw(replace_a replace_pre)];
-		$xpath_rm = $ref->{xpath_rm} || undef;
-		$xpath_cb = $ref->{xpath_cb} || [ ];
 	
 		push @$xpath_cb, { 
 			'xpath' => '//pre[@class="code"]', 
