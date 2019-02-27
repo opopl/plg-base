@@ -130,6 +130,9 @@ function! base#tg#tfile (...)
 	elseif tgid == 'help_perlmy'
 		let tfile = base#qw#catpath('plg','perlmy doc tags')
 
+	elseif tgid == 'help_python'
+		let tfile = base#qw#catpath('plg','pymy doc tags')
+
 	else
 		let tfile = base#file#catfile([ tdir, tgid . '.tags' ])
 	endif
@@ -256,6 +259,7 @@ function! base#tg#update (...)
 			\	}
 
 		let ok = base#tg#ok(okref)
+		return
 
 """tgupdate_help_plg_perlmy
 	elseif tgid == 'help_plg_perlmy'

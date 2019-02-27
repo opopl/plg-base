@@ -86,11 +86,11 @@ c = conn.cursor()
 
 c.execute(query)
 rows = c.fetchall()
-desc = map(lambda x: x[0], c.description)
+desc = map(lambda x: re.escape(x[0]), c.description)
 t = tabulate(rows,headers = desc)
 lines = deque(t.split("\n"))
 
-h = [ 'DATABASE', "\t" + dbfile, 'QUERY:', "\t" + query, 'OUTPUT:' ]
+h = [ 'DATABASE', "\t" + re.escape(dbfile), 'QUERY:', "\t" + query, 'OUTPUT:' ]
 lines.extendleft(reversed(h))
 
 conn.commit()
