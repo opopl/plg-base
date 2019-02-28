@@ -104,6 +104,7 @@ my @ex_vars_array = qw(
           VimSetLine
           VimAppend
           VimGrep
+          VimFileOpen
           VimInput
           VimJoin
           VimLen
@@ -390,6 +391,29 @@ sub VimVar {
         wantarray ? %$res : $res;
     }
 
+}
+
+=head2 VimFileOpen
+
+=head3 Usage 
+
+	my $ref={
+		file => $file,
+	};
+	VimFileOpen($ref);
+
+=cut
+
+sub VimFileOpen {
+	my ($ref) = @_;
+	my $file = $ref->{file};
+
+	$file = escape('printable',$file);
+	my $cmd = qq{ 
+		let f="$file"
+		exe 'edit ' . f  
+	};
+	VimCmd($cmd);
 }
 
 sub VimVarDump {

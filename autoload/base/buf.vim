@@ -197,7 +197,7 @@ function! base#buf#insert_snip ()
 
 	let ft_old = exists('g:snippet_ft') ? g:snippet_ft : ''
 
-	let g:snippet_ft = input('snippet ft:','','custom,snipMate#complete#snips')
+	let g:snippet_ft = input('snippet ft:','','custom,snipMate#complete#snips_all')
 
 	let snip = input('snippet:','','custom,snipMate#complete#snippetNames')
 

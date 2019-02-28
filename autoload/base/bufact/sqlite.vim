@@ -1,4 +1,12 @@
 
+
+function! base#bufact#sqlite#table_info ()
+	call base#buf#start()
+
+	let dbfile = b:file
+
+endf
+
 function! base#bufact#sqlite#show_tables ()
 	call base#buf#start()
 
@@ -41,10 +49,6 @@ q='''
 c.execute(q)
 tables = [r[0] for r in c.fetchall()]
 
-for table in tables:
-	q='''SELECT * FROM ''' + table 
-
-
 conn.commit()
 conn.close()
 
@@ -60,48 +64,22 @@ function! base#bufact#sqlite#query ()
 	call base#buf#start()
 
 	let dbfile = b:file
-	let query = input('query:','')
+
+	let query = ''
+	while !strlen(query)
+		let query = input('query:','')
+	endw
 	let limit = input('limit:','10')
 
 	if strlen(limit)
-		let query .= ' limit ' . limit 
+		let query .= ' LIMIT ' . limit 
 	endif
 
 	let lines = []
-
-python << eof
-
-import vim
-import sqlite3
-import re
-
-from tabulate import tabulate
-from collections import deque
-
-dbfile = vim.eval('dbfile')
-query = vim.eval('query')
-
-conn = sqlite3.connect(dbfile)
-c = conn.cursor()
-
-c.execute(query)
-rows = c.fetchall()
-desc = map(lambda x: re.escape(x[0]), c.description)
-t = tabulate(rows,headers = desc)
-lines = deque(t.split("\n"))
-
-h = [ 'DATABASE', "\t" + re.escape(dbfile), 'QUERY:', "\t" + query, 'OUTPUT:' ]
-lines.extendleft(reversed(h))
-
-conn.commit()
-conn.close()
-
-for line in lines:
-	line_e = re.escape(line).replace('\\\\', '\\')
-	vim.command("let line = " + '"' + line_e + '"')
-	vim.command('call add(lines,line)')
-	
-eof
+	let lines = pymy#sqlite#query_screen({ 
+		\	'q'      : query,
+		\	'dbfile' : dbfile
+		\	})
 	call base#buf#open_split({ 'lines' : lines })
 
 endfunction

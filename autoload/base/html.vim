@@ -338,11 +338,16 @@ perl << eof
 	use File::Path qw(mkpath);
 
 	use DBI;
-	use Base::DB qw(dbh_insert_hash);
+	use Base::DB qw(
+		dbh_insert_hash 
+		dbh_do
+		dbh_select
+	);
 
 	my $save_db  = VimVar('save_db');
 
 	my $warn = sub { VimWarn($_) for(@_) };
+	$Base::DB::WARN = $warn;
 
 	my $dsn      = "dbi:SQLite:dbname=$save_db";
 	
@@ -354,21 +359,20 @@ perl << eof
 		AutoCommit       => 1,
 		FetchHashKeyName => 'NAME_lc',
 	});
+	$Base::DB::DBH = $dbh;
+
 	my $q = qq{
 		CREATE TABLE IF NOT EXISTS pages  (
-			id INTEGER AUTO_INCREMENT PRIMARY KEY,
 			url TEXT NOT NULL,
 			saved_file TEXT UNIQUE,
 			saved_bname TEXT,
-			saved_urls TEXT,
 			tags TEXT,
 			title TEXT,
 			source_html TEXT,
 			converted_text TEXT
 		);
 	};
-	$dbh->do($q)
-		or do { $warn->($DBI::errstr); return; };
+	dbh_do({ q => $q }) or do { return; };
  
 	my $ref      = VimVar('ref');
 
@@ -376,11 +380,28 @@ perl << eof
 	my $tags  = VimVar('tags');
 	my $title = VimVar('title');
 
+	my $sav = dbh_select({
+		t    => 'pages',
+		f    => [ qw( url saved_file ) ],
+		p    => [ $url ],
+		cond => q{ WHERE url = ? },
+	});
+	if (@$sav) {
+		unless ($ref->{rewrite}) {
+			return;
+		}
+
+		my $cached_file = $rows->{saved_file};
+		if (-e $cached_file) {
+			VimFileOpen({ file => $cached_file});
+		}		
+
+	}
+
 	my $save_dir = VimVar('save_dir');
+	mkpath $save_dir unless -d $save_dir;
 
 	my $saved_bname = VimVar('saved_bname');
-
-	mkpath $save_dir unless -d $save_dir;
 
 	# File::Fetch block
 	use File::Fetch;
@@ -422,7 +443,6 @@ perl << eof
 
 			my $h = { 
 				url         => $url,
-				saved_urls  => $saved_urls,
 				saved_bname => $saved_bname,
 				saved_file  => $saved_file,
 				tags        => $tags,
@@ -430,16 +450,13 @@ perl << eof
 			};
 
 			dbh_insert_hash({ 
-				dbh  => $dbh,
-				warn => $warn,
 				t    => 'pages',
 				h    => $h,
 				i    => qq{INSERT OR IGNORE},
 			});
 			
 			if (-e $saved_file) {
-					my $cmd = qq{ let f='$saved_file' | exe 'edit ' . f  };
-					VimCmd($cmd);
+					VimFileOpen({ file => $saved_file });
 			}
 
 			$dbh->disconnect;
@@ -640,7 +657,7 @@ perl << eof
 				file_local_text => $file_local_text,
 				file_local_html => $file_local_html,
 				doc_id          => $doc_id,
-				    tags        => $doc_tags,
+				tags            => $doc_tags,
 				local_id        => $local_id,
 				contents_html   => $html,
 				contents_text   => $contents_text,

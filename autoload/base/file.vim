@@ -160,6 +160,18 @@ eof
 	return tmpname
 endf
 
+function! base#file#stat(file,...)
+	let file = a:file
+	let arr  = get(a:000,0,[])
+python << eof
+import vim
+
+file = vim.eval('file')
+	
+eof
+
+endf
+
 function! base#file#basename(file)
 	let file  = a:file
 	let bname = fnamemodify(file,':p:t')

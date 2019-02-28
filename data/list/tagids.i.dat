@@ -29,6 +29,7 @@ plg_base
 plg_browser
 plg_database_client
 plg_dbext
+plg_dicti
 plg_emmet
 plg_snipmate_2009
 plg_findstr

@@ -52,6 +52,18 @@ our ($DBH,$WARN);
 
 =head3 Usage
 
+	my $ref={
+		# table
+		t => TABLE,
+		# fields
+		f => [ FIELD1, FIELD2, ... ],
+		# params
+		p => [ ... ],
+		# additional conditions
+		cond => [ ... ],
+	};
+	my $rows = dbh_select($ref);
+
 =cut
 
 sub dbh_select {
@@ -87,7 +99,10 @@ sub dbh_select {
 	if($@){ $warn->($@,$dbh->errstr,$q);  }
 
 	if (not defined $sth) {
-		$warn->('sth undefined!','query:',$q,'params:',@p,'dbh->errstr=',$dbh->errstr);
+		my @w;
+		push @w,
+			'sth undefined!','query:',$q,'params:',@p,'dbh->errstr=',$dbh->errstr;
+		$warn->(@w);
 		return [];
 	}
 	
@@ -185,14 +200,12 @@ sub dbh_do  {
 	if ($@) {
 		my @w; 
 		push @w,
-			'Query:',
-				"\t".$q,
-			'Query parameters:',
-				"\t".Dumper($p),
-			'DBI $dbh->errstr:',
-				"\t".$dbh->errstr,
-			'Captured error output:',
-				"\t".$@
+			map { ( $_->[0] => $_->[1] ) }   (
+				[ 'Query:', $q ],
+				[ 'Query parameters:', Dumper($p) ],
+				[ 'DBI $dbh->errstr:', $dbh->errstr ],
+				[ 'Captured error output:', $@ ]
+			)
 			;
 		$warn->(@w);
 	}

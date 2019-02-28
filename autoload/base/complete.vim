@@ -90,6 +90,10 @@ function! base#complete#BaseAct (...)
   return base#complete#vars([ 'opts_BaseAct' ])
 endfunction
 
+function! base#complete#this (...)
+  return base#complete#vars([ 'this' ])
+endfunction
+
 function! base#complete#grep_history (...)
   return base#complete#vars([ 'grep_history' ])
 endfunction
@@ -239,7 +243,7 @@ endfunction
 "call base#complete#vars ([varname])
 "
 " for PlgAct:
-"call base#complete#vars ([plugins_all],{ 'addmore' : ['_all_']})
+"call base#complete#vars (['plugins_all'],{ 'addmore' : ['_all_']})
 
 function! base#complete#vars (...)
 
