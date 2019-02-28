@@ -36,6 +36,11 @@ for cmd in cmds:
 
 eof
 	return struct
+endfunction
 
-	
+function! base#url#basename (url)
+	let url = a:url
+	let struct = base#url#struct(url)
+	let basename = get(struct,'basename','')
+	return basename
 endfunction

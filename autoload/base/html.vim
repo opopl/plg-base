@@ -386,16 +386,21 @@ perl << eof
 		p    => [ $url ],
 		cond => q{ WHERE url = ? },
 	});
+
 	if (@$sav) {
 		unless ($ref->{rewrite}) {
+			my @cached;
+			@cached = map { $_->{saved_file} } @$sav;
+
+			foreach my $cached_file (@cached) {
+				if (-e $cached_file) {
+					VimFileOpen({ file => $cached_file });
+				}else{		
+					VimWarn('No file:',"\t". $cached_file);
+				}
+			}
 			return;
 		}
-
-		my $cached_file = $rows->{saved_file};
-		if (-e $cached_file) {
-			VimFileOpen({ file => $cached_file});
-		}		
-
 	}
 
 	my $save_dir = VimVar('save_dir');
