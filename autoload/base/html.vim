@@ -331,8 +331,6 @@ function! base#html#fetch_url_source (...)
 perl << eof
 	use Vim::Perl qw(VimVar VimMsg CurBufSet);
 
-	use Tie::File;
-
 	use File::Spec::Functions qw(catfile);
 	use File::Copy qw(move);
 	use File::Path qw(mkpath);

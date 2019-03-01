@@ -442,6 +442,12 @@ function! base#log (msg,...)
 
 		call add(log,{ 'msg' : msg })
 		call base#varset('base_log',log)
+perl << eof
+	my $msg = VimVar('msg');
+	my @m   = split "\n" => $msg;
+	$plgbase->log(@m);
+		
+eof
 
 		if do_echo
 			echo msg_prf

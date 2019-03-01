@@ -25,6 +25,7 @@ use DBI;
 use Base::DB qw(
 	dbh_insert_hash
 	dbh_select
+	dbh_do
 );
 
 use base qw( Class::Accessor::Complex );
@@ -90,7 +91,7 @@ sub init_vars {
 		dattypes     => [@TYPES],
 		dbopts       => {
 			tb_reset => {},
-			tb_order => [qw(plugins datfiles files exefiles)],
+			tb_order => [qw(log plugins datfiles files exefiles)],
 		},
 
 	};
@@ -107,6 +108,13 @@ sub init_sqlstm {
 
 	my $h = {
 		sqlstm => {
+			create_table_log => qq{
+				CREATE TABLE IF NOT EXISTS log (
+					msg TEXT,
+					time INTEGER,
+					loglevel TEXT
+				);
+			},
 			create_table_plugins => qq{
 				create table if not exists plugins (
 					id integer primary key asc,
