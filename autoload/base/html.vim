@@ -314,7 +314,7 @@ perl << eof
 	our $HTW ||= HTML::Work->new(
 			sub_log  => sub { VimMsg([@_]) },
 			sub_warn => sub { VimWarn(@_) },
-			db       => $dbfile,
+			dbfile   => $dbfile,
 			load_as  => 'html',
 	);
 eof
@@ -378,11 +378,13 @@ perl << eof
 			url TEXT NOT NULL,
 			saved_file TEXT UNIQUE,
 			saved_bname TEXT,
+			pcname TEXT,
 			tags TEXT,
 			title TEXT,
 			source_html TEXT,
 			converted_text TEXT
 		);
+		ALTER TABLE pages ADD COLUMN pcname TEXT;
 	};
 	dbh_do({ q => $q }) or do { return; };
  
@@ -435,13 +437,16 @@ perl << eof
 		local   => $saved_file,
 		rewrite => 1,
 	});
+	return;
 
+	my $pcname = ($^O eq 'Win32') ?  $ENV{COMPUTERNAME} : $ENV{HOSTNAME};
 	my $h = { 
 		url         => $url,
 		saved_bname => $saved_bname,
 		saved_file  => $saved_file,
 		tags        => $tags,
 		title       => $title,
+		pcname      => $pcname,
 	};
 
 	dbh_insert_hash({ 

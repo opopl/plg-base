@@ -237,12 +237,12 @@ sub dbh_do  {
 	my $spl = SQL::SplitStatement->new;
 	my @q = $spl->split($q);
 
-	my $OK = 1;
+	my $FINE = 1;
 
 	foreach my $query (@q) {
 		my $ok;
 		eval { $ok = $dbh->do($query); };
-		$OK=0 unless $ok;
+		$FINE=0 unless $ok;
 		if ($@) {
 			my @w; 
 			push @w,
@@ -257,7 +257,7 @@ sub dbh_do  {
 		}
 
 	}
-	return $OK;
+	return $FINE;
 }
 
 1;
