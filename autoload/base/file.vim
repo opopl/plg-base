@@ -172,6 +172,17 @@ eof
 
 endf
 
+function! base#file#size(file,...)
+	let file = a:file
+python << eof
+import vim
+
+file = vim.eval('file')
+	
+eof
+
+endf
+
 function! base#file#basename(file)
 	let file  = a:file
 	let bname = fnamemodify(file,':p:t')
