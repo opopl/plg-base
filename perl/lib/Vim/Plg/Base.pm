@@ -28,7 +28,10 @@ use Base::DB qw(
 	dbh_do
 );
 
-use base qw( Class::Accessor::Complex );
+use base qw( 
+	Class::Accessor::Complex 
+	Base::Logging
+);
 
 use File::Path qw(mkpath);
 use File::stat qw(stat);

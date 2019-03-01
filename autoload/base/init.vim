@@ -414,6 +414,14 @@ fun! base#init#sqlite(...)
 
 	let reload = get(ref,'reload',0)
 
+	let home = base#envvar('home')
+  call base#pathset({  
+		\	'db' : base#file#catfile([ home, 'db' ]),
+		\	})
+
+	let dbfile = base#qw#catpath('db','html_work.sqlite')
+	let dbfile = get(ref,'dbfile',dbfile)
+	call base#varset('htw_dbfile',dbfile)
 
 	let done = base#varget('done_base_init_sqlite',0)
 	if done && !reload
@@ -429,14 +437,14 @@ perl << eof
 	use Vim::Perl qw(:funcs :vars);
 	use Vim::Plg::Base;
 
+	my $dbfile = VimVar('dbfile');
+
 	our $plgbase = Vim::Plg::Base->new(
 		sub_log  => sub { VimMsg([@_]) },
 		sub_warn => sub { VimWarn(@_)  },
+		dbfile   => $dbfile,
 	)->init;
 eof
-
-	"let dbfiles = {}
-	"call extend(dbfiles,{ 'main' : })
 
 	call base#varset('done_base_init_sqlite',1)
 
