@@ -2155,10 +2155,22 @@ function! base#info (...)
    elseif topic == 'env'
      call base#echo({ 'text' : "ENVIRONMENT ", 'hl' : 'Title' } )
 
-     call base#sys({ "cmds" : [ 'env' ]})
-
      let evlist = base#envvarlist()
-     echo evlist
+		 let evlist_t = base#map#add_tabs(evlist)
+
+		 let info_env = []
+		 call add(info_env,'To see the value of specific env. variable, use:')
+		 let envcmds=[
+		 		\	'BaseAct envvar_open_split',
+		 		\	'BaseAppend env_path',
+		 		\	'BaseAppend envvar',
+		 		\	]
+		 call extend(info_env,base#map#add_tabs(envcmds))
+
+		 call add(info_env,'List of Environment Variables:')
+		 call extend(info_env,evlist_t)
+
+		 call base#buf#open_split({ 'lines' : info_env })
 
 
 """info_encodings
@@ -3108,8 +3120,8 @@ function! base#envvars ()
      endif
 
      let evlist = sort(keys(ev))
-     call base#var('ev',ev)
-     call base#var('evlist',evlist)
+     call base#varset('ev',ev)
+     call base#varset('evlist',evlist)
 
      return ev
 

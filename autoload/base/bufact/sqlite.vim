@@ -2,13 +2,25 @@
 
 function! base#bufact#sqlite#table_info ()
 	call base#buf#start()
+	call pymy#buf#sqlite_start()
 
 	let dbfile = b:file
+
+	let table = input('table:','','custom,pymy#sqlite#complete_tables')
+
+	let q = 'SELECT * FROM ' . table . ' LIMIT 1'
+
+	let ref = {
+		\	'q'      : q,
+		\	'dbfile' : dbfile,
+		\	}
+	let [ rows_h, cols ] = pymy#sqlite#query(ref)
 
 endf
 
 function! base#bufact#sqlite#show_tables ()
 	call base#buf#start()
+	call pymy#buf#sqlite_start()
 
 	let dbfile = b:file
 	let lines = []
@@ -62,8 +74,9 @@ endfunction
 
 function! base#bufact#sqlite#query ()
 	call base#buf#start()
+	call pymy#buf#sqlite_start()
 
-	let dbfile = b:file
+	let dbfile = pymy#sqlite#dbfile()
 
 	let query = ''
 	while !strlen(query)

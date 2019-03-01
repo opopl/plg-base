@@ -12,6 +12,7 @@ sqlite_query
 sqlite_table_describe
 sqlite_db_connect
 sqlite_info
+sqlite_load_from_excel
 #
 perl_Vim_Plg_Base
 ###svn

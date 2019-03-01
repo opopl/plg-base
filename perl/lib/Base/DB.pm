@@ -16,6 +16,8 @@ use warnings;
 
 use base qw(Exporter);
 
+use SQL::SplitStatement;
+
 ###export_vars_scalar
 my @ex_vars_scalar=qw(
 	$DBH
@@ -48,6 +50,8 @@ our ($DBH,$WARN);
 
 =head1 EXPORTED FUNCTIONS
 
+=cut
+
 =head2 dbh_select 
 
 =head3 Usage
@@ -70,7 +74,7 @@ sub dbh_select {
 	my ($ref)=@_;
 
 	my $dbh = $ref->{dbh} || $DBH;
-	my $warn = $ref->{warn} || sub {  warn $_ for(@_); };
+	my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
 
 	# fields
 	my @f = @{$ref->{f} || []};
@@ -118,6 +122,41 @@ sub dbh_select {
 	return $rows;
 }
 
+sub dbh_selectall_arrayref {
+	my ($ref)  = @_;
+
+	my $dbh = $ref->{dbh} || $DBH;
+	my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
+
+	# query
+	my $q   = $ref->{q} || '';
+
+	# params
+	my $p   = $ref->{p} || [];
+
+	my $res = [];
+
+	my $spl = SQL::SplitStatement->new;
+	my @q   = $spl->split($q);
+
+	for my $q (@q){
+		my $rows;
+		eval { $rows = $dbh->selectall_arrayref($q) or 
+			do { $warn->($q,$dbh->errstr);  };
+		}; 
+		if ($@) { $warn->($q,$@,$dbh->errstr); }
+
+		push @$res,{ 
+			q    => $q,
+			rows => $rows,
+			err  => $dbh->err ? [$dbh->errstr] : [],
+		};
+	}
+
+	return $res;
+
+}
+
 =head2 dbh_insert_hash 
 
 =head3 Usage
@@ -152,7 +191,7 @@ sub dbh_insert_hash {
 	my ($ref)=@_;
 
 	my $dbh = $ref->{dbh} || $DBH;
-	my $warn = $ref->{warn} || sub { warn $_ for(@_); };
+	my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
 
 	my $h = $ref->{h} || {};
 	my $t = $ref->{t} || '';
@@ -195,21 +234,30 @@ sub dbh_do  {
 	my $q = $ref->{q} || '';
 	my $p = $ref->{p} || [];
 
-	my $ok;
-	eval { $ok = $dbh->do($q); };
-	if ($@) {
-		my @w; 
-		push @w,
-			map { ( $_->[0] => $_->[1] ) }   (
-				[ 'Query:', $q ],
-				[ 'Query parameters:', Dumper($p) ],
-				[ 'DBI $dbh->errstr:', $dbh->errstr ],
-				[ 'Captured error output:', $@ ]
-			)
-			;
-		$warn->(@w);
+	my $spl = SQL::SplitStatement->new;
+	my @q = $spl->split($q);
+
+	my $OK = 1;
+
+	foreach my $query (@q) {
+		my $ok;
+		eval { $ok = $dbh->do($query); };
+		$OK=0 unless $ok;
+		if ($@) {
+			my @w; 
+			push @w,
+				map { ( $_->[0] => $_->[1] ) }   (
+					[ 'Query:', $query ],
+					[ 'Query parameters:', Dumper($p) ],
+					[ 'DBI $dbh->errstr:', $dbh->errstr ],
+					[ 'Captured error output:', $@ ]
+				)
+				;
+			$warn->(@w);
+		}
+
 	}
-	return $ok;
+	return $OK;
 }
 
 1;
