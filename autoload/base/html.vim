@@ -299,13 +299,22 @@ eof
 
 endfunction
 
-function! base#html#htw_init ()
+function! base#html#htw_init (...)
+	let ref = get(a:000,0,{})
+
+	let dbfile = ':memory:'
+	let dbfile = base#varget('htw_dbfile',dbfile)
+	let dbfile = get(ref,'dbfile',dbfile)
+
 perl << eof
 	use HTML::Work;
+
+	my $dbfile = VimVar('dbfile');
 
 	our $HTW ||= HTML::Work->new(
 			sub_log  => sub { VimMsg([@_]) },
 			sub_warn => sub { VimWarn(@_) },
+			db       => $dbfile,
 			load_as  => 'html',
 	);
 eof
@@ -314,6 +323,8 @@ endfunction
 "used in : idephp_cmd_fetch_url_source
 
 function! base#html#fetch_url_source (...)
+	call base#html#htw_init ()
+
 	let ref = get(a:000,0,{})
 	let url = get(ref,'url','')
 
@@ -334,6 +345,9 @@ perl << eof
 	use File::Spec::Functions qw(catfile);
 	use File::Copy qw(move);
 	use File::Path qw(mkpath);
+
+	use LWP;
+	use HTTP::Request;
 
 	use DBI;
 	use Base::DB qw(
@@ -406,64 +420,41 @@ perl << eof
 
 	my $saved_bname = VimVar('saved_bname');
 
-	# File::Fetch block
-	use File::Fetch;
+	my $saved_file;
+	{
+		local $_ = $saved_bname;
 
-	my $ff;
-	eval { $ff = File::Fetch->new(uri => $url); };
-	if ($@) { VimWarn($@); }
-	unless($ff) { VimWarn('File::Fetch undefined for: ',  $url); }
+		s/$/\.htm/g unless /\.(html|htm)$/;
+		s/\.php$/\.htm/g;
 
-	### fetch the uri to cwd() ###
-	VimMsg("\n".'Fetching...');
-	eval { $ff->fetch( to => $save_dir ) || VimWarn($ff->error); };
-	if ($@) { VimWarn($@); }
-
-	eval {
-			my $of_bname;
-			local $_ = $of_bname = $ff->output_file;
-			VimMsg($of_bname);
-
-			{
-				s/$/\.htm/g unless /\.(html|htm)$/;
-				s/\.php$/\.htm/g;
-			}
-
-			if ($saved_bname) {
-				$_ = $saved_bname;
-			}
-		
-			my $f_old      = catfile($save_dir,$of_bname);
-			my $saved_file = catfile($save_dir,$_);
-
-			VimMsg("\n".$saved_file);
-			VimMsg("\n".$_);
-			VimMsg("\n".$f_old);
-			VimMsg("\n".$of);
-
-			eval { move($f_old, $saved_file); };
-			if ($@) { VimWarn($@); }
-
-			my $h = { 
-				url         => $url,
-				saved_bname => $saved_bname,
-				saved_file  => $saved_file,
-				tags        => $tags,
-				title       => $title,
-			};
-
-			dbh_insert_hash({ 
-				t    => 'pages',
-				h    => $h,
-				i    => qq{INSERT OR IGNORE},
-			});
-			
-			if (-e $saved_file) {
-					VimFileOpen({ file => $saved_file });
-			}
-
-			$dbh->disconnect;
+		$saved_file = catfile($save_dir,$_);
 	};
+
+	$HTW->download_url({
+		remote  => $url,
+		local   => $saved_file,
+		rewrite => 1,
+	});
+
+	my $h = { 
+		url         => $url,
+		saved_bname => $saved_bname,
+		saved_file  => $saved_file,
+		tags        => $tags,
+		title       => $title,
+	};
+
+	dbh_insert_hash({ 
+		t    => 'pages',
+		h    => $h,
+		i    => qq{INSERT OR IGNORE},
+	});
+			
+	if (-e $saved_file) {
+		VimFileOpen({ file => $saved_file });
+	}
+
+	$dbh->disconnect;
 	if ($@) { VimWarn($@); }
 eof
 
@@ -697,6 +688,7 @@ endfunction
 
 function! base#html#htw_load_buf ()
 	call base#html#htw_init ()
+
 	let load_as      = base#html#libxml_load_as()
 perl << eof
 	use Vim::Perl qw(:funcs :vars);
