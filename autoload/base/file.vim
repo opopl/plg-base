@@ -172,14 +172,45 @@ eof
 
 endf
 
-function! base#file#size(file,...)
+function! base#file#mtime(file,...)
 	let file = a:file
+	let mtime = 0
 python << eof
 import vim
+import os
+import datetime
 
 file = vim.eval('file')
+stat = os.stat(file)
+size = stat.st_size 
+
+print stat
+
+vim.command('let size=' + str(size) )
 	
 eof
+	return size
+
+endf
+
+function! base#file#size(file,...)
+	let file = a:file
+	let size = 0
+python << eof
+import vim
+import os
+import datetime
+
+file = vim.eval('file')
+stat = os.stat(file)
+size = stat.st_size 
+
+print stat
+
+vim.command('let size=' + str(size) )
+	
+eof
+	return size
 
 endf
 

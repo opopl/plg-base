@@ -419,9 +419,9 @@ fun! base#init#sqlite(...)
 		\	'db' : base#file#catfile([ home, 'db' ]),
 		\	})
 
-	let dbfile = base#qw#catpath('db','html_work.sqlite')
+	let dbfile = base#qw#catpath('db','vim_plg_base.db')
 	let dbfile = get(ref,'dbfile',dbfile)
-	call base#varset('htw_dbfile',dbfile)
+	call base#varset('plg_base_dbfile',dbfile)
 
 	let done = base#varget('done_base_init_sqlite',0)
 	if done && !reload

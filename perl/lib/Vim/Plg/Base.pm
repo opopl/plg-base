@@ -572,7 +572,8 @@ sub db_insert_plugins {
 
 	my $dbh = $self->dbh;
 
-	$self->db_prepare("insert into plugins(plugin) values(?)");
+	my $q = q{ INSERT OR IGNORE INTO plugins ( plugin ) VALUES(?) };
+	$self->db_prepare();
 	my $sth=$self->sth;
 
 	unless ($sth) {
@@ -685,7 +686,10 @@ sub db_insert_datfiles {
 	$dbh=$self->dbh;
 	$sth=$self->sth;
 
-	my $q="insert into datfiles(key,type,plugin,datfile) values(?,?,?,?)";
+	my $q=q{
+		INSERT OR IGNORE INTO 
+			datfiles(key,type,plugin,datfile) 
+		VALUES(?,?,?,?) };
 	my @e=@{$ref}{qw(key type plugin datfile)};
 
 	$self->db_prepare($q)->db_execute(@e);

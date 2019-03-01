@@ -449,8 +449,8 @@ perl << eof
 
 	if ($plgbase) {
 		my $msg = VimVar('msg');
-		my @m   = split "\n" => $msg;
-		$plgbase->log_dbh(@m);
+		my @m   = split("\n", $msg );
+		$plgbase->log_dbh([@m],{});
 	}
 		
 eof
@@ -1980,15 +1980,15 @@ function! base#info (...)
 
 """info_file
 	 elseif topic == 'file'
+			call base#buf#start()
 
 			let info = []
 			
-
-
 			let info_a = [
 			\ [ 'Current file:', expand('%:p') ],
 			\ [ 'Current directory:', expand('%:p:h') ],
 			\ [ 'Filetype:', &ft ],
+			\ [ 'Filesize:', base#file#size(b:file) ],
 			\ ]
 
 			for x in info_a
