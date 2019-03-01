@@ -18,6 +18,17 @@ sub log_dumper {
 	return $self;
 }
 
+=head2 log_dbh
+
+=head3 Usage
+
+	$OBJ->log_dbh($args,{ 
+		pref => $pref, 
+		loglevel => $loglevel
+	});
+
+=cut
+
 sub log_dbh {
 	my ($self,$args,$ref)=@_;
 

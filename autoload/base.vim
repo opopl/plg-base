@@ -445,11 +445,12 @@ function! base#log (msg,...)
 perl << eof
 	use Vim::Perl qw(:vars :funcs);
 
-	my $msg = VimVar('msg');
-	my @m   = split "\n" => $msg;
+	my $do_echo = VimVar('do_echo');
 
 	if ($plgbase) {
-		$plgbase->log(@m);
+		my $msg = VimVar('msg');
+		my @m   = split "\n" => $msg;
+		$plgbase->log_dbh(@m);
 	}
 		
 eof
