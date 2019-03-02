@@ -585,7 +585,8 @@ endf
 fun! base#catpath(key,...)
  
  if !exists("s:paths")
-    call base#initpaths()
+    "call base#initpaths()
+		let s:paths={}
  endif
 
  let pc = []
