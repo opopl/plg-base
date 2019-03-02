@@ -182,14 +182,12 @@ import datetime
 
 file = vim.eval('file')
 stat = os.stat(file)
-size = stat.st_size 
+mtime = stat.mtime 
 
-print stat
-
-vim.command('let size=' + str(size) )
+vim.command('let mtime=' + str(mtime) )
 	
 eof
-	return size
+	return mtime 
 
 endf
 
@@ -204,8 +202,6 @@ import datetime
 file = vim.eval('file')
 stat = os.stat(file)
 size = stat.st_size 
-
-print stat
 
 vim.command('let size=' + str(size) )
 	

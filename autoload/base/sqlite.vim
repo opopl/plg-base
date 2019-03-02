@@ -53,7 +53,6 @@ function! base#sqlite#info (...)
 	if prompt
 	else
 		call extend(info,base#sqlite#info_dbfile())
-		call extend(info,base#sqlite#info_dbfiles())
 		call extend(info,base#sqlite#info_commands())
 		call extend(info,base#sqlite#info_tables())
 	endif
@@ -153,8 +152,6 @@ perl << eof
 	push @$info,
 		'DBFILE PATH:', ( map { "\t" . $_ } ( $dbfile ) ),
 		'DBFILE EXISTS:', "\t" . ((-e $dbfile) ? 'YES' : 'NO' ),
-		'DBNAME: ',(map { "\t" . $_ } ( $plgbase->dbname || '')),
-		'DBID:'   ,(map { "\t" . $_ } ( $plgbase->dbid || '')),
 		'SIZE:'   ,(map { "\t" . $_ } ( $plgbase->db_dbfile_size || 0));
 
 	VimListExtend('info',$info);
@@ -163,25 +160,6 @@ eof
 
 endfunction
 
-function! base#sqlite#info_dbfiles ()
-	call base#init#sqlite()
-
-	let info = []
-perl << eof
-	my $info=[];
-	my $dbfiles = $plgbase->dbfiles;
-
-	push @$info,'AVAILABLE DBFILES: ';
-	while (my ($k,$v) = each(%$dbfiles)) {
-		my $s = pack("A20xA*", $k, $v );
-		push @$info,"\t" . $s;
-	}
-
-	VimListExtend('info',$info);
-eof
-	return info
-
-endfunction
 
 function! base#sqlite#info_commands ()
 	call base#init#sqlite()

@@ -64,7 +64,6 @@ sub init {
 
 	$self
 		->init_dirs
-		->init_dbfiles
 		->init_sqlstm
 		->init_vars
 		->db_connect
@@ -79,18 +78,9 @@ sub init {
 sub init_vars {
 	my $self=shift;
 
-	my $dbname = 'main';
-	my $dbid   = $dbname;
-
-	my $dbfile = $self->dbfiles($dbid);
-
-	$self->dbid($dbid);
-
 	my $h={
 		withvim      => $self->_withvim(),
-		dbname       => $dbname,
-		dbid         => $dbid,
-		dbfile       => $dbfile,
+		dbfile       => ':memory:',
 		dattypes     => [@TYPES],
 		dbopts       => {
 			tb_reset => {},
@@ -115,7 +105,9 @@ sub init_sqlstm {
 				CREATE TABLE IF NOT EXISTS log (
 					msg TEXT,
 					time INTEGER,
-					loglevel TEXT
+					loglevel TEXT,
+					func TEXT,
+					prf TEXT
 				);
 			},
 			create_table_plugins => qq{
@@ -159,19 +151,6 @@ sub init_sqlstm {
 	$self;
 }
 
-sub init_dbfiles {
-	my $self=shift;
-
-	my $dbfiles = {
-		main       => catfile($self->dirs('appdata'),'main.db'),
-		saved_urls => catfile($self->dirs('appdata'),
-			qw(saved_urls saved_urls.sqlite )),
-	};
-	$self->dbfiles($dbfiles);
-
-	$self;
-}
-
 sub init_dirs {
 	my $self = shift;
 
@@ -192,36 +171,39 @@ sub init_dirs {
 }
 
 sub db_connect {
-	my ($self, $dbid) = @_;
+	my ($self) = @_;
 
-	my ($dbfile, $dbname);
-   
-	$dbfile	= $self->dbfile;
-	$dbname = $self->dbname;
+	my $dbfile	= $self->dbfile;
+	my $dbname = basename($dbfile);
+	$dbname =~ s/\.(\w+)//g;
 	
-	if ($dbid) {
-		$dbfile = $self->dbfiles($dbid) || $dbfile;
-		$dbname = basename($dbfile);
-		$dbname =~ s/\.(\w+)//g;
-	}else{
-		$dbid = $self->dbid;
+	if ($self->dbh) {
+		eval { $self->dbh->disconnect;  };
+		if ($@) { 
+			my @w;
+			push @w,
+				'Failure to disconnect db:',
+				DBI->errstr,
+				$@
+				;
+				
+			$self->warn(@w); 
+		}
 	}
-
-	eval { $self->dbh->disconnect;  };
-	#if ($@) { $self->warn('Failure to disconnect db!'); }
 
 	my $dbh;
 	
 	eval { $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile","",""); };
 	if ($@) { 
-		my $w = 'Failure to connect to database with dbid =' . $dbid .' and dbname =' . $dbname;
-		$self->warn($w); return $self; 
+		my @w;
+		push @w, 
+			'Failure to connect to database with dbname:',$dbname,
+			DBI->errstr,$@;
+		$self->warn(@w); return $self; 
 	}
 
-	$self->dbfile($dbfile);
-	$self->dbname($dbname);
-	$self->dbid($dbid);
 	$self->dbh($dbh);
+	$self->dbname($dbname);
 
 	$self;
 }
@@ -831,7 +813,6 @@ BEGIN {
 		sth
 		dbfile
 		dbname
-		dbid
 		withvim
 		sub_warn
 		sub_log
@@ -841,7 +822,6 @@ BEGIN {
 	###__ACCESSORS_HASH
 	our @hash_accessors=qw(
 		dirs
-		dbfiles
 		datfiles
 		vars
 		dbopts

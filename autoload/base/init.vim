@@ -183,9 +183,9 @@ fun! base#init#cmds()
 	command! -nargs=* -complete=custom,base#complete#basesys BaseSYS
 		\	call base#sys_split_output(<f-args>) 
 
+"""BaseLog
 	command! -nargs=* -complete=custom,base#complete#baselog BaseLog
 		\	call base#log#cmd(<f-args>) 
-
 
 """ImageAct
 	command! -nargs=*  -complete=custom,base#complete#imageact ImageAct 
@@ -413,6 +413,7 @@ fun! base#init#sqlite(...)
 	let ref = get(a:000,0,{})
 
 	let reload = get(ref,'reload',0)
+	let dbfile = base#dbfile()
 
 	let home = base#envvar('home')
   call base#pathset({  
@@ -420,7 +421,6 @@ fun! base#init#sqlite(...)
 		\	})
 
 	let dbfile = base#qw#catpath('db','vim_plg_base.db')
-	let dbfile = get(ref,'dbfile',dbfile)
 	call base#varset('plg_base_dbfile',dbfile)
 
 	let done = base#varget('done_base_init_sqlite',0)
@@ -504,10 +504,7 @@ function! base#init#vars (...)
     endif
 
 		call base#var#update('plugins_all')
-
-
-
-    call base#echoprefixold()
+		call base#echoprefixold()
 endf    
 
 fun! base#init#files(...)

@@ -425,36 +425,58 @@ function! base#islist(var)
 endf
 
 " call base#log(msg)
+"
+try
+function! base#dbfile ()
+	let vrt = $VIMRUNTIME
+	let dbfile = base#qw#catpath('db','vim_plg_base.db')
+	call base#varset('plg_base_dbfile',dbfile)
+	return dbfile
+endfunction
+catch
+endtry
 
 function! base#log (msg,...)
+	let msg = a:msg
+
 	let ref = get(a:000,0,{})
 	let log = base#varget('base_log',[])
 
 	let prf = base#varget('base_log_prf','')
 	let prf = get(ref,'prf',prf)
+
+	let func = get(ref,'func','')
+
 	let do_echo = get(ref,'echo',0)
 
 	if base#type(a:msg) == 'String'
 		let time = strftime("%Y %b %d %X")
 
 		let msg_prf = prf.' '.a:msg
-		let msg = '<<' . time . '>>' .' '.msg_prf
+		let msg_full = '<<' . time . '>>' .' '.msg_prf
 
-		call add(log,{ 'msg' : msg })
+		call add(log,{ 
+			\ 'msg'  : msg_full,
+			\ 'time' : time,
+			\ 'func' : func,
+			\	})
 		call base#varset('base_log',log)
-perl << eof
-	use Vim::Perl qw(:vars :funcs);
 
-	my $do_echo = VimVar('do_echo');
+		"let dbfile = base#dbfile() 
+		let dbfile = base#file#catfile([$HOME, 'db' ,'vim_plg_base.db'])
 
-	if ($plgbase) {
-		my $msg = VimVar('msg');
-		my @m   = split("\n", $msg );
-		$plgbase->log_dbh([@m],{});
-	}
-		
+		let p = [time,msg,prf,func]
+		let q = 'insert or ignore into log (time,msg,prf,func) values(?,?,?,?)'
+python << eof
+import vim
+import sqlite3
+
+q=vim.eval('q')
+p=vim.eval('p')
+
 eof
-
+		"call pymy#sqlite#query(rq)
+		
 		if do_echo
 			echo msg_prf
 		endif
@@ -463,9 +485,13 @@ eof
 	elseif base#type(a:msg) == 'List'
 		let msgs = a:msg
 
-		for msg in msgs
-			call base#log(msg,ref)
-		endfor
+		try
+			for msg in msgs
+				call base#log(msg,ref)
+			endfor
+		catch /E731/ 
+			echo msgs
+		endtry
 		return 1
 		
 	endif
