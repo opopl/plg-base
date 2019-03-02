@@ -24,12 +24,22 @@ endfunction
 function! base#log#clear ()
 	call base#varset('base_log',[])
 
-perl << eof
-	if ($plgbase) {
-		#$plgbase->;
-	}
+	let dbfile = base#dbfile() 
+python << eof
+import vim
+
+dbfile = vim.eval('dbfile')
+
+conn = sqlite3.connect(dbfile)
+c = conn.cursor()
 	
+q = '''DELETE FROM log'''
+c.execute(q)
+
+conn.commit()
+conn.close()
 eof
+
 endfunction
 
 function! base#log#cmd (...)

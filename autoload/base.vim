@@ -428,9 +428,10 @@ endf
 "
 try
 function! base#dbfile ()
-	let vrt = $VIMRUNTIME
-	let dbfile = base#qw#catpath('db','vim_plg_base.db')
-	call base#varset('plg_base_dbfile',dbfile)
+	let dbfile = $HOME . '/db/vim_plg_base.db'
+
+	"let dbfile = base#qw#catpath('db','vim_plg_base.db')
+	"call base#varset('plg_base_dbfile',dbfile)
 	return dbfile
 endfunction
 catch
@@ -445,7 +446,7 @@ function! base#log (msg,...)
 	let prf = base#varget('base_log_prf','')
 	let prf = get(ref,'prf',prf)
 
-	let func = get(ref,'func','')
+	let fnc = get(ref,'func','')
 
 	let do_echo = get(ref,'echo',0)
 
@@ -458,23 +459,78 @@ function! base#log (msg,...)
 		call add(log,{ 
 			\ 'msg'  : msg_full,
 			\ 'time' : time,
-			\ 'func' : func,
+			\ 'func' : fnc,
 			\	})
 		call base#varset('base_log',log)
 
-		"let dbfile = base#dbfile() 
- "   let dbfile = base#file#catfile([$HOME, 'db' ,'vim_plg_base.db'])
+		let dbfile = base#dbfile() 
 
-		"let p = [time,msg,prf,func]
-		"let q = 'insert or ignore into log (time,msg,prf,func) values(?,?,?,?)'
-"python << eof
-"import vim
-"import sqlite3
+		let p = [time,msg,prf,fnc]
+		let q = 'INSERT OR IGNORE INTO log (time,msg,prf,func) VALUES(?,?,?,?)'
+python << eof
 
-"q=vim.eval('q')
-"p=vim.eval('p')
+import vim
+import sqlite3
 
-"eof
+#------------------------------------------------------------
+def table_exists (ref):
+	table  = ref.get('table')
+	cur    = ref.get('cur')
+	dbfile = ref.get('dbfile')
+	tables = []
+	q='''
+		SELECT 
+			name 
+		FROM 
+			sqlite_master
+		WHERE 
+			type IN ('table','view') AND name NOT LIKE 'sqlite_%'
+		UNION ALL
+		SELECT 
+			name 
+		FROM 
+			sqlite_temp_master
+		WHERE 
+			type IN ('table','view')
+		ORDER BY 1
+	'''
+	if cur:
+		c.execute(q)
+		rows = c.fetchall()
+		tables = map(lambda x: x[0], rows)
+		if table in tables:
+			return 1
+	return 0
+#------------------------------------------------------------
+	
+dbfile = vim.eval('dbfile')
+q=vim.eval('q')
+p=vim.eval('p')
+
+conn = sqlite3.connect(dbfile)
+c = conn.cursor()
+
+#*******************************
+if not table_exists({ 'table' : 'log', 'cur' : c }):
+	q = '''
+				CREATE TABLE IF NOT EXISTS log (
+					msg TEXT,
+					time INTEGER,
+					loglevel TEXT,
+					func TEXT,
+					prf TEXT
+				);
+	'''
+	c.execute(q)
+#*******************************
+
+c.execute(q,p)
+
+conn.commit()
+conn.close()
+
+
+eof
 		"call pymy#sqlite#query(rq)
 		
 		if do_echo
@@ -1845,16 +1901,16 @@ function! base#pathset (ref,...)
 	let anew = get(opts,'anew',0)
 
 	if anew
-		call base#log(['base#pathset anew=1'])
+		call base#log(['anew=1'],{'prf' : 'base#pathset'})
 		let s:paths={}
 	endif
 
     for [ pathid, path ] in items(a:ref) 
         let e = { pathid : path }
 				call base#log([
-					\'base#pathset: pathid ='.pathid,
-					\'base#pathset: path   ='.path,
-					\	])
+					\'pathid ='.pathid,
+					\'path   ='.path,
+					\	],{ 'prf' : 'base#pathset' })
         call extend(s:paths,e)
     endfor
 
