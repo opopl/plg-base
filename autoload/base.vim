@@ -463,18 +463,18 @@ function! base#log (msg,...)
 		call base#varset('base_log',log)
 
 		"let dbfile = base#dbfile() 
-		let dbfile = base#file#catfile([$HOME, 'db' ,'vim_plg_base.db'])
+ "   let dbfile = base#file#catfile([$HOME, 'db' ,'vim_plg_base.db'])
 
-		let p = [time,msg,prf,func]
-		let q = 'insert or ignore into log (time,msg,prf,func) values(?,?,?,?)'
-python << eof
-import vim
-import sqlite3
+		"let p = [time,msg,prf,func]
+		"let q = 'insert or ignore into log (time,msg,prf,func) values(?,?,?,?)'
+"python << eof
+"import vim
+"import sqlite3
 
-q=vim.eval('q')
-p=vim.eval('p')
+"q=vim.eval('q')
+"p=vim.eval('p')
 
-eof
+"eof
 		"call pymy#sqlite#query(rq)
 		
 		if do_echo
