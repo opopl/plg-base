@@ -426,16 +426,16 @@ endf
 
 " call base#log(msg)
 "
-try
-function! base#dbfile ()
-	let dbfile = $HOME . '/db/vim_plg_base.db'
-
-	"let dbfile = base#qw#catpath('db','vim_plg_base.db')
-	"call base#varset('plg_base_dbfile',dbfile)
-	return dbfile
-endfunction
-catch
-endtry
+"try
+	function! base#dbfile ()
+		let dbfile = $HOME . '/db/vim_plg_base.db'
+	
+		"let dbfile = base#qw#catpath('db','vim_plg_base.db')
+		"call base#varset('plg_base_dbfile',dbfile)
+		return dbfile
+	endfunction
+"catch
+"endtry
 
 function! base#log (msg,...)
 	let msg = a:msg
@@ -2014,12 +2014,8 @@ function! base#warn (ref)
 		let hl     = get(a:ref,'hl','WarningMsg')
 
 		let text = prefix . text
-		
-		"exe 'echohl '.hl
-		"echo text
-		"echohl None
 
-		call base#log([text],{ 'prf' : 'WARNING' })
+		call base#log([text],{ 'prf' : 'WARN' })
     
 endfunction
 
@@ -2771,7 +2767,7 @@ function! base#datafiles (id)
 endfunction
 
 function! base#initvarsfromdat ()
-		call base#log('calling: base#initvarsfromdat()')
+		call base#log('start',{ 'prf' : 'base#initvarsfromdat'})
 
     let refdef = {}
     let ref    = refdef
