@@ -44,7 +44,7 @@ endfunction
 function! base#sqlite#list_datfiles ()
 	call base#init#sqlite()
 
-	let q = 'select plugin, key, datfile from datfiles'
+	let q = 'select plugin, key, keyfull, datfile from datfiles'
 	let lines =  pymy#sqlite#query_screen({
 		\	'q' : q,
 		\	'dbfile' : base#dbfile(),

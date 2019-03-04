@@ -262,12 +262,13 @@ sub dat_locate_from_fs {
 
 			/$pat/ && do {
 					s/$pat//g;
-					my $k = $prefix . $_;
+					my $kfull = $prefix . '_' .$_;
 
 					dbh_insert_hash({
 						t => 'datfiles',
 						h => {
-							key     => $k,
+							key     => $_,
+							keyfull => $kfull,
 							type    => $type,
 							plugin  => $plugin,
 							datfile => $name,
@@ -496,7 +497,7 @@ sub init_dat_plugins {
 					dirs   => [$pdir],
 					type   => $type,
 					plugin => $p,
-					prefix => '', 
+					prefix => $p, 
 				});
 			}
 		}
