@@ -46,10 +46,64 @@ function! base#sqlite#list_datfiles ()
 
 	let q = 'select plugin, key, keyfull, datfile from datfiles'
 	let lines =  pymy#sqlite#query_screen({
-		\	'q' : q,
+		\	'q'      : q,
 		\	'dbfile' : base#dbfile(),
 		\	})
 	call base#buf#open_split({ 'lines' : lines })
+
+endfunction
+
+function! base#sqlite#datfiles (...)
+	call base#init#sqlite()
+
+	let kf = get(a:000,0,'')
+
+	if strlen(kf)
+		let q = 'select datfile from datfiles where keyfull = ?'
+		let p = [ kf ]
+		let [ rows_h, cols ] =  pymy#sqlite#query({
+			\	'q'      : q,
+			\	'p'      : p,
+			\	'dbfile' : base#dbfile(),
+			\	})
+		let datlist = []
+		for rh in rows_h
+				call add(datlist,get(rh,'datfile',''))
+		endfor
+		return datlist
+	else
+		let q = 'select keyfull, datfile from datfiles'
+		let [ rows_h, cols ] =  pymy#sqlite#query({
+			\	'q' : q,
+			\	'dbfile' : base#dbfile(),
+			\	})
+		let datfiles = {}
+		for rh in rows_h
+			let kf = get(rh,'keyfull','')
+			let df = get(rh,'datfile','')
+			if strlen(kf)
+				call extend(datfiles,{ kf : df })
+			endif
+		endfor
+		return datfiles
+
+	endif
+
+endfunction
+
+function! base#sqlite#datlist ()
+	call base#init#sqlite()
+
+	let q = 'select keyfull from datfiles'
+	let [ rows_h, cols ] =  pymy#sqlite#query({
+		\	'q' : q,
+		\	'dbfile' : base#dbfile(),
+		\	})
+	let list = []
+	for rh in rows_h
+			call add(list,get(rh,'keyfull',''))
+	endfor
+	return list
 
 endfunction
 

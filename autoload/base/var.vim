@@ -18,6 +18,14 @@ function! base#var#update (varname)
 		let fileids = sort(keys(files))
 		call base#varset('exefileids',fileids)
 
+	elseif varname == 'datlist'
+		let datlist = base#sqlite#datlist()
+		call base#varset('datlist',datlist)
+
+	elseif varname == 'datfiles'
+		let datfiles = base#sqlite#datfiles()
+		call base#varset('datfiles',datfiles)
+
 """var_update_plugins_all
 	elseif varname == 'plugins_all'
 		let var = base#find({ 

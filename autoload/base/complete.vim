@@ -179,6 +179,9 @@ function! base#complete#varlist_list (...)
 endfunction
 
 function! base#complete#datlist (...)
+	"let list = base#sqlite#datlist()
+	"let comps = join(list,"\n")
+
   return base#complete#vars([ 'datlist' ])
 endfunction
 

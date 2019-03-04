@@ -2753,22 +2753,26 @@ function! base#varsetfromdat (...)
 endfunction
 
 function! base#datafile (id)
+		let id = a:id
+
     let files = base#datafiles(a:id)
     let file  = get(files,0,'')
     return file
 endfunction
 
 function! base#datafiles (id)
+		let id = a:id
+		return base#sqlite#datfiles(id)
 
-    let datadir = base#datadir()
-    let file    = a:id . ".i.dat"
+    "let datadir = base#datadir()
+    "let file    = a:id . ".i.dat"
 
-		let pat   = '^'.file.'$'
-    let files = base#find({
-        \ "dirs"    : [ datadir ],
-        \ "subdirs" : 1,
-        \ "pat"     : pat,
-        \  })
+		"let pat   = '^'.file.'$'
+    "let files = base#find({
+        "\ "dirs"    : [ datadir ],
+        "\ "subdirs" : 1,
+        "\ "pat"     : pat,
+        "\  })
 
 
     return files
@@ -3018,7 +3022,7 @@ function! base#viewdat (...)
   if has_key(datfiles,dat)
     let datfile=datfiles[dat]
   else
-    call base#subwarn("Given dat file does not exist in s:datfiles dictionary")
+    call base#subwarn("Given dat file does not exist in datfiles dictionary")
   endif
 
   call base#fileopen(datfile)
