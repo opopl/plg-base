@@ -7,6 +7,7 @@ sqlite_list_plugins
 sqlite_list_datfiles
 sqlite_reload_from_fs
 sqlite_drop_tables
+sqlite_reset_tables
 sqlite_query
 sqlite_table_describe
 sqlite_db_connect

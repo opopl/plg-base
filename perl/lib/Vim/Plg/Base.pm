@@ -185,8 +185,8 @@ sub db_connect {
 	$self->dbh($dbh);
 	$self->dbname($dbname);
 
-	$Base::DB::DBH=$dbh;
-	$Base::DB::WARN=sub{$self->warn(@_)};
+	$Base::DB::DBH  = $dbh;
+	$Base::DB::WARN = sub{ $self->warn(@_) };
 
 	$self;
 }
@@ -201,14 +201,18 @@ sub update_self {
 }
 
 sub reload_from_fs {
-	my $self=shift;
+	my ($self)=@_;
 
-	my %o=(
+	my %o = (
 		dbopts       => {
-			tb_reset => {plugins => 1, datfiles => 1},
+			tb_reset => {
+				plugins  => 1,
+				datfiles => 1,
+			},
 			tb_order => [qw(plugins datfiles)],
 		},
 	);
+
 	$self
 		->update_self(%o)
 		->db_connect
@@ -341,6 +345,17 @@ sub db_table_exists {
 
 }
 
+sub db_table_empty {
+	my ($self, $tb) = @_;
+
+	my $q = qq{select * from $tb limit 1};
+
+	my $rows = dbh_select({ q => $q });
+
+	return (@$rows) ? 0 : 1;
+
+}
+
 =head2 db_dbfile_size
 
 =over
@@ -408,7 +423,7 @@ sub db_drop_tables {
 }
 
 sub db_create_tables {
-	my $self=shift;
+	my ($self)=@_;
 
 	my $dbopts = $self->dbopts;
 
@@ -455,7 +470,10 @@ sub init_dat_base {
 
 	my $tb_reset = $dbopts->{tb_reset} || {};
 
-	if ($tb_reset->{datfiles}) {
+	if ($tb_reset->{datfiles} || $self->db_table_empty('datfiles')) {
+		$tb_reset->{datfiles} ||= 1;
+		$self->dbopts(tb_reset => $tb_reset);
+
 		# find all *.i.dat files in base plugin directory
 		foreach my $type (@types) {
 			my $dir = $self->{dirs}->{'dat_'.$type};

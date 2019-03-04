@@ -308,6 +308,17 @@ eof
 	
 endfunction
 
+function! base#sqlite#reset_tables ()
+	call base#init#sqlite()
+
+perl << eof
+	$plgbase
+		->db_drop_tables({ all => 1 })
+		->db_create_tables;
+eof
+	
+endfunction
+
 function! base#sqlite#reload_from_fs ()
 	call base#init#sqlite()
 
