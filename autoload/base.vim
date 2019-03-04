@@ -2903,7 +2903,7 @@ endf
 
 function! base#init (...)
 
-	let opts = base#qw('sqlite paths files plugins tagids vars omni au cmds menus rtp')
+	let opts = base#qw('rtp sqlite paths files plugins tagids vars omni au cmds menus')
 	let opts = base#varget('init_order',opts)
 
 	let opts_all = opts
