@@ -262,7 +262,7 @@ sub dat_locate_from_fs {
 
 			/$pat/ && do {
 					s/$pat//g;
-					my $kfull = join("_",$prefix,$_);
+					my $kfull = ($prefix) ? join("_",$prefix,$_) : $_;
 
 					dbh_insert_hash({
 						t => 'datfiles',
