@@ -5,9 +5,7 @@ function! base#sqlite#list_plugins ()
 
 	let p=[]
 perl << eof
-	$plgbase->get_plugins_from_db;
-
-	my @p = $plgbase->plugins;
+	my @p = $plgbase->db_list_plugins;
 	VimListExtend('p',\@p);
 eof
 	call base#buf#open_split({ 'lines' : p })
@@ -21,9 +19,20 @@ function! base#sqlite#list_keys_datfiles ()
 
 	let k=[]
 perl << eof
-	$plgbase->get_datfiles_from_db({ 'reload_from_fs' => 1 });
+	use Base::DB qw(dbh_select);
 
-	my $k = [ $plgbase->datfiles_keys ];
+	$Base::DB::DBH  = $plgbase->dbh;
+	$Base::DB::WARN = sub { VimWarn(@_) };
+
+	my $rows = dbh_select({ 
+		t => 'datfiles',
+		f => [qw( plugin key datfile )],
+		cond => q{limit 10},
+	});
+
+	VimMsg(Dumper($rows));
+
+	my $k=[];
 	VimListExtend('k',$k);
 eof
 	let k=sort(k)

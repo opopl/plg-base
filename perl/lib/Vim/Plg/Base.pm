@@ -85,7 +85,7 @@ sub init_vars {
 		dattypes     => [@TYPES],
 		dbopts       => {
 			tb_reset => {},
-			tb_order => [qw(log plugins datfiles files exefiles)],
+			tb_order => [qw(log plugins plugins_all datfiles files exefiles)],
 		},
 
 	};
@@ -303,68 +303,6 @@ sub db_list_plugins {
 	my @p   = map { $_->[0] } @$r;
 
 	wantarray ? @p : \@p ;
-}
-
-sub get_plugins_from_db {
-	my $self=shift;
-
-	#return if $self->done('get_plugins_from_db');
-
-	my @p=$self->db_list_plugins;
-
-	$self->plugins([@p]);
-
-}
-
-sub get_datfiles_from_db {
-	my $self=shift;
-
-	my $ref=shift || {};
-
-	my $dbh    = $self->dbh;
-	my @fields = qw(key plugin datfile);
-	my $f      = join(",",map { '`'.$_.'`'} @fields);
-
-	my $tb = "datfiles";
-	my $q  = qq{select $f from `$tb`};
-
-	if (! $self->db_table_exists($tb)) {
-		$self->warn('db table is absent:',$tb);
-		if ($ref->{reload_from_fs}) {
-			$self->reload_from_fs;
-		}
-		return;
-	}
-
-	my $sth;
-	eval { $sth    = $dbh->prepare($q); };
-	if ($@) { 
-		my @m; 
-		push @m, 'Errors for $dbh->prepare($q),','$q=',$q,$@,'$dbh->errstr:',$dbh->errstr;
-		$self->warn(@m); 
-		return;
-	}
-	unless(defined $sth){
-		$self->warn('$sth undefined after $dbh->prepare($q),','$q=',$q); 
-		return;
-	}
-
-	eval { $sth->execute(); };
-	if ($@) { 
-		my @m; 
-		push @m, 'Errors for $sth->execute(),',$@,'$dbh->errstr:',$dbh->errstr;
-		$self->warn(@m); 
-		return;
-	}
-
-
-	while (my $row=$sth->fetchrow_hashref()) {
-		my ($key,$plugin,$datfile)=@{$row}{@fields};
-		$key=join('_',$plugin,$key);
-
-		$self->datfiles($key => $datfile);
-	}
-
 }
 
 sub db_tables {
@@ -692,8 +630,6 @@ sub init_dat_base {
 				plugin => 'base',
 			});
 		}
-	}else{
-		$self->get_datfiles_from_db;
 	}
 	$self;
 }
@@ -722,8 +658,6 @@ sub init_dat_plugins {
 				});
 			}
 		}
-	}else{
-		$self->get_datfiles_from_db;
 	}
 
 }
@@ -758,12 +692,8 @@ sub init_plugins {
 		if (-e $dat_plg) {
 			my @plugins = readarr($dat_plg);
 		
-			$self->plugins([@plugins]);
 			$self->db_insert_plugins(@plugins);
 		}
-	}else{
-		# 	fill plugins array
-		$self->get_plugins_from_db;
 	}
 
 	$self;
@@ -810,7 +740,6 @@ BEGIN {
 	###__ACCESSORS_ARRAY
 	our @array_accessors=qw(
 		dattypes
-		plugins
 	);
 
 	__PACKAGE__
