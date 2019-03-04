@@ -246,9 +246,7 @@ sub _withvim {
 }
 
 sub dat_add {
-	my $self=shift;
-
-	my $ref=shift;
+	my ($self,$ref) = @_;
 
 	my $datfile = $ref->{datfile};
 	my $key     = $ref->{key};
@@ -528,13 +526,13 @@ sub db_create_tables {
 	my $self=shift;
 
 	my $dbopts = $self->dbopts;
-	my @s;
 
 	my $tb_reset = $dbopts->{tb_reset} || {};
 	my $tb_order = $dbopts->{tb_order} || [];
 
 	my $dbh = $self->dbh;
 
+	my @s;
 	foreach my $tb (@$tb_order) {
 		push @s,$self->sqlstm('create_table_'.$tb);
 		

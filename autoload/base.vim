@@ -2046,6 +2046,15 @@ function! base#info (...)
 	 elseif topic == 'dbext'
 			call base#info#dbext()
 
+"""info__sql
+	 elseif topic == '_sql'
+			 let lines=[]
+
+			 call add(lines,'Current sql file:')
+
+			 call base#buf#open_split({ 'lines' : lines })
+			 return
+
 	 elseif topic == 'dictionaries'
 			 let lines=[]
 			 call add(lines,'--------------------')
