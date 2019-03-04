@@ -254,11 +254,11 @@ sub dat_locate_from_fs {
 	my $type   = $ref->{type} || '';
 	my $plugin = $ref->{plugin} || 'base';
 
+	my $pat  = qr/\.i\.dat$/;
 	find({ 
 		wanted => sub { 
 			my $name = $File::Find::name;
 			my $dir  = $File::Find::dir;
-			my $pat  = qr/\.i\.dat$/;
 
 			/$pat/ && do {
 					s/$pat//g;
@@ -505,29 +505,26 @@ sub init_dat_plugins {
 }
 
 sub init_plugins {
-	my $self=shift;
+	my ($self)=@_;
 
-	my @types    = $self->dattypes;
-	my $dbopts   = $self->dbopts_ref;
+	my $rows = dbh_select({ 
+		q => q{select datfile from datfiles where key = ? },
+		p => [qw(plugins)],
+   	});
+	my ($dat_plg) = map { $_->{datfile} } @$rows;
 
-	my $tb_reset=$dbopts->{tb_reset} || {};
-	my $tb_order=$dbopts->{tb_order} || [];
-
-	if ($tb_reset->{plugins}) {
-
-		my $dat_plg = $self->datfiles('plugins');
-		unless ($dat_plg) {
-			$self->warn('plugins DAT file NOT defined!!');
-		}
-		if (-e $dat_plg) {
-			my @plugins = readarr($dat_plg);
-		
-			for(@plugins){	
-				dbh_insert_hash({
-					t => 'plugins', 
-					h => { plugin => $_ }
-				});
-			}
+	unless ($dat_plg) {
+		$self->warn('plugins DAT file NOT defined!!');
+	}
+	if (-e $dat_plg) {
+		my @plugins = readarr($dat_plg);
+	
+		for(@plugins){	
+			dbh_insert_hash({
+				i => 'INSERT OR IGNORE',
+				t => 'plugins', 
+				h => { plugin => $_ }
+			});
 		}
 	}
 
