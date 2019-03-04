@@ -27,6 +27,8 @@ let b:is_mkvimrc_fun=0
 
 setlocal iskeyword+=#
 
+exe 'setlocal dict+='.base#qw#catpath('plg','base dictionaries vim funcs.txt')
+
 vnoremap <buffer> <LocalLeader>plc  :PerlLinesComment<CR>
 vnoremap <buffer> <LocalLeader>plu  :PerlLinesUnComment<CR>
 vnoremap <buffer> <LocalLeader>plc  :PerlLinesSyntaxCheck<CR>

@@ -14,6 +14,7 @@ use File::Spec::Functions qw(catfile);
 use File::Find qw(find);
 use File::Dat::Utils qw(readarr);
 use File::Basename qw(basename dirname);
+use File::Slurp qw(read_file);
 
 use Data::Dumper;
 
@@ -99,52 +100,31 @@ sub init_vars {
 sub init_sqlstm {
 	my ($self) = @_;
 
-	my $h = {
-		sqlstm => {
-			create_table_log => qq{
-				CREATE TABLE IF NOT EXISTS log (
-					msg TEXT,
-					time INTEGER,
-					loglevel TEXT,
-					func TEXT,
-					prf TEXT
-				);
-			},
-			create_table_plugins => qq{
-				create table if not exists plugins (
-					id integer primary key asc,
-					plugin varchar(255) unique
-				);
-			},
-			create_table_datfiles => qq{
-				create table if not exists datfiles (
-					id integer primary key asc,
-					key varchar(255) unique,
-					plugin varchar(255),
-					type varchar(255),
-					datfile varchar(255)
-				);
-			},
-			create_table_exefiles => qq{
-				create table if not exists exefiles (
-					id integer primary key asc,
-					fileid varchar(255) unique,
-					file varchar(255),
-					pc varchar(255)
-				);
-			},
-			create_table_files => qq{
-				create table if not exists files (
-					id integer primary key asc,
-					fileid varchar(255) unique,
-					type varchar(255),
-					file varchar(255)
-				);
-			},
-		},
-	};
+	my $sql_dir = catfile($self->dirs('plgroot'),qw(data sql));
+	
+	my @files;
+	my @exts=qw(sql);
+	my @dirs;
+	push @dirs,$sql_dir;
+	
+	my $h = { sqlstm => {}};
+	find({ 
+		wanted => sub { 
+			foreach my $ext (@exts) {
+				if (/\.$ext$/) {
+					s/\.$ext$//g;
+	
+					my $f = $File::Find::name;
+					my $sql = read_file($f);
+					$h->{sqlstm}->{$_} = $sql;
+				}
+			}
+		} 
+	},@dirs
+	);
 
-	my @k=keys %$h;
+		
+	my @k = keys %$h;
 
 	for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
 
@@ -208,7 +188,7 @@ sub db_connect {
 	$self;
 }
 
-sub update {
+sub update_self {
 	my ($self,%o) = @_;
 
 	foreach my $k (keys %o) {
@@ -227,7 +207,7 @@ sub reload_from_fs {
 		},
 	);
 	$self
-		->update(%o)
+		->update_self(%o)
 		->db_connect
 		->db_drop_tables
 		->db_create_tables
@@ -738,7 +718,7 @@ sub init_dat_plugins {
 					dirs   => [$pdir],
 					type   => $type,
 					plugin => $p,
-					prefix => $p . '_'
+					prefix => '', 
 				});
 			}
 		}

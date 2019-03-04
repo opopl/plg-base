@@ -36,8 +36,16 @@ function! base#sqlite#list_datfiles ()
 	call base#init#sqlite()
 
 perl << eof
-	my $df = $plgbase->datfiles_ref;
-	VimMsg(Dumper($df));
+	use Base::DB qw(dbh_select);
+
+	my $dbh = $plgbase->dbh;
+	my $rows = dbh_select({ 
+		dbh => $dbh,
+		f => [qw(plugin key datfile)], 
+		t => 'datfiles',
+		cond => q{limit 10},
+	});
+	VimMsg(Dumper($rows));
 eof
 	
 endfunction
@@ -83,6 +91,11 @@ function! base#sqlite#query (...)
 
 	if !strlen(q)
 		let q =input('SQLITE query:','','custom,base#complete#sqlite_sql')
+	endif
+
+	let lim = input('LIMIT: ','10')
+	if strlen(lim)
+		let q .= ' LIMIT ' . lim
 	endif
 
 	call base#varset('base_sqlite_last_sql_query',q)
