@@ -85,6 +85,9 @@ sub dbh_select {
 	# table
 	my $t = $ref->{t} || '';
 
+	# query if input
+	my $q = $ref->{q};
+
 	# additional conditions
 	my $cond = $ref->{cond} || '';
 
@@ -92,11 +95,10 @@ sub dbh_select {
 
 	my $e = q{`};
 	my $f = join ',' => map { $e . $_ . $e } @f;
-	my $q = qq| 
+
+	$q ||= qq| 
 		$SELECT $f FROM `$t` $cond
 	|;
-	# query if input
-	$q = $ref->{q} if $ref->{q};
 
 	my $sth;
  	eval { $sth	= $dbh->prepare($q); };

@@ -44,19 +44,13 @@ endfunction
 function! base#sqlite#list_datfiles ()
 	call base#init#sqlite()
 
-perl << eof
-	use Base::DB qw(dbh_select);
+	let q = 'select plugin, key, datfile from datfiles'
+	let lines =  pymy#sqlite#query_screen({
+		\	'q' : q,
+		\	'dbfile' : base#dbfile(),
+		\	})
+	call base#buf#open_split({ 'lines' : lines })
 
-	my $dbh = $plgbase->dbh;
-	my $rows = dbh_select({ 
-		dbh => $dbh,
-		f => [qw(plugin key datfile)], 
-		t => 'datfiles',
-		cond => q{limit 10},
-	});
-	VimMsg(Dumper($rows));
-eof
-	
 endfunction
 
 function! base#sqlite#info (...)

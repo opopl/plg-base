@@ -80,18 +80,29 @@ function! base#exefile#set (...)
 		 if has('perl')
 perl << eof
 		use Vim::Perl qw(VimVar);
+		use Base::DB qw(dbh_insert_hash);
 
 		my $file   = VimVar('file');
 		my $fileid = VimVar('fileid');
 		my $pc     = VimVar('pc');
 
-		my $a = $plgbase
-			->dbh
+		my $dbh = $plgbase->dbh;
+
+		$Base::DB::DBH  = $dbh;
+		$Base::DB::WARN = sub{$plgbase->warn(@_)};
+
+		my $a = $dbh
 			->selectall_arrayref('select fileid from exefiles where fileid=?',undef,$fileid);
+
 		unless(@$a) {
-			$plgbase
-				->db_prepare('insert into exefiles ( fileid, file, pc ) values(?,?,?)')
-				->db_execute($fileid,$file,$pc);
+			dbh_insert_hash({ 
+				t => 'exefiles',
+				h => {
+					fileid => $fileid ,
+					file 	=>  $file,
+					pc 		=>  $pc,
+				}
+			});
 		}
 
 

@@ -185,6 +185,9 @@ sub db_connect {
 	$self->dbh($dbh);
 	$self->dbname($dbname);
 
+	$Base::DB::DBH=$dbh;
+	$Base::DB::WARN=sub{$self->warn(@_)};
+
 	$self;
 }
 
@@ -225,17 +228,6 @@ sub _withvim {
 	return $uv;
 }
 
-sub dat_add {
-	my ($self,$ref) = @_;
-
-	my $datfile = $ref->{datfile};
-	my $key     = $ref->{key};
-
-	$self->datfiles($key => $datfile );
-
-	$self->db_insert_datfiles($ref);
-}
-
 =head2 dat_locate_from_fs 
 
 =head3 Usage
@@ -253,8 +245,7 @@ sub dat_add {
 =cut
 
 sub dat_locate_from_fs {
-	my $self = shift;
-	my $ref  = shift;
+	my ($self,$ref) = @_;
 
 	my @dirs   = grep { (-d $_) } @{$ref->{dirs} || []};
 	return unless @dirs;
@@ -271,12 +262,16 @@ sub dat_locate_from_fs {
 
 			/$pat/ && do {
 					s/$pat//g;
-					my $k=$prefix . $_;
-					$self->dat_add({ 
+					my $k = $prefix . $_;
+
+					dbh_insert_hash({
+						t => 'datfiles',
+						h => {
 							key     => $k,
 							type    => $type,
 							plugin  => $plugin,
 							datfile => $name,
+						}
 					});
 			};
 			 
@@ -308,10 +303,7 @@ sub db_list_plugins {
 sub db_tables {
 	my $self=shift;
 
-	my $dbname = $self->dbname;
-	my $dbh    = $self->dbh;
 
-	my $sub_warn = $self->{sub_warn} || sub {};
 	my $q = qq{  
 		SELECT 
 			name 
@@ -330,21 +322,13 @@ sub db_tables {
 	};
 
 	my $rows = dbh_select({ 
-		dbh  => $dbh,
-		warn => $sub_warn,
 		q    => $q,
 	});
 
 	my @tables = map { $_->{name} }  @$rows;
 
-	#my $pat    = qr/"$dbname"\."(\w+)"/;
-    #my @tables = map { /$pat/ ? $1 : () } $dbh->tables;
-
 	wantarray ? @tables : \@tables ;
 }
-
-#VimMsg($plgbase->db_table_exists('datfiles'));
-#
 
 sub db_table_exists {
 	my ($self, $tb) = @_;
@@ -394,9 +378,9 @@ sub db_dbfile_size {
 =cut
 
 sub db_drop_tables {
-	my $self = shift;
+	my ($self,$ref) = @_;
 
-	my $ref  = shift || {};
+	$ref ||= {};
 
 	my $dbopts = $ref->{dbopts} || $self->dbopts;
 
@@ -408,36 +392,18 @@ sub db_drop_tables {
 
 	my $dbh=$self->dbh;
 
-	my @s;
+	my @drop;
 	foreach my $tb (@$tb_order) {
 		if ($ref->{all} || $tb_reset->{$tb}) {
-			push @s, qq{ DROP TABLE IF EXISTS $tb; };
+			push @drop, qq{ DROP TABLE IF EXISTS $tb; };
 		}
 	}
 
-	$self->db_do([@s]);
-
-	$self;
-}
-
-sub db_do {
-	my $self = shift;
-
-	my $qs  = shift || [];
-	my $ref = shift || {};
-
-	my @q   = @$qs;
-	my $dbh = $self->dbh;
-
-	foreach my $q (@q) {
-		eval { $dbh->do($q) or do { $self->warn($dbh->errstr,$q)}; };
-		if ($@) {
-			$self->warn('Errors while dbh->do($q)','$q=',$q,$dbh->errstr,$@);
-		}
+	for my $q (@drop){
+		dbh_do({ q  => $q });
 	}
 
 	$self;
-
 }
 
 sub db_create_tables {
@@ -450,151 +416,22 @@ sub db_create_tables {
 
 	my $dbh = $self->dbh;
 
-	my @s;
+	my @create;
 	foreach my $tb (@$tb_order) {
-		push @s,$self->sqlstm('create_table_'.$tb);
+		push @create,$self->sqlstm('create_table_'.$tb);
 		
 		unless ($self->db_table_exists($tb)) {
 			$tb_reset->{$tb}=1;
 		}
 	}
 
-	$self->db_do([@s]);
-
-	$self;
-}
-
-sub db_insert_plugins {
-	my $self=shift;
-	my @p=@_;
-
-	my $dbh = $self->dbh;
-
-	my $q = q{ INSERT OR IGNORE INTO plugins ( plugin ) VALUES(?) };
-	$self->db_prepare();
-	my $sth=$self->sth;
-
-	unless ($sth) {
-		$self->warn('db_insert_plugins: sth undefined!');
-		return $self;
-	}
-	for(@p){	
-		$sth->execute($_);
+	for my $q (@create){
+		dbh_do({ q    => $q });
 	}
 
 	$self;
 }
 
-sub warn_dbh_undef {
-	my $self=shift;
-
-	my $pref=(caller[1])[3];
-	$self->warn($pref.': $dbh undefined!'); 
-	return $self;
-}
-
-sub db_prepare {
-	my $self=shift;
-
-	my $q=shift || '';
-
-	$self->{prepared_query}=undef;
-
-	my $dbh = $self->dbh;
-
-	unless (defined $dbh) { return $self->warn_dbh_undef; }
-
-	my $sth=undef;
-	eval { $sth = $dbh->prepare($q); };
-	$self->sth($sth);
-
-	if ($@) {
-		my $s='eval { $sth = $dbh->prepare($q); };';
-		my @m;
-		push @m,
-			'db_prepare: errors while executing:',$s,
-			'message thrown:',$@,
-			'$dbh->errstr=',$dbh->errstr,
-			'query $q=',$q,
-		$self->warn(@m);
-		return $self;
-	}
-
-	defined $sth or do { 
-		my @m;
-		push @m,
-			'db_prepare: $sth undefined!',
-			'dbh->errstr=',$dbh->errstr,
-			'query $q=',$q;
-		$self->warn(@m);
-		return $self;
-	};
-
-	$self->{prepared_query}=$q;
-
-
-	$self;
-
-}
-
-sub db_execute {
-	my $self=shift;
-
-	my @e=@_;
-
-	my $sth=$self->sth;
-	my $dbh=$self->dbh;
-
-	unless (defined $sth) {
-		$self->warn('db_execute: $sth undefined!'); 
-		return $self;
-	}
-	unless (defined $dbh) { return $self->warn_dbh_undef; }
-
-	my $q=$self->prepared_query || '';
-	unless ($q) {
-		$self->warn('db_execute: no query prepared!');
-		return $self;
-	}
-
-	eval {$sth->execute(@e) or
-	   	do {
-			$self->warn($dbh->errstr,$q,Dumper(\@e));
-			return $self;
-		}; 
-	};
-	if ($@) {
-		my @m;
-		push @m,
-			'db_execute: $sth undefined!',
-			'dbh->errstr=',$dbh->errstr;
-		$self->warn(@m);
-		return $self;
-	}
-
-	$self;
-	
-}
-
-sub db_insert_datfiles {
-	my $self = shift;
-	my $ref  = shift || {};
-
-	my ($dbh,$sth);
-	$dbh=$self->dbh;
-	$sth=$self->sth;
-
-	my $q=q{
-		INSERT OR IGNORE INTO 
-			datfiles(key,type,plugin,datfile) 
-		VALUES(?,?,?,?) };
-	my @e=@{$ref}{qw(key type plugin datfile)};
-
-	$self->db_prepare($q)->db_execute(@e);
-
-	$self;
-
-}
 
 =head2 init_dat_base 
 
@@ -637,11 +474,16 @@ sub init_dat_base {
 sub init_dat_plugins {
 	my $self=shift;
 
-	my @plugins = $self->plugins;
 	my @types   = $self->dattypes;
 
 	my $dbopts   = $self->dbopts_ref;
 	my $tb_reset = $dbopts->{tb_reset} || {};
+
+	my $p_h = dbh_select({ 
+		t => 'plugins', 
+		f => [qw(plugin)],
+	});
+	my @plugins = map { $_->{plugin} } @$p_h;
 
 	if ($tb_reset->{datfiles}) {
 		# find all *.i.dat files for the rest of plugins, except  base plugin
@@ -659,18 +501,6 @@ sub init_dat_plugins {
 			}
 		}
 	}
-
-}
-
-sub warn {
-	my $self = shift;
-	my @m    = @_;
-
-	my $sub_warn=$self->{sub_warn} || sub {};
-
-	$sub_warn->(@m);
-
-	$self;
 
 }
 
@@ -692,7 +522,12 @@ sub init_plugins {
 		if (-e $dat_plg) {
 			my @plugins = readarr($dat_plg);
 		
-			$self->db_insert_plugins(@plugins);
+			for(@plugins){	
+				dbh_insert_hash({
+					t => 'plugins', 
+					h => { plugin => $_ }
+				});
+			}
 		}
 	}
 
@@ -730,7 +565,6 @@ BEGIN {
 	###__ACCESSORS_HASH
 	our @hash_accessors=qw(
 		dirs
-		datfiles
 		vars
 		dbopts
 		done
