@@ -19,3 +19,5 @@ perl_Vim_Plg_Base
 svn_ls
 svn_status
 svn_commit
+###dictionaries
+dict_view

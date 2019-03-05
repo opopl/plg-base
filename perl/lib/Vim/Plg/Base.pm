@@ -26,6 +26,7 @@ use DBI;
 use Base::DB qw(
 	dbh_insert_hash
 	dbh_select
+	dbh_select_as_list
 	dbh_do
 );
 
@@ -79,13 +80,17 @@ sub init {
 sub init_vars {
 	my $self=shift;
 
+	my $dat = catfile($self->dirs('plgroot'),qw( data list db_table_order.i.dat ));
+
+	my $tb_order = (-e $dat) ? readarr($dat) : [];
+
 	my $h={
 		withvim      => $self->_withvim(),
 		dbfile       => ':memory:',
 		dattypes     => [@TYPES],
 		dbopts       => {
 			tb_reset => {},
-			tb_order => [qw(log plugins plugins_all datfiles files exefiles)],
+			tb_order => $tb_order,
 		},
 
 	};
@@ -504,7 +509,15 @@ sub init_dat_plugins {
 	});
 	my @plugins = map { $_->{plugin} } @$p_h;
 
-	if ($tb_reset->{datfiles}) {
+	my @other = dbh_select_as_list({
+		t    => 'plugins',
+		s    => 'select distinct',
+		f    => [qw(plugin)],
+		cond => qq{where plugin not in (?)},
+		p    => [qw(base)],
+	});
+
+	if ($tb_reset->{datfiles} || @other) {
 		# find all *.i.dat files for the rest of plugins, except  base plugin
 		foreach my $p (@plugins) {
 			next if $p eq 'base';

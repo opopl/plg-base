@@ -12,6 +12,17 @@ function! base#act#envvar_open_split (...)
 
 endfunction
 
+function! base#act#dict_view (...)
+	let dicts = split(&dict,',')
+
+	for dict in dicts
+		if filereadable(dict)
+			call base#fileopen({'files':[dict]})
+		endif
+	endfor
+
+endfunction
+
 function! base#act#perl_Vim_Plg_Base (...)
 
 perl << eof
