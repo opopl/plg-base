@@ -503,11 +503,10 @@ sub init_dat_plugins {
 	my $dbopts   = $self->dbopts_ref;
 	my $tb_reset = $dbopts->{tb_reset} || {};
 
-	my $p_h = dbh_select({ 
+	my @plugins = dbh_select_as_list({ 
 		t => 'plugins', 
 		f => [qw(plugin)],
 	});
-	my @plugins = map { $_->{plugin} } @$p_h;
 
 	my @other = dbh_select_as_list({
 		t    => 'plugins',
@@ -517,7 +516,7 @@ sub init_dat_plugins {
 		p    => [qw(base)],
 	});
 
-	if ($tb_reset->{datfiles} || @other) {
+	if ($tb_reset->{datfiles} || (not @other) ) {
 		# find all *.i.dat files for the rest of plugins, except  base plugin
 		foreach my $p (@plugins) {
 			next if $p eq 'base';

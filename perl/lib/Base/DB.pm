@@ -33,6 +33,7 @@ my %EXPORT_TAGS = (
 'funcs' => [qw( 
 	dbh_insert_hash
 	dbh_select
+	dbh_select_as_list
 	dbh_do
 )],
 'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
@@ -122,6 +123,16 @@ sub dbh_select {
 	}
 
 	return $rows;
+}
+
+sub dbh_select_as_list {
+	my ($ref)  = @_;
+
+	my $rows = dbh_select($ref);
+	my @list = map { values %{$_} } @$rows;
+
+	return wantarray ? @list : \@list;
+
 }
 
 sub dbh_selectall_arrayref {
