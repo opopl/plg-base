@@ -129,7 +129,7 @@ sub init_db {
 		#qw(tags_write),
 		;
 	;
-	push @q, map { qq{DROP TABLE IF EXIST `$_`} } @drop;
+	push @q, map { qq{DROP TABLE IF EXISTS `$_`} } @drop;
 
 ###t_files
 	push @q,

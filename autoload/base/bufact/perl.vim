@@ -215,6 +215,7 @@ perl << eof
 	my $opts = {
 		skip => $skip,
 	};
+	@sb_yaml = map { s/^(\s*)\-/$1/g; $_ } @sb_yaml;
 	VimListExtend('lines',[@sb_yaml],$opts);
 eof
 	call base#buf#open_split({ 'lines' : lines })
