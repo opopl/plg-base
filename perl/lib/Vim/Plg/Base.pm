@@ -564,12 +564,44 @@ sub init_plugins {
 
 }
 
+sub init_plugins_all {
+	my ($self)=@_;
+	
+	# list of all plugins
+	my @pall;
+
+	my @dirs;
+	push @dirs,
+		catfile($self->dirs('plgroot'),qw(..));
+	
+	find({ 
+		wanted => sub { 
+			if (-d) {
+				s/^\.(?:\\|\/)//g;
+				push @pall,$_;
+				dbh_insert_hash({
+					t => 'plugins_all',
+					h => {
+						plugin => $_,
+					},
+				});
+			}
+		} 
+	},@dirs
+	);
+
+	$self;
+
+
+}
+
 sub init_dat {
 	my $self = shift;
 
 	$self
 		->init_dat_base
 		->init_plugins
+		->init_plugins_all
 		->init_dat_plugins
 		;
 

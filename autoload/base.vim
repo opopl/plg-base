@@ -2783,6 +2783,36 @@ function! base#datafile (id)
     return file
 endfunction
 
+function! base#plugins (...)
+		let plugins = []
+		let dbfile = base#dbfile()
+		
+		let q = 'select plugin from plugins'
+		let p = []
+		
+		let plugins = pymy#sqlite#query_as_list({
+			\	'dbfile' : dbfile,
+			\	'p'      : p,
+			\	'q'      : q,
+			\	})
+		return plugins
+
+endfunction
+
+function! base#plugins_all (...)
+		let dbfile = base#dbfile()
+		
+		let q = 'select plugin from plugins_all'
+		let p = []
+		
+		let plugins_all = pymy#sqlite#query_as_list({
+			\	'dbfile' : dbfile,
+			\	'p'      : p,
+			\	'q'      : q,
+			\	})
+		return plugins_all
+
+endfunction
 
 function! base#datafiles (...)
 		let id = get(a:000,0,'')
