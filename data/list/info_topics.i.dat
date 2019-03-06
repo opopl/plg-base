@@ -1,7 +1,6 @@
 bufs
 completions
-#datfiles_dict
-datfiles_list
+datfiles
 dbext
 dirs
 encodings

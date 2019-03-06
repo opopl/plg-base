@@ -1,5 +1,6 @@
 log 
 dbfiles
+varlist
 plugins 
 plugins_all 
 datfiles 

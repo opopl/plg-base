@@ -1576,7 +1576,8 @@ fun! base#readdictdat(ref)
  call base#varcheckexist('datfiles')
 
  if base#type(ref) == 'String'
-   let opts['file']=s:datfiles[ref]
+   let opts['file'] = s:datfiles[ref]
+
  elseif base#type(ref) == 'Dictionary'
    if has_key(ref,'dat')
      let opts['file']=s:datfiles[ref['dat']]
@@ -2069,13 +2070,15 @@ function! base#info (...)
 			 call base#buf#open_split({ 'lines' : lines })
 			 return
 
-"""info_datfiles_list
-	 elseif topic == 'datfiles_list'
+"""info_datfiles
+	 elseif topic == 'datfiles'
 			 let lines=[]
 			 let dbfile = base#dbfile()
+
+			 let type = input('dattype:','','custom,base#complete#dattypes')
 			 
 			 let q = 'select keyfull from datfiles where type = ?'
-			 let p = base#qw('list')
+			 let p = [type]
 			 
 			 let list = pymy#sqlite#query_as_list({
 			 	\	'dbfile' : dbfile,
@@ -2083,6 +2086,8 @@ function! base#info (...)
 			 	\	'q'      : q,
 			 	\	})
 			 call base#buf#open_split({ 'lines' : list })
+
+	 elseif topic == 'datfiles_dict'
 
 """info_file
 	 elseif topic == 'file'
@@ -2778,6 +2783,7 @@ function! base#datafile (id)
     return file
 endfunction
 
+
 function! base#datafiles (...)
 		let id = get(a:000,0,'')
 		return base#sqlite#datfiles(id)
@@ -2792,9 +2798,13 @@ function! base#datafiles (...)
         "\ "pat"     : pat,
         "\  })
 
-
     return files
 
+endfunction
+
+function! base#datlist ()
+	let list = base#sqlite#datlist()
+	return list
 endfunction
 
 function! base#initvarsfromdat ()
@@ -2806,8 +2816,8 @@ function! base#initvarsfromdat ()
 
     call extend(ref,refa)
 
-    let datfiles = base#varget('datfiles',{})
-    let datlist  = base#varget('datlist',[])
+    let datfiles = base#datafiles()
+    let datlist  = base#datlist()
 
     let dir = base#datadir()
     let dir = get(ref,'dir',dir)
@@ -3027,7 +3037,7 @@ function! base#viewdat (...)
     let dat=a:1
   else
     let dat=base#getfromchoosedialog({ 
-        \ 'list'        : base#varhash#keys('datfiles'),
+        \ 'list'        : base#datlist(),
         \ 'startopt'    : '',
         \ 'header'      : "Available DAT files are: ",
         \ 'numcols'     : 1,

@@ -44,19 +44,28 @@ function! base#plg#runtime (...)
 	endif
 endf	
 
-function! base#plg#datfiles (...)
-		let plg = get(a:000,0,'')
+function! base#plg#datpaths (...)
+		let ref=get(a:000,0,{})
+
+		let plg = get(ref,'plg','')
+		let type = get(ref,'type','list')
 
 		let dbfile = base#dbfile()
 
-		let q = 'select datfile from datfiles where plugin = ?'
-		let p = [ plg ]
+		let q = 'select keyfull, datfile from datfiles where plugin = ? and type = ?'
+		let p = [ plg, type ]
 
-		let datpaths = pymy#sqlite#query_as_list({
+		let [rows_h,cols] = pymy#sqlite#query({
 			\	'dbfile' : dbfile,
 			\	'p'      : p,
 			\	'q'      : q,
 			\	})
+		let datpaths={}
+		for rh in rows_h
+			let k = get(rh,'keyfull','')
+			let v = get(rh,'datfile','')
+			call extend(datpaths,{ k: v})
+		endfor
 		return datpaths
 	
 endfunction
@@ -74,7 +83,7 @@ function! base#plg#loadvars (...)
 
 	let dbfile = base#dbfile()
 
-	let prf={ 'prf' : 'base#plg#loadvars' }
+	let prf = { 'prf' : 'base#plg#loadvars' }
 	call base#log([
 		\	'plg => ' . plg,
 		\	],prf )
@@ -82,46 +91,24 @@ function! base#plg#loadvars (...)
 	let opts_readarr  = get(ref,'opts_readarr',{})
 	let opts_readdict = get(ref,'opts_readdict',{})
 
-	let types = base#qw('list listlines dict')
+	let dattypes = base#qw('list listlines dict')
+
+	for type in dattypes
 	
-	let rpath = plg.' '.'data'
-
-  let datfiles = base#varget('datfiles',{})
-
-	for type in types
-		let typedir = base#qw#catpath('plg',rpath.' '.type)
-
-		if !isdirectory(typedir)
-			continue
-		endif
+		let datpaths = base#plg#datpaths({ 'plg' : plg, 'type' : type })
 	
-		let ext  = "i.dat"
-		let exts = [ ext ]
-
-		let fnames = base#find({ 
-			\	"dirs"    : [typedir],
-			\	"exts"    : exts,
-			\	"relpath" : 1,
-			\	"rmext"   : 1,
-			\	})
-	
-		for fname in fnames
-			let vname = plg.'_'.fname
-
-      "" full path to the datfile
-			let df    = base#file#catfile([ typedir, fname .'.'.ext ])
-
-      call extend(datfiles,{ vname : df })
+		for [ keyfull, datpath ] in items(datpaths)
+			let vname = keyfull
 
 			if type == 'list'
-				let vv = base#readarr(df,opts_readarr)
+				let vv = base#readarr(datpath,opts_readarr)
 
 			elseif type == 'listlines'
 				call extend(opts_readarr,{ 'splitlines' : 0 })
-				let vv = base#readarr(df,opts_readarr)
+				let vv = base#readarr(datpath,opts_readarr)
 
 			else
-				let rf = { 'file' : df }
+				let rf = { 'file' : datpath }
 				call extend(rf,opts_readdict)
 				let vv = base#readdict(rf)
 
@@ -138,11 +125,6 @@ function! base#plg#loadvars (...)
 				call base#varset(plg.'_'.k,v)
 		endfor
 	endif
-
-  call base#varset('datfiles',datfiles)
-
-  let datlist=base#varhash#keys('datfiles')
-  call base#varset('datlist',datlist)
 
 endfunction
 
