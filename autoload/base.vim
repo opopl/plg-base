@@ -428,7 +428,10 @@ endf
 "
 "try
 	function! base#dbfile ()
-		let dbfile = $HOME . '/db/vim_plg_base.db'
+		let dbdir = $HOME . '/db'
+		call base#mkdir(dbdir)
+
+		let dbfile = dbdir . '/vim_plg_base.db'
 	
 		"let dbfile = base#qw#catpath('db','vim_plg_base.db')
 		"call base#varset('plg_base_dbfile',dbfile)
@@ -2065,6 +2068,21 @@ function! base#info (...)
 
 			 call base#buf#open_split({ 'lines' : lines })
 			 return
+
+"""info_datfiles_list
+	 elseif topic == 'datfiles_list'
+			 let lines=[]
+			 let dbfile = base#dbfile()
+			 
+			 let q = 'select keyfull from datfiles where type = ?'
+			 let p = base#qw('list')
+			 
+			 let list = pymy#sqlite#query_as_list({
+			 	\	'dbfile' : dbfile,
+			 	\	'p'      : p,
+			 	\	'q'      : q,
+			 	\	})
+			 call base#buf#open_split({ 'lines' : list })
 
 """info_file
 	 elseif topic == 'file'

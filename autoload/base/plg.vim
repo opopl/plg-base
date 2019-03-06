@@ -44,6 +44,23 @@ function! base#plg#runtime (...)
 	endif
 endf	
 
+function! base#plg#datfiles (...)
+		let plg = get(a:000,0,'')
+
+		let dbfile = base#dbfile()
+
+		let q = 'select datfile from datfiles where plugin = ?'
+		let p = [ plg ]
+
+		let datpaths = pymy#sqlite#query_as_list({
+			\	'dbfile' : dbfile,
+			\	'p'      : p,
+			\	'q'      : q,
+			\	})
+		return datpaths
+	
+endfunction
+
 """ call base#plg#loadvars (plg)
 """ call base#plg#loadvars (plg,{ 'opts_readarr' : { ... } })
 """ call base#plg#loadvars (plg,{ 'opts_readdict' : { ... } })
@@ -55,7 +72,7 @@ function! base#plg#loadvars (...)
 		let ref = get(a:000,1,{})
 	endif
 
-	let dbfile=base#dbfile()
+	let dbfile = base#dbfile()
 
 	let prf={ 'prf' : 'base#plg#loadvars' }
 	call base#log([
