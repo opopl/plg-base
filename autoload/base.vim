@@ -2760,8 +2760,8 @@ function! base#datafile (id)
     return file
 endfunction
 
-function! base#datafiles (id)
-		let id = a:id
+function! base#datafiles (...)
+		let id = get(a:000,0,'')
 		return base#sqlite#datfiles(id)
 
     "let datadir = base#datadir()

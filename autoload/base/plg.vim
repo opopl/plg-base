@@ -55,6 +55,8 @@ function! base#plg#loadvars (...)
 		let ref = get(a:000,1,{})
 	endif
 
+	let dbfile=base#dbfile()
+
 	let prf={ 'prf' : 'base#plg#loadvars' }
 	call base#log([
 		\	'plg => ' . plg,

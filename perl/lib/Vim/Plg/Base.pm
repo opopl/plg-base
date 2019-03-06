@@ -496,7 +496,7 @@ sub init_dat_base {
 }
 
 sub init_dat_plugins {
-	my $self=shift;
+	my ($self) = @_;
 
 	my @types   = $self->dattypes;
 
@@ -509,7 +509,7 @@ sub init_dat_plugins {
 	});
 
 	my @other = dbh_select_as_list({
-		t    => 'plugins',
+		t    => 'datfiles',
 		s    => 'select distinct',
 		f    => [qw(plugin)],
 		cond => qq{where plugin not in (?)},
