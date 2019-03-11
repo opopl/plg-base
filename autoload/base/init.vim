@@ -548,12 +548,11 @@ function! base#init#plugins (...)
 		call base#varsetfromdat('plugins','List')
 		let plugins = base#varget('plugins',[])
 
-
 		let dbfile = base#dbfile()
 		call pymy#sqlite#dbfile(dbfile)
 
 		call pymy#sqlite#query({
-			\	'q'      : 'delete from plugins',
+			\	'q'      : 'DELETE FROM plugins',
 			\	})
 
 		let ref = {
@@ -562,14 +561,20 @@ function! base#init#plugins (...)
 					\ "field"  : 'plugin',
 					\ "list"   : plugins,
 					\ }
-		call pymy#sqlite#extend_with_list(ref)
-		
-		call base#var#update('plugins_all')
-		let plugins_all = base#varget('plugins_all',[])
 
+		call pymy#sqlite#extend_with_list(ref)
+
+		call base#init#plugins_all()
+
+endf  
+
+function! base#init#plugins_all (...)
 		call pymy#sqlite#query({
 			\	'q'      : 'delete from plugins_all',
 			\	})
+		
+		call base#var#update('plugins_all')
+		let plugins_all = base#varget('plugins_all',[])
 
 		let ref = {
 					\ "insert" : "INSERT OR IGNORE",
@@ -579,7 +584,4 @@ function! base#init#plugins (...)
 					\ }
 		call pymy#sqlite#extend_with_list(ref)
 
-
-endf  
-
-
+endf

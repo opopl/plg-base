@@ -568,13 +568,11 @@ sub init_plugins {
 sub init_plugins_all {
 	my ($self)=@_;
 	
-	# list of all plugins
-	my @pall;
-
 	my @dirs;
 	push @dirs,
 		catfile($self->dirs('plgroot'),qw(..));
 
+	# list of all plugins
 	my @pall = File::Find::Rule
 		->directory
 		->relative
