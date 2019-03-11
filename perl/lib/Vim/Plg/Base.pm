@@ -580,6 +580,7 @@ sub init_plugins_all {
 				s/^\.(?:\\|\/)//g;
 				push @pall,$_;
 				dbh_insert_hash({
+					i => 'insert or ignore',
 					t => 'plugins_all',
 					h => {
 						plugin => $_,
