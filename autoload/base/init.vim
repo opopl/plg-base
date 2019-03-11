@@ -503,7 +503,6 @@ function! base#init#vars (...)
     		call base#varset('pdfviewer',v)
     endif
 
-		call base#var#update('plugins_all')
 		call base#echoprefixold()
 endf    
 
@@ -546,23 +545,40 @@ endf
 
 function! base#init#plugins (...)
 
-    call base#varsetfromdat('plugins','List')
+		call base#varsetfromdat('plugins','List')
 		let plugins = base#varget('plugins',[])
 
+
 		let dbfile = base#dbfile()
+		call pymy#sqlite#dbfile(dbfile)
 
-		let qrs = []
-
-		for p in plugins
-			call add(qrs,)
-		endfor
-		
-		let [ rows_h, cols ] = pymy#sqlite#query({
-			\	'dbfile' : dbfile,
-			\	'p'      : p,
-			\	'q'      : q,
+		call pymy#sqlite#query({
+			\	'q'      : 'delete from plugins',
 			\	})
-			" code
+
+		let ref = {
+					\ "insert" : "INSERT OR IGNORE",
+					\ "table"  : "plugins",
+					\ "field"  : 'plugin',
+					\ "list"   : plugins,
+					\ }
+		call pymy#sqlite#extend_with_list(ref)
+		
+		call base#var#update('plugins_all')
+		let plugins_all = base#varget('plugins_all',[])
+
+		call pymy#sqlite#query({
+			\	'q'      : 'delete from plugins_all',
+			\	})
+
+		let ref = {
+					\ "insert" : "INSERT OR IGNORE",
+					\ "table"  : "plugins_all",
+					\ "field"  : 'plugin',
+					\ "list"   : plugins_all,
+					\ }
+		call pymy#sqlite#extend_with_list(ref)
+
 
 endf  
 
