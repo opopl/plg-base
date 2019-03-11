@@ -1,7 +1,9 @@
 base#plg#loadvars
 
 pymy#sqlite#dbfile
+pymy#sqlite#insert_hash
+pymy#sqlite#insert_hash_qp
+pymy#sqlite#list_of_tables
 pymy#sqlite#query
 pymy#sqlite#query_as_list
 pymy#sqlite#query_screen
-pymy#sqlite#list_of_tables

@@ -942,6 +942,7 @@ endfun
 fun! base#readdatfile(ref,...)
 
  let opts={ 'type' : 'List' }
+ let ref = a:ref
 
  if a:0 
     if base#type(a:1) == 'Dictionary'
@@ -949,27 +950,23 @@ fun! base#readdatfile(ref,...)
     endif
  endif
 
- if base#type(a:ref) == 'String'
-   if base#varhash#haskey('datfiles',a:ref)
-      let file = base#varhash#get('datfiles',a:ref,'')
-   else 
-      return []
-   endif
- elseif base#type(a:ref) == 'Dictionary'
-   call extend(opts,a:ref)
-   let file=a:ref['file']
-   if exists("a:ref['type']")
-        let opts.type = a:ref['type']
-   endif
+ if base#type(ref) == 'String'
+		let datid = ref
+		let file = base#datafile(datid)
+
+ elseif base#type(ref) == 'Dictionary'
+   call extend(opts,ref)
+
+   let file = get(ref,'file','')
  endif
 
  if opts.type == 'Dictionary'
-    let ref=opts
+    let ref = opts
     call extend(ref,{ 'file' :  file } )
-    let res=base#readdict( ref )
+    let res = base#readdict( ref )
 
  elseif opts.type == 'List'
-    let res=base#readarr(file,opts)
+    let res = base#readarr(file,opts)
 
  elseif opts.type == 'ListLines'
 		call extend(opts,{ 'splitlines' : 0 })
@@ -2748,12 +2745,8 @@ function! base#varexists (varname)
 endfunction
 
 function! base#varsetfromdat (...)
-    let varname = a:1
-
-    let type = "List"
-    if a:0 == 2
-        let type = a:2
-    endif
+    let varname = get(a:000,0,'')
+		let type    = get(a:000,1,'List')
 
     let datafile = base#datafile(varname)
 

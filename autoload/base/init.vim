@@ -547,6 +547,22 @@ endf
 function! base#init#plugins (...)
 
     call base#varsetfromdat('plugins','List')
+		let plugins = base#varget('plugins',[])
+
+		let dbfile = base#dbfile()
+
+		let qrs = []
+
+		for p in plugins
+			call add(qrs,)
+		endfor
+		
+		let [ rows_h, cols ] = pymy#sqlite#query({
+			\	'dbfile' : dbfile,
+			\	'p'      : p,
+			\	'q'      : q,
+			\	})
+			" code
 
 endf  
 

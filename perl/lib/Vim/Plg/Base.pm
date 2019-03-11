@@ -37,6 +37,7 @@ use base qw(
 
 use File::Path qw(mkpath);
 use File::stat qw(stat);
+use File::Find::Rule;
 
 our @TYPES = qw(list dict listlines );
 
@@ -573,27 +574,24 @@ sub init_plugins_all {
 	my @dirs;
 	push @dirs,
 		catfile($self->dirs('plgroot'),qw(..));
+
+	my @pall = File::Find::Rule
+		->directory
+		->relative
+		->maxdepth(1)
+		->in( @dirs );
+
+	for(@pall){
+		dbh_insert_hash({
+			i => 'insert or ignore',
+			t => 'plugins_all',
+			h => {
+				plugin => $_,
+			},
+		});
+	}
 	
-	find({ 
-		wanted => sub { 
-			if (-d) {
-				s/^\.(?:\\|\/)//g;
-				push @pall,$_;
-				dbh_insert_hash({
-					i => 'insert or ignore',
-					t => 'plugins_all',
-					h => {
-						plugin => $_,
-					},
-				});
-			}
-		} 
-	},@dirs
-	);
-
 	$self;
-
-
 }
 
 sub init_dat {
