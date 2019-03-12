@@ -2959,8 +2959,12 @@ function! base#datlist ()
 endfunction
 
 function! base#initvarsfromdat ()
+		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		let msg = ['start']
 		let prf = { 'func' : 'base#initvarsfromdat', 'plugin' : 'base'}
-		call base#log('start',prf)
+		call base#log(msg,prf)
+		let l:start=localtime()
+		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
     let refdef = {}
     let ref    = refdef
@@ -3008,6 +3012,13 @@ function! base#initvarsfromdat ()
 
     call base#varset('datlist',datlist)
     call base#varset('datfiles',datfiles)
+
+		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		let l:elapsed = localtime() - l:start
+		let msg = ['end, elapsed = ' . l:elapsed]
+		let prf = {'plugin' : 'base', 'func' : 'base#initvarsfromdat'}
+		call base#log(msg,prf)
+		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     
 endfunction
 
