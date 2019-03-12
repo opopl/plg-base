@@ -7,8 +7,9 @@ function! base#varhash#keys (var)
 	   let keys = sort(keys(val))
 	else 
 	   call base#warn({ 
-	   	\	"text" : "Input parameter is not hash!",
-	   	\	"prefix" : "(base#varhash#keys) ",
+	   	\	"text"   : "Input parameter is not hash!",
+	   	\	"func"   : "base#varhash#keys",
+	   	\	"plugin" : "base",
 	   	\	})
 	endif
 

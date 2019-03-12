@@ -457,6 +457,12 @@ function! base#log (msg,...)
 	if base#type(a:msg) == 'String'
 		let time = strftime("%Y %b %d %X")
 
+		if !exists('g:time_start')
+			let g:time_start = localtime()
+		endif
+			
+		let elapsed = localtime() - g:time_start
+
 		let msg_prf = prf.' '.a:msg
 		let msg_full = '<<' . time . '>>' .' '.msg_prf
 
@@ -469,8 +475,8 @@ function! base#log (msg,...)
 
 		let dbfile = base#dbfile() 
 
-		let p = [time,msg,prf,fnc,plugin]
-		let q = 'INSERT OR IGNORE INTO log (time,msg,prf,func,plugin) VALUES(?,?,?,?,?)'
+		let p = [time,elapsed,msg,prf,fnc,plugin]
+		let q = 'INSERT OR IGNORE INTO log (time,elapsed,msg,prf,func,plugin) VALUES(?,?,?,?,?,?)'
 python << eof
 
 import vim
@@ -2015,15 +2021,32 @@ endfunction
 "  base#warn({ "text" : "aaa", "prefix" : ">>> " })
 "
 function! base#warn (ref)
-		let text   = get(a:ref,'text','')
+		let ref    = a:ref
+		let text   = get(ref,'text','')
 		let prefix = base#echoprefix()
-		let prefix = get(a:ref,'prefix',prefix)
-		let hl     = get(a:ref,'hl','WarningMsg')
+		let prefix = get(ref,'prefix',prefix)
+		let hl     = get(ref,'hl','WarningMsg')
 
 		let text = prefix . text
 
-		call base#log([text],{ 'prf' : 'WARN' })
+		let prf = {}
+		call extend(prf,ref)
+		call extend(prf,{ 'loglevel' : 'warn' })
+
+		call base#log([text],prf)
     
+endfunction
+
+function! base#time_start ()
+	if !exists('g:time_start')
+		let	g:time_start = localtime()
+	endif
+
+	let time = g:time_start
+	let time_s = strftime("%Y %b %d %X",time)
+
+	return time_s
+
 endfunction
 
 function! base#info (...)
@@ -2838,7 +2861,8 @@ function! base#datlist ()
 endfunction
 
 function! base#initvarsfromdat ()
-		call base#log('start',{ 'prf' : 'base#initvarsfromdat'})
+		let prf = { 'func' : 'base#initvarsfromdat', 'plugin' : 'base'}
+		call base#log('start',prf)
 
     let refdef = {}
     let ref    = refdef
@@ -2967,13 +2991,15 @@ function! base#init (...)
 	let opts_all = opts
 	let opts_all = base#varget('all_init_cmds',opts_all)
 
+	let prf = { 'func' : 'base#init', 'plugin' : 'base'}
+ 
   if a:0
-    let ref = a:1
+    let ref = get(a:000,0,'')
 
 		if type(ref)==type('')
 				let opt = ref
-				let msg = 'base#init for: ' .  opt
-				call base#log(msg)
+				let msg = 'init opt = ' .  opt
+				call base#log(msg,prf)
 
 		elseif type(ref)==type([])
 				let opts = ref

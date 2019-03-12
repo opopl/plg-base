@@ -54,7 +54,7 @@ function! base#var#update (varname)
 		return
 	endif
 
-	let prf={ 'prf' : '(base#var#update)' }
+	let prf={ 'func' : 'base#var#update','plugin' : 'base' }
 	call base#log([
 		\	'updated: ' . varname,
 		\	],prf)

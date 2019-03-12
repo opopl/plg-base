@@ -102,21 +102,25 @@ function! base#vim#helptags (...)
 
 		if !len(ff) | return | endif
 
-		let prf = { 'prf' : 'base#vim#helptags' }
+		let prf = { 'func' : 'base#vim#helptags', 'plugin' : 'base' }
 		let cmd = 'helptags ' . docdir
 
-		call base#log([
-			\	'try: ' . cmd,
-			\	],prf)
+		call base#log([ 'try: ' . cmd	],prf)
 
+		let warn_msg=''
 		try
 			silent exe cmd
 		catch /^Vim\%((\a\+)\)\=:E154/	
-			call base#log('Vim Error E154: duplicate tag for docdir: '."\n".docdir)
+			let warn_msg = 'Vim Error E154: duplicate tag for docdir: '."\n".docdir
 		catch 	
-			call base#log('Errors for helptags command, docdir: '."\n".docdir)
+			let warn_msg = 'Errors for helptags command, docdir: '."\n".docdir
 		finally
 		endtry
+
+		call extend(prf,{'loglevel' : 'warn'})
+		if strlen(warn_msg)
+			call base#log(warn_msg,prf)
+		endif
 
 		let tfile_old = base#file#catfile([ docdir, 'tags' ])
 		if filereadable(tfile_old)
