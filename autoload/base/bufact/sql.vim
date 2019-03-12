@@ -48,19 +48,23 @@ endf
 function! base#bufact#sql#file_exec ()
 	call base#buf#start()
 
-	let driver = input("db driver: ","sqlite","custom,base#complete#dbdrivers")
+	let dbdriver = input("db driver: ","sqlite","custom,base#complete#dbdrivers")
 	let user   = input("user: ","")
 	let pwd    = input("pwd: ","")
+
+	call base#varset('dbdriver',dbdriver)
 
 	let defaults = {
 		\	'mysql'  : { 'db' :  'information_schema' },
 		\	'sqlite' : { 'db' :  '' },
 		\	}
-	let dfs = get(defaults,driver,{})
 
-	let db = get(dfs,'db','')
-	let db = input('db:',db)
-	
+
+	let dbname = input('dbname: ','','custom,base#complete#dbnames')
+	let db     = base#dbfile(dbname)
+
+	echo db
+
 	let fail = 1
 
 perl << eof
@@ -70,10 +74,14 @@ perl << eof
 
 	my $err = sub{ my @m=@_; for(@m){ VimWarn($_) } };
 
-	my $db     = VimVar('db');
-	my $driver = VimVar('driver');
+	my $db       = VimVar('db');
+	my $dbdriver = VimVar('dbdriver');
+	my $dbds = {
+		sqlite => 'SQLite',
+	};
+	my $dbd = $dbds->{$dbdriver} || $dbdriver;
 
-	my $dsn  = "DBI:$driver:database=$db:host=localhost";
+	my $dsn  = "DBI:$dbd:database=$db:host=localhost";
 	my $user = VimVar('user');
 	my $pwd  = VimVar('pwd');
 
@@ -112,7 +120,7 @@ perl << eof
 
 eof
 
-	redraw!
+ " redraw!
 	if ( fail == 0 )
 		echohl MoreMsg
 		echo 'DBI query OK'

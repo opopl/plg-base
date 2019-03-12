@@ -1995,11 +1995,9 @@ base_cur = base_conn.cursor()
 
 for pathid in paths.keys():
 	path = paths.get(pathid)
-
 	q ='''INSERT OR IGNORE INTO paths (pathid,path,pcname) VALUES (?,?,?)'''
 	p = [ pathid, path, pcname ]
-
-base_cur.execute(q,p)
+	base_cur.execute(q,p)
 
 base_conn.commit()
 base_conn.close()

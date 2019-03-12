@@ -90,6 +90,22 @@ function! base#complete#dbdrivers (...)
   return base#complete#vars([ 'dbdrivers' ])
 endfunction
 
+function! base#complete#dbnames (...)
+	let dbdriver = base#varget('dbdriver','sqlite')
+	let dbfile = base#dbfile()
+	
+	let q = 'select dbname from dbfiles where dbdriver = ?'
+	let p = [ dbdriver ]
+	
+	let dbnames = pymy#sqlite#query_as_list({
+		\	'dbfile' : dbfile,
+		\	'p'      : p,
+		\	'q'      : q,
+		\	})
+	let comps = join(dbnames,"\n")
+	return comps
+endfunction
+
 function! base#complete#BaseAct (...)
   return base#complete#vars([ 'opts_BaseAct' ])
 endfunction
