@@ -162,13 +162,28 @@ endf
 
 function! base#file#stat(file,...)
 	let file = a:file
-	let arr  = get(a:000,0,[])
+	let st = {}
 python << eof
+
 import vim
+import os
 
 file = vim.eval('file')
+stat = os.stat(file)
+
+st = { 
+	'mtime' : stat.st_mtime ,
+	'ctime' : stat.st_ctime ,
+	'size'  : stat.st_size ,
+}
+
+for k in st.keys():
+	v = st.get(k)
+	cmd = "call extend(st,{ " + "'" + k +"'" + ' : ' + "'" + str(v) +"'" + "})"
+	vim.command(cmd)
 	
 eof
+	return st
 
 endf
 

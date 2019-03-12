@@ -1,5 +1,9 @@
 
-let b:comps_BufAct = base#varget('comps_BufAct_vim',[])
+let comps = base#varget('comps_BufAct_vim',[])
+call add(comps,'stat')
+
+let b:comps_BufAct = comps
+
 if exists("b:did_base_vim_ftplugin")
   finish
 endif

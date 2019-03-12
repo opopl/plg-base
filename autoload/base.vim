@@ -514,8 +514,8 @@ def table_exists (ref):
 #------------------------------------------------------------
 	
 dbfile = vim.eval('dbfile')
-q=vim.eval('q')
-p=vim.eval('p')
+q = vim.eval('q')
+p = vim.eval('p')
 
 conn = sqlite3.connect(dbfile)
 c = conn.cursor()

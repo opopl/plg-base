@@ -192,6 +192,17 @@ function! base#buf#onload ()
 	
 endfunction
 
+function! base#buf#stat ()
+	call base#buf#start()
+	let st = base#file#stat(b:file)
+
+	let lines = []
+	for [k,v] in items(st)
+		"call add(lines,)
+	endfor
+
+endfunction
+
 function! base#buf#insert_snip ()
 	call base#buf#start()
 
