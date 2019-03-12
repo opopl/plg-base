@@ -444,6 +444,11 @@ perl << eof
 		sub_warn => sub { VimWarn(@_)  },
 		dbfile   => $dbfile,
 	)->init;
+
+	my $dbh = $plgbase->dbh;
+	if ($dbh) {
+		$Vim::Perl::DBH=$dbh;
+	}
 eof
 
 	call base#varset('done_base_init_sqlite',1)

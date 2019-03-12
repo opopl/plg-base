@@ -42,7 +42,7 @@ sub log_dbh {
 	if (my $dbh = $self->{dbh}) {
 		dbh_insert_hash({ 
 			dbh => $dbh,
-			t => 'log', 
+			t   => 'log',
 			h => { 
 				msg      => $msg,
 				time     => time(),

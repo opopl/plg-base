@@ -31,6 +31,10 @@ use File::Slurp qw(
   prepend_file
 );
 
+use Base::DB qw(
+	dbh_insert_hash
+);
+
 
 $VERSION = '0.01';
 @ISA     = qw(Exporter);
@@ -79,137 +83,70 @@ my @ex_vars_array = qw(
 ###export_funcs
     'funcs' => [
         qw(
-          _die
-          init
-          init_Args
-          init_PIECES
-		  EnvVar
 		  CurBufSet
+		  EnvVar
 		  UnderVim
-          VimArg
 		  VimBufSplit
+		  VimListExtend
+          VimAppend
+          VimArg
           VimBufFiles_Insert_SubName
           VimChooseFromPrompt
-          VimCreatePrompt
           VimCmd
+          VimCreatePrompt
           VimEcho
           VimEditBufFiles
           VimEval
-          VimThisLine
-          VimWarn
           VimExists
-          VimPerlGetModuleName
+          VimFileOpen
           VimGetFromChooseDialog
           VimGetLine
-          VimSetLine
-          VimAppend
           VimGrep
-          VimFileOpen
           VimInput
           VimJoin
           VimLen
           VimLet
           VimLetEval
-		  VimListExtend
           VimLog
-          VimSet
-          VimStrToOpts
           VimMsg
-          VimMsgDebug
-          VimMsgE
-          VimMsgNL
-          Vim_MsgColor
-          Vim_MsgPrefix
-          Vim_MsgDebug
-          Vim_Files
-          Vim_Files_DAT
+          VimPerlGetModuleName
+          VimPerlGetModuleNameFromDialog
           VimPerlInstallModule
-          VimPerlViewModule
           VimPerlModuleNameFromPath
           VimPerlPathFromModuleName
-          VimPerlGetModuleNameFromDialog
+          VimPerlViewModule
           VimPieceFullFile
-          VimResetVars
           VimQuickFixList
-          VimSo
+          VimResetVars
+          VimSet
+          VimSetLine
           VimSetTags
+          VimSo
+          VimStrToOpts
+          VimThisLine
           VimVar
+          VimVarDump
           VimVarEcho
           VimVarType
-          VimVarDump
+          VimWarn
+          Vim_Files
+          Vim_Files_DAT
+          Vim_MsgColor
+          Vim_MsgDebug
+          Vim_MsgPrefix
+          _die
+          init
+          init_Args
+          init_PIECES
           )
     ],
     'vars' => [ @ex_vars_scalar, @ex_vars_array, @ex_vars_hash ]
 );
 
-#sub _die;
-#sub init;
-#sub init_Args;
-#sub init_PIECES;
-
-#sub VimArg;
-#sub VimBufSplit;
-## ----------- buffers -----------------------
-
-#sub VimCmd;
-#sub VimChooseFromPrompt;
-#sub VimCreatePrompt;
-#sub VimEcho;
-#sub VimEditBufFiles;
-#sub VimEval;
-#sub VimThisLine;
-#sub VimWarn;
-#sub VimExists;
-#sub VimGetFromChooseDialog;
-#sub VimGetLine;
-#sub VimSetLine;
-#sub VimAppend;
-#sub VimGrep;
-#sub VimInput;
-#sub VimJoin;
-#sub VimLet;
-#sub VimLetEval;
-#sub VimListExtend;
-#sub VimSet;
-## -------------- messages --------------------
-#sub VimMsg;
-#sub VimMsgNL;
-#sub VimMsgDebug;
-#sub VimMsgE;
-#sub VimMsgPack;
-#sub VimMsg_PE;
-## -------------- perl --------------------
-#sub VimPerlGetModuleName;
-#sub VimPerlInstallModule;
-#sub VimPerlViewModule;
-#sub VimPerlModuleNameFromPath;
-#sub VimPerlPathFromModuleName;
-#sub VimPerlGetModuleNameFromDialog;
-
-## -------------- vimrc pieces ------------
-#sub VimPieceFullFile;
-#sub VimResetVars;
-#sub VimQuickFixList;
-#sub VimSo;
-#sub VimStrToOpts;
-#sub VimSetTags;
-#sub VimVar;
-#sub VimVarEcho;
-#sub VimVarType;
-#sub VimVarDump;
-#sub VimLen;
-
-#sub Vim_Files;
-#sub Vim_Files_DAT;
-#sub Vim_MsgColor;
-#sub Vim_MsgPrefix;
-#sub Vim_MsgDebug;
-
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 our @EXPORT    = qw( );
 our $VERSION   = '0.01';
 
-my $MsgHist=[];
 
 ################################
 # GLOBAL VARIABLE DECLARATIONS
@@ -241,6 +178,7 @@ our ($MsgPrefix);
 our ($MsgDebug);
 
 our $SILENT;
+our ($DBH,$DBFILE);
 
 # ---
 our ($ModuleName);
@@ -502,18 +440,7 @@ sub VimEcho {
 
 }
 
-sub VimWarn {
-	my @msg=@_;
 
-	for(@msg){
-		VIM::Msg($_,"WarningMsg");
-
-		#VimLet("msg","$_");
-		#VimLet("prf","VimWarn");
-		#VimCmd("call base#log(msg,{ 'prf' : prf })");
-	}
-
-}
 
 sub VimEval {
     my $cmd = shift;
@@ -539,12 +466,7 @@ sub VimExists {
 
 }
 
-sub VimMsgPack {
-    my $text = shift;
 
-    VIM::Msg( __PACKAGE__ . "> $text" );
-
-}
 
 sub VimInput {
     my ( $dialog, $default ) = @_;
@@ -926,9 +848,6 @@ sub Vim_MsgDebug {
 
 }
 
-sub VimMsgNL {
-    VimMsg( " ", { prefix => 'none' } );
-}
 
 sub VimLog {
 	my @m = @_;
@@ -974,115 +893,54 @@ additional options (color, highlighting etc.).
 =cut
 
 sub VimMsg {
-    my $text = shift;
-    return '' unless defined $text;
+    my ($text,$ref,@o) = @_;
+    return  unless defined $text;
 
-    my @o   = @_;
-    my $ref = shift @o;
-
-    my ($opts);
-    my $prefix;
-
-    my $keys = [qw(warn hl prefix color )];
-    foreach my $k (@$keys) { $opts->{$k} = ''; }
-
-    $opts->{prefix} = 'subname';
+	$ref ||= {};
 
     if ( ref $text eq "ARRAY" ) {
-		foreach my $msg (@$text) {
-			VimMsg($msg,$ref);
-		}
+		VimMsg($_,$ref) for(@$text);
 		return 1;
 	}
 
 	unless (ref $text eq '') { return; }
-
-	&_MsgHist_add($text);
 	return if $SILENT;
 
-    unless ( ref $ref ) {
-        if (@o) {
-            my %oo = ( $ref, @o );
-            $opts->{$_} = $oo{$_} for ( keys %oo );
-        }
-        else {
-            $opts->{hl} = $ref unless @o;
-        }
-    }
-    elsif ( ref $ref eq "HASH" ) {
-        $opts->{$_} = $ref->{$_} for ( keys %$ref );
-    }
+	my $hl = $ref->{hl};
+	my @a=($text);
+	push @a,$hl if $hl;
 
-    for ( $opts->{prefix} ) {
-        /^none$/ && do { $prefix = ''; next; };
-        /^subname$/ && do { $SubName=(caller(0))[3]; $prefix = "$SubName()>> "; next; };
-    }
+   	VIM::Msg(@a);
 
-    #$prefix    = $MsgPrefix if $MsgPrefix;
-    #$MsgPrefix = $prefix;
-
-	$prefix='';
-
-    $opts->{hl} = 'WarningMsg' if $opts->{warn};
-    $opts->{hl} = 'ErrorMsg'   if $opts->{error};
-
-    my $colors = {
-        yellow          => 'CursorLineNr',
-        'bold yellow'   => 'CursorLineNr',
-        'red'           => 'WarningMsg',
-        'bold red'      => 'WarningMsg',
-        'green'         => 'DiffChange',
-    };
-
-    my $color = $MsgColor || '';
-    $color    = $opts->{color} if $opts->{color};
-
-    $opts->{hl} = $colors->{$color} if $color;
-
-    $text = $prefix . $text;
-
-	my @a;
-	push @a,"$text";
-    ( $opts->{hl} ) && do { push @a,$opts->{hl} };
-
-	my $hl=$opts->{hl};
-	if ($hl) {
-    	VIM::Msg("$text",$hl);
-	}else{
-    	VIM::Msg("$text");
+	if ($DBH) {
+		my $ref = {
+			t => 'log',
+			i => q{INSERT OR IGNORE},
+			h => {
+				"time"   => time(),
+				"msg"    => "$text",
+				"prf"    => "vim::perl",
+				loglevel => $ref->{loglevel} || '',
+				func     => $ref->{func} || '',
+				plugin   => $ref->{plugin} || '',
+			},
+		};
+		
+		dbh_insert_hash($ref);
 	}
-
-	#VimLet("msg","$text");
-	#VimLet("prf","VimMsg");
-	#VimCmd("call base#log(msg,{ 'prf' : prf })");
 
 	return 1;
 
 }
 
-sub VimMsg_PE {
-    my $text = shift;
+sub VimWarn {
+	my @msg=@_;
 
-    my $subname = ( caller(1) )[3];
+	for(@msg){
+		VimMsg($_,{ hl => "WarningMsg" });
 
-    VimMsg( "Error in $subname : " . $text, { error => 1 } );
+	}
 
-}
-
-sub VimMsgVar {
-    my $text = shift;
-
-    my $var = shift;
-
-    #VIM::Msg( "$FullSubName() : $text", "ErrorMsg" );
-    VIM::Msg( Dumper(VimVar($var)) );
-}
-
-sub VimMsgE {
-    my $text = shift;
-
-    #VIM::Msg( "$FullSubName() : $text", "ErrorMsg" );
-    VIM::Msg( " $text", "ErrorMsg" );
 }
 
 =head3 VimLet
@@ -1184,15 +1042,7 @@ sub VimSet {
 
 }
 
-sub VimMsgDebug {
-    my $msg = shift;
 
-    if ( $MsgDebug eq "1" ) {
-
-        #VimMsg("(D) $msg",{ color => 'green'} );
-        VimMsg( "(D) $msg", { hl => 'Folded' } );
-    }
-}
 
 =head3 VimStrToOpts
 
@@ -1784,26 +1634,6 @@ sub init_VDIRS {
         'PLG'        => catfile($ENV{VIMRUNTIME},qw(plg))
     );
 
-}
-
-sub _MsgHist_add {
-	my @m=@_;
-
-	push @{$MsgHist},@_;
-}
-
-sub _MsgHist_set {
-	my @m=@_;
-
-	$MsgHist=[@m];
-}
-
-sub _MsgHist_get {
-	wantarray ? @$MsgHist : $MsgHist ;
-}
-
-sub _MsgHist_clear {
-	$MsgHist=[];
 }
 
 

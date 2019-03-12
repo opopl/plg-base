@@ -175,8 +175,10 @@ sub db_connect {
 	}
 
 	my $dbh;
+
+	$self->debug('sqlite connect:',$dbfile);
 	
-	eval { $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile","",""); };
+	eval { $dbh = DBI->connect("dbi:SQLite:dbname='$dbfile'","",""); };
 	if ($@) { 
 		my @w;
 		push @w, 
@@ -185,10 +187,14 @@ sub db_connect {
 		$self->warn(@w); return $self; 
 	}
 
-	$self->dbh($dbh);
-	$self->dbname($dbname);
+	unless ($dbh) {
+		$self->warn('dbh undefined!');
+	}else{
+		$self->dbh($dbh);
+		$self->dbname($dbname);
+		$Base::DB::DBH  = $dbh;
+	}
 
-	$Base::DB::DBH  = $dbh;
 	$Base::DB::WARN = sub{ $self->warn(@_) };
 
 	$self;
@@ -452,6 +458,16 @@ sub db_create_tables {
 		dbh_do({ q    => $q });
 	}
 
+	dbh_insert_hash({
+		i => q{INSERT OR IGNORE},
+		t => 'dbfiles',
+		h => {
+			dbfile   => $self->dbfile,
+			dbname   => $self->dbname,
+			dbdriver => 'sqlite',
+		}
+	});
+
 	$self;
 }
 
@@ -582,7 +598,7 @@ sub init_plugins_all {
 
 	for(@pall){
 		dbh_insert_hash({
-			i => 'insert or ignore',
+			i => q{INSERT OR IGNORE},
 			t => 'plugins_all',
 			h => {
 				plugin => $_,
