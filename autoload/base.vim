@@ -2799,8 +2799,13 @@ function! base#dump (...)
     let val  = a:1
     let dump = ''
 
+		try
+			let dump = prettyprint#prettyprint(val)
+		catch
+		endtry
+
     if exists("*PrettyPrint")
-        let dump = PrettyPrint(val)
+        "let dump = PrettyPrint(val)
    "     else
 				"redir	=> v
 				"silent echo val
