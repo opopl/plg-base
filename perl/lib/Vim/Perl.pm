@@ -906,20 +906,18 @@ sub VimMsg {
 	unless (ref $text eq '') { return; }
 	return if $SILENT;
 
-	my $hl = $ref->{hl};
-	my @a=($text);
-	push @a,$hl if $hl;
+	my $hl = $ref->{hl} || '';
 
-   	VIM::Msg(@a);
+ 	VIM::Msg($text,$hl) ;
 
 	if ($DBH) {
 		my $ref = {
 			t => 'log',
 			i => q{INSERT OR IGNORE},
 			h => {
-				"time"   => time(),
-				"msg"    => "$text",
-				"prf"    => "vim::perl",
+				time     => time(),
+				msg      => "$text",
+				prf      => $ref->{prf} || "vim::perl",
 				loglevel => $ref->{loglevel} || '',
 				func     => $ref->{func} || '',
 				plugin   => $ref->{plugin} || '',
@@ -934,12 +932,11 @@ sub VimMsg {
 }
 
 sub VimWarn {
-	my @msg=@_;
+	my($text,$ref)=@_;
+	$ref ||= {};
 
-	for(@msg){
-		VimMsg($_,{ hl => "WarningMsg" });
-
-	}
+	$ref->{hl} = 'WarningMsg';
+	VimMsg($text,$ref);
 
 }
 

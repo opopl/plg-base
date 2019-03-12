@@ -15,7 +15,7 @@ use File::Dat::Utils qw(readarr);
 use File::Basename qw(basename dirname);
 use File::Slurp qw(read_file);
 
-use File::Find qw(find);
+use File::Find;
 use File::Find::Rule;
 
 use Data::Dumper;
@@ -115,7 +115,7 @@ sub init_sqlstm {
 	push @dirs,$sql_dir;
 	
 	my $h = { sqlstm => {}};
-	find({ 
+	File::Find::find({ 
 		wanted => sub { 
 			foreach my $ext (@exts) {
 				if (/\.$ext$/) {
@@ -178,7 +178,13 @@ sub db_connect {
 
 	$self->debug('sqlite connect:',$dbfile);
 	
-	eval { $dbh = DBI->connect("dbi:SQLite:dbname='$dbfile'","",""); };
+	my $o={
+		PrintError       => 1,
+		RaiseError       => 1,
+		AutoCommit       => 1,
+		FetchHashKeyName => 'NAME_lc',
+	};
+	eval { $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile","","",$o); };
 	if ($@) { 
 		my @w;
 		push @w, 
@@ -193,6 +199,10 @@ sub db_connect {
 		$self->dbh($dbh);
 		$self->dbname($dbname);
 		$Base::DB::DBH  = $dbh;
+
+		if (my $s = $self->{sub_on_connect}) {
+			$s->($dbh);
+		}
 	}
 
 	$Base::DB::WARN = sub{ $self->warn(@_) };
@@ -272,7 +282,7 @@ sub dat_locate_from_fs {
 	my $plugin = $ref->{plugin} || 'base';
 
 	my $pat  = qr/\.i\.dat$/;
-	find({ 
+	File::Find::find({ 
 		wanted => sub { 
 			my $name = $File::Find::name;
 			my $dir  = $File::Find::dir;
@@ -589,8 +599,9 @@ sub init_plugins_all {
 		catfile($self->dirs('plgroot'),qw(..));
 
 	# list of all plugins
-	my $rule = File::Find::Rule->new;
-	my @pall = $rule
+	my $r = File::Find::Rule->new;
+
+	my @pall = $r
 		->directory
 		->relative
 		->maxdepth(1)
@@ -633,6 +644,7 @@ BEGIN {
 		withvim
 		sub_warn
 		sub_log
+		sub_on_connect
 		prepared_query
 	);
 	

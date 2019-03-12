@@ -439,16 +439,17 @@ perl << eof
 
 	my $dbfile = VimVar('dbfile');
 
+	my $prf = { prf => 'vim::plg::base' };
 	our $plgbase = Vim::Plg::Base->new(
-		sub_log  => sub { VimMsg([@_]) },
-		sub_warn => sub { VimWarn(@_)  },
+		sub_log        => sub { VimMsg([@_],$prf) },
+		sub_warn       => sub { VimWarn([@_],$prf)  },
+		sub_on_connect => sub {
+			my ($dbh) = @_; 
+			$Vim::Perl::DBH=$dbh; 
+		},
 		dbfile   => $dbfile,
 	)->init;
 
-	my $dbh = $plgbase->dbh;
-	if ($dbh) {
-		$Vim::Perl::DBH=$dbh;
-	}
 eof
 
 	call base#varset('done_base_init_sqlite',1)
