@@ -893,7 +893,7 @@ additional options (color, highlighting etc.).
 =cut
 
 sub VimMsg {
-    my ($text,$ref,@o) = @_;
+    my ($text,$ref) = @_;
     return  unless defined $text;
 
 	$ref ||= {};
@@ -911,7 +911,7 @@ sub VimMsg {
  	VIM::Msg($text,$hl) ;
 
 	if ($DBH) {
-		my $ref = {
+		my $r = {
 			t => 'log',
 			i => q{INSERT OR IGNORE},
 			h => {
@@ -924,7 +924,7 @@ sub VimMsg {
 			},
 		};
 		
-		dbh_insert_hash($ref);
+		dbh_insert_hash($r);
 	}
 
 	return 1;
