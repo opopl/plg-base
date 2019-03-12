@@ -1977,6 +1977,49 @@ function! base#pathlist ()
     
 endfunction
 
+function! base#paths_from_db ()
+	let dbfile = base#dbfile()
+	let paths = {}
+python << eof
+import vim,sqlite3,re
+
+paths = {}
+pcname = vim.eval('base#pcname()')
+
+base_dbfile = vim.eval('base#dbfile()')
+
+base_conn = sqlite3.connect(base_dbfile)
+base_cur = base_conn.cursor()
+
+q ='''SELECT pathid, path FROM paths WHERE pcname = ?'''
+p = [ pcname ] 
+base_cur.execute(q,p)
+
+rows = base_cur.fetchall()
+
+for row in rows:
+	pathid = row[0]
+	path   = row[1]
+	paths[pathid] = path
+	k = '"' + pathid + '"'
+	v = '"' + re.escape(path) + '"'
+	cmd = "call extend(paths," + "{" + k + ':' + v + "})"
+	vim.command(cmd)
+
+base_conn.commit()
+base_conn.close()
+	
+eof
+
+	if !exists('s:paths')
+		let s:paths = {}
+	endif
+	call extend(s:paths,paths)
+
+	return paths
+
+endfunction
+
 function! base#paths_to_db ()
 	let dbfile = base#dbfile()
 	if !exists('s:paths')

@@ -14,7 +14,10 @@ endfunction
 
 function! base#act#paths_to_db (...)
 	call base#paths_to_db()
+endfunction
 
+function! base#act#paths_from_db (...)
+	call base#paths_from_db()
 endfunction
 
 function! base#act#dict_view (...)

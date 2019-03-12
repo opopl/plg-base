@@ -22,3 +22,4 @@ svn_commit
 ###dictionaries
 dict_view
 paths_to_db
+paths_from_db

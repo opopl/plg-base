@@ -62,6 +62,11 @@ fun! base#init#paths(...)
 
     let pc       = base#envvar((has('win32')) ? 'USERPROFILE' : get(split(system('hostname'),"\n"),0) )
 
+		let p = base#paths_from_db()
+		if len(p)
+			return
+		endif
+
 		if has('win32')
 			let pf       = base#envvar('PROGRAMFILES')
 
