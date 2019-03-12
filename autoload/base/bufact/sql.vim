@@ -48,7 +48,7 @@ endf
 function! base#bufact#sql#file_exec ()
 	call base#buf#start()
 
-	let driver = input("db driver: ","mysql")
+	let driver = input("db driver: ","sqlite","custom,base#complete#dbdrivers")
 	let user   = input("user: ","")
 	let pwd    = input("pwd: ","")
 

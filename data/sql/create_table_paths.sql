@@ -1,4 +1,5 @@
-create table if not exists paths (
+
+CREATE TABLE IF NOT EXISTS paths (
 	pathid text,
 	path text,
 	pcname text

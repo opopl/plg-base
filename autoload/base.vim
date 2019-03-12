@@ -424,21 +424,41 @@ function! base#islist(var)
   return 0
 endf
 
-" call base#log(msg)
-"
-"try
-	function! base#dbfile ()
+function! base#dbnames ()
+	let dbfile = base#dbfile()
+	
+	let q = 'select dbname from dbfiles where dbdriver = ?'
+	let p = ['sqlite']
+	let dbnames = pymy#sqlite#query_as_list({
+		\	'dbfile' : dbfile,
+		\	'p'      : p,
+		\	'q'      : q,
+		\	})
+	return dbnames
+
+endf
+
+function! base#dbfile (...)
+	let dbname = get(a:000,0,'')
+
+	if !strlen(dbname)
 		let dbdir = $HOME . '/db'
 		call base#mkdir(dbdir)
-
-		let dbfile = dbdir . '/vim_plg_base.db'
 	
-		"let dbfile = base#qw#catpath('db','vim_plg_base.db')
-		"call base#varset('plg_base_dbfile',dbfile)
-		return dbfile
-	endfunction
-"catch
-"endtry
+		let dbfile = dbdir . '/vim_plg_base.db'
+	else
+		let q = 'select dbfile from dbfiles where dbname = ?'
+		let p = [dbname]
+		let r = pymy#sqlite#query_as_list({
+			\	'dbfile' : base#dbfile(),
+			\	'p'      : p,
+			\	'q'      : q,
+			\	})
+		let dbfile = get(r,0,'')
+	endif
+
+	return dbfile
+endfunction
 
 function! base#log (msg,...)
 	let msg = a:msg
@@ -1959,8 +1979,30 @@ endfunction
 
 function! base#paths_to_db ()
 	let dbfile = base#dbfile()
+	if !exists('s:paths')
+		let s:paths = {}
+	endif
 python << eof
-import vim
+import vim,sqlite3
+
+paths = vim.eval('s:paths')
+pcname = vim.eval('base#pcname()')
+
+base_dbfile = vim.eval('base#dbfile()')
+
+base_conn = sqlite3.connect(base_dbfile)
+base_cur = base_conn.cursor()
+
+for pathid in paths.keys():
+	path = paths.get(pathid)
+
+	q ='''INSERT OR IGNORE INTO paths (pathid,path,pcname) VALUES (?,?,?)'''
+	p = [ pathid, path, pcname ]
+
+base_cur.execute(q,p)
+
+base_conn.commit()
+base_conn.close()
 	
 eof
 

@@ -86,6 +86,10 @@ function! base#complete#perl_Vim_Plg_Base(...)
   return base#complete#vars([ 'opts_perl_Vim_Plg_Base' ])
 endfunction
 
+function! base#complete#dbdrivers (...)
+  return base#complete#vars([ 'dbdrivers' ])
+endfunction
+
 function! base#complete#BaseAct (...)
   return base#complete#vars([ 'opts_BaseAct' ])
 endfunction

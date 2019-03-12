@@ -21,3 +21,4 @@ svn_status
 svn_commit
 ###dictionaries
 dict_view
+paths_to_db

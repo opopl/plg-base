@@ -12,6 +12,11 @@ function! base#act#envvar_open_split (...)
 
 endfunction
 
+function! base#act#paths_to_db (...)
+	call base#paths_to_db()
+
+endfunction
+
 function! base#act#dict_view (...)
 	let dicts = split(&dict,',')
 
