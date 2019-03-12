@@ -2,7 +2,7 @@
 function! base#find#withperl (...)
     let ref = get(a:000,0,{})
 
-		let prf={ 'prf' : 'base#find#withperl' }
+		let prf={ 'func' : 'base#find#withperl','plugin' : 'base' }
 		call base#log([
 			\	'ref => ' . base#dump(ref),
 			\	],prf)

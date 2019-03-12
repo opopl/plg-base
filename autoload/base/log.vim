@@ -3,7 +3,7 @@ function! base#log#view_split ()
 
 	let dbfile = base#dbfile()
 
-	let q = 'select rowid,time,prf,msg from log'
+	let q = 'select rowid,time,prf,plugin,func,msg from log'
 	let rq = {
 			\	'dbfile' : dbfile,
 			\	'q'      : q,
@@ -19,6 +19,33 @@ function! base#log#view_split ()
 
 	"call base#buf#open_split({ 'lines' : lines })
 	
+endfunction
+
+function! base#log#create_table ()
+	let dbfile = base#dbfile() 
+	let sqlfile = base#plgdir() . '/data/sql/create_table_log.sql' 
+python << eof
+import vim
+import os.path
+
+dbfile = vim.eval('dbfile')
+sqlfile = vim.eval('sqlfile')
+
+conn = sqlite3.connect(dbfile)
+c = conn.cursor()
+	
+q = '''DROP TABLE IF EXISTS log'''
+c.execute(q)
+
+if os.path.isfile(sqlfile):
+	with open(sqlfile) as f:
+		q = f.read()
+		c.execute(q)
+
+conn.commit()
+conn.close()
+eof
+
 endfunction
 
 function! base#log#clear ()

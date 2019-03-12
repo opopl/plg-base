@@ -11,10 +11,12 @@ use strict;
 use warnings;
 
 use File::Spec::Functions qw(catfile);
-use File::Find qw(find);
 use File::Dat::Utils qw(readarr);
 use File::Basename qw(basename dirname);
 use File::Slurp qw(read_file);
+
+use File::Find qw(find);
+use File::Find::Rule;
 
 use Data::Dumper;
 
@@ -37,7 +39,6 @@ use base qw(
 
 use File::Path qw(mkpath);
 use File::stat qw(stat);
-use File::Find::Rule;
 
 our @TYPES = qw(list dict listlines );
 
@@ -167,11 +168,7 @@ sub db_connect {
 		eval { $self->dbh->disconnect;  };
 		if ($@) { 
 			my @w;
-			push @w,
-				'Failure to disconnect db:',
-				DBI->errstr,
-				$@
-				;
+			push @w, 'Failure to disconnect db:', DBI->errstr, $@ ;
 				
 			$self->warn(@w); 
 		}
@@ -209,13 +206,17 @@ sub update_self {
 sub reload_from_fs {
 	my ($self)=@_;
 
+	my $tb_order = [qw(
+		plugins 
+		plugins_all 
+		datfiles
+	)];
+	my $tb_reset = map { ($_ => 1 ) } @$tb_order;
+
 	my %o = (
 		dbopts       => {
-			tb_reset => {
-				plugins  => 1,
-				datfiles => 1,
-			},
-			tb_order => [qw(plugins datfiles)],
+			tb_reset => $tb_reset,
+			tb_order => $tb_order,
 		},
 	);
 
@@ -562,18 +563,18 @@ sub init_plugins {
 
 	$self;
 
-
 }
 
 sub init_plugins_all {
-	my ($self)=@_;
+	my ($self) = @_;
 	
 	my @dirs;
 	push @dirs,
 		catfile($self->dirs('plgroot'),qw(..));
 
 	# list of all plugins
-	my @pall = File::Find::Rule
+	my $rule = File::Find::Rule->new;
+	my @pall = $rule
 		->directory
 		->relative
 		->maxdepth(1)

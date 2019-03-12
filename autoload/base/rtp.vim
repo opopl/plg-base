@@ -2,7 +2,7 @@ function! base#rtp#add_plugin(plg)
 
 	let plgdir = base#catpath('plg', a:plg )
 
-	let prf={ 'prf' : 'base#rtp#add_plugin' }
+	let prf={ 'func' : 'base#rtp#add_plugin', 'plugin' : 'base' }
 	call base#log([
 		\	'Adding plugin:' . a:plg,
 		\	],prf)

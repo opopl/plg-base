@@ -83,7 +83,7 @@ function! base#plg#loadvars (...)
 
 	let dbfile = base#dbfile()
 
-	let prf = { 'prf' : 'base#plg#loadvars' }
+	let prf = { 'func' : 'base#plg#loadvars', 'plugin' : 'base' }
 	call base#log([
 		\	'plg => ' . plg,
 		\	],prf )

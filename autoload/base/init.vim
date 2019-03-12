@@ -428,7 +428,7 @@ fun! base#init#sqlite(...)
 		return 
 	endif
 
-	let prf={ 'prf' : 'base#init#sqlite' }
+	let prf={ 'func' : 'base#init#sqlite','plugin' : 'base' }
 	call base#log([
 			\	'db initialization',
 			\	],prf)

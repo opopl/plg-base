@@ -449,7 +449,8 @@ function! base#log (msg,...)
 	let prf = base#varget('base_log_prf','')
 	let prf = get(ref,'prf',prf)
 
-	let fnc = get(ref,'func','')
+	let fnc    = get(ref,'func','')
+	let plugin = get(ref,'plugin','')
 
 	let do_echo = get(ref,'echo',0)
 
@@ -468,8 +469,8 @@ function! base#log (msg,...)
 
 		let dbfile = base#dbfile() 
 
-		let p = [time,msg,prf,fnc]
-		let q = 'INSERT OR IGNORE INTO log (time,msg,prf,func) VALUES(?,?,?,?)'
+		let p = [time,msg,prf,fnc,plugin]
+		let q = 'INSERT OR IGNORE INTO log (time,msg,prf,func,plugin) VALUES(?,?,?,?,?)'
 python << eof
 
 import vim
@@ -521,6 +522,7 @@ if not table_exists({ 'table' : 'log', 'cur' : c }):
 					time INTEGER,
 					loglevel TEXT,
 					func TEXT,
+					plugin TEXT,
 					prf TEXT
 				);
 	'''
@@ -699,7 +701,10 @@ fun! base#fileopen(ref)
    
  endif
 
- let prf={ 'prf' : 'base#fileopen' }
+ let prf={ 
+ 	\	'func'   : 'base#fileopen',
+ 	\	'plugin' : 'base',
+ 	\	}
  call base#log([
  	\	'opening files => ' . base#dump(files),
  	\	],prf)
@@ -1900,9 +1905,10 @@ function! base#pathset (ref,...)
 	let opts = get(a:000,0,{})
 
 	let anew = get(opts,'anew',0)
+	let prf = {'func' : 'base#pathset','plugin' : 'base'}
 
 	if anew
-		call base#log(['anew=1'],{'prf' : 'base#pathset'})
+		call base#log(['anew=1'],prf)
 		let s:paths={}
 	endif
 
@@ -1911,7 +1917,7 @@ function! base#pathset (ref,...)
 				call base#log([
 					\'pathid ='.pathid,
 					\'path   ='.path,
-					\	],{ 'prf' : 'base#pathset' })
+					\	],prf)
         call extend(s:paths,e)
     endfor
 
@@ -2557,9 +2563,10 @@ fun! base#echovar(ref)
  
 endfun
 
-
 function! base#plgdir ()
-    return base#varget('plgdir','')
+		let plgdir = $VIMRUNTIME . '/plg/base' 
+		call base#varset('plgdir',plgdir)
+		return plgdir
 endf    
 
 "" let dd = base#datadir()
