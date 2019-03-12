@@ -1928,12 +1928,16 @@ function! base#pathset (ref,...)
   if ! exists("s:paths") | let s:paths={} | endif
 	let opts = get(a:000,0,{})
 
+	if exists("g:paths_from_db")
+		return
+	endif
+
 	let anew = get(opts,'anew',0)
 	let prf = {'func' : 'base#pathset','plugin' : 'base'}
 
 	if anew
 		call base#log(['anew=1'],prf)
-		let s:paths={}
+		let s:paths = {}
 	endif
 
     for [ pathid, path ] in items(a:ref) 
@@ -2015,6 +2019,10 @@ eof
 		let s:paths = {}
 	endif
 	call extend(s:paths,paths)
+
+	if !exists('g:paths_from_db')
+		let g:paths_from_db = 1
+	endif
 
 	return paths
 

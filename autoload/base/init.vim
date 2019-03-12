@@ -418,6 +418,12 @@ fun! base#init#sqlite(...)
 	let ref = get(a:000,0,{})
 
 	let reload = get(ref,'reload',0)
+
+	let done = base#varget('done_base_init_sqlite',0)
+	if done && !reload
+		return 
+	endif
+
 	let dbfile = base#dbfile()
 
 	let home = base#envvar('home')
@@ -427,11 +433,6 @@ fun! base#init#sqlite(...)
 
 	let dbfile = base#qw#catpath('db','vim_plg_base.db')
 	call base#varset('plg_base_dbfile',dbfile)
-
-	let done = base#varget('done_base_init_sqlite',0)
-	if done && !reload
-		return 
-	endif
 
 	let prf={ 'func' : 'base#init#sqlite','plugin' : 'base' }
 	call base#log([
