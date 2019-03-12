@@ -473,8 +473,6 @@ function! base#log (msg,...)
 			\	})
 		call base#varset('base_log',log)
 
-		let dbfile = base#dbfile() 
-
 		let p = [time,elapsed,msg,prf,fnc,plugin]
 		let q = 'INSERT OR IGNORE INTO log (time,elapsed,msg,prf,func,plugin) VALUES(?,?,?,?,?,?)'
 python << eof
@@ -505,44 +503,44 @@ def table_exists (ref):
 		ORDER BY 1
 	'''
 	if cur:
-		c.execute(q)
-		rows = c.fetchall()
+		cur.execute(q)
+		rows = cur.fetchall()
 		tables = map(lambda x: x[0], rows)
 		if table in tables:
 			return 1
 	return 0
 #------------------------------------------------------------
 	
-dbfile = vim.eval('dbfile')
+base_dbfile = vim.eval('base#dbfile()')
 q = vim.eval('q')
 p = vim.eval('p')
 
-conn = sqlite3.connect(dbfile)
-c = conn.cursor()
+base_conn = sqlite3.connect(base_dbfile)
+base_cur = base_conn.cursor()
 
 #*******************************
-if not table_exists({ 'table' : 'log', 'cur' : c }):
+if not table_exists({ 'table' : 'log', 'cur' : base_cur }):
 	q = '''
 				CREATE TABLE IF NOT EXISTS log (
 					msg TEXT,
 					time INTEGER,
+					elapsed INTEGER,
 					loglevel TEXT,
 					func TEXT,
 					plugin TEXT,
 					prf TEXT
 				);
 	'''
-	c.execute(q)
+	base_cur.execute(q)
 #*******************************
 
-c.execute(q,p)
+base_cur.execute(q,p)
 
-conn.commit()
-conn.close()
+base_conn.commit()
+base_conn.close()
 
 
 eof
-		"call pymy#sqlite#query(rq)
 		
 		if do_echo
 			echo msg_prf
@@ -1957,6 +1955,15 @@ function! base#pathlist ()
 
     return pathlist
     
+endfunction
+
+function! base#paths_to_db ()
+	let dbfile = base#dbfile()
+python << eof
+import vim
+	
+eof
+
 endfunction
 
 function! base#pathids (path)
