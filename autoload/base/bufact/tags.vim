@@ -30,7 +30,13 @@ with open(file) as f:
 			if append:
 				tags.append(tag)
 
-print tags
+for tag in tags:
+	cmds = deque([])
+	cmds.append( "let tag=" + '"' + tag + '"' )
+	cmds.append( "call add(tags,tag)")
+	for cmd in cmds:
+		vim.command(cmd)
 eof
+	call base#buf#open_split({ 'lines' : tags })
 endfunction
 
