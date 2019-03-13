@@ -23,7 +23,7 @@ sub log_dumper {
 =head3 Usage
 
 	$OBJ->log_dbh($args,{ 
-		pref => $pref, 
+		pref     => $pref,
 		loglevel => $loglevel
 	});
 

@@ -313,7 +313,7 @@ perl << eof
 
 	our $HTW ||= HTML::Work->new(
 			sub_log  => sub { VimMsg([@_]) },
-			sub_warn => sub { VimWarn(@_) },
+			sub_warn => sub { VimWarn([@_]) },
 			dbfile   => $dbfile,
 			load_as  => 'html',
 	);
@@ -439,7 +439,6 @@ perl << eof
 		local   => $saved_file,
 		rewrite => 1,
 	});
-	return;
 
 	my $pcname = ($^O eq 'Win32') ?  $ENV{COMPUTERNAME} : $ENV{HOSTNAME};
 	my $h = { 
