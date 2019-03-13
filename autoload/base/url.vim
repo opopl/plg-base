@@ -13,17 +13,16 @@ import posixpath
 from urlparse import urlparse
 from collections import deque
 
-
 url = vim.eval('url')
 o = urlparse(url)
 
-host=o.netloc
-host=re.sub(r':(\d+)$','',host)
+host = o.netloc
+host = re.sub(r':(\d+)$','',host)
 
 path = o.path
 basename = posixpath.basename(path)
 
-cmds=deque([])
+cmds = deque([])
 cmds.append('call extend(struct,{ "path" :' + '"' + path +'"' + '})' )
 cmds.append('call extend(struct,{ "host" :' + '"' + host +'"' + '})' )
 cmds.append('call extend(struct,{ "port" :' + '"' + str(o.port) +'"' + '})' )
