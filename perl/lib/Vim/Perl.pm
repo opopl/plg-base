@@ -959,11 +959,9 @@ Set the value of a vimscript variable
 =cut
 
 sub VimLet {
-    # name of the vimscript variable to be assigned
-    my $var = shift;
-
-    # contains value(s) to be assigned to $var
-    my $ref = shift;
+    # $var - name of the vimscript variable to be assigned
+    # $ref - contains value(s) to be assigned to $var
+    my ($var,$ref) = @_;
 
     my $valstr = '';
 

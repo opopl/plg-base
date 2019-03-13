@@ -396,21 +396,29 @@ perl << eof
 	my $tags  = VimVar('tags');
 	my $title = VimVar('title');
 
+	my $table = 'pages';
 	my $sav = dbh_select({
-		t    => 'pages',
-		f    => [ qw( url saved_file ) ],
+		t    => $table,
+		f    => [ qw( rowid url saved_file ) ],
 		p    => [ $url ],
 		cond => q{ WHERE url = ? },
 	});
 
 	if (@$sav) {
 		unless ($ref->{rewrite}) {
-			my @cached;
-			@cached = map { $_->{saved_file} } @$sav;
+			foreach(@$sav) {
+				my $cached_file = $_->{saved_file};
+				my $rowid       = $_->{rowid};
 
-			foreach my $cached_file (@cached) {
 				if (-e $cached_file) {
 					VimFileOpen({ file => $cached_file });
+					my $db_info = {
+						rowid   => $rowid,
+						table   => $table,
+						url     => $url,
+						save_db => $save_db,
+					};
+					VimLet('b:db_info',$db_info);
 				}else{		
 					VimWarn('No file:',"\t". $cached_file);
 				}

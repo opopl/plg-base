@@ -2244,6 +2244,11 @@ function! base#info (...)
 			let dirs_belong = base#buf#pathids_str()
 			call add(info,indent . dirs_belong)
 
+			if exists("b:db_info")
+				call add(info,'DB INFO:')
+				call add(info,indent . base#dump(b:db_info))
+			endif
+
 			call base#buf#open_split({ 'lines' : info })
 
 """info_perlapp

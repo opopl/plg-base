@@ -199,10 +199,11 @@ function! base#complete#varlist_list (...)
 endfunction
 
 function! base#complete#datlist (...)
-	"let list = base#sqlite#datlist()
-	"let comps = join(list,"\n")
+	let list = base#sqlite#datlist()
+	let comps = join(list,"\n")
+	return comps
 
-  return base#complete#vars([ 'datlist' ])
+  "return base#complete#vars([ 'datlist' ])
 endfunction
 
 function! base#complete#idat_acts (...)
