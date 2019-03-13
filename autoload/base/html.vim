@@ -334,7 +334,7 @@ function! base#html#fetch_url_source (...)
 	let tags  = get(ref,'tags','')
 	let title = get(ref,'title','')
 
-	let save_db = base#qw#catpath('saved_urls','saved_urls.sqlite')
+	let save_db = base#qw#catpath('db','saved_urls.sqlite')
 	let save_db = get(ref,'save_db',save_db)
 
 	let saved_bname = get(ref,'saved_bname','')
@@ -358,8 +358,7 @@ perl << eof
 
 	my $save_db  = VimVar('save_db');
 
-	my $warn = sub { VimWarn([$_]) for(@_) };
-	$Base::DB::WARN = $warn;
+	$Vim::Perl::DBH = undef;
 
 	my $dsn      = "dbi:SQLite:dbname=$save_db";
 	
@@ -371,7 +370,10 @@ perl << eof
 		AutoCommit       => 1,
 		FetchHashKeyName => 'NAME_lc',
 	});
-	$Base::DB::DBH = $dbh;
+
+	my $warn = sub { VimWarn([$_]) for(@_) };
+	$Base::DB::DBH  = $dbh;
+	$Base::DB::WARN = $warn;
 
 	my $q = qq{
 		CREATE TABLE IF NOT EXISTS pages  (
@@ -384,8 +386,8 @@ perl << eof
 			source_html TEXT,
 			converted_text TEXT
 		);
-		ALTER TABLE pages ADD COLUMN pcname TEXT;
 	};
+	#ALTER TABLE pages ADD COLUMN pcname TEXT;
 	dbh_do({ q => $q }) or do { return; };
  
 	my $ref      = VimVar('ref');
@@ -494,6 +496,37 @@ perl << eof
 			proto       => $proto,
 	});
 eof
+
+endfunction
+
+function! base#html#save_db(...)
+		let save_db = base#qw#catpath('db','saved_urls.sqlite')
+		return save_db
+endfunction
+
+function! base#html#url_is_cached (...)
+	let url = get(a:000,0,'')
+	let ref = get(a:000,1,{})
+
+	let save_db = base#html#save_db()
+	let save_db = get(ref,'save_db',save_db)
+
+	let table   = get(ref,'table','pages')
+
+	let q = 'SELECT saved_file FROM ' . table . ' WHERE url = ?'
+	let p = [ url ]
+	
+	let list = pymy#sqlite#query_as_list({
+		\	'dbfile' : save_db,
+		\	'p'      : p,
+		\	'q'      : q,
+		\	})
+	let saved_file = get(list,0,'')
+	if filereadable(saved_file)
+		return 1
+	endif
+
+	return 0
 
 endfunction
 

@@ -34,7 +34,7 @@ function! base#bufact#sqlite#add_to_dbfiles ()
 	
 	let ref = {
 		\ "dbfile" : base#dbfile(),
-		\ "i"      : "insert or ignore",
+		\ "i"      : "INSERT OR REPLACE",
 		\ "t"      : t,
 		\ "h"      : h,
 		\ }
