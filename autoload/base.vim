@@ -3236,17 +3236,10 @@ function! base#viewdat (...)
         \ })
   endif
 
-  let datfiles=base#varget('datfiles',{})
-
-  if has_key(datfiles,dat)
-    let datfile=datfiles[dat]
-  else
-    call base#subwarn("Given dat file does not exist in datfiles dictionary")
-  endif
+  let datfile = base#datafiles(dat)
 
   call base#fileopen(datfile)
 endf
-
  
 "
 "   base#listnewinc(start,end,inc)
