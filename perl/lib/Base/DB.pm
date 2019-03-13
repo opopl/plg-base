@@ -17,6 +17,7 @@ use warnings;
 use base qw(Exporter);
 
 use SQL::SplitStatement;
+use Data::Dumper;
 
 ###export_vars_scalar
 my @ex_vars_scalar=qw(

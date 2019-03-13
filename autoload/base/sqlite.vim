@@ -56,27 +56,52 @@ endfunction
 function! base#sqlite#datfiles (...)
 	call base#init#sqlite()
 
-	let kf = get(a:000,0,'')
+	let kf  = get(a:000,0,'')
+	let ref = get(a:000,1,{})
+
+	let plugin = get(ref,'plugin','')
+	let type   = get(ref,'type','')
+
+	let q = ''
+	let p = []
+	if strlen(kf)
+		let q = 'SELECT datfile FROM datfiles WHERE keyfull = ?'
+		let p = [ kf ]
+	else
+		let q = 'SELECT keyfull, datfile FROM datfiles'
+		let p = []
+	endif
+
+	let fw = keys(ref) 
+	let vals = []
+	for ff in fw
+		call add(vals,get(ref,ff,''))
+	endfor
+	let fw_q = base#mapsub(fw,'$',' = ?','g')
+	let cond = join(fw_q,' AND ')
+
+	call extend(p,vals)
+
+	if strlen(cond)
+		if !strlen(kf)
+			let cond = ' WHERE ' . cond
+		endif
+	endif
+	let q .= cond
+
+	let [ rows_h, cols ] =  pymy#sqlite#query({
+		\	'q' : q,
+		\	'p' : p,
+		\	'dbfile' : base#dbfile(),
+		\	})
 
 	if strlen(kf)
-		let q = 'select datfile from datfiles where keyfull = ?'
-		let p = [ kf ]
-		let [ rows_h, cols ] =  pymy#sqlite#query({
-			\	'q'      : q,
-			\	'p'      : p,
-			\	'dbfile' : base#dbfile(),
-			\	})
 		let datlist = []
 		for rh in rows_h
 				call add(datlist,get(rh,'datfile',''))
 		endfor
 		return datlist
 	else
-		let q = 'select keyfull, datfile from datfiles'
-		let [ rows_h, cols ] =  pymy#sqlite#query({
-			\	'q' : q,
-			\	'dbfile' : base#dbfile(),
-			\	})
 		let datfiles = {}
 		for rh in rows_h
 			let kf = get(rh,'keyfull','')

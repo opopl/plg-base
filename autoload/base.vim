@@ -2804,21 +2804,6 @@ function! base#dump (...)
 		catch
 		endtry
 
-    if exists("*PrettyPrint")
-        "let dump = PrettyPrint(val)
-   "     else
-				"redir	=> v
-				"silent echo val
-				"redir END
-				"return v
-    endif
-
-    if base#type(val) == 'Dictionary'
-    elseif base#type(val) == 'String'
-    elseif base#type(val) == 'List'
-          
-    endif
-
     return dump
 endfunction
 
@@ -2941,8 +2926,10 @@ function! base#plugins_all (...)
 endfunction
 
 function! base#datafiles (...)
-		let id = get(a:000,0,'')
-		return base#sqlite#datfiles(id)
+		let id  = get(a:000,0,'')
+		let ref = get(a:000,1,{})
+
+		return base#sqlite#datfiles(id,ref)
 
     "let datadir = base#datadir()
     "let file    = a:id . ".i.dat"
@@ -3099,11 +3086,13 @@ endf
 
 function! base#init (...)
 
-	let opts = base#qw('sqlite paths rtp files plugins tagids vars omni au cmds menus')
-	let opts = base#varget('init_order',opts)
+	let dat_inor = base#file#catfile([  base#plgdir() , 'data', 'list', 'init_order.i.dat' ])
+	let opts = base#readarr(dat_inor) 
+	call base#varset('init_order',opts)
 
-	let opts_all = opts
-	let opts_all = base#varget('all_init_cmds',opts_all)
+	let dat_all = base#file#catfile([  base#plgdir() , 'data', 'list', 'all_init_cmds.i.dat' ])
+	let opts_all = base#readarr(dat_all) 
+	call base#varset('all_init_cmds',opts_all)
 
 	let prf = { 'func' : 'base#init', 'plugin' : 'base'}
  

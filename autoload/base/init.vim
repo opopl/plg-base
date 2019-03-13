@@ -494,6 +494,12 @@ endfun
 
 function! base#init#vars (...)
     call base#echoprefix('(base#initvars)')
+		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		let msg = ['start']
+		let prf = {'plugin' : 'base', 'func' : 'base#init#vars'}
+		call base#log(msg,prf)
+		let l:start=localtime()
+		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
     call base#initvarsfromdat()
 
@@ -516,6 +522,13 @@ function! base#init#vars (...)
     endif
 
 		call base#echoprefixold()
+
+		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		let l:elapsed = localtime() - l:start
+		let msg = ['end, elapsed = ' . l:elapsed]
+		let prf = {'plugin' : 'base', 'func' : 'base#init#vars'}
+		call base#log(msg,prf)
+		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 endf    
 
 fun! base#init#files(...)
