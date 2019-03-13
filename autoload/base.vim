@@ -2945,8 +2945,11 @@ function! base#datafiles (...)
 
 endfunction
 
-function! base#datlist ()
-	let list = base#sqlite#datlist()
+function! base#datlist (...)
+	let ref = get(a:000,0,{})
+
+	let dfiles = base#datafiles('',ref)
+	let list = sort(keys(dfiles))
 	return list
 endfunction
 
@@ -2954,6 +2957,35 @@ function! base#initvarsfromdat ()
 		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 		let msg = ['start']
 		let prf = { 'func' : 'base#initvarsfromdat', 'plugin' : 'base'}
+		call base#log(msg,prf)
+		let l:start=localtime()
+		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    let dattypes = base#qw("list listlines dict")
+		let mp = { 
+			\	"list"      : "List",
+			\	"dict"      : "Dictionary",
+			\	"listlines" : "ListLines",
+			\	}
+		for type in dattypes
+        let tp = get(mp,type,'')
+				let dlist = base#datlist({'type' : type })
+				for v in dlist
+        	call base#varsetfromdat(v,tp)
+				endfor
+		endfor
+		
+		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		let l:elapsed = localtime() - l:start
+		let msg = ['end, elapsed = ' . l:elapsed]
+		let prf = {'plugin' : 'base', 'func' : 'base#initvarsfromdat'}
+		call base#log(msg,prf)
+		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+endfunction
+
+function! base#initvarsfromdat_vim ()
+		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+		let msg = ['start']
+		let prf = { 'func' : 'base#initvarsfromdat_vim', 'plugin' : 'base'}
 		call base#log(msg,prf)
 		let l:start=localtime()
 		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -3008,7 +3040,7 @@ function! base#initvarsfromdat ()
 		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 		let l:elapsed = localtime() - l:start
 		let msg = ['end, elapsed = ' . l:elapsed]
-		let prf = {'plugin' : 'base', 'func' : 'base#initvarsfromdat'}
+		let prf = {'plugin' : 'base', 'func' : 'base#initvarsfromdat_vim'}
 		call base#log(msg,prf)
 		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     
