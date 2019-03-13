@@ -1,3 +1,4 @@
 show_tables
 query
 table_info
+add_to_dbfiles

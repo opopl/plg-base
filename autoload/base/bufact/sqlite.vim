@@ -18,6 +18,33 @@ function! base#bufact#sqlite#table_info ()
 
 endf
 
+function! base#bufact#sqlite#add_to_dbfiles ()
+	call base#buf#start()
+	call pymy#buf#sqlite_start()
+
+	let dbfile_current = pymy#sqlite#dbfile()
+	let dbname = fnamemodify(dbfile_current,':t:r')
+	
+	let t = "dbfiles"
+	let h = {
+		\	"dbfile"   : dbfile_current,
+		\	"dbname"   : dbname,
+		\	"dbdriver" : 'sqlite',
+		\	}
+	
+	let ref = {
+		\ "dbfile" : base#dbfile(),
+		\ "i"      : "insert or ignore",
+		\ "t"      : t,
+		\ "h"      : h,
+		\ }
+		
+	call pymy#sqlite#insert_hash(ref)
+
+	call pymy#sqlite#dbfile(dbfile_current)
+
+endf
+
 function! base#bufact#sqlite#show_tables ()
 	call base#buf#start()
 	call pymy#buf#sqlite_start()

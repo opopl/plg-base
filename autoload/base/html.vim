@@ -358,7 +358,7 @@ perl << eof
 
 	my $save_db  = VimVar('save_db');
 
-	my $warn = sub { VimWarn($_) for(@_) };
+	my $warn = sub { VimWarn([$_]) for(@_) };
 	$Base::DB::WARN = $warn;
 
 	my $dsn      = "dbi:SQLite:dbname=$save_db";
@@ -366,7 +366,7 @@ perl << eof
 	my $user     = "";
 	my $password = "";
 	my $dbh = DBI->connect($dsn, $user, $password, {
-		PrintError       => 0,
+		PrintError       => 1,
 		RaiseError       => 1,
 		AutoCommit       => 1,
 		FetchHashKeyName => 'NAME_lc',
