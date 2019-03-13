@@ -454,7 +454,7 @@ perl << eof
 	dbh_insert_hash({ 
 		t    => 'pages',
 		h    => $h,
-		i    => qq{INSERT OR IGNORE},
+		i    => qq{INSERT OR REPLACE},
 	});
 			
 	if (-e $saved_file) {
