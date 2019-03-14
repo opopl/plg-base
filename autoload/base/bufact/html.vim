@@ -14,6 +14,16 @@ function! base#bufact#html#lynx_dump_split ()
 
 endfunction
 
+function! base#bufact#html#db_info ()
+	call base#buf#start()
+	call base#buf#db_info()
+
+endfunction
+
+function! base#bufact#html#db_record_delete ()
+	call base#buf#start()
+endfunction
+
 function! base#bufact#html#headings ()
 	call base#buf#start()
 

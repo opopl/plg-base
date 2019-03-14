@@ -443,11 +443,14 @@ function! base#tg#update (...)
 
 		let plgdir = base#catpath('plg',plg)
 
-		let files_arr = base#find({ 
-			\	"dirs" : [ plgdir ], 
-			\	"exts" : [ "vim"  ], 
-			\ })
-		let files = join(files_arr,' ')
+ "   let files_arr = base#find({ 
+			"\	"dirs" : [ plgdir ], 
+			"\	"exts" : [ "vim"  ], 
+			"\ })
+		"let files = join(files_arr,' ')
+		let files = ' --language-force=vim * '
+		let path = base#qw#catpath('plg',plg)
+		call base#cd(path)
 
 """tgupdate_projs_tex
 	""" all tex files in current projs directory
@@ -470,10 +473,10 @@ function! base#tg#update (...)
 				let proj  = projs#proj#name()
 				let exts  = base#qw('tex vim bib')
 		
-				let files_arr = projs#proj#files({ 
-						\	"exts"         : exts,
-						\	"exclude_dirs" : [ 'joins', 'builds' ],
-						\	})
+ "       let files_arr = projs#proj#files({ 
+						"\	"exts"         : exts,
+						"\	"exclude_dirs" : [ 'joins', 'builds' ],
+						"\	})
 		
 				"let files = join(files_arr,' ')
 				let files = proj . '.*.tex' . ' ' . proj . '.tex'

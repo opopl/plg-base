@@ -49,17 +49,20 @@ function! base#buf#act(...)
 		let ft = 'html'
 	endif
 	let subs = []
-	if base#inlist(ft,base#qw('php html'))
-		for ff in base#qw('html php')
-			if base#inlist(act,base#varget('comps_BufAct_'.ff,[]))
-				let sub  = 'base#bufact#'.ff.'#'.act
-				call add(subs,sub)
-			endif
-		endfor
- 	else
-		let sub  = 'base#bufact#'.ft.'#'.act
-		call add(subs,sub)
-	endif
+ " if base#inlist(ft,base#qw('php html'))
+		"for ff in base#qw('html php')
+			"let acts_ff = acts
+			"call extend(acts_ff,base#varget('comps_BufAct_'.ff,[]))
+			"if base#inlist(act,acts_ff)
+				"let sub  = 'base#bufact#'.ff.'#'.act
+				"call add(subs,sub)
+			"endif
+		"endfor
+   "else
+	"endif
+
+	let sub  = 'base#bufact#'.ft.'#'.act
+	call add(subs,sub)
 
 	for sub in subs
 		exe 'call '. sub.'()'
@@ -245,6 +248,20 @@ function! base#buf#is_plg ()
 	endfor
 
 endfunction
+
+
+function! base#buf#db_info ()
+	let info = []
+
+	if exists("b:db_info")
+		call add(info,'DB INFO:')
+		let y = base#dump#yaml(b:db_info)
+		let y = base#map#add_tabs(y)
+		call extend(info,y)
+	endif
+	call base#buf#open_split({ 'lines' : info })
+endfunction
+
 
 function! base#buf#start ()
 

@@ -4,11 +4,10 @@ let s:comps = base#varget('comps_BufAct_html',[])
 if exists("b:db_info")
 	let c_db = base#varget('comps_db_info',[])
 	call extend(s:comps,c_db)
-else
+endif
 
 let b:comps_BufAct = s:comps 
 	
-endif
 if exists("b:did_html_vim_ftplugin")
   finish
 endif
