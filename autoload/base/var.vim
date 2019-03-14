@@ -2,8 +2,8 @@
 function! base#var#update (varname)
 	let varname = a:varname
 
-  let datfiles = base#varhash#get('datfiles')
-  let datlist  = base#varhash#keys('datfiles')
+  let datfiles = base#datafiles()
+  let datlist  = base#datlist()
 
 	let types = {
 			\	'dict'      : 'Dictionary',
