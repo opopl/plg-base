@@ -188,25 +188,10 @@ endfunction
 
 """bufact_remove_extra
 function! base#bufact#html#remove_extra ()
-	let xpaths = [] 
-	call add(xpaths,'//script') 
-	call add(xpaths,'//link') 
-	call add(xpaths,'//meta') 
+	call base#buf#start()
+	call base#html#htw_load_buf()
 
-	call add(xpaths,"//meta[ not(translate(@http-equiv,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz') = 'content-type' )]")
-
-	call add(xpaths,"//meta[not(contains(translate(@content,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'text/html; charset=utf-8'))]")
-
-""<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	call add(xpaths,'//style') 
-
-	call add(xpaths,"//*[@id='footer']") 
-	call add(xpaths,"//*[@id='topnav']") 
-	call add(xpaths,"//*[@id='sidenav']") 
-	call add(xpaths,"//*[@id='googleSearch']") 
-	call add(xpaths,"//*[@id='google_translate_element']") 
-
-	call add(xpaths,"//*[@class='sidesection']") 
+	let xpaths = base#varget('xpaths_remove_extra',[])
 
 	call base#bufact#html#remove_xpath({ 'xpaths' : xpaths })
 

@@ -1,0 +1,12 @@
+//script
+//link
+//meta
+//meta[ not(translate(@http-equiv,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz') = 'content-type' )]
+//meta[not(contains(translate(@content,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'text/html; charset=utf-8'))]
+//style
+//*[@id='footer']
+//*[@id='topnav']
+//*[@id='sidenav']
+//*[@id='googleSearch']
+//*[@id='google_translate_element']
+//*[@class='sidesection']

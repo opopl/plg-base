@@ -306,6 +306,13 @@ function! base#html#htw_init (...)
 	let dbfile = base#varget('htw_dbfile',dbfile)
 	let dbfile = get(ref,'dbfile',dbfile)
 
+	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+	let msg = ['start']
+	let prf = {'plugin' : 'base', 'func' : 'base#html#htw_init'}
+	call base#log(msg,prf)
+	let l:start=localtime()
+	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
 perl << eof
 	use HTML::Work;
 
@@ -354,6 +361,7 @@ perl << eof
 		dbh_insert_hash 
 		dbh_do
 		dbh_select
+		dbh_list_tables
 	);
 
 	my $save_db  = VimVar('save_db');
@@ -381,6 +389,7 @@ perl << eof
 			url_host TEXT,
 			url_query TEXT,
 			saved_file TEXT UNIQUE,
+			saved_txt TEXT,
 			saved_bname TEXT,
 			pcname TEXT,
 			tags TEXT,
@@ -740,6 +749,13 @@ endfunction
 
 function! base#html#htw_load_buf ()
 	call base#html#htw_init ()
+
+	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+	let msg = ['start']
+	let prf = {'plugin' : 'base', 'func' : 'base#html#htw_load_buf'}
+	call base#log(msg,prf)
+	let l:start=localtime()
+	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 	let load_as      = base#html#libxml_load_as()
 perl << eof
