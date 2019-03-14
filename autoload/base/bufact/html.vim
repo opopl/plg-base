@@ -27,6 +27,11 @@ function! base#bufact#html#db_record_delete ()
 		return
 	endif
 
+	let yn = input('Delete? (1/0): ',1)
+	if ! yn
+		return
+	endif
+
 	let dbfile = get(b:db_info,'dbfile','')
 	let table  = get(b:db_info,'table','')
 	let record = get(b:db_info,'record',{})

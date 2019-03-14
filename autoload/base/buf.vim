@@ -262,7 +262,7 @@ function! base#buf#db_info ()
 		let record  = get(db_info,'record',{})
 		let rowid   = get(record,'rowid','')
 
-		let q = 'SELECT * FROM ' . table . ' WHERE saved_file = ?'	
+		let q = 'SELECT rowid,* FROM ' . table . ' WHERE saved_file = ?'	
 		let p = [ b:file ]
 		let [ rows_h, cols ] = pymy#sqlite#query({
 			\	'dbfile' : dbfile,

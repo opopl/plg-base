@@ -379,6 +379,7 @@ perl << eof
 		CREATE TABLE IF NOT EXISTS pages  (
 			url TEXT NOT NULL,
 			url_host TEXT,
+			url_query TEXT,
 			saved_file TEXT UNIQUE,
 			saved_bname TEXT,
 			pcname TEXT,
@@ -400,7 +401,7 @@ perl << eof
 	my $table = 'pages';
 	my $f = [ qw( 
 		rowid 
-		url url_host 
+		url url_host url_query
 		saved_file saved_bname 
 		tags title 
 	) ];
