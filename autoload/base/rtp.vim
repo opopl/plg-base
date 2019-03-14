@@ -21,6 +21,9 @@ function! base#rtp#add_plugin(plg)
 		exe 'set rtp+=' . dir
 	endfor
 
+	let sdir = base#file#catfile([ plgdir, 'data', 'snippets' ])
+	call base#snip#add_dir(sdir)
+
 endf
 
 

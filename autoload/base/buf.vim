@@ -106,12 +106,13 @@ endfunction
 "base#buf#open_split({ 'lines' : lines })
 
 function! base#buf#open_split (ref)
-
 		let ref      = a:ref
+
 		let lines    = get(ref,'lines',[])
+		let text     = get(ref,'text','')
+
 		let cmds_pre = get(ref,'cmds_pre',[])
 
-		let text      = get(ref,'text','')
 		if len(text)
 			let textlines = split(text,"\n")
 			call extend(lines,textlines)

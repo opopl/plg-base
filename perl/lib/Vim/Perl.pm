@@ -19,6 +19,7 @@ use File::Spec::Functions qw(catfile rel2abs curdir catdir );
 use File::Dat::Utils qw( readarr );
 use Text::TabularDisplay;
 use String::Escape qw(escape printable quote);
+use JSON::XS;
 
 use Data::Dumper;
 use File::Basename qw(basename dirname);
@@ -959,6 +960,35 @@ Set the value of a vimscript variable
 =cut
 
 sub VimLet {
+    my ($var, $ref) = @_;
+
+	my $valstr = "";
+	my $vimcode = "";
+    unless ( ref $ref ) {
+        $valstr .= quote(printable($ref));
+		$vimcode = qq{ let $var = $valstr };
+    }else{
+		my $coder = JSON::XS->new->ascii->pretty(0)->allow_nonref;
+		$valstr = $coder->encode ($ref);
+		$vimcode = qq{ let $var = $valstr };
+		$vimcode = escape('printable',$vimcode);
+	}
+
+	print $vimcode;
+
+	my $cmds = [];
+
+	push @$cmds,
+		qq{if exists("$var") | unlet $var  | endif},
+		$vimcode
+		;
+
+	for(@$cmds){
+		VimCmd($_);
+	}
+}
+
+sub VimLetOld {
     # $var - name of the vimscript variable to be assigned
     # $ref - contains value(s) to be assigned to $var
     my ($var,$ref) = @_;
