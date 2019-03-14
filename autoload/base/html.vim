@@ -413,10 +413,12 @@ perl << eof
 				if (-e $cached_file) {
 					VimFileOpen({ file => $cached_file });
 					my $db_info = {
-						rowid   => $rowid,
+						record => {
+							rowid   => $rowid,
+							url     => $url,
+						},
 						table   => $table,
-						url     => $url,
-						save_db => $save_db,
+						dbfile  => $save_db,
 					};
 					VimLet('b:db_info',$db_info);
 				}else{		

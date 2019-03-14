@@ -960,7 +960,7 @@ Set the value of a vimscript variable
 =cut
 
 sub VimLet {
-    my ($var, $ref) = @_;
+    my ($var, $ref, $o) = @_;
 
 	my $valstr = "";
 	my $vimcode = "";
@@ -971,10 +971,9 @@ sub VimLet {
 		my $coder = JSON::XS->new->ascii->pretty(0)->allow_nonref;
 		$valstr = $coder->encode ($ref);
 		$vimcode = qq{ let $var = $valstr };
-		$vimcode = escape('printable',$vimcode);
+		#$vimcode = escape('printable',$vimcode);
+		print $vimcode if $o->{print_vc};
 	}
-
-	print $vimcode;
 
 	my $cmds = [];
 
