@@ -268,6 +268,11 @@ Return Perl representation of a VimScript variable
 
 =cut
 
+sub VimVarNew {
+    my $var = shift;
+
+}
+
 sub VimVar {
     my $var = shift;
 

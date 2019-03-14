@@ -1,5 +1,8 @@
 base#plg#loadvars
 
+prettyprint#echo	
+prettyprint#prettyprint	
+
 pymy#buf#sqlite_start	
 pymy#cmd#SQLITE	
 pymy#complete#SQLITE	
