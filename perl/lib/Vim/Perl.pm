@@ -271,17 +271,47 @@ Return Perl representation of a VimScript variable
 sub VimVarNew {
     my ($var) = @_;
 
-	my $dmp   = VimEval(qq{ base#pp#pp($var) });
-	$dmp   = escape('printable',$dmp);
+    return '' unless VimExists($var);
+    my $vartype = VimVarType($var);
+
+	for ($vartype) {
+        /^(String|Number|Float)$/ && do {
+            my $res = VimEval($var);
+			return $res;
+        };
+
+		last;
+	}
+
+	my ($dmp,$res);
+
+	$dmp = VimEval(qq{ base#pp#pp($var) });
+	$dmp =~ s/\\/\\\\/g;
+	
 
 	my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
-	my $p     = $coder->decode($dmp);
+	$res     = eval {$coder->decode($dmp); };
+	if ($@) { VimWarn($@); }
 
-	return ($p,$dmp);
+    unless ( ref $res ) {
+        $res;
+    }
+    elsif ( ref $res eq "ARRAY" ) {
+        wantarray ? @$res : $res;
+    }
+    elsif ( ref $res eq "HASH" ) {
+        wantarray ? %$res : $res;
+    }
+
+	#return ($res,$dmp);
 
 }
 
 sub VimVar {
+	VimVarNew(@_);
+}
+
+sub VimVarOld {
     my ($var) = @_;
 
     return '' unless VimExists($var);

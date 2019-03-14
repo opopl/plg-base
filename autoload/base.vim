@@ -2245,8 +2245,11 @@ function! base#info (...)
 			call add(info,indent . dirs_belong)
 
 			if exists("b:db_info")
+					
 				call add(info,'DB INFO:')
-				call add(info,indent . base#dump(b:db_info))
+				let y = base#dump#yaml(b:db_info)
+				let y = base#map#add_tabs(y)
+				call extend(info,y)
 			endif
 
 			call base#buf#open_split({ 'lines' : info })

@@ -9,20 +9,21 @@ endfunction
 
 function! base#dump#yaml (thing)
 	let thing = a:thing
-	let dmp = base#pp#pp(thing)
-	echo dmp
 perl << eof
 use YAML::XS;
 use JSON::XS;
-use String::Escape qw(escape);
+use Vim::Perl qw(VimVar VimLet);
 
-my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
+my $thing = VimVar('thing');
+my $yaml = Dump $thing;
+my @yaml = split "\n",$yaml;
 
-my $dmp = VimVar('dmp');
-print $dmp;
-my $p = $coder->decode($dmp);
-print Dumper($p);
+VimLet('y',\@yaml);
+#VimCmd(qq| call base#buf#open_split({ 'text' : y }) |);
+VimCmd(qq| return y |);
+
 eof
-	return dmp
+
+
 
 endfunction
