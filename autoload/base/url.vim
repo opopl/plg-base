@@ -19,7 +19,21 @@ o = urlparse(url)
 host = o.netloc
 host = re.sub(r':(\d+)$','',host)
 
-path = o.path
+scheme = o.scheme
+path   = o.path
+
+if ((host is '') and (scheme is '')):
+	scheme = 'http:'
+	url = scheme + "//" + url
+	o = urlparse(url)
+
+host = o.netloc
+host = re.sub(r':(\d+)$','',host)
+
+scheme = o.scheme
+path   = o.path
+
+
 basename = posixpath.basename(path)
 
 cmds = deque([])
@@ -28,7 +42,9 @@ cmds.append('call extend(struct,{ "host" :' + '"' + host +'"' + '})' )
 cmds.append('call extend(struct,{ "port" :' + '"' + str(o.port) +'"' + '})' )
 cmds.append('call extend(struct,{ "fragment" :' + '"' + o.fragment +'"' + '})' )
 cmds.append('call extend(struct,{ "query" :' + '"' + o.query +'"' + '})' )
+cmds.append('call extend(struct,{ "scheme" :' + '"' + o.scheme +'"' + '})' )
 cmds.append('call extend(struct,{ "basename" :' + '"' + basename +'"' + '})' )
+cmds.append('call extend(struct,{ "url" :' + '"' + url +'"' + '})' )
 
 for cmd in cmds:
 	vim.command(cmd)

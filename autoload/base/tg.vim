@@ -442,13 +442,14 @@ function! base#tg#update (...)
 		let plg = substitute(tgid,pat,'\1','g')
 
 		let plgdir = base#catpath('plg',plg)
+		let plgdir_u = base#file#win2unix(plgdir)
 
  "   let files_arr = base#find({ 
 			"\	"dirs" : [ plgdir ], 
 			"\	"exts" : [ "vim"  ], 
 			"\ })
 		"let files = join(files_arr,' ')
-		let files = ' --language-force=vim * '
+		let files = ' --language-force=vim ' . plgdir_u . '/*'
 		let path = base#qw#catpath('plg',plg)
 		call base#cd(path)
 

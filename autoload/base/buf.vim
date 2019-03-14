@@ -254,6 +254,24 @@ function! base#buf#db_info ()
 	let info = []
 
 	if exists("b:db_info")
+		let db_info = b:db_info
+
+		let dbfile  = get(db_info,'dbfile','')
+		let table   = get(db_info,'table','')
+
+		let record  = get(db_info,'record',{})
+		let rowid   = get(record,'rowid','')
+
+		let q = 'SELECT * FROM ' . table . ' WHERE saved_file = ?'	
+		let p = [ b:file ]
+		let [ rows_h, cols ] = pymy#sqlite#query({
+			\	'dbfile' : dbfile,
+			\	'q'      : q,
+			\	'p'      : p,
+			\	})
+		let record = get(rows_h,0,{})
+		call extend(b:db_info,{ 'record' : record })
+
 		call add(info,'DB INFO:')
 		let y = base#dump#yaml(b:db_info)
 		let y = base#map#add_tabs(y)

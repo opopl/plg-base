@@ -36,6 +36,8 @@ my %EXPORT_TAGS = (
 	dbh_select
 	dbh_select_as_list
 	dbh_do
+	dbh_list_tables
+	dbh_selectall_arrayref
 )],
 'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -134,6 +136,35 @@ sub dbh_select_as_list {
 
 	return wantarray ? @list : \@list;
 
+}
+
+
+sub dbh_list_tables {
+	my ($ref)  = @_;
+
+	my $dbh = $ref->{dbh} || $DBH;
+	my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
+
+	my $q = q{
+		SELECT 
+			name 
+		FROM 
+			sqlite_master
+		WHERE 
+			type IN ('table','view') AND name NOT LIKE 'sqlite_%'
+		UNION ALL
+		SELECT 
+			name 
+		FROM 
+			sqlite_temp_master
+		WHERE 
+			type IN ('table','view')
+		ORDER BY 1
+	};
+
+	my @t = dbh_select_as_list({ q => $q });
+
+	wantarray ? @t : \@t;
 }
 
 sub dbh_selectall_arrayref {

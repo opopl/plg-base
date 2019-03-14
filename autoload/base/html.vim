@@ -378,6 +378,7 @@ perl << eof
 	my $q = qq{
 		CREATE TABLE IF NOT EXISTS pages  (
 			url TEXT NOT NULL,
+			url_host TEXT,
 			saved_file TEXT UNIQUE,
 			saved_bname TEXT,
 			pcname TEXT,
@@ -397,9 +398,15 @@ perl << eof
 	my $title = VimVar('title');
 
 	my $table = 'pages';
+	my $f = [ qw( 
+		rowid 
+		url url_host 
+		saved_file saved_bname 
+		tags title 
+	) ];
 	my $sav = dbh_select({
 		t    => $table,
-		f    => [ qw( rowid url saved_file ) ],
+		f    => $f,
 		p    => [ $url ],
 		cond => q{ WHERE url = ? },
 	});
@@ -413,10 +420,7 @@ perl << eof
 				if (-e $cached_file) {
 					VimFileOpen({ file => $cached_file });
 					my $db_info = {
-						record => {
-							rowid   => $rowid,
-							url     => $url,
-						},
+						record  => $_,
 						table   => $table,
 						dbfile  => $save_db,
 					};

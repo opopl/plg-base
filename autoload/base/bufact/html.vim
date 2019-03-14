@@ -22,6 +22,26 @@ endfunction
 
 function! base#bufact#html#db_record_delete ()
 	call base#buf#start()
+
+	if ! exists("b:db_info")
+		return
+	endif
+
+	let dbfile = get(b:db_info,'dbfile','')
+	let table  = get(b:db_info,'table','')
+	let record = get(b:db_info,'record',{})
+	let rowid  = get(record,'rowid','')
+
+	if strlen(rowid)
+		let q = 'DELETE FROM ' . table . ' WHERE rowid = ? '
+		let p = [ rowid ]
+		let [ rows_h, cols ] = pymy#sqlite#query({
+			\	'dbfile' : dbfile,
+			\	'p'      : p,
+			\	'q'      : q,
+			\	})
+	endif
+
 endfunction
 
 function! base#bufact#html#headings ()
