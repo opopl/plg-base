@@ -269,12 +269,20 @@ Return Perl representation of a VimScript variable
 =cut
 
 sub VimVarNew {
-    my $var = shift;
+    my ($var) = @_;
+
+	my $dmp   = VimEval(qq{ base#pp#pp($var) });
+	$dmp   = escape('printable',$dmp);
+
+	my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
+	my $p     = $coder->decode($dmp);
+
+	return ($p,$dmp);
 
 }
 
 sub VimVar {
-    my $var = shift;
+    my ($var) = @_;
 
     return '' unless VimExists($var);
 

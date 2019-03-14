@@ -9,7 +9,7 @@ endfunction
 
 function! base#dump#yaml (thing)
 	let thing = a:thing
-	let dmp = prettyprint#prettyprint(thing)
+	let dmp = base#pp#pp(thing)
 	echo dmp
 perl << eof
 use YAML::XS;
