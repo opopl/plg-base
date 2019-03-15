@@ -21,6 +21,8 @@ use Text::TabularDisplay;
 use String::Escape qw(escape printable quote);
 use JSON::XS;
 
+use Clone qw(clone);
+
 use Data::Dumper;
 use File::Basename qw(basename dirname);
 use File::Slurp qw(
@@ -34,6 +36,9 @@ use File::Slurp qw(
 
 use Base::DB qw(
 	dbh_insert_hash
+);
+use Base::Util qw(
+	replace_undefs
 );
 
 
@@ -984,6 +989,7 @@ sub VimWarn {
 
 }
 
+
 =head3 VimLet
 
 =head4 Usage
@@ -1005,6 +1011,9 @@ Set the value of a vimscript variable
 sub VimLet {
     my ($var, $ref, $o) = @_;
 
+	my $refc = clone $ref;
+	replace_undefs($refc);
+
 	my $valstr = "";
 	my $vimcode = "";
     unless ( ref $ref ) {
@@ -1012,7 +1021,7 @@ sub VimLet {
 		$vimcode = qq{ let $var = $valstr };
     }else{
 		my $coder = JSON::XS->new->ascii->pretty(0)->allow_nonref;
-		$valstr = $coder->encode ($ref);
+		$valstr = $coder->encode ($refc);
 		$vimcode = qq{ let $var = $valstr };
 		#$vimcode = escape('printable',$vimcode);
 		print $vimcode if $o->{print_vc};
