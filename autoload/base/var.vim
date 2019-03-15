@@ -48,7 +48,6 @@ function! base#var#update (varname)
         \   "file" : datfile ,
         \   "type" : type ,
         \   })
-		echo varname
 
     call base#varset(varname,data)
 	else

@@ -12,3 +12,8 @@ snippet base#file#write_lines
 		\})
 snippet ret
 	return
+snippet pymy#data#tabulate
+	let lines = pymy#data#tabulate({
+		\ 'data'    : <++>,
+		\ 'headers' : <++>,
+		\ })
