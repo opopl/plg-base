@@ -275,6 +275,10 @@ Return Perl representation of a VimScript variable
 
 =cut
 
+sub VimVar {
+	VimVarNew(@_);
+}
+
 sub VimVarNew {
     my ($var) = @_;
 
@@ -294,11 +298,13 @@ sub VimVarNew {
 
 	$dmp = VimEval(qq{ base#pp#pp($var) });
 	$dmp =~ s/\\/\\\\/g;
+	#$dmp =~ s/'/\\'/g;
+	#$dmp =~ s/"/\\"/g;
 	
 
 	my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
 	$res     = eval {$coder->decode($dmp); };
-	if ($@) { VimWarn($@); }
+	if ($@) { VimWarn([ $@,$dmp ]); }
 
     unless ( ref $res ) {
         $res;
@@ -314,9 +320,6 @@ sub VimVarNew {
 
 }
 
-sub VimVar {
-	VimVarNew(@_);
-}
 
 sub VimVarOld {
     my ($var) = @_;
