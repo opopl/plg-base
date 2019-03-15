@@ -30,5 +30,5 @@ function! base#bufact#idat#update_var ()
 		
 	call pymy#sqlite#insert_hash(ref)
 		
-	call base#var#update(vname)
+	call base#var#update(kf)
 endf	

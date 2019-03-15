@@ -388,6 +388,7 @@ perl << eof
 			url TEXT NOT NULL,
 			url_host TEXT,
 			url_query TEXT,
+			time_saved INTEGER,
 			saved_file TEXT UNIQUE,
 			saved_txt TEXT,
 			saved_bname TEXT,
@@ -399,6 +400,7 @@ perl << eof
 		);
 	};
 	#ALTER TABLE pages ADD COLUMN pcname TEXT;
+	#ALTER TABLE pages ADD COLUMN time_saved INTEGER;
 	dbh_do({ q => $q }) or do { return; };
  
 	my $ref      = VimVar('ref');
