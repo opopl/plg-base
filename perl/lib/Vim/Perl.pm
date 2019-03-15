@@ -296,9 +296,9 @@ sub VimVarNew {
 
 	my ($dmp,$res);
 
-	$dmp = VimEval(qq{ base#pp#pp($var) });
-	$dmp =~ s/\\/\\\\/g;
-	$dmp =~ s/'/\\'/g;
+	$dmp = VimEval(qq{ pymy#var#pp($var) });
+	#$dmp =~ s/\\/\\\\/g;
+	#$dmp =~ s/'/\\'/g;
 	#$dmp =~ s/"/\\"/g;
 	
 
