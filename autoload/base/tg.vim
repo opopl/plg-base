@@ -140,14 +140,47 @@ function! base#tg#tfile (...)
 	return tfile
 endf
 
-function! base#tg#update_wbat (...)
+function! base#tg#update_w_files (...)
+	let ref = get(a:000,0,{})
+
+	let filelist = get(ref,'filelist',[])
+	let tgid     = get(ref,'tgid','')
+
+	if !len(filelist)
+		return ''
+	endif
+
+	let home = base#path('home')
+	let f   = base#file#catfile([home,'tmp_bat','list_tgupdate_' . tgid . '.txt'])
+	let f_u = base#file#win2unix(f)
+
+	call base#file#write_lines({ 
+		\	'lines' : filelist,
+		\	'file'  : f, 
+		\})
+
+	return f_u
+endf
+
+function! base#tg#update_w_bat (...)
 	let execmd = ''
 
 	let ref   = get(a:000,0,{})
 
-	let tgid  = get(ref,'tgid','')
-	let tfile = get(ref,'tfile','')
-	let cmd   = get(ref,'cmd','')
+	let tgid       = get(ref,'tgid','')
+	let tfile      = get(ref,'tfile','')
+	let f_filelist = get(ref,'f_filelist','')
+
+	let libs        = get(ref,'libs','')
+	let files       = get(ref,'files','')
+
+	let cmd = 'ctags -R -o "' . ap#file#win( tfile ) . '" ' . libs . ' ' . files
+
+	call base#varset('last_ctags_cmd',cmd)
+
+	if filereadable(f_filelist)
+		let cmd .=   ' -L ' . f_filelist
+	endif
 
 	if has('win32')
 		let batlines = []
@@ -173,7 +206,7 @@ function! base#tg#update_wbat (...)
 		let execmd = '"' . batfile .'"'
 	endif
 
-	return execmd
+	return [ cmd, execmd ]
 
 endf
 
@@ -192,6 +225,8 @@ function! base#tg#update (...)
 		endfor
 		return
 	endif
+
+	let f_filelist = ''
 
 	" use asynccommand plugin commands
 	let async=0
@@ -481,12 +516,14 @@ function! base#tg#update (...)
 		let plgdir = base#catpath('plg',plg)
 		let plgdir_u = base#file#win2unix(plgdir)
 
- "   let files_arr = base#find({ 
-			"\	"dirs" : [ plgdir ], 
-			"\	"exts" : [ "vim"  ], 
-			"\ })
-		"let files = join(files_arr,' ')
+		let files_arr = base#find({ 
+			\	"dirs" : [ plgdir ], 
+			\	"exts" : [ "vim"  ], 
+			\ })
+		call map(files_arr,'base#file#win2unix(v:val)')
+
 		let files = ' --language-force=vim ' . plgdir_u . '/*'
+		let files = ''
 		let path = base#qw#catpath('plg',plg)
 		call base#cd(path)
 
@@ -553,15 +590,23 @@ function! base#tg#update (...)
 	endif
 
 """tgupdate_cmd_ctags
-	let cmd = 'ctags -R -o "' . ap#file#win( tfile ) . '" ' . libs . ' ' . files
-	call base#varset('last_ctags_cmd',cmd)
 
-	let r = {
-			\	'cmd'   : cmd,
-			\	'tgid'  : tgid,
-			\	'tfile' : tfile,
+	let r_files = {
+		\	'filelist' : files_arr,
+		\	'tgid'     : tgid,
+		\	}
+
+	let f_filelist = base#tg#update_w_files(r_files)
+
+	let r_bat = {
+			\	'tgid'       : tgid,
+			\	'tfile'      : tfile,
+			\	'f_filelist' : f_filelist,
+			\	'files'      : files,
+			\	'libs'       : libs,
 			\	}
-	let execmd = base#tg#update_wbat(r)
+
+	let [ cmd, execmd ] = base#tg#update_w_bat(r_bat)
 
 	echo "Calling ctags command for: " . tgid 
 

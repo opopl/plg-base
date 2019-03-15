@@ -4,3 +4,9 @@ snippet base#listnewinc
 	let list = base#listnewinc(<+start+>,<+end+>,<+inc+>)
 snippet prf
 	let prf = { 'plugin' : '<++>', 'func' : '<++>', 'prf' : '<++>' }
+snippet base#file#write_lines
+	call base#file#write_lines({ 
+		\	'lines' : lines, 
+		\	'file'  : file, 
+		\	'mode'  : 'rewrite',
+		\})
