@@ -3,12 +3,54 @@ function! base#log#view_split ()
 
 	let dbfile = base#dbfile()
 
-	let q = 'select rowid,elapsed,prf,plugin,func,msg from log'
+	let q = 'SELECT rowid,elapsed,prf,plugin,func,msg FROM log'
 	let q = input('log view query: ',q)
 
 	let rq = {
 			\	'dbfile' : dbfile,
 			\	'q'      : q,
+			\	}
+	let lines = []
+	let delim = repeat('x',50)
+	call extend(lines,[delim,'base#time_start():' , "\t" . base#time_start(),delim ])
+
+	call extend(lines, pymy#sqlite#query_screen(rq))
+	call base#buf#open_split({ 'lines' : lines })
+
+endfunction
+
+function! base#log#warnings ()
+	let dbfile = base#dbfile()
+
+	let q = 'SELECT rowid,elapsed,prf,plugin,func,msg FROM log WHERE loglevel = ?'
+	let p = [ 'warning' ]
+	let q = input('log view query: ',q)
+
+	let rq = {
+			\	'dbfile' : dbfile,
+			\	'q'      : q,
+			\	'p'      : p,
+			\	}
+	let lines = []
+	let delim = repeat('x',50)
+	call extend(lines,[delim,'base#time_start():' , "\t" . base#time_start(),delim ])
+
+	call extend(lines, pymy#sqlite#query_screen(rq))
+	call base#buf#open_split({ 'lines' : lines })
+
+endfunction
+
+function! base#log#debug ()
+	let dbfile = base#dbfile()
+
+	let q = 'SELECT rowid,elapsed,prf,plugin,func,msg FROM log WHERE loglevel = ?'
+	let p = [ 'debug' ]
+	let q = input('log view query: ',q)
+
+	let rq = {
+			\	'dbfile' : dbfile,
+			\	'q'      : q,
+			\	'p'      : p,
 			\	}
 	let lines = []
 	let delim = repeat('x',50)
@@ -45,6 +87,7 @@ conn.close()
 eof
 
 endfunction
+
 
 function! base#log#clear ()
 	call base#varset('base_log',[])

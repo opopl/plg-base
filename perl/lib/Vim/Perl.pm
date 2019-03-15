@@ -34,6 +34,8 @@ use File::Slurp qw(
   prepend_file
 );
 
+use DBI;
+
 use Base::DB qw(
 	dbh_insert_hash
 );
@@ -959,12 +961,28 @@ sub VimMsg {
 
  	VIM::Msg($text,$hl) ;
 
+	if ($DBFILE) {
+		my $dsn      = "dbi:SQLite:dbname=$DBFILE";
+		
+		$DBH = DBI->connect($dsn, '', '', {
+			PrintError       => 0,
+			RaiseError       => 1,
+			AutoCommit       => 1,
+			FetchHashKeyName => 'NAME_lc',
+		});
+		 
+	}
+
 	if ($DBH) {
+		my $start = int(VimVar('g:time_start') || time());
+		my $elapsed = time() -  $start;
 		my $r = {
+			dbh => $DBH,
 			t => 'log',
 			i => q{INSERT OR IGNORE},
 			h => {
 				time     => time(),
+				elapsed  => $elapsed,
 				msg      => "$text",
 				prf      => $ref->{prf} || "vim::perl",
 				loglevel => $ref->{loglevel} || '',
@@ -974,6 +992,8 @@ sub VimMsg {
 		};
 		
 		dbh_insert_hash($r);
+
+		$DBH->disconnect;
 	}
 
 	return 1;
@@ -984,7 +1004,13 @@ sub VimWarn {
 	my($text,$ref)=@_;
 	$ref ||= {};
 
-	$ref->{hl} = 'WarningMsg';
+	my $h = {
+		hl       => 'WarningMsg',
+		loglevel => 'warning',
+	};
+	for (keys %$h){
+		$ref->{$_} = $h->{$_};
+	}
 	VimMsg($text,$ref);
 
 }

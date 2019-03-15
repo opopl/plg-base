@@ -361,6 +361,7 @@ perl << eof
 		dbh_insert_hash 
 		dbh_do
 		dbh_select
+		dbh_select_fetchone
 		dbh_list_tables
 	);
 
@@ -416,6 +417,7 @@ perl << eof
 		saved_file saved_bname 
 		tags title 
 	) ];
+
 	my $sav = dbh_select({
 		t    => $table,
 		f    => $f,
@@ -423,20 +425,26 @@ perl << eof
 		cond => q{ WHERE url = ? },
 	});
 
+	my $set_db_info = sub {
+		my ($r,$table,$dbfile)=@_;
+
+		my $db_info = {
+			record  => $r,
+			table   => $table,
+			dbfile  => $dbfile,
+		};
+		VimLet('b:db_info',$db_info);
+	};
+
 	if (@$sav) {
 		unless ($ref->{rewrite}) {
-			foreach(@$sav) {
-				my $cached_file = $_->{saved_file};
-				my $rowid       = $_->{rowid};
+			foreach my $r (@$sav) {
+				my $cached_file = $r->{saved_file};
+				my $rowid       = $r->{rowid};
 
 				if (-e $cached_file) {
 					VimFileOpen({ file => $cached_file });
-					my $db_info = {
-						record  => $_,
-						table   => $table,
-						dbfile  => $save_db,
-					};
-					VimLet('b:db_info',$db_info);
+					$set_db_info->($r,$table,$save_db);
 				}else{		
 					VimWarn('No file:',"\t". $cached_file);
 				}
@@ -474,6 +482,9 @@ perl << eof
 		tags        => $tags,
 		title       => $title,
 		pcname      => $pcname,
+		time_saved  => time(),
+		url_host    => '',
+		url_query   => '',
 	};
 
 	dbh_insert_hash({ 
@@ -481,9 +492,13 @@ perl << eof
 		h    => $h,
 		i    => qq{INSERT OR REPLACE},
 	});
-			
+	$h->{rowid} = dbh_select_fetchone({  
+		q => 'SELECT last_insert_rowid() FROM pages',
+	});
+
 	if (-e $saved_file) {
 		VimFileOpen({ file => $saved_file });
+		$set_db_info->($h,'pages',$save_db);
 	}
 
 	$dbh->disconnect;
