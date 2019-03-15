@@ -1,4 +1,5 @@
 //script
+//style
 //link
 //meta
 //meta[ not(translate(@http-equiv,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz') = 'content-type' )]
