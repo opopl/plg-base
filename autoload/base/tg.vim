@@ -140,6 +140,43 @@ function! base#tg#tfile (...)
 	return tfile
 endf
 
+function! base#tg#update_wbat (...)
+	let execmd = ''
+
+	let ref   = get(a:000,0,{})
+
+	let tgid  = get(ref,'tgid','')
+	let tfile = get(ref,'tfile','')
+	let cmd   = get(ref,'cmd','')
+
+	if has('win32')
+		let batlines = []
+
+		call add(batlines,' ')
+		call add(batlines,'@echo off')
+		call add(batlines,' ')
+		call add(batlines,'set tagid=' . tgid )
+		call add(batlines,'set tfile="' . tfile . '"')
+		call add(batlines,' ')
+		call add(batlines,'echo tagfile: %tfile%')
+		call add(batlines,'echo tagid: %tagid%')
+		call add(batlines,' ')
+		call add(batlines,cmd)
+		call add(batlines,' ')
+
+		let home = base#path('home')
+		let batfile = base#file#catfile([home,'tmp_bat','tgupdate_' . tgid . '.bat'])
+		call base#file#write_lines({ 
+			\	'lines' : batlines, 
+			\	'file'  : batfile, 
+			\})
+		let execmd = '"' . batfile .'"'
+	endif
+
+	return execmd
+
+endf
+
 "call base#tg#update (tgid)
 "call base#tg#update ()
 
@@ -519,29 +556,12 @@ function! base#tg#update (...)
 	let cmd = 'ctags -R -o "' . ap#file#win( tfile ) . '" ' . libs . ' ' . files
 	call base#varset('last_ctags_cmd',cmd)
 
-	let execmd = ''
-	if has('win32')
-		let batlines = []
-		call add(batlines,' ')
-		call add(batlines,'@echo off')
-		call add(batlines,' ')
-		call add(batlines,'set tagid=' . tgid )
-		call add(batlines,'set tfile="' . tfile . '"')
-		call add(batlines,' ')
-		call add(batlines,'echo tagfile: %tfile%')
-		call add(batlines,'echo tagid: %tagid%')
-		call add(batlines,' ')
-		call add(batlines,cmd)
-		call add(batlines,' ')
-
-		let home = base#path('home')
-		let batfile = base#file#catfile([home,'tmp_bat','tgupdate_' . tgid . '.bat'])
-		call base#file#write_lines({ 
-			\	'lines' : batlines, 
-			\	'file'  : batfile, 
-			\})
-		let execmd = '"' . batfile .'"'
-	endif
+	let r = {
+			\	'cmd'   : cmd,
+			\	'tgid'  : tgid,
+			\	'tfile' : tfile,
+			\	}
+	let execmd = base#tg#update_wbat(r)
 
 	echo "Calling ctags command for: " . tgid 
 
