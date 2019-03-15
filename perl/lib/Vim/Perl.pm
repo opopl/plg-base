@@ -298,7 +298,7 @@ sub VimVarNew {
 
 	$dmp = VimEval(qq{ base#pp#pp($var) });
 	$dmp =~ s/\\/\\\\/g;
-	#$dmp =~ s/'/\\'/g;
+	$dmp =~ s/'/\\'/g;
 	#$dmp =~ s/"/\\"/g;
 	
 
