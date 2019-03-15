@@ -11,6 +11,7 @@ pymy#plgdir
 pymy#py#add_lib	
 pymy#sqlite#complete_tables	
 pymy#sqlite#dbfile	
+pymy#sqlite#table_count
 pymy#sqlite#extend_with_list	
 pymy#sqlite#insert_hash	
 pymy#sqlite#insert_hash_qp	
