@@ -205,7 +205,7 @@ perl << eof
 		;
 
 #	VimListExtend('lines_tags',$pf->{lines_tags});
-	my $subnames = $pf->subnames;
+	my $subnames   = $pf->subnames;
 	my $namespaces = $pf->namespaces;
 
 	eval { Bless($subnames)->keys($namespaces); };

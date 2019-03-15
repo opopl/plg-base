@@ -38,6 +38,8 @@ my %EXPORT_TAGS = (
 	dbh_do
 	dbh_list_tables
 	dbh_selectall_arrayref
+	dbh_select_fetchone
+	dbh_sth_exec
 )],
 'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -165,6 +167,18 @@ sub dbh_list_tables {
 	my @t = dbh_select_as_list({ q => $q });
 
 	wantarray ? @t : \@t;
+}
+
+sub dbh_select_fetchone {
+	my ($ref)  = @_;
+
+	my $dbh = $ref->{dbh} || $DBH;
+	my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
+
+	my $list = dbh_select_as_list($ref);
+
+	my $res = $list->[0];
+	return $res;
 }
 
 sub dbh_selectall_arrayref {
@@ -303,6 +317,32 @@ sub dbh_do  {
 
 	}
 	return $FINE;
+}
+
+sub dbh_sth_exec {
+	my ($ref)  = @_;
+
+	my $dbh = $ref->{dbh} || $DBH;
+	my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
+
+	my $q   = $ref->{q};
+	my @e   = @{ $ref->{p} || [] };
+	
+	my $sth;
+	my $spl=SQL::SplitStatement->new;
+
+	my @q = $spl->split($q);
+
+	for(@q){
+		eval { $sth = $dbh->prepare($_) 
+				or $warn->($_,$dbh->errstr) 
+		};
+		if ($@) { $warn->($_,$@,$dbh->errstr); }
+		eval { $sth->execute(@e); };
+		if ($@) { $warn->($_,$@,$dbh->errstr); }
+	}
+
+	$sth;
 }
 
 1;

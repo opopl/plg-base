@@ -76,6 +76,10 @@ sub subnames {
 		push @$subs, $sub;
 		$subnames->{$ns} = $subs;
 	}
+	foreach my $ns (keys %$subnames) {
+		my $subs = $subnames->{$ns};
+		@$subs = sort @$subs;
+	}
 	return $subnames;
 }
 
