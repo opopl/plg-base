@@ -197,35 +197,6 @@ function! base#bufact#html#remove_extra ()
 
 endfunction
 
-"""bufact_htw_load_buf
-function! base#bufact#html#htw_load_buf ()
-	call base#buf#start()
-	call base#html#htw_load_buf()
-endfunction
-
-"""bufact_htw_node_print
-function! base#bufact#html#htw_node_print ()
-	call base#buf#start()
-	call base#html#htw_load_buf()
-	let lines=[]
-perl << eof
-	use String::Escape qw(escape);
-
-	my $cmd = qq{ let xpath=input('Node xpath:','') };
-	VimCmd($cmd);
-	my $xpath = VimVar('xpath');
-
-	my @lines;
-	my $sub = sub{ 
-		my $node = shift;
-		my $line = escape('printable',$node->toString);
-		VimCmd(qq{ call add(lines,"$line") });
-	};
-	$DOM->findnodes($xpath)->map($sub);
-eof
-	call base#buf#open_split({ 'lines' : lines })
-endfunction
-
 """bufact_remove_xpath
 function! base#bufact#html#remove_xpath (...)
 	call base#buf#start()
@@ -258,6 +229,37 @@ perl << eof
 eof
 
 endfunction
+
+"""bufact_htw_load_buf
+function! base#bufact#html#htw_load_buf ()
+	call base#buf#start()
+	call base#html#htw_load_buf()
+endfunction
+
+"""bufact_htw_node_print
+function! base#bufact#html#htw_node_print ()
+	call base#buf#start()
+	call base#html#htw_load_buf()
+	let lines=[]
+perl << eof
+	use String::Escape qw(escape);
+
+	my $cmd = qq{ let xpath=input('Node xpath:','') };
+	VimCmd($cmd);
+	my $xpath = VimVar('xpath');
+
+	my @lines;
+	my $sub = sub{ 
+		my $node = shift;
+		my $line = escape('printable',$node->toString);
+		VimCmd(qq{ call add(lines,"$line") });
+	};
+	$DOM->findnodes($xpath)->map($sub);
+eof
+	call base#buf#open_split({ 'lines' : lines })
+endfunction
+
+
 
 """attr_remove
 function! base#bufact#html#attr_remove ()
