@@ -244,6 +244,10 @@ function! base#tg#update (...)
 	" list of files
 	let files = ''
 
+	" list of files (to be writte to a file which will be processed by 
+	" 	ctags via -L option)
+	let files_arr = []
+
 	" file with the list of files
 	let filelist = ''
 
