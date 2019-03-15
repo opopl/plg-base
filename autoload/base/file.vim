@@ -250,10 +250,10 @@ function! base#file#write_lines(...)
 		call base#mkdir(dirname)
 	endif
 
+	let prf = { 'plugin' : 'base', 'func' : 'base#file#write_lines', 'prf' : '' }
 	call base#log([
-			\	'base#file#write_lines writing to file:',
-			\	'base#file#write_lines  '.file,
-			\	])
+			\	'writing to file: ' . file,
+			\	],prf)
 
 	" -1 fail code for writefile()
 	let ec        = -1
@@ -268,20 +268,20 @@ function! base#file#write_lines(...)
 		call extend(filelines,lines)
 		let ec = writefile(filelines,file)
 	catch 
-		call base#log([
-			\	'base#file#write_lines errors while writing to file!',
-			\	])
+		call base#warn({
+			\	'text' : 'errors while writing to file!',
+			\	},prf)
 	finally
 		if filereadable(file)
 			call base#log([
-				\	'base#file#write_lines file exists.',
-				\	])
+				\	'file exists.',
+				\	],prf)
 		endif
 
 		call base#log([
 				\	'writefile() exit code: '.ec,
 				\	'	(-1 - FAIL, 0 - OK)',
-				\	],{'prf' : 'base#file#write_lines'})
+				\	],prf)
 	endtry
 
 

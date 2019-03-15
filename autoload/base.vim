@@ -2120,7 +2120,9 @@ endfunction
 "
 function! base#warn (ref)
 		let ref    = a:ref
+
 		let text   = get(ref,'text','')
+
 		let prefix = base#echoprefix()
 		let prefix = get(ref,'prefix',prefix)
 		let hl     = get(ref,'hl','WarningMsg')

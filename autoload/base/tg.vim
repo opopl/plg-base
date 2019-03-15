@@ -519,13 +519,37 @@ function! base#tg#update (...)
 	let cmd = 'ctags -R -o "' . ap#file#win( tfile ) . '" ' . libs . ' ' . files
 	call base#varset('last_ctags_cmd',cmd)
 
+	let execmd = ''
+	if has('win32')
+		let batlines = []
+		call add(batlines,' ')
+		call add(batlines,'@echo off')
+		call add(batlines,' ')
+		call add(batlines,'set tagid=' . tgid )
+		call add(batlines,'set tfile="' . tfile . '"')
+		call add(batlines,' ')
+		call add(batlines,'echo tagfile: %tfile%')
+		call add(batlines,'echo tagid: %tagid%')
+		call add(batlines,' ')
+		call add(batlines,cmd)
+		call add(batlines,' ')
+
+		let home = base#path('home')
+		let batfile = base#file#catfile([home,'tmp_bat','tgupdate_' . tgid . '.bat'])
+		call base#file#write_lines({ 
+			\	'lines' : batlines, 
+			\	'file'  : batfile, 
+			\})
+		let execmd = '"' . batfile .'"'
+	endif
+
 	echo "Calling ctags command for: " . tgid 
 
 	if async && ( exists(':AsyncCommand') == 2 )
-		call asynccommand#run(cmd)
+		call asynccommand#run(execmd)
 		let ok = 1
 	else
-		call extend(refsys,{ 'cmds' : [ cmd ] })
+		call extend(refsys,{ 'cmds' : [ execmd ] })
 		let ok = base#sys(refsys)
 	endif
 
