@@ -39,15 +39,17 @@ sub log_dbh {
 	my $loglevel = $ref->{loglevel} || 'log';
 
 	my $msg = join "\n" => map { $pref . $_ } @$args;
+
+	my $h = {
+		msg      => $msg,
+		time     => time(),
+		loglevel => $loglevel,
+	};
 	if (my $dbh = $self->{dbh}) {
 		dbh_insert_hash({ 
 			dbh => $dbh,
 			t   => 'log',
-			h => { 
-				msg      => $msg,
-				time     => time(),
-				loglevel => $loglevel,
-			} 
+			h   => $h,
 		});
 	}
 
