@@ -44,7 +44,16 @@ function! base#htmlwork#saved ()
 
 	let q = 'SELECT rowid,local,remote FROM saved'
 	let q = input('query:',q)
+	let np = input('number of params:',0)
+
 	let p = []
+	if np
+		 let i = 0
+		 while i<np
+				let par = input('param '.#i . ' : ','')
+				call add(p,par)
+		 endw
+	endif
 
 	let sortcol = 0
 	let sortcol = input('sortcol: ',sortcol)
