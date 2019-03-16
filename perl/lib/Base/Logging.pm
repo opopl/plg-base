@@ -18,7 +18,7 @@ use Base::DB qw(
 
 =cut
 
-my($SUB_LOG,$SUB_WARN,$PRINT,$WARN);
+my($PRINT,$WARN);
 
 $PRINT = sub { 
 	local $_=shift; 
@@ -31,43 +31,6 @@ $WARN = sub {
 	my $s = (defined) ? $_ : ''; 
 	CORE::warn($s . "\n") if $s;
 }; 
-
-my $sub_log_s;
-
-$sub_log_s = sub {
-	my ($arg,$ref,$print);
-
-	$print ||= $PRINT;
-
-	my $msg;
-	if(ref $arg eq "HASH"){
-		$msg = $arg->{msg};
-		my $ih = $ref->{ih};
-	}elsif(ref $arg eq ''){
-		$msg = $arg;
-	}
-		
-	$print->($msg);
-};
-
-$SUB_LOG = sub {
-	my ($args,@o)=@_;
-	if (ref $args eq "ARRAY"){
-		foreach my $arg (@$args) {
-			$sub_log_s->($arg,@o);
-		}
-
-	}else{
-		my $arg = $args;
-		$sub_log_s->($arg,@o);
-	}
-};
-
-$SUB_WARN = sub { 
-	my ($args,$ref,$warn)=@_;
-	$warn ||= $WARN;
-	$SUB_LOG->($args,$ref,$warn);
-};
 
 #================================
 
@@ -142,14 +105,41 @@ sub log_dbh {
 	return $self;
 }
 
+sub log_s {
+	my ($self,$arg,$ref,$print)=@_;
+
+	$print ||= $PRINT;
+
+	my $msg;
+	if(ref $arg eq "HASH"){
+		$msg = $arg->{msg};
+		my $ih = $ref->{ih};
+	}elsif(ref $arg eq ''){
+		$msg = $arg;
+	}
+		
+	$print->($msg);
+}
+
 sub log {
-	my ($self,@args)=@_;
+	my ($self,$args,@o)=@_;
 
-	my $sub = $self->{sub_log} || $SUB_LOG || undef;
-	$PRINT ||= $self->{def_PRINT};
-	$sub && $sub->(@args);
+	#my $sub = $self->{sub_log} || $SUB_LOG || undef;
+	#$sub && $sub->(@args);
 
-	for(@args){
+	$PRINT = $self->{def_PRINT} if $self->{def_PRINT};
+
+	if (ref $args eq "ARRAY"){
+		foreach my $arg (@$args) {
+			$self->log_s->($arg,@o);
+		}
+	}else{
+		my $arg = $args;
+		$self->log_s->($arg,@o);
+	}
+
+
+	for(@$args){
 		$self->log_dbh($_,{ loglevel => '' });
 	}
 
@@ -157,14 +147,16 @@ sub log {
 }
 
 sub _warn_ {
-	my ($self,@args)=@_;
+	my ($self,$args,$ref)=@_;
 
-	my $sub = $self->{sub_warn} || $SUB_WARN || $self->{sub_log} || $SUB_LOG || undef;
-	$sub && $sub->(@args);
+	#my $sub = $self->{sub_warn} || $SUB_WARN || $self->{sub_log} || $SUB_LOG || undef;
+	#$sub && $sub->(@args);
 
-	$WARN ||= $self->{def_WARN};
+	my $warn = $self->{def_WARN} || $WARN;
 
-	for(@args){
+	$self->log($args,$ref,$warn);
+
+	for(@$args){
 		$self->log_dbh($_,{ loglevel => 'warn' });
 	}
 
@@ -172,16 +164,18 @@ sub _warn_ {
 }
 
 sub debug {
-	my ($self,@args)=@_;
+	my ($self,$args,$ref)=@_;
 
 	return $self unless $self->{debug};
 
-	my $sub = $self->{sub_log} || $SUB_LOG || undef;
-	$PRINT ||= $self->{def_PRINT};
+	#my $sub = $self->{sub_log} || $SUB_LOG || undef;
+	#$PRINT ||= $self->{def_PRINT};
+	#$sub && $sub->(@args);
+	#
+	my $print = $self->{def_PRINT} || $PRINT;
+	$self->log($args,$ref,$print);
 
-	$sub && $sub->(@args);
-
-	for(@args){
+	for(@$args){
 		$self->log_dbh($_,{ loglevel => 'debug' });
 	}
 
