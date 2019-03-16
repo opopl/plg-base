@@ -19,11 +19,16 @@ use Base::DB qw(
 =cut
 
 our($SUB_LOG,$SUB_WARN);
+my $sub_log_s;
 
-my $sub_log_s = sub {
+$sub_log_s = sub {
 	my ($arg,$ref,$print);
 
-	$print||= sub {print $_ . "\n"}; 
+	$print||= sub { 
+		local $_=shift; 
+		my $s = (defined) ? $_ : ''; 
+		CORE::print($s . "\n") if $s;
+	}; 
 
 	my $msg;
 	if(ref $arg eq "HASH"){
@@ -51,7 +56,11 @@ $SUB_LOG = sub {
 
 $SUB_WARN = sub { 
 	my ($args,$ref,$warn)=@_;
-	$warn||= sub {warn $_ . "\n"}; 
+	$warn||= sub { 
+		local $_ = shift; 
+		my $s = (defined) ? $_ : ''; 
+		CORE::warn($s . "\n") if $s;
+	}; 
 	$SUB_LOG->($args,$ref,$warn);
 };
 
@@ -92,7 +101,8 @@ sub log_dbh {
 	my $pref     = $ref->{pref} || '';
 	my $loglevel = $ref->{loglevel} || 'log';
 
-	my ($msg,$ih);
+	my $msg;
+	my $ih = {};
 	if (ref $args eq ""){
 		$msg  = $pref . $args;
 
@@ -117,9 +127,10 @@ sub log_dbh {
 
 	if (my $dbh = $self->{dbh}) {
 		dbh_insert_hash({ 
-			dbh => $dbh,
-			t   => 'log',
-			h   => $h,
+			warn => sub {},
+			dbh  => $dbh,
+			t    => 'log',
+			h    => $h,
 		});
 	}
 
@@ -139,7 +150,7 @@ sub log {
 	return $self;
 }
 
-sub warn {
+sub _warn_ {
 	my ($self,@args)=@_;
 
 	my $sub = $self->{sub_warn} || $self->{sub_log} || undef;

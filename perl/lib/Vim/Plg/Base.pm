@@ -170,7 +170,7 @@ sub db_connect {
 			my @w;
 			push @w, 'Failure to disconnect db:', DBI->errstr, $@ ;
 				
-			$self->warn(@w); 
+			$self->_warn_(@w); 
 		}
 	}
 
@@ -190,11 +190,11 @@ sub db_connect {
 		push @w, 
 			'Failure to connect to database with dbname:',$dbname,
 			DBI->errstr,$@;
-		$self->warn(@w); return $self; 
+		$self->_warn_(@w); return $self; 
 	}
 
 	unless ($dbh) {
-		$self->warn('dbh undefined!');
+		$self->_warn_('dbh undefined!');
 	}else{
 		$self->dbh($dbh);
 		$self->dbname($dbname);
@@ -205,7 +205,7 @@ sub db_connect {
 		}
 	}
 
-	$Base::DB::WARN = sub{ $self->warn(@_) };
+	$Base::DB::WARN = sub{ $self->_warn_(@_) };
 
 	$self;
 }
@@ -398,7 +398,7 @@ sub db_dbfile_size {
 
 	my $st;
     eval{ $st = stat($dbfile)};
-	$@ && do { $self->warn("File::stat errors for $dbfile: $@"); return; };
+	$@ && do { $self->_warn_("File::stat errors for $dbfile: $@"); return; };
 
 	my $size=$st->size;
 	return $size;
@@ -573,7 +573,7 @@ sub init_plugins {
 	my ($dat_plg) = map { $_->{datfile} } @$rows;
 
 	unless ($dat_plg) {
-		$self->warn('plugins DAT file NOT defined!!');
+		$self->_warn_('plugins DAT file NOT defined!!');
 	}
 	if (-e $dat_plg) {
 		my @plugins = readarr($dat_plg);
