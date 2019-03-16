@@ -18,17 +18,26 @@ use Base::DB qw(
 
 =cut
 
-our($SUB_LOG,$SUB_WARN);
+our($SUB_LOG,$SUB_WARN,$PRINT,$WARN);
+
+$PRINT = sub { 
+	local $_=shift; 
+	my $s = (defined) ? $_ : ''; 
+	CORE::print($s . "\n") if $s;
+}; 
+
+$WARN = sub { 
+	local $_ = shift; 
+	my $s = (defined) ? $_ : ''; 
+	CORE::warn($s . "\n") if $s;
+}; 
+
 my $sub_log_s;
 
 $sub_log_s = sub {
 	my ($arg,$ref,$print);
 
-	$print||= sub { 
-		local $_=shift; 
-		my $s = (defined) ? $_ : ''; 
-		CORE::print($s . "\n") if $s;
-	}; 
+	$print ||= $PRINT;
 
 	my $msg;
 	if(ref $arg eq "HASH"){
@@ -56,11 +65,7 @@ $SUB_LOG = sub {
 
 $SUB_WARN = sub { 
 	my ($args,$ref,$warn)=@_;
-	$warn||= sub { 
-		local $_ = shift; 
-		my $s = (defined) ? $_ : ''; 
-		CORE::warn($s . "\n") if $s;
-	}; 
+	$warn ||= $WARN;
 	$SUB_LOG->($args,$ref,$warn);
 };
 
@@ -140,7 +145,7 @@ sub log_dbh {
 sub log {
 	my ($self,@args)=@_;
 
-	my $sub = $self->{sub_log} || undef;
+	my $sub = $self->{sub_log} || $SUB_LOG || undef;
 	$sub && $sub->(@args);
 
 	for(@args){
@@ -153,7 +158,7 @@ sub log {
 sub _warn_ {
 	my ($self,@args)=@_;
 
-	my $sub = $self->{sub_warn} || $self->{sub_log} || undef;
+	my $sub = $self->{sub_warn} || $SUB_WARN || $self->{sub_log} || $SUB_LOG || undef;
 	$sub && $sub->(@args);
 
 	for(@args){
@@ -168,7 +173,7 @@ sub debug {
 
 	return $self unless $self->{debug};
 
-	my $sub = $self->{sub_log} || undef;
+	my $sub = $self->{sub_log} || $SUB_LOG || undef;
 	$sub && $sub->(@args);
 
 	for(@args){

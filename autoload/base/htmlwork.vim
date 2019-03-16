@@ -29,10 +29,14 @@ function! base#htmlwork#saved ()
 	let q = input('query:',q)
 	let p = []
 
+	let sortcol = 0
+	let sortcol = input('sortcol: ',sortcol)
+
 	let lines = pymy#sqlite#query_screen({
 		\	'dbfile' : dbfile,
 		\	'p'      : p,
 		\	'q'      : q,
+		\	'sortcol'      : sortcol,
 		\	})
 	call base#buf#open_split({ 'lines' : lines })
 endfunction
