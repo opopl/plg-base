@@ -192,6 +192,10 @@ fun! base#init#cmds()
 	command! -nargs=* -complete=custom,base#complete#baselog BaseLog
 		\	call base#log#cmd(<f-args>) 
 
+"""HTMLWORK
+	command! -nargs=* -complete=custom,base#complete#htmlwork HTMLWORK
+		\	call base#html#work(<f-args>) 
+
 """ImageAct
 	command! -nargs=*  -complete=custom,base#complete#imageact ImageAct 
 		\	call base#image#act(<f-args>)
