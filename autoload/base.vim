@@ -392,6 +392,7 @@ function! base#cd(dir,...)
     if a:0 | let ref = a:1 | endif
 
 		let dir = a:dir
+		let dir = base#file#win2unix(dir)
 
     let ech = get(ref,'echo',1)
 

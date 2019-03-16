@@ -388,11 +388,14 @@ endf
 
 function! base#file#win2unix( filename )
 
+	let s = a:filename
+
 	if has('win32')
-		return substitute(a:filename,'\\','/','g')
+		let s = substitute(s,'[\\]\+','\\','g')
+		let s = substitute(s,'\\','/','g')
 	endif
 
-	return a:filename
+	return s
 
 endf
 
