@@ -117,6 +117,7 @@ sub log_s {
 	}elsif(ref $arg eq ''){
 		$msg = $arg;
 	}
+
 		
 	$print->($msg);
 }
@@ -127,21 +128,16 @@ sub log {
 	#my $sub = $self->{sub_log} || $SUB_LOG || undef;
 	#$sub && $sub->(@args);
 
-	$PRINT = $self->{def_PRINT} if $self->{def_PRINT};
-
 	if (ref $args eq "ARRAY"){
 		foreach my $arg (@$args) {
-			$self->log_s->($arg,@o);
+			$self->log_s($arg,@o);
 		}
 	}else{
 		my $arg = $args;
-		$self->log_s->($arg,@o);
+		$self->log_s($arg,@o);
 	}
 
-
-	for(@$args){
-		$self->log_dbh($_,{ loglevel => '' });
-	}
+	$self->log_dbh($args);
 
 	return $self;
 }
@@ -156,9 +152,7 @@ sub _warn_ {
 
 	$self->log($args,$ref,$warn);
 
-	for(@$args){
-		$self->log_dbh($_,{ loglevel => 'warn' });
-	}
+	$self->log_dbh($args,{ loglevel => 'warn' });
 
 	return $self;
 }
