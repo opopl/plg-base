@@ -22,3 +22,17 @@ function! base#htmlwork#dbfile()
 	
 endfunction
 
+function! base#htmlwork#saved ()
+	let dbfile = base#htmlwork#dbfile()
+
+	let q = 'SELECT rowid,local,remote FROM saved'
+	let q = input('query:',q)
+	let p = []
+
+	let lines = pymy#sqlite#query_screen({
+		\	'dbfile' : dbfile,
+		\	'p'      : p,
+		\	'q'      : q,
+		\	})
+	call base#buf#open_split({ 'lines' : lines })
+endfunction
