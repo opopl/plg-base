@@ -2,7 +2,7 @@
 function! base#htmlwork#log ()
 	let dbfile = base#htmlwork#dbfile()
 
-	let q = 'select rowid,func,url,msg from log'
+	let q = 'SELECT rowid,func,url,msg FROM log'
 	let q = input('query:',q)
 	let p = []
 
