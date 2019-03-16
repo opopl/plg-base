@@ -162,7 +162,7 @@ sub run_pf {
 		'dbfile:   ',
 			"\t" . $dbfile,
 		;
-	$self->log(@m);
+	$self->log([@m]);
 
 	my %o = (
 		dirs     => \@dirs,
@@ -186,7 +186,7 @@ sub run_pf {
 	$pf->generate_from_source;
 	my $end = time();
 
-	$self->log('TIME SPENT:',"\t" . ($end-$start));
+	$self->log(['TIME SPENT:',"\t" . ($end-$start)]);
 
 	$self;
 }

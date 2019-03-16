@@ -477,6 +477,8 @@ function! base#dbfile (...)
 		let dbfile = get(r,0,'')
 	endif
 
+	let dbfile = base#file#win2unix(dbfile)
+
 	return dbfile
 endfunction
 

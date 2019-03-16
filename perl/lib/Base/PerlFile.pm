@@ -24,6 +24,7 @@ use File::stat;
 use Base::DB qw(
 	dbh_insert_hash
 	dbh_select
+	dbh_select_as_list
 );
 use base qw(Base::Logging);
 
@@ -308,7 +309,6 @@ sub process_var {
 				'namespace'   => $ns,
 				'type'   	  => 'var_'.( $type || 'undef' ),
 			};
-			#$self->log(Dumper($h));
 	
 			dbh_insert_hash({ h => $h, t => 'tags' });
 		}
@@ -354,14 +354,13 @@ sub ppi_process {
 
 	unless ($file && -f $file) { return $self; }
 
-	my $rows = dbh_select({
-		s    => 'SELECT DISTINCT',
+	my ($mtime_db) = dbh_select_as_list({
+		s    => q{SELECT DISTINCT},
 		f    => [qw(file_mtime)],
 		t    => 'tags',
 		cond => qq{ where filename = ? },
 		p    => [$file],
 	});
-	my ($mtime_db) = map { $_->{file_mtime} } @$rows;
 	# file is modified compared to its data stored in database
 	if (defined $mtime_db && ($file_mtime == $mtime_db)) {
 		return $self;
@@ -369,7 +368,7 @@ sub ppi_process {
 
  	my $DOC; 
 	eval { $DOC = PPI::Document->new($file); };
-	if ($@) { $self->warn($@); return $self; }
+	if ($@) { $self->_warn_([ $@ ]); return $self; }
 
 	$DOC->index_locations;
 
@@ -421,7 +420,6 @@ sub ppi_process {
 			my @a = ($ns,$file,$type);
 
 			my $vars = [ $node->variables ];
-			#$self->log(Dumper($vars));
 
 			$self->process_var($node,@a);
 		};
@@ -459,7 +457,7 @@ sub ppi_process {
 					my ($sign,$varname) = ( /$pat/g );
 
 					unless (defined $sign) {
-						$self->warn('PPI::Statement::Include: $sign zero!');
+						$self->_warn_([ 'PPI::Statement::Include: $sign zero!' ]);
 					}
 
 					my $h = { 
@@ -522,7 +520,7 @@ sub write_tags {
 		return $self;
 	}
 
-	$self->log('write_tags: ' . $tagfile);
+	$self->log({ msg => 'write_tags: ' . $tagfile });
 
 	my $add = $ref->{add} || $self->{add} || [];
 
@@ -617,7 +615,7 @@ sub write_tags {
 	eval { $sth->execute(); };
 
 	if ($@) {
-		$self->warn($@,$q,$dbh->errstr);
+		$self->_warn_([ $@,$q,$dbh->errstr ]);
 		return $self;
 	}
 
@@ -694,13 +692,13 @@ sub tags_add {
 		return $self;
 	}
 
-	$self->log('tags_add: ' . Dumper($ref));
+	$self->log({ msg => 'tags_add: ' , ih => { dump => Dumper($ref) } });
 
 	my $sth = $dbh->prepare($query);
 	eval { $sth->execute(@$params); };
 
 	if ($@) {
-		$self->warn($@,$query,Dumper($params),$dbh->errstr);
+		$self->_warn_([ $@,$query,Dumper($params),$dbh->errstr ]);
 		return $self;
 	}
 

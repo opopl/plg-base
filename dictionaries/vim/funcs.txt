@@ -24,6 +24,7 @@ pymy#sqlite#table_info
 pymy#sqlite_cmd#info	
 pymy#sqlite_cmd#list_of_tables	
 pymy#sqlite_cmd#query	
+pymy#sqlite_cmd#query_fetchone
 pymy#data#tabulate
 
 txtmy#action	
