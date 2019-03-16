@@ -2,9 +2,26 @@
 function! base#htmlwork#log ()
 	let dbfile = base#htmlwork#dbfile()
 
-	let q = 'SELECT rowid,func,url,msg FROM log'
+	let q = 'SELECT rowid,func,url,msg FROM log where loglevel in (?,?)'
 	let q = input('query:',q)
-	let p = []
+	let p = [ '' , 'log' ]
+
+	let lines = pymy#sqlite#query_screen({
+		\	'dbfile' : dbfile,
+		\	'p'      : p,
+		\	'q'      : q,
+		\	})
+
+	call base#buf#open_split({ 'lines' : lines })
+	
+endfunction
+
+function! base#htmlwork#debug ()
+	let dbfile = base#htmlwork#dbfile()
+
+	let q = 'SELECT rowid,func,url,msg FROM log where loglevel in (?)'
+	let q = input('query:',q)
+	let p = [ 'debug' ]
 
 	let lines = pymy#sqlite#query_screen({
 		\	'dbfile' : dbfile,
