@@ -645,6 +645,8 @@ BEGIN {
 		sub_warn
 		sub_log
 		sub_on_connect
+		def_PRINT
+		def_WARN
 		prepared_query
 	);
 	

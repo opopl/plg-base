@@ -18,7 +18,7 @@ use Base::DB qw(
 
 =cut
 
-our($SUB_LOG,$SUB_WARN,$PRINT,$WARN);
+my($SUB_LOG,$SUB_WARN,$PRINT,$WARN);
 
 $PRINT = sub { 
 	local $_=shift; 
@@ -146,6 +146,7 @@ sub log {
 	my ($self,@args)=@_;
 
 	my $sub = $self->{sub_log} || $SUB_LOG || undef;
+	$PRINT ||= $self->{def_PRINT};
 	$sub && $sub->(@args);
 
 	for(@args){
@@ -161,6 +162,8 @@ sub _warn_ {
 	my $sub = $self->{sub_warn} || $SUB_WARN || $self->{sub_log} || $SUB_LOG || undef;
 	$sub && $sub->(@args);
 
+	$WARN ||= $self->{def_WARN};
+
 	for(@args){
 		$self->log_dbh($_,{ loglevel => 'warn' });
 	}
@@ -174,6 +177,8 @@ sub debug {
 	return $self unless $self->{debug};
 
 	my $sub = $self->{sub_log} || $SUB_LOG || undef;
+	$PRINT ||= $self->{def_PRINT};
+
 	$sub && $sub->(@args);
 
 	for(@args){

@@ -451,8 +451,10 @@ perl << eof
 
 	my $prf = { prf => 'vim::plg::base' };
 	our $plgbase = Vim::Plg::Base->new(
-		sub_log        => sub { VimMsg([@_],$prf) },
-		sub_warn       => sub { VimWarn([@_],$prf)  },
+	#sub_log        => sub { VimMsg([@_],$prf) },
+	#	sub_warn       => sub { VimWarn([@_],$prf)  },
+	def_PRINT => sub { VimMsg([@_],$prf)   },
+	def_WARN  => sub { VimWarn([@_],$prf)  },
 		sub_on_connect => sub {
 			my ($dbh) = @_; 
 			$Vim::Perl::DBH=$dbh; 

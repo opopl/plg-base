@@ -23,7 +23,7 @@ function! base#log#warnings ()
 	let dbfile = base#dbfile()
 
 	let q = 'SELECT rowid,elapsed,prf,plugin,func,msg FROM log WHERE loglevel = ?'
-	let p = [ 'warning' ]
+	let p = [ 'warn' ]
 	let q = input('log view query: ',q)
 
 	let rq = {
