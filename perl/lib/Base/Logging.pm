@@ -123,19 +123,20 @@ sub log_s {
 }
 
 sub log {
-	my ($self,$args,@o)=@_;
+	my ($self,$args,$ref,$print)=@_;
 
+	$ref ||= {};
 
 	if (ref $args eq "ARRAY"){
 		foreach my $arg (@$args) {
-			$self->log_s($arg,@o);
+			$self->log_s($arg,$ref,$print);
 		}
 	}else{
 		my $arg = $args;
-		$self->log_s($arg,@o);
+		$self->log_s($arg,$ref,$print);
 	}
 
-	$self->log_dbh($args);
+	$self->log_dbh($args,{ loglevel => $ref->{loglevel} });
 
 	return $self;
 }
@@ -145,9 +146,8 @@ sub _warn_ {
 
 	my $warn = $self->{def_WARN} || $WARN;
 
-	$self->log($args,$ref,$warn);
+	$self->log($args,{ %$ref, loglevel => 'warn' },$print);
 
-	$self->log_dbh($args,{ loglevel => 'warn' });
 
 	return $self;
 }
@@ -158,11 +158,8 @@ sub debug {
 	return $self unless $self->{debug};
 
 	my $print = $self->{def_PRINT} || $PRINT;
-	$self->log($args,$ref,$print);
 
-	for(@$args){
-		$self->log_dbh($_,{ loglevel => 'debug' });
-	}
+	$self->log($args,{ %$ref, loglevel => 'debug' },$print);
 
 	return $self;
 }
