@@ -2256,7 +2256,7 @@ function! base#info (...)
 			endfor
 
 			call add(info,'Other variables:')
-			let var_names  = base#qw("b:dirname b:file b:ext b:bufnr")
+			let var_names  = base#qw("b:basename b:dirname b:file b:ext b:bufnr")
 
 			for var_name in var_names
 				let var_value = exists(var_name) ? eval(var_name) : ''

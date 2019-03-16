@@ -24,6 +24,9 @@ function! base#bufact#html#save_to_vh ()
 	call base#buf#start()
 	call base#html#htw_load_buf()
 
+	let bn = fnamemodify(b:basename,':r')
+	let vh_file = base#file#catfile([ b:dirname, 'vh_' . bn . '.txt' ])
+
 	let vh_tag  = input('VH tag:','')
 	let vh_file = input('VH file:',vh_file)
 
@@ -43,7 +46,7 @@ my $vhref={
 my $lines      = $HTW->save_to_vh($vhref);
 VimLet('lines',$lines);
 eof
-call base#buf#open_split({ 'lines' : lines })
+	call base#buf#open_split({ 'lines' : lines })
 endfunction
 
 function! base#bufact#html#db_record_delete ()
