@@ -125,8 +125,6 @@ sub log_s {
 sub log {
 	my ($self,$args,@o)=@_;
 
-	#my $sub = $self->{sub_log} || $SUB_LOG || undef;
-	#$sub && $sub->(@args);
 
 	if (ref $args eq "ARRAY"){
 		foreach my $arg (@$args) {
@@ -145,9 +143,6 @@ sub log {
 sub _warn_ {
 	my ($self,$args,$ref)=@_;
 
-	#my $sub = $self->{sub_warn} || $SUB_WARN || $self->{sub_log} || $SUB_LOG || undef;
-	#$sub && $sub->(@args);
-
 	my $warn = $self->{def_WARN} || $WARN;
 
 	$self->log($args,$ref,$warn);
@@ -162,10 +157,6 @@ sub debug {
 
 	return $self unless $self->{debug};
 
-	#my $sub = $self->{sub_log} || $SUB_LOG || undef;
-	#$PRINT ||= $self->{def_PRINT};
-	#$sub && $sub->(@args);
-	#
 	my $print = $self->{def_PRINT} || $PRINT;
 	$self->log($args,$ref,$print);
 
