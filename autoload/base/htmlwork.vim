@@ -16,6 +16,40 @@ function! base#htmlwork#log ()
 	
 endfunction
 
+function! base#htmlwork#log_debug ()
+	let dbfile = base#htmlwork#dbfile()
+
+	let q = 'SELECT rowid,func,url,msg FROM log where loglevel in (?)'
+	let q = input('query:',q)
+	let p = [ 'debug' ]
+
+	let lines = pymy#sqlite#query_screen({
+		\	'dbfile' : dbfile,
+		\	'p'      : p,
+		\	'q'      : q,
+		\	})
+
+	call base#buf#open_split({ 'lines' : lines })
+	
+endfunction
+
+function! base#htmlwork#log_warnings ()
+	let dbfile = base#htmlwork#dbfile()
+
+	let q = 'SELECT rowid,func,url,msg FROM log where loglevel in (?)'
+	let q = input('query:',q)
+	let p = [ 'warn' ]
+
+	let lines = pymy#sqlite#query_screen({
+		\	'dbfile' : dbfile,
+		\	'p'      : p,
+		\	'q'      : q,
+		\	})
+
+	call base#buf#open_split({ 'lines' : lines })
+	
+endfunction
+
 function! base#htmlwork#db_backup ()
 	let dbfile = base#htmlwork#dbfile()
 
@@ -34,22 +68,7 @@ function! base#htmlwork#db_restore ()
 
 endfunction
 
-function! base#htmlwork#debug ()
-	let dbfile = base#htmlwork#dbfile()
 
-	let q = 'SELECT rowid,func,url,msg FROM log where loglevel in (?)'
-	let q = input('query:',q)
-	let p = [ 'debug' ]
-
-	let lines = pymy#sqlite#query_screen({
-		\	'dbfile' : dbfile,
-		\	'p'      : p,
-		\	'q'      : q,
-		\	})
-
-	call base#buf#open_split({ 'lines' : lines })
-	
-endfunction
 
 function! base#htmlwork#dbfile()
 	let dbfile = base#qw#catpath('db','html_work.sqlite')
