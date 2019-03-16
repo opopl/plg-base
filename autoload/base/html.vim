@@ -303,7 +303,7 @@ function! base#html#htw_init (...)
 	let ref = get(a:000,0,{})
 
 	let dbfile = ':memory:'
-	let dbfile = base#varget('htw_dbfile',dbfile)
+	let dbfile = base#htw_dbfile() 
 	let dbfile = get(ref,'dbfile',dbfile)
 
 	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -319,10 +319,10 @@ perl << eof
 	my $dbfile = VimVar('dbfile');
 
 	our $HTW ||= HTML::Work->new(
-			sub_log  => sub { VimMsg([@_]) },
-			sub_warn => sub { VimWarn([@_]) },
-			dbfile   => $dbfile,
-			load_as  => 'html',
+			def_PRINT => sub { VimMsg([@_]) },
+			def_WARN  => sub { VimWarn([@_]) },
+			dbfile    => $dbfile,
+			load_as   => 'html',
 	);
 eof
 endfunction

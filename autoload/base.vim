@@ -451,6 +451,13 @@ function! base#dbnames ()
 
 endf
 
+function! base#htw_dbfile()
+		let dbdir = $HOME . '/db'
+		let dbfile = dbdir . '/html_work.sqlite'
+		call base#varset('htw_dbfile',dbfile)
+		return dbfile
+endf
+
 function! base#dbfile (...)
 	let dbname = get(a:000,0,'')
 

@@ -16,6 +16,24 @@ function! base#htmlwork#log ()
 	
 endfunction
 
+function! base#htmlwork#db_backup ()
+	let dbfile = base#htmlwork#dbfile()
+
+	let dirname  = fnamemodify(dbfile,':p:h')
+	let basename = fnamemodify(dbfile,':p:t')
+
+	let bdir = base#file#catfile([ dirname, 'backup' ])
+	call base#mkdir(bdir)
+
+	let bfile = base#file#catfile([ bdir, basename ])
+	call base#file#copy(dbfile,bfile)	
+
+endfunction
+
+function! base#htmlwork#db_restore ()
+
+endfunction
+
 function! base#htmlwork#debug ()
 	let dbfile = base#htmlwork#dbfile()
 
