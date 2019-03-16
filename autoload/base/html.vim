@@ -386,12 +386,12 @@ perl << eof
 
 	my $q = qq{
 		CREATE TABLE IF NOT EXISTS pages  (
-			url TEXT NOT NULL,
+			url TEXT NOT NULL UNIQUE,
 			url_host TEXT,
 			url_query TEXT,
 			time_saved INTEGER,
+			txt_file TEXT,
 			saved_file TEXT UNIQUE,
-			saved_txt TEXT,
 			saved_bname TEXT,
 			pcname TEXT,
 			tags TEXT,
@@ -401,6 +401,7 @@ perl << eof
 		);
 	};
 	#ALTER TABLE pages ADD COLUMN pcname TEXT;
+	#ALTER TABLE pages ADD COLUMN txt_file TEXT;
 	#ALTER TABLE pages ADD COLUMN time_saved INTEGER;
 	dbh_do({ q => $q }) or do { return; };
  
@@ -415,6 +416,7 @@ perl << eof
 		rowid 
 		url url_host url_query
 		saved_file saved_bname 
+		txt_file
 		tags title 
 	) ];
 
@@ -458,7 +460,7 @@ perl << eof
 
 	my $saved_bname = VimVar('saved_bname');
 
-	my $saved_file;
+	my ($saved_file,$txt_file);
 	{
 		local $_ = $saved_bname;
 
@@ -466,6 +468,7 @@ perl << eof
 		s/\.php$/\.htm/g;
 
 		$saved_file = catfile($save_dir,$_);
+		$txt_file   = catfile($save_dir,$saved_bname . '.txt');
 	};
 
 	$HTW->download_url({

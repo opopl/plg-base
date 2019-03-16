@@ -321,6 +321,7 @@ sub VimVar {
 
 	my $ref={
 		file => $file,
+		act  => q{split},
 	};
 	VimFileOpen($ref);
 
@@ -328,12 +329,14 @@ sub VimVar {
 
 sub VimFileOpen {
 	my ($ref) = @_;
+
 	my $file = $ref->{file};
+	my $act  = $ref->{act} || q{edit};
 
 	$file = escape('printable',$file);
 	my $cmd = qq{ 
 		let f="$file"
-		exe 'edit ' . f  
+		exe '$act ' . f  
 	};
 	VimCmd($cmd);
 }
