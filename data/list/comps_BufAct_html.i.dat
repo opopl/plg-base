@@ -25,3 +25,4 @@ replace_pre
 replace_tables
 replace_with_text
 toc_generate
+save_to_vh

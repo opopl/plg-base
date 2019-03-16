@@ -20,6 +20,32 @@ function! base#bufact#html#db_info ()
 
 endfunction
 
+function! base#bufact#html#save_to_vh ()
+	call base#buf#start()
+	call base#html#htw_load_buf()
+
+	let vh_tag  = input('VH tag:','')
+	let vh_file = input('VH file:',vh_file)
+
+perl << eof
+	
+my $vh_tag  = VimVar('vh_tag');
+my $vh_file = VimVar('vh_file');
+
+my $vhref={
+	out_vh_file => $vh_file,
+	tag         => $vh_tag,
+	actions     => [qw( replace_a replace_pre )],
+	xpath_rm    => [],
+	xpath_cb    => [],
+};
+			
+my $lines      = $HTW->save_to_vh($vhref);
+VimLet('lines',$lines);
+eof
+call base#buf#open_split({ 'lines' : lines })
+endfunction
+
 function! base#bufact#html#db_record_delete ()
 	call base#buf#start()
 
