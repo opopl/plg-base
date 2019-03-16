@@ -146,8 +146,7 @@ sub _warn_ {
 
 	my $warn = $self->{def_WARN} || $WARN;
 
-	$self->log($args,{ %$ref, loglevel => 'warn' },$print);
-
+	$self->log($args,{ %$ref, loglevel => 'warn' },$warn);
 
 	return $self;
 }
