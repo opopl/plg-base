@@ -8,6 +8,55 @@ use Base::DB qw(
 	dbh_insert_hash
 );
 
+=head1 VARIABLES
+
+=over 4
+
+=item C<$SUB_LOG>
+
+=back
+
+=cut
+
+our($SUB_LOG,$SUB_WARN);
+
+my $sub_log_s = sub {
+	my ($arg,$ref,$print);
+
+	$print||= sub {print $_ . "\n"}; 
+
+	my $msg;
+	if(ref $arg eq "HASH"){
+		$msg = $arg->{msg};
+		my $ih = $ref->{ih};
+	}elsif(ref $arg eq ''){
+		$msg = $arg;
+	}
+		
+	$print->($msg);
+};
+
+$SUB_LOG = sub {
+	my ($args,@o)=@_;
+	if (ref $args eq "ARRAY"){
+		foreach my $arg (@$args) {
+			$sub_log_s->($arg,@o);
+		}
+
+	}else{
+		my $arg = $args;
+		$sub_log_s->($arg,@o);
+	}
+};
+
+$SUB_WARN = sub { 
+	my ($args,$ref,$warn)=@_;
+	$warn||= sub {warn $_ . "\n"}; 
+	$SUB_LOG->($args,$ref,$warn);
+};
+
+#================================
+
 sub log_dumper {
 	my ($self,@args)=@_;
 
@@ -22,7 +71,12 @@ sub log_dumper {
 
 =head3 Usage
 
-	$OBJ->log_dbh($args,{ 
+	$OBJ->log_dbh([ 'a', 'b' ],{ 
+		pref     => $pref,
+		loglevel => $loglevel
+	});
+
+	$OBJ->log_dbh([ { msg => 'a', dump => Dumper($a) }, 'b' ],{ 
 		pref     => $pref,
 		loglevel => $loglevel
 	});
@@ -38,13 +92,29 @@ sub log_dbh {
 	my $pref     = $ref->{pref} || '';
 	my $loglevel = $ref->{loglevel} || 'log';
 
-	my $msg = join "\n" => map { $pref . $_ } @$args;
+	my ($msg,$ih);
+	if (ref $args eq ""){
+		$msg  = $pref . $args;
+
+	}elsif(ref $args eq "HASH"){
+		my $arg = $args;
+		$msg = $arg->{msg};
+		$ih  = $arg->{ih} || {};
+		
+	}elsif(ref $args eq "ARRAY"){
+		foreach my $arg (@$args) {
+			$self->log_dbh($arg,$ref);
+			return $self;
+		}
+	}	
 
 	my $h = {
+		%$ih,
 		msg      => $msg,
 		time     => time(),
 		loglevel => $loglevel,
 	};
+
 	if (my $dbh = $self->{dbh}) {
 		dbh_insert_hash({ 
 			dbh => $dbh,
@@ -62,7 +132,9 @@ sub log {
 	my $sub = $self->{sub_log} || undef;
 	$sub && $sub->(@args);
 
-	$self->log_dbh([@args],{ pref => '', loglevel => 'log' });
+	for(@args){
+		$self->log_dbh($_,{ loglevel => '' });
+	}
 
 	return $self;
 }
@@ -73,7 +145,9 @@ sub warn {
 	my $sub = $self->{sub_warn} || $self->{sub_log} || undef;
 	$sub && $sub->(@args);
 
-	$self->log_dbh([@args],{ pref => 'WARN ', loglevel => 'warn' });
+	for(@args){
+		$self->log_dbh($_,{ loglevel => 'warn' });
+	}
 
 	return $self;
 }
@@ -83,10 +157,12 @@ sub debug {
 
 	return $self unless $self->{debug};
 
-	my $sub = $self->{sub_warn} || $self->{sub_log} || undef;
+	my $sub = $self->{sub_log} || undef;
 	$sub && $sub->(@args);
 
-	$self->log_dbh([@args],{ pref => 'DEBUG ', loglevel => 'debug' });
+	for(@args){
+		$self->log_dbh($_,{ loglevel => 'debug' });
+	}
 
 	return $self;
 }
