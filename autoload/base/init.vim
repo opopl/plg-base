@@ -194,7 +194,7 @@ fun! base#init#cmds()
 
 """HTMLWORK
 	command! -nargs=* -complete=custom,base#complete#htmlwork HTMLWORK
-		\	call base#html#work(<f-args>) 
+		\	call base#htmlwork(<f-args>) 
 
 """ImageAct
 	command! -nargs=*  -complete=custom,base#complete#imageact ImageAct 

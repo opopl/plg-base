@@ -110,6 +110,10 @@ function! base#complete#BaseAct (...)
   return base#complete#vars([ 'opts_BaseAct' ])
 endfunction
 
+function! base#complete#htmlwork(...)
+  return base#complete#vars([ 'htmlwork' ])
+endfunction
+
 function! base#complete#this (...)
   return base#complete#vars([ 'this' ])
 endfunction

@@ -387,6 +387,18 @@ function! base#cdfile(...)
   exe 'cd ' . dir
 endf
 
+function! base#htmlwork (...)
+	let cmd = get(a:000,0,'')
+	let cmds = base#varget('htmlwork',[])
+
+	if base#inlist(cmd,cmds)
+		let sub = 'call base#htmlwork#'.cmd.'()'
+		exe sub
+	endif
+
+	
+endfunction
+
 function! base#cd(dir,...)
     let ref = {}
     if a:0 | let ref = a:1 | endif
