@@ -118,7 +118,6 @@ sub log_s {
 		$msg = $arg;
 	}
 
-		
 	$print->($msg);
 }
 
@@ -145,6 +144,7 @@ sub _warn_ {
 	my ($self,$args,$ref)=@_;
 
 	my $warn = $self->{def_WARN} || $WARN;
+	$ref ||={};
 
 	$self->log($args,{ %$ref, loglevel => 'warn' },$warn);
 
@@ -155,6 +155,7 @@ sub debug {
 	my ($self,$args,$ref)=@_;
 
 	return $self unless $self->{debug};
+	$ref ||={};
 
 	my $print = $self->{def_PRINT} || $PRINT;
 
