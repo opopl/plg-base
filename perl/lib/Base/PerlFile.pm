@@ -450,7 +450,7 @@ sub ppi_process {
 		p    => [$file],
 	});
 
-	unless($ref->{redo}){
+	unless($redo){
 	# file is NOT modified compared to its data stored in database,
 	# 	so no need for further actions
 	# OR:
@@ -468,7 +468,6 @@ sub ppi_process {
 
 	$DOC->index_locations;
 
-	print 'b' . "\n";
 
 	my $f = sub { 
 		$_[1]->isa( 'PPI::Statement::Sub' ) 
@@ -694,18 +693,13 @@ sub write_tags {
 			`tag`
 		ASC
 	};
-	my $sth = $DBH->prepare($q);
-	eval { $sth->execute(); };
+	my $rows = dbh_select({
+		q     => $q,
+		fetch => 'fetchrow_arrayref',
+	});
 
-	if ($@) {
-		$self->_warn_([ $@, $q, $DBH->errstr ]);
-		return $self;
-	}
-
-	my $fetch='fetchrow_arrayref';
 	my @lines;
-	while( my $row = $sth->$fetch() ){
-		#push @lines, join("\t",map { defined ($_) ? $_ : 'undef' }@$row);
+	for my $row ( @$rows ){
 		push @lines, join("\t",@$row);
 	}
 

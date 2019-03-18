@@ -16,7 +16,7 @@ set db=%db_dir%\tygs_perl_inc.sqlite
 set opts=
 set opts=%opts% --inc --db "%db%" --tfile "%tygs%" --action generate_from_db
 set opts=%opts% --files_limit 10
-set opts=%opts% --redo
+REM set opts=%opts% --redo
 
 set cmd=ty.bat %opts%
 

@@ -305,7 +305,7 @@ sub dbh_update_hash {
 	my @values_update = map { $h->{$_} } @fields_update ;
 
 	my @fields_where = keys %$w;
-	my @values_where = map { $h->{$_} } @fields_where ;
+	my @values_where = map { $w->{$_} } @fields_where ;
 
 	my $e = q{`};
 
@@ -318,9 +318,6 @@ sub dbh_update_hash {
 	if (@values_where) {
 		$q .= q{ WHERE } . join(' AND ' ,map { $e.$_.$e . ' = ? ' } @fields_where);
 	}
-
-	print $q . "\n";
-	print Dumper($q) . "\n";
 
 	my @p = ( @values_update, @values_where );
 	my $ok = eval {$dbh->do($q,undef,@p); };
