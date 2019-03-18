@@ -151,10 +151,12 @@ sub init_db {
 				`file` TEXT NOT NULL UNIQUE,
 				`file_mtime` TEXT NOT NULL,
 				`dir` TEXT NOT NULL,
-				`done` INTEGER,
+				`done` INTEGER DEFAULT 0,
 				PRIMARY KEY(`id`)
 			);
-			ALTER TABLE `files` ADD COLUMN `done` INTEGER;
+		},
+	push @q, qq{
+			ALTER TABLE `files` ADD COLUMN `done` INTEGER DEFAULT 0;
 		},
 ###t_tags
 		qq{
@@ -183,7 +185,6 @@ sub init_db {
 ###t_tags_write
 		qq{
 			create table if not exists `tags_write` (
-				`id` INT AUTO_INCREMENT,
 				`tag` TEXT,
 				`file` TEXT,
 				`address` TEXT,
@@ -812,7 +813,7 @@ sub tags_add {
 		my @v = @$row;
 
 		my $q = q{
-			INSERT INTO 
+			INSERT OR REPLACE INTO 
 				`tags_write` (`tag`,`file`,`address`)
 			VALUES (?,?,?)
 		};
