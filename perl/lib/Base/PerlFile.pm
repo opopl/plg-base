@@ -663,6 +663,7 @@ sub write_tags {
 					`tags`
 				WHERE
 					`type` = ?
+				AND `filename` = ?
 			},
 			p => [qw(sub)],
 		},
@@ -673,7 +674,7 @@ sub write_tags {
 					`tags`
 				WHERE
 					`type` = ?
-				AND `filename` => ?
+				AND `filename` = ?
 			},
 			p => [qw(sub)],
 		},
@@ -684,7 +685,7 @@ sub write_tags {
 					`tags`
 				WHERE
 					`type` = ?
-				AND `filename` => ?
+				AND `filename` = ?
 			},
 			p => [qw(package)],
 		},
@@ -695,7 +696,7 @@ sub write_tags {
 					`tags`
 				WHERE
 					`type` = ?
-				AND `filename` => ?
+				AND `filename` = ?
 			},
 			p => [qw( var_our )],
 		},
@@ -706,7 +707,7 @@ sub write_tags {
 					`tags`
 				WHERE
 					`type` = ?
-				AND `filename` => ?
+				AND `filename` = ?
 			},
 			p => [qw( var_our )],
 		},
@@ -826,8 +827,6 @@ sub tags_add {
 		fetch => 'fetchrow_arrayref',
 	});
 
-	print Dumper($rows) . "\n";
-	
 	foreach my $row (@$rows) {
 		my @v = @$row;
 
