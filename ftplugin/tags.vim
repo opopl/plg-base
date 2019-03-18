@@ -10,4 +10,4 @@ endif
 let b:did_base_tags_ftplugin = 1
 
 """ftplugin_base_tags
-
+exe 'setlocal tags+=' . expand('%:p')

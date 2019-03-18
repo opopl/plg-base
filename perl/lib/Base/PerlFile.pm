@@ -639,11 +639,11 @@ sub write_tags {
 
 	if (@$filelist) {
 		my $r = { %$ref };
+		$r->{filelist} = [];
 
 		foreach my $file (@$filelist) {
-			$r->{filelist} = [];
 			$r->{file} = $_;
-			$self->tags_write({ %$ref, file => $file });
+			$self->write_tags($r);
 		}
 		return $self;
 	}
@@ -666,7 +666,7 @@ sub write_tags {
 					`tags`
 				WHERE
 					`type` = ?
-					AND `file` => ?
+				AND `filename` => ?
 			},
 			p => [qw(sub)],
 		},
@@ -677,7 +677,7 @@ sub write_tags {
 					`tags`
 				WHERE
 					`type` = ?
-				AND `file` => ?
+				AND `filename` => ?
 			},
 			p => [qw(package)],
 		},
@@ -688,7 +688,7 @@ sub write_tags {
 					`tags`
 				WHERE
 					`type` = ?
-				AND `file` => ?
+				AND `filename` => ?
 			},
 			p => [qw( var_our )],
 		},
@@ -699,7 +699,7 @@ sub write_tags {
 					`tags`
 				WHERE
 					`type` = ?
-				AND `file` => ?
+				AND `filename` => ?
 			},
 			p => [qw( var_our )],
 		},

@@ -188,10 +188,10 @@ sub run_pf {
 		tagfile  => $tfile,
 		dbfile   => $dbfile,
 		def_PRINT  => sub { 
-			append_file($logfile,join("\n",@_) . "\n");
+			append_file($logfile,join("\n",map { defined ? $_ : () } @_ ) . "\n");
 		},
 		def_WARN => sub { 
-			append_file($logfile,join("\n",map { 'WARN ' . $_ } @_) . "\n");
+			append_file($logfile,join("\n",map { defined ? 'WARN ' . $_  : () } @_) . "\n");
 		},
 		add => [qw( subs packs vars include )],
 		max_node_count => $OPT{max_node_count} || 0,
