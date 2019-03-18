@@ -362,7 +362,7 @@ sub db_filelist {
 		$cond = 'WHERE done IS NOT 1';
 	}
 	if ($limit) {
-		$cond .= 'LIMIT ' . $limit; 
+		$cond .= ' LIMIT ' . $limit; 
 	}
 
 	my $rows = dbh_select({ 
