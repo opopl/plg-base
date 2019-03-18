@@ -115,6 +115,9 @@ function! base#tg#tfile (...)
 
 		let tfile    = base#file#catfile([ dirname, basename . '.tags' ])
 
+	elseif tgid == 'ty_perl_inc'
+		let tfile    = base#qw#catpath('home','tygs perl_inc.tygs')
+
 	elseif tgid == '_this_tagfile_'
 		let tfile = expand('%:p')
 
