@@ -641,8 +641,15 @@ sub write_tags {
 		my $r = { %$ref };
 		$r->{filelist} = [];
 
+		dbh_do({ q => q{ 
+			DELETE FROM `tags_write`
+		}});
+
 		foreach my $file (@$filelist) {
-			$r->{file} = $_;
+			$r->{file} = $file;
+			$r->{lines_pre} = [
+				'! file : ' . $file
+			];
 			$self->write_tags($r);
 		}
 		return $self;
@@ -726,6 +733,9 @@ sub write_tags {
 	});
 
 	my @lines;
+	my @pre = @{$ref->{lines_pre}||[]};
+	push @lines,@pre;
+
 	for my $row ( @$rows ){
 		push @lines, join("\t",@$row);
 	}
@@ -815,6 +825,8 @@ sub tags_add {
 		p     => $params,
 		fetch => 'fetchrow_arrayref',
 	});
+
+	print Dumper($rows) . "\n";
 	
 	foreach my $row (@$rows) {
 		my @v = @$row;
