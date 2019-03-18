@@ -74,6 +74,7 @@ sub get_opt {
 		"action=s",
 		"max_node_count=i",
 		"files_limit=i",
+		"redo",
 	);
 	
 	%OPTDESC=(
@@ -120,6 +121,8 @@ sub dhelp {
 
 		--files_limit LIM        (int)
 			default: 0
+
+		--redo 		
 	EXAMPLES
 		$Script --inc
 
@@ -193,6 +196,7 @@ sub run_pf {
 		add => [qw( subs packs vars include )],
 		max_node_count => $OPT{max_node_count} || 0,
 		files_limit    => $OPT{files_limit} || 0,
+		redo           => $OPT{redo} || 0,
 	);
 
 	@{$o{add}} = split(',', join(',' , @{ $OPT{add} } )) if $OPT{add};

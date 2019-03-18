@@ -408,7 +408,7 @@ sub db_filelist {
 sub ppi_process {
 	my ($self,$ref)=@_;
 
-	my $redo = $ref->{redo};
+	my $redo = $ref->{redo} || $self->{redo};
 
 	my $files = $ref->{files} 
 		|| $self->db_filelist({ redo => $redo }) 
@@ -449,13 +449,15 @@ sub ppi_process {
 		cond => qq{ WHERE file = ? },
 		p    => [$file],
 	});
+
+	unless($ref->{redo}){
 	# file is NOT modified compared to its data stored in database,
 	# 	so no need for further actions
-	if (defined $mtime_db && ($file_mtime == $mtime_db)) {
-		return $self;
-	}
-	if($done and not $ref->{redo}){
-		return $self;
+	# OR:
+	# 	done = 1 in the database
+		if ( (defined $mtime_db && ($file_mtime == $mtime_db) ) || ($done) ) {
+			return $self;
+		}
 	}
 
 	# file is modified, so process it via PPI
@@ -465,6 +467,8 @@ sub ppi_process {
 	if ($@) { $self->_warn_([ $@ ]); return $self; }
 
 	$DOC->index_locations;
+
+	print 'b' . "\n";
 
 	my $f = sub { 
 		$_[1]->isa( 'PPI::Statement::Sub' ) 
