@@ -181,6 +181,10 @@ function! base#complete#tagids (...)
   return base#complete#vars([ 'tagids' ])
 endfunction
 
+function! base#complete#buff (...)
+  return base#complete#vars([ 'cmds_BUFF' ])
+endfunction
+
 function! base#complete#VH (...)
   return base#complete#vars([ 'opts_VH' ])
 endfunction

@@ -388,13 +388,10 @@ command! -nargs=* -complete=custom,base#complete#omnioptions
 	command! -nargs=* -complete=custom,base#complete#tagids  TgAdd 
 		\	call base#tg#add(<f-args>) 
 
-"""BuffersList
-	command! -nargs=*  BuffersList
-		\	call base#buffers#list(<f-args>) 
 
-"""BuffersWipeAll
-	command! -nargs=*  BuffersWipeAll
-		\	call base#buffers#wipeall(<f-args>)
+"""BUFF
+	command! -nargs=*  -complete=custom,base#complete#buff BUFF
+		\	call base#buffers#cmd(<f-args>) 
 	 
 
 endfun

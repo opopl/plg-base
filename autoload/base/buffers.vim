@@ -1,5 +1,5 @@
  
-fun! base#buffers#get(...)
+fun! base#buffers#get()
 
   redir => lsvar 
   silent ls!
@@ -71,6 +71,11 @@ fun! base#buffers#get(...)
 	call base#varset('bufs',all)
 	call base#varset('bufnums',bufnums)
 
+
+
+endfun
+
+fun! base#buffers#fill_db(...)
 	let dbfile  = base#dbfile()
 
 	let sqlf   = base#qw#catpath('plg', 'base data sql create_table_buffers.sql')
@@ -96,8 +101,17 @@ fun! base#buffers#get(...)
 
 endfun
 
-fun! base#buffers#list(...)
-  call base#buffers#get()
+fun! base#buffers#cmd(...)
+	let cmd = get(a:000,0,'')
+
+	let cmds = base#varget('cmds_BUFF',[])
+
+	let sub = 'call base#buffers#'.cmd.'()'
+	exe sub
+
+endfun
+
+fun! base#buffers#list()
 
 	let id   = get(a:000,0,'')
 	let bufs = base#varget('bufs',[])
@@ -115,7 +129,6 @@ fun! base#buffers#list(...)
 
 endfun
 
- 
 fun! base#buffers#wipeall(...)
   call base#buffers#get()
 
@@ -124,6 +137,14 @@ fun! base#buffers#wipeall(...)
   for bnum in base#varget('bufnums',[])
      if bnum != currnum  
         exe 'bwipeout ' . bnum
+				let q = 'DELETE FROM buffers WHERE num = ?'
+				
+				call pymy#sqlite#query({
+					\	'dbfile' : base#dbfile(),
+					\	'p'      : [ bnum ],
+					\	'q'      : q,
+					\	})
+				
      endif
   endfor
  
