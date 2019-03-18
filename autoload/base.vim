@@ -2268,6 +2268,13 @@ function! base#info (...)
 			let dirs_belong = base#buf#pathids_str()
 			call add(info,indent . dirs_belong)
 
+			if exists("b:other")
+				call add(info,'OTHER INFO:')
+				let y = base#dump#yaml(b:other)
+				let y = base#map#add_tabs(y)
+				call extend(info,y)
+			endif
+
 			if exists("b:db_info")
 					
 				call add(info,'DB INFO:')

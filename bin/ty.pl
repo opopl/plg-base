@@ -71,6 +71,7 @@ sub get_opt {
 		"dir=s@" ,
 		"add=s@" ,
 		"inc",
+		"action=s",
 	);
 	
 	%OPTDESC=(
@@ -100,10 +101,17 @@ sub dhelp {
 		--help
 
 		--tfile     FILE         (string)
-		--dir DIR1 --dir DIR2   (array)
+		--dir DIR1 --dir DIR2    (array)
 		--inc 
 
 		--db dbfile
+
+		--action ACTION          (string)
+			values:
+				generate_from_fs
+				generate_from_db
+			default: 
+				generate_from_fs
 	EXAMPLES
 		$Script --inc
 
@@ -135,6 +143,7 @@ sub run_pf {
 		push @dirs,
 			@INC;
 	}
+	my $action = $OPT{action} || 'generate_from_fs';
 
 	unless (@dirs) {
 		$self->warn('no dirs!'); return $self;
@@ -142,7 +151,6 @@ sub run_pf {
 
 	@dirs = map { abs_path($_) } @dirs;
 	@dirs = uniq(@dirs);
-
 
 	unless ($tfile) {
 		$self->warn('no tfile!'); return $self;
@@ -168,10 +176,10 @@ sub run_pf {
 		dirs     => \@dirs,
 		tagfile  => $tfile,
 		dbfile   => $dbfile,
-		sub_log  => sub { 
+		def_PRINT  => sub { 
 			append_file($logfile,join("\n",@_) . "\n");
 		},
-		sub_warn => sub { 
+		def_WARN => sub { 
 			append_file($logfile,join("\n",map { 'WARN ' . $_ } @_) . "\n");
 			warn $_ . "\n" for(@_);
 		},
@@ -183,7 +191,7 @@ sub run_pf {
 	my $pf = Base::PerlFile->new(%o);
 
 	my $start = time();
-	$pf->generate_from_source;
+	$pf->$action;
 	my $end = time();
 
 	$self->log(['TIME SPENT:',"\t" . ($end-$start)]);

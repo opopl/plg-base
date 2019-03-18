@@ -22,13 +22,14 @@ use DBI;
 use File::stat;
 
 use Base::DB qw(
+	dbh_do
 	dbh_insert_hash
 	dbh_select
 	dbh_select_as_list
 );
 use base qw(Base::Logging);
 
-use vars qw($dbh);
+use vars qw($DBH);
 
 =head1 METHODS 
 
@@ -122,19 +123,12 @@ sub init_db {
 		FetchHashKeyName => 'NAME_lc',
 	};
 
-	$dbh = DBI->connect("dbi:SQLite:dbname=$dbfile","","",$o);
+	$DBH = DBI->connect("dbi:SQLite:dbname=$dbfile","","",$o);
 
-	$Base::DB::DBH = $dbh;
+	$Base::DB::DBH = $DBH;
 
 	my @q;
-	my @drop;
 
-	push @drop,qw(files),
-		#qw(tags),
-		#qw(tags_write),
-		;
-	;
-	push @q, map { qq{DROP TABLE IF EXISTS `$_`} } @drop;
 
 ###t_files
 	push @q,
@@ -184,15 +178,7 @@ sub init_db {
 		;
 	
 	foreach my $q (@q) {
-		eval { $dbh->do($q); };
-		if ($@) { 
-			my @m; 
-			push @m,
-				'FAIL: dbh->do(...)',
-				'q:',$q,
-				'dbh->errstr:',$dbh->errstr; 
-			die join "\n" => @m;
-		}
+		eval { dbh_do({ q => $q }); };
 	}
 
 	return $self;
@@ -221,7 +207,23 @@ sub init {
 		
 }
 
-sub load_files_source {
+sub db_drop_tables {
+	my ($self,,) = @_;
+
+	my (@drop, @tables_drop);
+
+	push @tables_drop,
+		qw(files),
+		qw(tags),
+		qw(tags_write),
+		;
+	;
+	push @drop, map { qq{DROP TABLE IF EXISTS `$_`} } @drop;
+
+	return $self;
+}
+
+sub load_files_from_fs {
 	my($self, $ref) = @_;
 
 	my $dirs = $ref->{dirs} || $self->{dirs} || [];
@@ -327,7 +329,7 @@ sub ppi_get_sub_block {
 	return $block;
 }
 
-sub files_source {
+sub db_filelist {
 	my ($self)=@_;
 
 	my $rows = dbh_select({ 
@@ -337,10 +339,36 @@ sub files_source {
 	return $rows;
 }
 
+=head2 ppi_process
+
+=head3 Usage
+
+=head4 no options
+
+	$pf->ppi_process;
+
+	# files to be processed are 
+	# obtained from $pf->db_filelist() invocation
+
+=head4 'files' option (ARRAYREF)
+
+	$pf->ppi_process({ files => $files });
+
+=head4 'file' option (SCALAR)
+
+	$pf->ppi_process({ 
+		file => $file,
+
+		# optional, file modification time
+		file_mtime => $file_mtime,
+	 });
+
+=cut
+
 sub ppi_process {
 	my ($self,$ref)=@_;
 
-	my $files = $ref->{files} || $self->files_source || [];
+	my $files = $ref->{files} || $self->db_filelist || [];
 
 	my ($file,$file_mtime) = @{$ref}{qw(file file_mtime)};
 	$files = [] if $file;
@@ -351,20 +379,27 @@ sub ppi_process {
 		}
 	}
 
-
 	unless ($file && -f $file) { return $self; }
+
+	unless ($file_mtime) {
+		my $st = stat($file);
+		$file_mtime = $st->mtime;
+	}
 
 	my ($mtime_db) = dbh_select_as_list({
 		s    => q{SELECT DISTINCT},
 		f    => [qw(file_mtime)],
 		t    => 'tags',
-		cond => qq{ where filename = ? },
+		cond => qq{ WHERE filename = ? },
 		p    => [$file],
 	});
-	# file is modified compared to its data stored in database
+	# file is NOT modified compared to its data stored in database,
+	# 	so no need for further actions
 	if (defined $mtime_db && ($file_mtime == $mtime_db)) {
 		return $self;
 	}
+
+	# file is modified, so process it via PPI
 
  	my $DOC; 
 	eval { $DOC = PPI::Document->new($file); };
@@ -611,11 +646,11 @@ sub write_tags {
 			`tag`
 		ASC
 	};
-	my $sth = $dbh->prepare($q);
+	my $sth = $DBH->prepare($q);
 	eval { $sth->execute(); };
 
 	if ($@) {
-		$self->_warn_([ $@,$q,$dbh->errstr ]);
+		$self->_warn_([ $@,$q,$DBH->errstr ]);
 		return $self;
 	}
 
@@ -631,11 +666,23 @@ sub write_tags {
 	return $self;
 }
 
-sub generate_from_source {
+sub generate_from_fs {
 	my ($self)=@_;
 
 	$self
-		->load_files_source
+		->load_files_from_fs
+		->ppi_process
+		->tagfile_rm
+		->write_tags
+		;
+	
+	return $self;
+}
+
+sub generate_from_db {
+	my ($self)=@_;
+
+	$self
 		->ppi_process
 		->tagfile_rm
 		->write_tags
@@ -694,11 +741,11 @@ sub tags_add {
 
 	$self->log({ msg => 'tags_add: ' , ih => { dump => Dumper($ref) } });
 
-	my $sth = $dbh->prepare($query);
+	my $sth = $DBH->prepare($query);
 	eval { $sth->execute(@$params); };
 
 	if ($@) {
-		$self->_warn_([ $@,$query,Dumper($params),$dbh->errstr ]);
+		$self->_warn_([ $@,$query,Dumper($params),$DBH->errstr ]);
 		return $self;
 	}
 
@@ -711,7 +758,7 @@ sub tags_add {
 				`tags_write` (`tag`,`file`,`address`)
 			VALUES (?,?,?)
 		};
-		$dbh->do($q,undef,@v);
+		$DBH->do($q,undef,@v);
 	}
 
 	return $self;
