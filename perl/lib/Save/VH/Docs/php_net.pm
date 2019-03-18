@@ -43,7 +43,7 @@ sub run {
 	$ref->{vhdir} = catfile($ENV{plg},qw(idephp help php ),$topic);
 
 	$ref->{tagsub} = sub { 
-		local $_=shift; 
+		local $_ = shift; 
 		return 'httpd_'.$_ 
 	};
 
@@ -52,7 +52,3 @@ sub run {
 }
 
 1;
-
-1;
- 
-
