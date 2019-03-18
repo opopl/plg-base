@@ -38,7 +38,7 @@ Save::VH::Docs - vimhelp converter from HTML files
 
 		# callback which returns vimhelp tag to be
 		# 	store as *tag* inside the generated vimhelp file 
-		tagsub => sub { ... },
+		mytag => sub { ... },
 
 		code_filename => sub { ... },
 	 
@@ -54,7 +54,7 @@ sub run {
 	my ($self,$ref) = @_;
 
 	my $dir    = $ref->{dir} || '';
-	my $tagsub = $ref->{tagsub} || sub { my $file = shift; basename($file); };
+	my $mytag = $ref->{mytag} || sub { my $file = shift; basename($file); };
 
 	my $code_filename = $ref->{code_filename} || sub {};
 
@@ -92,7 +92,7 @@ sub run {
 	
 		my ($in_html,$out_vh,$tag);
 
-		$tag      = $tagsub->($_);
+		$tag      = $mytag->($_);
 		
 		$in_html  = $file;
 		$out_vh   = catfile($vhdir,$_ . '.txt');

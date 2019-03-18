@@ -38,7 +38,7 @@ sub run {
 	# where to save VimHelp files
 	$ref->{vhdir} = catfile($ENV{plg},qw(idephp help apache httpd_docs ));
 
-	$ref->{tagsub} = sub { 
+	$ref->{mytag} = sub { 
 		local $_=shift; 
 		return 'httpd_'.$_ 
 	};
