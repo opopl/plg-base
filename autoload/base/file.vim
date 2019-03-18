@@ -92,11 +92,12 @@ function! base#file#catfile( ... )
 	if type(a:1) == type([])
 			let pieces = a:1
 			let sep = has('win32') ? '\' : '/'
+			let sep = get(a:000,1,sep)
 
-			let pieces = map(pieces,'base#file#catfile(v:val)')
+			let pieces = map(pieces,'base#file#catfile(v:val,sep)')
 
 			let path = join(pieces,sep)
-			let path = base#file#std(path)
+			let path = base#file#std(path,sep)
 
 			return path 
 
