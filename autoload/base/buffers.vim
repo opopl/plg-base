@@ -71,6 +71,29 @@ fun! base#buffers#get(...)
 	call base#varset('bufs',all)
 	call base#varset('bufnums',bufnums)
 
+	let dbfile  = base#dbfile()
+
+	let sqlf   = base#qw#catpath('plg', 'base data sql create_table_buffers.sql')
+
+	let sql   = join(readfile(sqlf),"\n")
+	
+	call pymy#sqlite#query({
+		\	'dbfile' : base#dbfile(),
+		\	'q'      : sql,
+		\	})
+
+	let bufs = base#varget('bufs',[])
+	for buf in bufs
+			let ref = {
+					\ "dbfile" : dbfile,
+					\ "i" : "INSERT OR REPLACE",
+					\ "t" : 'buffers', 
+					\ "h" : buf,
+					\ }
+					
+			call pymy#sqlite#insert_hash(ref)
+	endfor
+
 endfun
 
 fun! base#buffers#list(...)
@@ -79,23 +102,17 @@ fun! base#buffers#list(...)
 	let id   = get(a:000,0,'')
 	let bufs = base#varget('bufs',[])
 
-	let res =[]
-	if !strlen(id)
-			let res = bufs
-			for buf in bufs
-				echo base#type(buf)
-				"call add(res,string(buf))
-			endfor
-	else
-			if id == 'path'
-					" code
-			endif
-	endif
+	let q = 'SELECT num, path FROM buffers'
+	let q = input('query:',q)
 
-	call base#buf#open_split({ 'lines' : res })
+	let dbfile  = base#dbfile()
 
-  return res
- 
+	let lines = pymy#sqlite#query_screen({
+		\	'dbfile' : base#dbfile(),
+		\	'q'      : q,
+		\	})
+	call base#buf#open_split({ 'lines' : lines })
+
 endfun
 
  
