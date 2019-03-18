@@ -143,7 +143,7 @@ sub run_pf {
 		push @dirs,
 			@INC;
 	}
-	my $action = $OPT{action} || 'generate_from_fs';
+	my $action = $OPT{action} || 'generate_from_db';
 
 	unless (@dirs) {
 		$self->warn('no dirs!'); return $self;

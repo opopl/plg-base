@@ -13,6 +13,6 @@ md %db_dir%
 set tygs=%tygs_dir%\perl_inc.tygs
 set db=%db_dir%\tygs_perl_inc.sqlite
 
-set cmd=ty.bat --inc --db "%db%" --tfile "%tygs%"
+set cmd=ty.bat --inc --db "%db%" --tfile "%tygs%" --action generate_from_db
 
 cmd /c "%cmd%"
