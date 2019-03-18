@@ -26,6 +26,7 @@ use Base::DB qw(
 	dbh_insert_hash
 	dbh_select
 	dbh_select_as_list
+	dbh_select_fetchone
 );
 use base qw(Base::Logging);
 
@@ -150,8 +151,10 @@ sub init_db {
 				`file` TEXT NOT NULL UNIQUE,
 				`file_mtime` TEXT NOT NULL,
 				`dir` TEXT NOT NULL,
+				`done` INTEGER,
 				PRIMARY KEY(`id`)
 			);
+			ALTER TABLE `files` ADD COLUMN `done` INTEGER;
 		},
 ###t_tags
 		qq{
@@ -380,6 +383,10 @@ sub db_filelist {
 		file_mtime => $file_mtime,
 	 });
 
+=head3 Flags
+
+=head4 'redo' flag (values: 0 or 1, default: 0)
+
 =cut
 
 sub ppi_process {
@@ -391,8 +398,16 @@ sub ppi_process {
 	$files = [] if $file;
 
 	if (@$files) {
+		my $nfiles = scalar @$files;
+		$self->log(['Files to process: ' . $nfiles ]);
+		my ($i,$nleft)=(1,$nfiles);
+
 		foreach my $f (@$files) {
+			$nleft = $nfiles - $i;
+
 			$self->ppi_process($f);
+			$self->log([' files left: ' . $nleft]);
+			$i++;
 		}
 	}
 
@@ -403,9 +418,9 @@ sub ppi_process {
 		$file_mtime = $st->mtime;
 	}
 
-	my ($mtime_db) = dbh_select_as_list({
+	my ($mtime_db,$done) = dbh_select_as_list({
 		s    => q{SELECT DISTINCT},
-		f    => [qw(file_mtime)],
+		f    => [qw(file_mtime done)],
 		t    => 'tags',
 		cond => qq{ WHERE filename = ? },
 		p    => [$file],
@@ -413,6 +428,9 @@ sub ppi_process {
 	# file is NOT modified compared to its data stored in database,
 	# 	so no need for further actions
 	if (defined $mtime_db && ($file_mtime == $mtime_db)) {
+		return $self;
+	}
+	if($done and not $ref->{redo}){
 		return $self;
 	}
 
@@ -546,6 +564,13 @@ sub ppi_process {
 			dbh_insert_hash({ h => $h, t => 'tags' });
 		};
 	}
+
+	dbh_update_hash({ 
+		h => { done => 1 }, 
+		u => q{UPDATE},
+		t => 'tags',
+		w => { filename => $file },
+	});
 
 	return $self;
 }

@@ -40,6 +40,7 @@ my %EXPORT_TAGS = (
 	dbh_selectall_arrayref
 	dbh_select_fetchone
 	dbh_sth_exec
+	dbh_update_hash
 )],
 'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -278,6 +279,56 @@ sub dbh_insert_hash {
 	return $ok;
 }
 
+=head2 dbh_update_hash 
+
+=cut
+
+
+sub dbh_update_hash {
+	my ($ref)=@_;
+
+	my $dbh = $ref->{dbh} || $DBH;
+	my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
+
+	my $h = $ref->{h} || {};
+	my $t = $ref->{t} || '';
+
+	my $UPDATE = $ref->{u} || 'UPDATE';
+	my $w      = $ref->{w} || {};
+
+	unless (keys %$h) {
+		return;
+	}
+
+	my $ph = join ',' => map { '?' } keys %$h;
+
+	my @fields_update = keys %$h;
+	my @values_update = map { $h->{$_} } @fields_update ;
+
+	my @fields_where = keys %$w;
+	my @values_where = map { $h->{$_} } @fields_where ;
+
+	my $e = q{`};
+
+	my @set = map { $e.$_.$e . "= ? " } @fields_update;
+	my $set = join "," => @set;
+	my $q = qq| 
+		$UPDATE `$t` SET $set ($ph) 
+	|;
+
+	if (@values_where) {
+		$q .= q{ WHERE } . join(' AND ' ,map { $e.$_.$e . ' = ? ' } @fields_where);
+	}
+	my @p = ( @values_update, @values_where );
+	my $ok = eval {$dbh->do($q,undef,@p); };
+	if ($@) {
+		$warn->($@,$q,$dbh->errstr);
+		return;
+	}
+
+	return $ok;
+}
+
 =head2 dbh_do
 
 =head3 Usage
@@ -300,7 +351,7 @@ sub dbh_do  {
 
 	foreach my $query (@q) {
 		my $ok;
-		eval { $ok = $dbh->do($query); };
+		eval { $ok = $dbh->do($query,undef,@$p); };
 		$FINE=0 unless $ok;
 		if ($@) {
 			my @w; 
