@@ -111,6 +111,7 @@ fun! base#buffers#cmd(...)
 
 endfun
 
+"""BUFF_list
 fun! base#buffers#list()
 
 	let id   = get(a:000,0,'')
@@ -130,8 +131,6 @@ fun! base#buffers#list()
 endfun
 
 fun! base#buffers#wipeall(...)
-  call base#buffers#get()
-
   let currnum=bufnr('%')
 
   for bnum in base#varget('bufnums',[])
