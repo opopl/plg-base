@@ -790,7 +790,7 @@ sub tagfile_rm {
 sub tags_add {
 	my ($self,$ref)=@_;
 
-	my ($query,$queries,$params)=@{$ref}{qw( query queries params )};
+	my ($query,$queries,$params) = @{$ref}{qw( query queries params )};
 
 	my $tagfile = $ref->{tagfile} || $self->{tagfile} || '';
 
