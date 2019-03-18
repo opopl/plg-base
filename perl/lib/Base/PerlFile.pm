@@ -350,11 +350,19 @@ sub ppi_get_sub_block {
 }
 
 sub db_filelist {
-	my ($self)=@_;
+	my ($self,$ref)=@_;
+
+	my $redo = $ref->{redo};
+	my $cond = '';
+
+	unless ($redo) {
+		$cond = 'WHERE done IS NOT 1';
+	}
 
 	my $rows = dbh_select({ 
-		f => [qw(file file_mtime)], 
-		t => 'files', 
+		f    => [qw(file file_mtime)],
+		t    => 'files',
+		cond => $cond,
 	});
 	return $rows;
 }
@@ -392,21 +400,29 @@ sub db_filelist {
 sub ppi_process {
 	my ($self,$ref)=@_;
 
-	my $files = $ref->{files} || $self->db_filelist || [];
+	my $redo = $ref->{redo};
+
+	my $files = $ref->{files} 
+		|| $self->db_filelist({ redo => $redo }) 
+		|| [];
 
 	my ($file,$file_mtime) = @{$ref}{qw(file file_mtime)};
 	$files = [] if $file;
 
 	if (@$files) {
 		my $nfiles = scalar @$files;
-		$self->log(['Files to process: ' . $nfiles ]);
-		my ($i,$nleft)=(1,$nfiles);
+		$self->log({ 'msg' => 'Files to process: ' . $nfiles,  });
+		my $start = time();
+		my ($i,$nleft,$elapsed)=(1,$nfiles);
 
 		foreach my $f (@$files) {
 			$nleft = $nfiles - $i;
 
+			$elapsed = time()-$start;
+
 			$self->ppi_process($f);
-			$self->log([' files left: ' . $nleft]);
+			$self->log([ { 'msg' => ' files left: ' . $nleft,  ih => { elapsed => $elapsed } } ]);
+
 			$i++;
 		}
 	}
@@ -421,8 +437,8 @@ sub ppi_process {
 	my ($mtime_db,$done) = dbh_select_as_list({
 		s    => q{SELECT DISTINCT},
 		f    => [qw(file_mtime done)],
-		t    => 'tags',
-		cond => qq{ WHERE filename = ? },
+		t    => 'files',
+		cond => qq{ WHERE file = ? },
 		p    => [$file],
 	});
 	# file is NOT modified compared to its data stored in database,

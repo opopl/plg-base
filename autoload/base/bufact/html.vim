@@ -25,28 +25,35 @@ function! base#bufact#html#save_to_vh ()
 	call base#html#htw_load_buf()
 
 	let bn = fnamemodify(b:basename,':r')
-	let vh_file = base#file#catfile([ b:dirname, 'vh_' . bn . '.txt' ])
 
-	let vh_tag  = input('VH tag:','')
-	let vh_file = input('VH file:',vh_file)
+	let plugin = input('Vim plugin:','idephp','custom,base#complete#plg')
+	let plgdir = base#qw#catpath('plg',plugin)
+
+	let vhdir = base#file#catfile([ plgdir, 'help' ])
+	let vhdir = input('vhdir: ',vhdir)
+
+	let vhfile_name = bn . '.txt' 
+	let vhfile_name = input('VH file: ',vhfile_name)
+
+	let vhtag  = input('VH tag:','')
+	let vhfile = base#file#catfile([ plgdir, vhfile_name ])
 
 perl << eof
 	
-my $vh_tag  = VimVar('vh_tag');
-my $vh_file = VimVar('vh_file');
-
-my $vhref={
-	out_vh_file => $vh_file,
-	tag         => $vh_tag,
-	actions     => [qw( replace_a replace_pre )],
-	xpath_rm    => [],
-	xpath_cb    => [],
-};
-			
-my $lines      = $HTW->save_to_vh($vhref);
-VimLet('lines',$lines);
+	my $vhtag  = VimVar('vhtag');
+	my $vhfile = VimVar('vhfile');
+	
+	my $vhref={
+		out_vh_file => $vhfile,
+		tag         => $vhtag,
+		actions     => [qw( replace_a replace_pre )],
+		xpath_rm    => [],
+		xpath_cb    => [],
+	};
+				
+	my $lines      = $HTW->save_to_vh($vhref);
 eof
-	call base#buf#open_split({ 'lines' : lines })
+	call base#fileopen({ 'files': [vhfile] })
 endfunction
 
 function! base#bufact#html#db_record_delete ()
