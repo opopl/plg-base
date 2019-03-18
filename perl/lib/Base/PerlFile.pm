@@ -679,28 +679,6 @@ sub write_tags {
 
 	];
 
-	for(@$add){
-   #     /^include$/ && do { 
-			#push @$queries,
-				#{ 	q => qq{ 
-						#SELECT 
-							#`var_full`,`filename`,`line_number`
-						#FROM
-							#`tags`
-						#WHERE
-								#`type` = ? 
-							#AND 
-								#`include_module` = ? 
-					#},
-					#params => [qw( 
-						#include_use 
-						#vars
-					#)],
-				#};
-			#next;
-		#};
-	}
-
 	$self->tags_add({ queries => $queries });
 
 	my $q = q{
@@ -716,18 +694,18 @@ sub write_tags {
 	eval { $sth->execute(); };
 
 	if ($@) {
-		$self->_warn_([ $@,$q,$DBH->errstr ]);
+		$self->_warn_([ $@, $q, $DBH->errstr ]);
 		return $self;
 	}
 
 	my $fetch='fetchrow_arrayref';
 	my @lines;
-	while(my $row=$sth->$fetch()){
+	while( my $row = $sth->$fetch() ){
 		#push @lines, join("\t",map { defined ($_) ? $_ : 'undef' }@$row);
 		push @lines, join("\t",@$row);
 	}
 
-	append_file($tagfile,join("\n",@lines) . "\n");
+	append_file($tagfile, join("\n",@lines) . "\n");
 
 	return $self;
 }

@@ -95,6 +95,8 @@ sub dbh_select {
 	# query if input
 	my $q = $ref->{q};
 
+	my $fetch = $ref->{fetch} || 'fetchrow_hashref';
+
 	# additional conditions
 	my $cond = $ref->{cond} || '';
 
@@ -124,7 +126,7 @@ sub dbh_select {
 
 	my $rows=[];
 
-	while (my $row = $sth->fetchrow_hashref()) {
+	while (my $row = $sth->$fetch()) {
 		push @$rows,$row;
 	}
 
