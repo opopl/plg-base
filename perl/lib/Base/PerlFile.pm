@@ -352,7 +352,7 @@ sub ppi_get_sub_block {
 	return $block;
 }
 
-sub db_filelist {
+sub files_from_db {
 	my ($self,$ref)=@_;
 
 	my $redo = $ref->{redo};
@@ -387,7 +387,7 @@ sub db_filelist {
 	$pf->ppi_process;
 
 	# files to be processed are 
-	# 	obtained from $pf->db_filelist() invocation
+	# 	obtained from $pf->files_from_db() invocation
 
 =head4 'files' option (ARRAYREF)
 
@@ -414,7 +414,7 @@ sub ppi_process {
 	my $redo = $ref->{redo} || $self->{redo};
 
 	my $files = $ref->{files} 
-		|| $self->db_filelist({ redo => $redo }) 
+		|| $self->files_from_db({ redo => $redo }) 
 		|| [];
 
 	my ($file,$file_mtime) = @{$ref}{qw(file file_mtime)};
@@ -432,7 +432,13 @@ sub ppi_process {
 			$elapsed = time()-$start;
 
 			$self->ppi_process($f);
-			$self->log([ { 'msg' => ' files left: ' . $nleft,  ih => { elapsed => $elapsed } } ]);
+			$self->log([ 
+				{ 
+					msg => ' files left: ' . $nleft,  
+					ih => { 
+						elapsed => $elapsed 
+					} 
+				} ]);
 
 			$i++;
 		}
@@ -446,7 +452,7 @@ sub ppi_process {
 	}
 
 	my ($mtime_db,$done) = dbh_select_as_list({
-		s    => q{SELECT DISTINCT},
+		s    => q{SELECT},
 		f    => [qw(file_mtime done)],
 		t    => 'files',
 		cond => qq{ WHERE file = ? },
@@ -583,12 +589,12 @@ sub ppi_process {
 			next unless $add->{packs};
 
 			my $h = { 
-						'filename'    => $file,
-						'file_mtime'  => $file_mtime,
-						'line_number' => $node->line_number,
-						######################
-						'namespace'   => $ns,
-						'type'   	  => 'package',
+				'filename'    => $file,
+				'file_mtime'  => $file_mtime,
+				'line_number' => $node->line_number,
+				######################
+				'namespace'   => $ns,
+				'type'   	  => 'package',
 			};
 
 			dbh_insert_hash({ h => $h, t => 'tags' });
