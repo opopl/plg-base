@@ -13,6 +13,10 @@ md %db_dir%
 set tygs=%tygs_dir%\perl_inc.tygs
 set db=%db_dir%\tygs_perl_inc.sqlite
 
-set cmd=ty.bat --inc --db "%db%" --tfile "%tygs%" --action generate_from_db
+set opts=
+set opts=%opts% --inc --db "%db%" --tfile "%tygs%" --action generate_from_db
+set opts=%opts% --files_limit 10
+
+set cmd=ty.bat %opts%
 
 cmd /c "%cmd%"

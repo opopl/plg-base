@@ -53,7 +53,7 @@ sub init {
 }
 
 sub logfile {
-	my $self=shift;
+	my $self = shift;
 
 	my $logfile = catfile(getcwd(),'ty.log');
 
@@ -72,6 +72,8 @@ sub get_opt {
 		"add=s@" ,
 		"inc",
 		"action=s",
+		"max_node_count=i",
+		"files_limit=i",
 	);
 	
 	%OPTDESC=(
@@ -111,7 +113,13 @@ sub dhelp {
 				generate_from_fs
 				generate_from_db
 			default: 
-				generate_from_fs
+				generate_from_db
+
+		--max_node_count COUNT   (int)
+			default: 0
+
+		--files_limit LIM        (int)
+			default: 0
 	EXAMPLES
 		$Script --inc
 
@@ -183,6 +191,8 @@ sub run_pf {
 			append_file($logfile,join("\n",map { 'WARN ' . $_ } @_) . "\n");
 		},
 		add => [qw( subs packs vars include )],
+		max_node_count => $OPT{max_node_count} || 0,
+		files_limit    => $OPT{files_limit} || 0,
 	);
 
 	@{$o{add}} = split(',', join(',' , @{ $OPT{add} } )) if $OPT{add};

@@ -356,8 +356,13 @@ sub db_filelist {
 	my $redo = $ref->{redo};
 	my $cond = '';
 
+	my $limit = $self->{files_limit} || 0;
+
 	unless ($redo) {
 		$cond = 'WHERE done IS NOT 1';
+	}
+	if ($limit) {
+		$cond .= 'LIMIT ' . $limit; 
 	}
 
 	my $rows = dbh_select({ 
