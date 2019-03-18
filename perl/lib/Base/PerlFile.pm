@@ -125,10 +125,22 @@ sub init_db {
 
 	$DBH = DBI->connect("dbi:SQLite:dbname=$dbfile","","",$o);
 
-	$Base::DB::DBH = $DBH;
+	$self->{dbh} = $Base::DB::DBH = $DBH;
 
 	my @q;
 
+###t_log
+	push @q,
+		qq{
+			CREATE TABLE IF NOT EXISTS log (
+				msg TEXT,
+				time INTEGER,
+				elapsed INTEGER,
+				loglevel TEXT,
+				func TEXT,
+				prf TEXT
+			);
+		};
 
 ###t_files
 	push @q,
@@ -216,9 +228,14 @@ sub db_drop_tables {
 		qw(files),
 		qw(tags),
 		qw(tags_write),
+		qw(log),
 		;
 	;
-	push @drop, map { qq{DROP TABLE IF EXISTS `$_`} } @drop;
+	push @drop, map { qq{DROP TABLE IF EXISTS `$_`} } @tables_drop;
+
+	foreach my $q (@drop) {
+		eval { dbh_do({ q => $q }); };
+	}
 
 	return $self;
 }
@@ -348,7 +365,7 @@ sub db_filelist {
 	$pf->ppi_process;
 
 	# files to be processed are 
-	# obtained from $pf->db_filelist() invocation
+	# 	obtained from $pf->db_filelist() invocation
 
 =head4 'files' option (ARRAYREF)
 

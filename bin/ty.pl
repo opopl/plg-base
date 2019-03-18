@@ -181,7 +181,6 @@ sub run_pf {
 		},
 		def_WARN => sub { 
 			append_file($logfile,join("\n",map { 'WARN ' . $_ } @_) . "\n");
-			warn $_ . "\n" for(@_);
 		},
 		add => [qw( subs packs vars include )],
 	);
