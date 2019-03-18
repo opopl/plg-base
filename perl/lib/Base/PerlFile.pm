@@ -647,9 +647,7 @@ sub write_tags {
 
 		foreach my $file (@$filelist) {
 			$r->{file} = $file;
-			$r->{lines_pre} = [
-				'! file : ' . $file
-			];
+			$r->{lines_pre} = [ ];
 			$self->write_tags($r);
 		}
 		return $self;
