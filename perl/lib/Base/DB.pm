@@ -296,11 +296,8 @@ sub dbh_update_hash {
 	my $UPDATE = $ref->{u} || 'UPDATE';
 	my $w      = $ref->{w} || {};
 
-	unless (keys %$h) {
-		return;
-	}
-
-	my $ph = join ',' => map { '?' } keys %$h;
+	unless (keys %$h) { return; }
+	unless ($t) { return; }
 
 	my @fields_update = keys %$h;
 	my @values_update = map { $h->{$_} } @fields_update ;
@@ -313,12 +310,16 @@ sub dbh_update_hash {
 	my @set = map { $e.$_.$e . "= ? " } @fields_update;
 	my $set = join "," => @set;
 	my $q = qq| 
-		$UPDATE `$t` SET $set ($ph) 
+		$UPDATE `$t` SET $set
 	|;
 
 	if (@values_where) {
 		$q .= q{ WHERE } . join(' AND ' ,map { $e.$_.$e . ' = ? ' } @fields_where);
 	}
+
+	print $q . "\n";
+	print Dumper($q) . "\n";
+
 	my @p = ( @values_update, @values_where );
 	my $ok = eval {$dbh->do($q,undef,@p); };
 	if ($@) {

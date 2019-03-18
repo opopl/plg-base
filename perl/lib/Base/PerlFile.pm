@@ -27,6 +27,7 @@ use Base::DB qw(
 	dbh_select
 	dbh_select_as_list
 	dbh_select_fetchone
+	dbh_update_hash
 );
 use base qw(Base::Logging);
 
@@ -127,6 +128,7 @@ sub init_db {
 	$DBH = DBI->connect("dbi:SQLite:dbname=$dbfile","","",$o);
 
 	$self->{dbh} = $Base::DB::DBH = $DBH;
+	$Base::DB::WARN = sub { $self->_warn_([ @_ ]); };
 
 	my @q;
 
@@ -155,9 +157,9 @@ sub init_db {
 				PRIMARY KEY(`id`)
 			);
 		},
-	push @q, qq{
-			ALTER TABLE `files` ADD COLUMN `done` INTEGER DEFAULT 0;
-		},
+	#push @q, qq{
+			#ALTER TABLE `files` ADD COLUMN `done` INTEGER DEFAULT 0;
+		#},
 ###t_tags
 		qq{
 			CREATE TABLE IF NOT EXISTS `tags` (
@@ -590,8 +592,8 @@ sub ppi_process {
 	dbh_update_hash({ 
 		h => { done => 1 }, 
 		u => q{UPDATE},
-		t => 'tags',
-		w => { filename => $file },
+		t => 'files',
+		w => { file => $file },
 	});
 
 	return $self;
