@@ -30,7 +30,7 @@ function! base#bufact#html#save_to_vh ()
 	let plgdir = base#qw#catpath('plg',plugin)
 
 	let vhdir = base#file#catfile([ plgdir, 'help' ])
-	let vhdir = input('vhdir: ',vhdir)
+	let vhdir = input('vhdir: ', vhdir, 'file')
 
 	let vhfile_name = bn . '.txt' 
 	let vhfile_name = input('VH file: ',vhfile_name)
