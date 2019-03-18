@@ -367,11 +367,14 @@ sub db_filelist {
 		$cond .= ' LIMIT ' . $limit; 
 	}
 
-	my $rows = dbh_select({ 
+	my $ref = { 
 		f    => [qw(file file_mtime)],
 		t    => 'files',
 		cond => $cond,
-	});
+	};
+	my $rows = dbh_select($ref);
+	$self->{filelist} = [ map { $_->{file} } @$rows ];
+
 	return $rows;
 }
 
@@ -628,6 +631,23 @@ sub write_tags {
 
 	my $add = $ref->{add} || $self->{add} || [];
 
+	my $file = $ref->{file};
+	my $filelist = $ref->{filelist} || $self->{filelist} || [];
+
+	$filelist = [] if $file;
+	$file = '' if @$filelist;
+
+	if (@$filelist) {
+		my $r = { %$ref };
+
+		foreach my $file (@$filelist) {
+			$r->{filelist} = [];
+			$r->{file} = $_;
+			$self->tags_write({ %$ref, file => $file });
+		}
+		return $self;
+	}
+
 	my $queries = [ 
 		{ 	q => qq{ 
 				SELECT 
@@ -637,7 +657,7 @@ sub write_tags {
 				WHERE
 					`type` = ?
 			},
-			params => [qw(sub)],
+			p => [qw(sub)],
 		},
 		{ 	q => qq{ 
 				SELECT 
@@ -646,8 +666,9 @@ sub write_tags {
 					`tags`
 				WHERE
 					`type` = ?
+					AND `file` => ?
 			},
-			params => [qw(sub)],
+			p => [qw(sub)],
 		},
 		{ 	q => qq{ 
 				SELECT 
@@ -656,8 +677,9 @@ sub write_tags {
 					`tags`
 				WHERE
 					`type` = ?
+				AND `file` => ?
 			},
-			params => [qw(package)],
+			p => [qw(package)],
 		},
 		{ 	q => qq{ 
 				SELECT 
@@ -666,8 +688,9 @@ sub write_tags {
 					`tags`
 				WHERE
 					`type` = ?
+				AND `file` => ?
 			},
-			params => [qw( var_our )],
+			p => [qw( var_our )],
 		},
 		{ 	q => qq{ 
 				SELECT 
@@ -676,11 +699,15 @@ sub write_tags {
 					`tags`
 				WHERE
 					`type` = ?
+				AND `file` => ?
 			},
-			params => [qw( var_our )],
+			p => [qw( var_our )],
 		},
 
 	];
+	foreach my $qs (@$queries) {
+		push @{$qs->{p}},$file;
+	}
 
 	$self->tags_add({ queries => $queries });
 
@@ -775,7 +802,7 @@ sub tags_add {
 		foreach (@$queries) {
 			$self->tags_add({ 
 				query  => $_->{q},
-				params => $_->{params},
+				params => $_->{p},
 			});
 		}
 		return $self;
@@ -783,16 +810,13 @@ sub tags_add {
 
 	$self->log({ msg => 'tags_add: ' , ih => { dump => Dumper($ref) } });
 
-	my $sth = $DBH->prepare($query);
-	eval { $sth->execute(@$params); };
-
-	if ($@) {
-		$self->_warn_([ $@,$query,Dumper($params),$DBH->errstr ]);
-		return $self;
-	}
-
-	my $fetch='fetchrow_arrayref';
-	while(my $row=$sth->$fetch()){
+	my $rows = dbh_select({
+		q     => $query,
+		p     => $params,
+		fetch => 'fetchrow_arrayref',
+	});
+	
+	foreach my $row (@$rows) {
 		my @v = @$row;
 
 		my $q = q{
@@ -800,7 +824,10 @@ sub tags_add {
 				`tags_write` (`tag`,`file`,`address`)
 			VALUES (?,?,?)
 		};
-		$DBH->do($q,undef,@v);
+		dbh_do({ 
+			q => $q, 
+			p => [@v],
+		});
 	}
 
 	return $self;

@@ -126,8 +126,9 @@ sub dbh_select {
 
 	my $rows=[];
 
-	while (my $row = $sth->$fetch()) {
-		push @$rows,$row;
+	while ( my $row = $sth->$fetch() ) {
+		push @$rows, { %$row } if ref $row eq 'HASH' ;
+		push @$rows, [ @$row ]	if ref $row eq 'ARRAY' ;
 	}
 
 	return $rows;
