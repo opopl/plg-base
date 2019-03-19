@@ -897,11 +897,26 @@ sub VimMsg {
 
  	VIM::Msg($text,$hl) ;
 
-	if ($DBFILE) {
-		my $dsn      = "dbi:SQLite:dbname=$DBFILE";
+	$ref->{dbfile}=$DBFILE;
+	$ref->{dbh}=$DBH;
+
+	VimMsg_dbh($text,$ref);
+
+	return 1;
+
+}
+
+sub VimMsg_dbh {
+    my ($text,$ref) = @_;
+	
+	my $dbh    = $ref->{dbh};
+	my $dbfile = $ref->{dbfile};
+
+	if ($dbfile) {
+		my $dsn      = "dbi:SQLite:dbname=$dbfile";
 		
-		$DBH = DBI->connect($dsn, '', '', {
-			PrintError       => 0,
+		$DBH = $dbh = DBI->connect($dsn, '', '', {
+			PrintError       => 1,
 			RaiseError       => 1,
 			AutoCommit       => 1,
 			FetchHashKeyName => 'NAME_lc',
@@ -909,31 +924,26 @@ sub VimMsg {
 		 
 	}
 
-	if ($DBH) {
-		my $start = int(VimVar('g:time_start') || time());
-		my $elapsed = time() -  $start;
-		my $r = {
-			dbh => $DBH,
-			t => 'log',
-			i => q{INSERT OR IGNORE},
-			h => {
-				time     => time(),
-				elapsed  => $elapsed,
-				msg      => "$text",
-				prf      => $ref->{prf} || "vim::perl",
-				loglevel => $ref->{loglevel} || '',
-				func     => $ref->{func} || '',
-				plugin   => $ref->{plugin} || '',
-			},
-		};
+	my $start = int(VimVar('g:time_start') || time());
+	my $elapsed = time() -  $start;
+	my $r = {
+		dbh => $dbh,
+		t => 'log',
+		i => q{INSERT OR IGNORE},
+		h => {
+			time     => time(),
+			elapsed  => $elapsed,
+			msg      => "$text",
+			prf      => $ref->{prf} || "vim::perl",
+			loglevel => $ref->{loglevel} || '',
+			func     => $ref->{func} || '',
+			plugin   => $ref->{plugin} || '',
+		},
+	};
 		
-		dbh_insert_hash($r);
+	dbh_insert_hash($r);
 
-		$DBH->disconnect;
-	}
-
-	return 1;
-
+	eval { $dbh->disconnect; };
 }
 
 sub VimWarn {
