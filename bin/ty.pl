@@ -75,6 +75,7 @@ sub get_opt {
 		"max_node_count=i",
 		"files_limit=i",
 		"redo",
+		"ns=s",
 	);
 	
 	%OPTDESC=(
@@ -123,6 +124,8 @@ sub dhelp {
 			default: 0
 
 		--redo 		
+
+		--ns  NAMESPACE          (string)
 	EXAMPLES
 		$Script --inc
 
@@ -197,6 +200,7 @@ sub run_pf {
 		max_node_count => $OPT{max_node_count} || 0,
 		files_limit    => $OPT{files_limit} || 0,
 		redo           => $OPT{redo} || 0,
+		ns             => $OPT{ns} || '',
 	);
 
 	@{$o{add}} = split(',', join(',' , @{ $OPT{add} } )) if $OPT{add};

@@ -477,7 +477,6 @@ sub ppi_process {
 
 	$DOC->index_locations;
 
-
 	my $f = sub { 
 		$_[1]->isa( 'PPI::Statement::Sub' ) 
 		|| $_[1]->isa( 'PPI::Statement::Package' )
@@ -719,6 +718,14 @@ sub write_tags {
 	];
 	foreach my $qs (@$queries) {
 		push @{$qs->{p}},$file;
+	}
+
+	if (my $ns = $self->{ns}) {
+
+		foreach my $qs (@$queries) {
+			$qs->{q} .= qq{ AND `namespace` = ? };
+			push @{$qs->{p}},$ns;
+		}
 	}
 
 	$self->tags_add({ queries => $queries });
