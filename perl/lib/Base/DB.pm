@@ -41,6 +41,7 @@ my %EXPORT_TAGS = (
 	dbh_select_fetchone
 	dbh_sth_exec
 	dbh_update_hash
+	dbi_connect
 )],
 'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -57,7 +58,29 @@ our ($DBH,$WARN);
 
 =head1 EXPORTED FUNCTIONS
 
+=head2 dbi_connect
+
 =cut
+
+sub dbi_connect {
+	my ($ref)=@_;
+
+	my $dbfile = $ref->{dbfile};
+	my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
+
+	my $dsn      = $ref->{dsn} || "dbi:SQLite:dbname=$dbfile";
+	my $user     = $ref->{user} || "";
+	my $password = $ref->{pwd} || "";
+
+	my $dbh = eval { DBI->connect($dsn, $user, $password, {
+		PrintError       => 1,
+		RaiseError       => 1,
+		AutoCommit       => 1,
+		FetchHashKeyName => 'NAME_lc',
+	}) };
+	if ($@) { $warn->([ $@ ]); return; }
+	return $dbh;
+}
 
 =head2 dbh_select 
 
@@ -82,6 +105,11 @@ sub dbh_select {
 
 	my $dbh = $ref->{dbh} || $DBH;
 	my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
+
+	my $dbfile = $ref->{dbfile};
+	if($dbfile){
+		$dbh = dbi_connect($ref);
+	}
 
 	# fields
 	my @f = @{$ref->{f} || []};
@@ -129,6 +157,11 @@ sub dbh_select {
 	while ( my $row = $sth->$fetch() ) {
 		push @$rows, { %$row } if ref $row eq 'HASH' ;
 		push @$rows, [ @$row ]	if ref $row eq 'ARRAY' ;
+	}
+
+	if($dbfile && $dbh){
+		eval { $dbh->disconnect; };
+		if ($@) { $warn->($@); }
 	}
 
 	return $rows;
