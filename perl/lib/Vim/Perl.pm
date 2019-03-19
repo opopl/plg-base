@@ -942,7 +942,7 @@ sub VimWarn {
 
 	my $h = {
 		hl       => 'WarningMsg',
-		loglevel => 'warning',
+		loglevel => 'warn',
 	};
 	for (keys %$h){
 		$ref->{$_} = $h->{$_};

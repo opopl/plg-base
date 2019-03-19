@@ -3,7 +3,7 @@ function! base#log#view_split ()
 
 	let dbfile = base#dbfile()
 
-	let q = 'SELECT rowid,elapsed,prf,plugin,func,msg FROM log'
+	let q = 'SELECT rowid,loglevel,elapsed,prf,plugin,func,msg FROM log'
 	let q = input('log view query: ',q)
 
 	let rq = {
