@@ -389,8 +389,8 @@ command! -nargs=* -complete=custom,base#complete#omnioptions
 		\	call base#tg#add(<f-args>) 
 
 
-"""BUFF
-	command! -nargs=*  -complete=custom,base#complete#buff BUFF
+"""BYFF
+	command! -nargs=*  -complete=custom,base#complete#buff BYFF
 		\	call base#buffers#cmd(<f-args>) 
 	 
 
