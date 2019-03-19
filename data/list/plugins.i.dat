@@ -107,6 +107,7 @@ vimtex
 tex
 projs
 asynccommand
+asyncrun
 asyncmakegreen
 textconv
 ###python
