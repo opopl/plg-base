@@ -318,9 +318,10 @@ perl << eof
 
 	my $dbfile = VimVar('dbfile');
 
+	my $prf = { dbfile => $dbfile };
 	our $HTW ||= HTML::Work->new(
-			def_PRINT => sub { VimMsg([@_]) },
-			def_WARN  => sub { VimWarn([@_]) },
+			def_PRINT => sub { VimMsg([@_],$prf) },
+			def_WARN  => sub { VimWarn([@_],$prf) },
 			dbfile    => $dbfile,
 			load_as   => 'html',
 	);

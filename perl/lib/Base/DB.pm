@@ -246,6 +246,11 @@ sub dbh_selectall_arrayref {
 		};
 	}
 
+	if($dbfile && $dbh){
+		eval { $dbh->disconnect; };
+		if ($@) { $warn->($@); }
+	}
+
 	return $res;
 
 }
@@ -312,6 +317,12 @@ sub dbh_insert_hash {
 		return;
 	}
 
+
+	if($dbfile && $dbh){
+		eval { $dbh->disconnect; };
+		if ($@) { $warn->($@); }
+	}
+
 	return $ok;
 }
 
@@ -362,6 +373,11 @@ sub dbh_update_hash {
 		return;
 	}
 
+	if($dbfile && $dbh){
+		eval { $dbh->disconnect; };
+		if ($@) { $warn->($@); }
+	}
+
 	return $ok;
 }
 
@@ -406,6 +422,13 @@ sub dbh_do  {
 		}
 
 	}
+
+
+	if($dbfile && $dbh){
+		eval { $dbh->disconnect; };
+		if ($@) { $warn->($@); }
+	}
+
 	return $FINE;
 }
 
@@ -433,6 +456,12 @@ sub dbh_sth_exec {
 		if ($@) { $warn->($_,$@,$dbh->errstr); }
 		eval { $sth->execute(@e); };
 		if ($@) { $warn->($_,$@,$dbh->errstr); }
+	}
+
+
+	if($dbfile && $dbh){
+		eval { $dbh->disconnect; };
+		if ($@) { $warn->($@); }
 	}
 
 	$sth;

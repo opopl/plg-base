@@ -912,22 +912,11 @@ sub VimMsg_dbh {
 	my $dbh    = $ref->{dbh} || $DBH;
 	my $dbfile = $ref->{dbfile} || $DBFILE;
 
-	if ($dbfile) {
-		my $dsn      = "dbi:SQLite:dbname=$dbfile";
-		
-		$dbh = DBI->connect($dsn, '', '', {
-			PrintError       => 1,
-			RaiseError       => 1,
-			AutoCommit       => 1,
-			FetchHashKeyName => 'NAME_lc',
-		});
-		 
-	}
-
 	my $start = int(VimVar('g:time_start') || time());
 	my $elapsed = time() -  $start;
 	my $r = {
-		dbh => $dbh,
+		dbh    => $dbh,
+		dbfile => $dbfile,
 		t => 'log',
 		i => q{INSERT OR IGNORE},
 		h => {
@@ -943,7 +932,6 @@ sub VimMsg_dbh {
 		
 	dbh_insert_hash($r);
 
-	eval { $dbh->disconnect; };
 }
 
 sub VimWarn {
