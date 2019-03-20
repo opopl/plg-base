@@ -96,6 +96,29 @@ function! base#htmlwork#clear_log ()
 
 endfunction
 
+function! base#htmlwork#delete_saved_files ()
+	let dbfile = base#htmlwork#dbfile()
+
+	if !yn
+		return
+	endif
+
+	let q = 'SELECT local FROM saved'
+	let p = []
+	
+	let saved_files = pymy#sqlite#query_as_list({
+		\	'dbfile' : dbfile,
+		\	'p'      : p,
+		\	'q'      : q,
+		\	})
+	for sfile in saved_files
+		if filereadable(sfile)
+			call delete(sfile)
+		endif
+	endfor
+
+endfunction
+
 function! base#htmlwork#clear_saved ()
 	let dbfile = base#htmlwork#dbfile()
 

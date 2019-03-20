@@ -7,5 +7,6 @@ db_restore
 fails
 clear_log
 clear_saved
+clear_all
 debug_vars
 href
