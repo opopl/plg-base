@@ -89,12 +89,10 @@ function! base#htmlwork#clear_log ()
 
 	let q = 'DELETE FROM log'
 
-	let lines = pymy#sqlite#query_screen({
+	call pymy#sqlite#query({
 		\	'dbfile' : dbfile,
 		\	'q'      : q,
 		\	})
-
-	call base#buf#open_split({ 'lines' : lines })
 
 endfunction
 
