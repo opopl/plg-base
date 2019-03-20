@@ -202,7 +202,7 @@ endfunction
 function! base#htmlwork#href ()
 	let dbfile = base#htmlwork#dbfile()
 
-	let q = 'SELECT rowid,url FROM href'
+	let q = 'SELECT rowid,url_full,url_short FROM href'
 	let q = input('query:',q)
 
 	let lines = pymy#sqlite#query_screen({
