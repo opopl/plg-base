@@ -5,3 +5,5 @@ saved
 db_backup
 db_restore
 fails
+clear_log
+debug_vars

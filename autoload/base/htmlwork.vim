@@ -36,7 +36,7 @@ endfunction
 function! base#htmlwork#log_warnings ()
 	let dbfile = base#htmlwork#dbfile()
 
-	let q = 'SELECT rowid,func,url,msg FROM log where loglevel in (?)'
+	let q = 'SELECT rowid,func,url,msg,details FROM log where loglevel in (?)'
 	let q = input('query:',q)
 	let p = [ 'warn' ]
 
@@ -53,12 +53,44 @@ endfunction
 function! base#htmlwork#fails ()
 	let dbfile = base#htmlwork#dbfile()
 
-	let q = 'SELECT rowid,msg,details FROM log where msg = ?'
+	let q = 'SELECT rowid,msg,url,details FROM log where msg = ?'
 	let p = ['FAIL']
 
 	let lines = pymy#sqlite#query_screen({
 		\	'dbfile' : dbfile,
 		\	'p'      : p,
+		\	'q'      : q,
+		\	})
+
+	call base#buf#open_split({ 'lines' : lines })
+
+endfunction
+
+function! base#htmlwork#debug_vars ()
+	let dbfile = base#htmlwork#dbfile()
+
+	let q = 'SELECT rowid,func,url,msg,var_name,var_value,details FROM log where loglevel = ?'
+	let q = input('query:',q)
+	let p = ['debug']
+
+	let lines = pymy#sqlite#query_screen({
+		\	'dbfile' : dbfile,
+		\	'p'      : p,
+		\	'q'      : q,
+		\	})
+
+	call base#buf#open_split({ 'lines' : lines })
+
+endfunction
+
+
+function! base#htmlwork#clear_log ()
+	let dbfile = base#htmlwork#dbfile()
+
+	let q = 'DELETE FROM log'
+
+	let lines = pymy#sqlite#query_screen({
+		\	'dbfile' : dbfile,
 		\	'q'      : q,
 		\	})
 
@@ -108,14 +140,10 @@ function! base#htmlwork#saved ()
 		 endw
 	endif
 
-	let sortcol = 0
-	let sortcol = input('sortcol: ',sortcol)
-
 	let lines = pymy#sqlite#query_screen({
 		\	'dbfile' : dbfile,
 		\	'p'      : p,
 		\	'q'      : q,
-		\	'sortcol'      : sortcol,
 		\	})
 	call base#buf#open_split({ 'lines' : lines })
 endfunction
