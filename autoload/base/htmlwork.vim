@@ -119,14 +119,30 @@ function! base#htmlwork#delete_saved_files ()
 
 endfunction
 
+function! base#htmlwork#clear_all ()
+	let dbfile = base#htmlwork#dbfile()
+
+	let yn = input('Ready to delete everything? 1/0:',1)
+	if !yn | return | endif
+
+	call base#htmlwork#delete_saved_files()
+	let tables = base#qw('href log saved')
+	for t in tables
+		let q = 'DELETE FROM ' . t
+		call pymy#sqlite#query({
+			\	'dbfile' : dbfile,
+			\	'q'      : q,
+			\	})
+	endfor
+
+endfunction
+
 function! base#htmlwork#clear_saved ()
 	let dbfile = base#htmlwork#dbfile()
 
 	let yn = input('Ready to delete saved? 1/0:',1)
 
-	if !yn
-		return
-	endif
+	if !yn | return | endif
 
 	let q = 'SELECT local FROM saved'
 	let p = []
