@@ -99,10 +99,6 @@ endfunction
 function! base#htmlwork#delete_saved_files ()
 	let dbfile = base#htmlwork#dbfile()
 
-	if !yn
-		return
-	endif
-
 	let q = 'SELECT local FROM saved'
 	let p = []
 	
@@ -119,10 +115,27 @@ function! base#htmlwork#delete_saved_files ()
 
 endfunction
 
+function! base#htmlwork#drop_all ()
+	let dbfile = base#htmlwork#dbfile()
+
+	let yn = input('Ready to drop all tables? 1/0: ',1)
+	if !yn | return | endif
+
+	let tables = base#qw('href log saved')
+	for t in tables
+		let q = 'DROP TABLE IF EXISTS ' . t
+		call pymy#sqlite#query({
+			\	'dbfile' : dbfile,
+			\	'q'      : q,
+			\	})
+	endfor
+
+endfunction
+
 function! base#htmlwork#clear_all ()
 	let dbfile = base#htmlwork#dbfile()
 
-	let yn = input('Ready to delete everything? 1/0:',1)
+	let yn = input('Ready to delete everything? 1/0: ',1)
 	if !yn | return | endif
 
 	call base#htmlwork#delete_saved_files()

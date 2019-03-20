@@ -8,5 +8,6 @@ fails
 clear_log
 clear_saved
 clear_all
+drop_all
 debug_vars
 href
