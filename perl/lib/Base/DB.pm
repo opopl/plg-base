@@ -179,8 +179,7 @@ sub dbh_select_as_list {
 sub dbh_list_tables {
 	my ($ref)  = @_;
 
-	my $dbh = $ref->{dbh} || $DBH;
-	my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
+	$ref ||= {};
 
 	my $q = q{
 		SELECT 
@@ -199,16 +198,13 @@ sub dbh_list_tables {
 		ORDER BY 1
 	};
 
-	my @t = dbh_select_as_list({ q => $q });
+	my @t = dbh_select_as_list({ %$ref, q => $q });
 
 	wantarray ? @t : \@t;
 }
 
 sub dbh_select_fetchone {
 	my ($ref)  = @_;
-
-	my $dbh = $ref->{dbh} || $DBH;
-	my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
 
 	my $list = dbh_select_as_list($ref);
 
@@ -221,6 +217,9 @@ sub dbh_selectall_arrayref {
 
 	my $dbh = $ref->{dbh} || $DBH;
 	my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
+
+	my $dbfile = $ref->{dbfile};
+	if($dbfile){ $dbh = dbi_connect($ref); }
 
 	# query
 	my $q   = $ref->{q} || '';
@@ -320,12 +319,14 @@ sub dbh_insert_hash {
 
 =cut
 
-
 sub dbh_update_hash {
 	my ($ref)=@_;
 
 	my $dbh = $ref->{dbh} || $DBH;
 	my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
+
+	my $dbfile = $ref->{dbfile};
+	if($dbfile){ $dbh = dbi_connect($ref); }
 
 	my $h = $ref->{h} || {};
 	my $t = $ref->{t} || '';
