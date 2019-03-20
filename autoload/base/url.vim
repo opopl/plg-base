@@ -59,3 +59,16 @@ function! base#url#basename (url)
 	let basename = get(struct,'basename','')
 	return basename
 endfunction
+
+function! base#url#normalize_htw (url)
+	call base#html#htw_init ()
+	let url = a:url
+perl << eof
+	use Vim::Perl qw(VimVar);
+	my $url = VimVar('url');
+	
+	$url = $HTW->url_normalize($url);
+	return $url;
+eof
+
+endfunction

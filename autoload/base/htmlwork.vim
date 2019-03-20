@@ -199,11 +199,29 @@ function! base#htmlwork#db_restore ()
 
 endfunction
 
+function! base#htmlwork#url_level (url,url_base)
+endfunction
+
+function! base#htmlwork#sql_alterations ()
+	let dbfile = base#htmlwork#dbfile()
+	let qs = []
+	"call add(qs,'ALTER TABLE href ADD COLUMN url_level INTEGER')
+	call add(qs,'ALTER TABLE href ADD COLUMN base_url TEXT')
+
+	for q in qs
+		call pymy#sqlite#query({
+			\	'dbfile' : dbfile,
+			\	'q'      : q,
+			\	})
+	endfor
+
+endfunction
+
 function! base#htmlwork#href ()
 	let dbfile = base#htmlwork#dbfile()
 
-	let q = 'SELECT rowid,url_full,url_short FROM href'
-	let q = input('query:',q)
+	let q = 'SELECT rowid,url_parent,url_full,url_short FROM href'
+	let q = input('query:',q,)
 
 	let lines = pymy#sqlite#query_screen({
 		\	'dbfile' : dbfile,
