@@ -114,7 +114,9 @@ function! base#htmlwork#clear_saved ()
 		\	'q'      : q,
 		\	})
 	for sfile in saved_files
-		call delete(sfile)
+		if filereadable(sfile)
+			call delete(sfile)
+		endif
 	endfor
 
 	let q = 'DELETE FROM saved'
@@ -145,6 +147,19 @@ function! base#htmlwork#db_restore ()
 
 endfunction
 
+function! base#htmlwork#href ()
+	let dbfile = base#htmlwork#dbfile()
+
+	let q = 'SELECT rowid,url FROM href'
+	let q = input('query:',q)
+
+	let lines = pymy#sqlite#query_screen({
+		\	'dbfile' : dbfile,
+		\	'q'      : q,
+		\	})
+	call base#buf#open_split({ 'lines' : lines })
+endfunction
+
 
 
 function! base#htmlwork#dbfile()
@@ -156,7 +171,7 @@ endfunction
 function! base#htmlwork#saved ()
 	let dbfile = base#htmlwork#dbfile()
 
-	let q = 'SELECT rowid,local,remote FROM saved'
+	let q = 'SELECT rowid,remote,local FROM saved'
 	let q = input('query:',q)
 	let np = input('number of params:',0)
 

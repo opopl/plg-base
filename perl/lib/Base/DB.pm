@@ -35,10 +35,10 @@ my %EXPORT_TAGS = (
 	dbh_insert_hash
 	dbh_select
 	dbh_select_as_list
+	dbh_select_fetchone
 	dbh_do
 	dbh_list_tables
 	dbh_selectall_arrayref
-	dbh_select_fetchone
 	dbh_sth_exec
 	dbh_update_hash
 	dbi_connect
