@@ -206,7 +206,8 @@ function! base#htmlwork#sql_alterations ()
 	let dbfile = base#htmlwork#dbfile()
 	let qs = []
 	"call add(qs,'ALTER TABLE href ADD COLUMN url_level INTEGER')
-	call add(qs,'ALTER TABLE href ADD COLUMN base_url TEXT')
+	"call add(qs,'ALTER TABLE href ADD COLUMN base_url TEXT')
+	call add(qs,'ALTER TABLE saved ADD COLUMN href_done INTEGER')
 
 	for q in qs
 		call pymy#sqlite#query({
