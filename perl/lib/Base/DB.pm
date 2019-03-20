@@ -107,9 +107,7 @@ sub dbh_select {
 	my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
 
 	my $dbfile = $ref->{dbfile};
-	if($dbfile){
-		$dbh = dbi_connect($ref);
-	}
+	if($dbfile){ $dbh = dbi_connect($ref); }
 
 	# fields
 	my @f = @{$ref->{f} || []};
@@ -289,6 +287,9 @@ sub dbh_insert_hash {
 	my $dbh = $ref->{dbh} || $DBH;
 	my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
 
+	my $dbfile = $ref->{dbfile};
+	if($dbfile){ $dbh = dbi_connect($ref); }
+
 	my $h = $ref->{h} || {};
 	my $t = $ref->{t} || '';
 
@@ -375,6 +376,9 @@ sub dbh_do  {
 	my $dbh = $ref->{dbh} || $DBH;
 	my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
 
+	my $dbfile = $ref->{dbfile};
+	if($dbfile){ $dbh = dbi_connect($ref); }
+
 	my $q = $ref->{q} || '';
 	my $p = $ref->{p} || [];
 
@@ -409,6 +413,9 @@ sub dbh_sth_exec {
 
 	my $dbh = $ref->{dbh} || $DBH;
 	my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
+
+	my $dbfile = $ref->{dbfile};
+	if($dbfile){ $dbh = dbi_connect($ref); }
 
 	my $q   = $ref->{q};
 	my @e   = @{ $ref->{p} || [] };

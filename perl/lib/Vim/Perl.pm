@@ -909,13 +909,13 @@ sub VimMsg {
 sub VimMsg_dbh {
     my ($text,$ref) = @_;
 	
-	my $dbh    = $ref->{dbh};
-	my $dbfile = $ref->{dbfile};
+	my $dbh    = $ref->{dbh} || $DBH;
+	my $dbfile = $ref->{dbfile} || $DBFILE;
 
 	if ($dbfile) {
 		my $dsn      = "dbi:SQLite:dbname=$dbfile";
 		
-		$DBH = $dbh = DBI->connect($dsn, '', '', {
+		$dbh = DBI->connect($dsn, '', '', {
 			PrintError       => 1,
 			RaiseError       => 1,
 			AutoCommit       => 1,

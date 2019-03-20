@@ -109,6 +109,7 @@ projs
 asynccommand
 asyncrun
 asyncmakegreen
+vim-addon-background-cmd
 textconv
 ###python
 pymy

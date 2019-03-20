@@ -26,6 +26,8 @@ projs_this
 plg
 plg_ap
 plg_asynccommand
+plg_simsim
+plg_vim-addon-background-cmd
 plg_base
 plg_browser
 plg_database_client

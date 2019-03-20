@@ -124,7 +124,7 @@ perl << eof
 		my $l = escape('printable',"$_");
 		s/"/\\"/g;
 		#VimMsg($_);
-		VimCmd(qq{ call add(lines,"$_") });
+		VimCmd(qq{ call add(lines,"$l") });
 	}
 	
 eof
