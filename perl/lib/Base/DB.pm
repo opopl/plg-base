@@ -73,7 +73,7 @@ sub dbi_connect {
 	my $password = $ref->{pwd} || "";
 
 	my $dbh = eval { DBI->connect($dsn, $user, $password, {
-		PrintError       => 1,
+		PrintError       => 0,
 		RaiseError       => 1,
 		AutoCommit       => 1,
 		FetchHashKeyName => 'NAME_lc',

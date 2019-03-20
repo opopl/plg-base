@@ -50,6 +50,22 @@ function! base#htmlwork#log_warnings ()
 	
 endfunction
 
+function! base#htmlwork#fails ()
+	let dbfile = base#htmlwork#dbfile()
+
+	let q = 'SELECT rowid,msg,details FROM log where msg = ?'
+	let p = ['FAIL']
+
+	let lines = pymy#sqlite#query_screen({
+		\	'dbfile' : dbfile,
+		\	'p'      : p,
+		\	'q'      : q,
+		\	})
+
+	call base#buf#open_split({ 'lines' : lines })
+
+endfunction
+
 function! base#htmlwork#db_backup ()
 	let dbfile = base#htmlwork#dbfile()
 

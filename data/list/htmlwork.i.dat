@@ -4,3 +4,4 @@ log_debug
 saved
 db_backup
 db_restore
+fails
