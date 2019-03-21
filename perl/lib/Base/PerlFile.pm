@@ -362,12 +362,12 @@ sub files_from_db {
 		$cond .= ' LIMIT ' . $limit; 
 	}
 
-	my $ref = { 
+	my $r = { 
 		f    => [qw(file file_mtime)],
 		t    => 'files',
 		cond => $cond,
 	};
-	my $rows = dbh_select($ref);
+	my $rows = dbh_select($r);
 	$self->{filelist} = [ map { $_->{file} } @$rows ];
 
 	return $rows;

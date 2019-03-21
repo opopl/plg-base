@@ -190,7 +190,9 @@ function! base#htmlwork#db_backup ()
 	let bdir = base#file#catfile([ dirname, 'backup' ])
 	call base#mkdir(bdir)
 
-	let bfile = base#file#catfile([ bdir, basename ])
+	let bname = input('backup dbfile name: ',basename)
+
+	let bfile = base#file#catfile([ bdir, bname ])
 	call base#file#copy(dbfile,bfile)	
 
 endfunction

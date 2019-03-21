@@ -36,10 +36,9 @@ function! base#bufact#html#save_to_vh ()
 	let vhfile_name = input('VH file: ',vhfile_name)
 
 	let vhtag  = input('VH tag:','')
-	let vhfile = base#file#catfile([ plgdir, vhfile_name ])
+	let vhfile = base#file#catfile([ vhdir, vhfile_name ])
 
 perl << eof
-	
 	my $vhtag  = VimVar('vhtag');
 	my $vhfile = VimVar('vhfile');
 	
@@ -95,6 +94,15 @@ function! base#bufact#html#headings ()
 
 	call base#buf#open_split({ 'lines' : h })
 
+endfunction
+
+function! base#bufact#html#list_href ()
+	call base#buf#start()
+	call base#html#htw_load_buf()
+
+	let href = base#html#list_href()
+
+	call base#buf#open_split({ 'lines' : href })
 endfunction
 
 function! base#bufact#html#perl_html_formattext ()
