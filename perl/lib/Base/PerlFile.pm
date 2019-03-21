@@ -149,12 +149,10 @@ sub init_db {
 	push @q,
 		qq{
 			CREATE TABLE IF NOT EXISTS `files` (
-				`id` INT AUTO_INCREMENT,
 				`file` TEXT NOT NULL UNIQUE,
 				`file_mtime` TEXT NOT NULL,
 				`dir` TEXT NOT NULL,
-				`done` INTEGER DEFAULT 0,
-				PRIMARY KEY(`id`)
+				`done` INTEGER DEFAULT 0
 			);
 		},
 	#push @q, qq{
@@ -163,7 +161,6 @@ sub init_db {
 ###t_tags
 		qq{
 			CREATE TABLE IF NOT EXISTS `tags` (
-				`id` INT AUTO_INCREMENT,
 				`filename` TEXT,
 				`file_mtime` TEXT,
 				`dir` TEXT,
@@ -180,8 +177,7 @@ sub init_db {
 				`type` TEXT,
 				`include_module` TEXT,
 				`include_arguments` TEXT,
-				`content` TEXT,
-				primary key(`id`)
+				`content` TEXT
 			);
 		},
 ###t_tags_write
@@ -189,8 +185,7 @@ sub init_db {
 			create table if not exists `tags_write` (
 				`tag` TEXT,
 				`file` TEXT,
-				`address` TEXT,
-				PRIMARY KEY(`id`)
+				`address` TEXT
 			);
 		},
 		;

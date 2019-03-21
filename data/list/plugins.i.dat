@@ -32,7 +32,7 @@ vim_prettyprint
 vim-misc
 xmledit
 xmlparser
-vim-perl
+#vim-perl
 #syntastic
 #browser
 #bufexplorer
