@@ -2275,6 +2275,21 @@ function! base#info (...)
 				call extend(info,y)
 			endif
 
+			if exists("b:aucmds")
+				call add(info,'AUTOCOMMANDS:')
+				call add(info,"\t".'b:aucmds:')
+				let y = base#dump#yaml(b:aucmds)
+				let y = base#map#add_tabs(y,2)
+				call extend(info,y)
+
+				if exists("b:augroup")
+					call add(info,"\t".'b:augroup:')
+					let y = base#dump#yaml(b:augroup)
+					let y = base#map#add_tabs(y,2)
+					call extend(info,y)
+				endif
+			endif
+
 			if exists("b:db_info")
 					
 				call add(info,'DB INFO:')
