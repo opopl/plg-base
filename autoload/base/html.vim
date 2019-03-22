@@ -64,6 +64,12 @@ function! base#html#file_info (...)
 
 	call extend(inf,{ 'f' :  f, 'h' : h })
 
+
+	if exists("b:html_info")
+		unlet b:html_info
+		let b:html_info = inf
+	endif
+
 	return inf
 
 endfunction
@@ -928,6 +934,7 @@ perl << eof
 
 	use Vim::Perl qw(:funcs :vars);
 	use XML::LibXML;
+	use HTML::Entities;
 
 	my $html         = VimVar('htmltext');
 	my $xpath        = VimVar('xpath');
@@ -966,6 +973,7 @@ perl << eof
 		}
 		push @filtered,split("\n",$node->toString);
 	}
+	@filtered = map { decode_entities($_) } @filtered;
 
 	VimListExtend('filtered',\@filtered);
 eof
