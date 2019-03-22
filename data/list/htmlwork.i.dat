@@ -11,4 +11,5 @@ clear_all
 drop_all
 debug_vars
 href
+href_short
 sql_alterations

@@ -223,6 +223,24 @@ endfunction
 function! base#htmlwork#href ()
 	let dbfile = base#htmlwork#dbfile()
 
+	let qs = []
+	call add(qs,'SELECT rowid,url_parent,url_full,url_short FROM href')
+	call add(qs,'SELECT type,url_short FROM href')
+	call add(qs,'')
+
+	call base#varset('this',qs)
+	let q = input('query:','','custom,base#complete#this')
+
+	let lines = pymy#sqlite#query_screen({
+		\	'dbfile' : dbfile,
+		\	'q'      : q,
+		\	})
+	call base#buf#open_split({ 'lines' : lines })
+endfunction
+
+function! base#htmlwork#href_short ()
+	let dbfile = base#htmlwork#dbfile()
+
 	let q = 'SELECT rowid,url_parent,url_full,url_short FROM href'
 	let q = input('query:',q,)
 
