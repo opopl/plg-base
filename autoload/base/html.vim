@@ -59,8 +59,12 @@ function! base#html#file_info (...)
 	let h = base#html#headings({ 'file' : file })
 
 	let f =  base#html#xpath({ 
-		\	'file'  : file,
-		\	'xpath' : '//title/text()' })
+		\	'file'       : file,
+		\	'xpath'      : '//title/text()',
+		\	'trim'       : 1,
+		\	'skip_empty' : 1,
+		\	})
+	echo f
 
 	call extend(inf,{ 'f' :  f, 'h' : h })
 
@@ -935,6 +939,7 @@ perl << eof
 	use Vim::Perl qw(:funcs :vars);
 	use XML::LibXML;
 	use HTML::Entities;
+	use String::Util qw(trim);
 
 	my $html         = VimVar('htmltext');
 	my $xpath        = VimVar('xpath');
@@ -974,6 +979,13 @@ perl << eof
 		push @filtered,split("\n",$node->toString);
 	}
 	@filtered = map { decode_entities($_) } @filtered;
+
+	if ($ref->{trim}) {
+		map { $_ = trim($_) } @filtered;
+	}
+	if ($ref->{skip_empty}) {
+		@filtered = map { /^\s*/ ? () : $_ } @filtered;
+	}
 
 	VimListExtend('filtered',\@filtered);
 eof
