@@ -12,6 +12,8 @@ use URI::Simple;
 use Exporter ();
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 
+our $WARN;
+
 ###export_vars_scalar
 my @ex_vars_scalar=qw(
 );
@@ -59,20 +61,40 @@ sub url_normalize {
 	my ($url,$ref) = @_;
 	
 	$ref ||= { };
+	my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
 	
-	my $uri = URI->new($url);
+	my ($uri, $proto, $host, $path, $url_norm);
+
+	$uri = URI->new($url);
+	$url_norm = $url;
 	
-	my $proto = $uri->scheme;
-	my $host  = $uri->host;
-	my $path  = $uri->path;
+	eval { $proto = $uri->scheme; };
+	$proto ||= 'http';
+
+	#------------- host -----------
+	eval { $host  = $uri->host; };
+	if ($@) {
+		my @w; push @w,
+			'fail: $uri->host',
+			'url: ' . $url,
+			$@;
+		#$warn->(@w);
+	}
+
+	if ($host) {
+		$host =~ s/[\/]+/\//g;
+	}
+	#------------------------------
+
+	$path  = $uri->path;
+	if ($path) {
+		$path =~ s/[\/]+/\//g;
+	}
 	
-	$path =~ s/[\/]+/\//g;
-	$host =~ s/[\/]+/\//g;
-	
-	my $url_norm = $url;
 	unless ($host) {
 		$path =~ s/^\///g;
-		$url_norm = $proto . '://' . $path;
+		#$url_norm = ($proto) ? $proto . '://' : '';
+		$url_norm = $path;
 	}
 
 	my $norm = URL::Normalize->new($url_norm);
@@ -99,6 +121,9 @@ sub uri_decompose {
 	$url      = url_normalize($url);
 	$base_url = url_normalize($base_url);
 
+	print $url . "\n";
+	print $base_url . "\n";
+
 	my $uri  = URI::Simple->new($url);
 
 	my @v = qw( host path protocol directory file source );
@@ -120,6 +145,7 @@ sub uri_decompose {
 
 	if ($path_base) {
 		$pt_base = path($path_base);
+
 		$par = $pt_base->parent->stringify;
 		$struct->{path_base_parent} = $par;
 		$struct->{path_base_basename} = $pt_base->basename();
