@@ -96,6 +96,17 @@ function! base#bufact#html#headings ()
 
 endfunction
 
+function! base#bufact#html#info ()
+	call base#buf#start()
+	call base#html#htw_load_buf()
+
+	let inf = base#html#file_info({ 'file' : b:file })
+
+	let d = base#dump#yaml(inf)
+	call base#buf#open_split({ 'lines' : d })
+
+endfunction
+
 function! base#bufact#html#list_href ()
 	call base#buf#start()
 	call base#html#htw_load_buf()

@@ -44,6 +44,30 @@ eof
 
 endfunction
 
+function! base#html#file_info (...)
+	let ref   = get(a:000,0,{})
+
+	let inf = {}
+
+	let file  = get(ref,'file','')
+
+	if filereadable(file)
+		 let lines = readfile(file)
+	endif
+	let html = join(lines,"\n")
+
+	let h = base#html#headings({ 'file' : file })
+
+	let f =  base#html#xpath({ 
+		\	'file'  : file,
+		\	'xpath' : '//title/text()' })
+
+	call extend(inf,{ 'f' :  f, 'h' : h })
+
+	return inf
+
+endfunction
+
 
 function! base#html#headings (...)
 	let ref   = get(a:000,0,{})
@@ -766,6 +790,68 @@ perl << eof
 		}
 	}
 eof
+endfunction
+
+function! base#html#xpath_attr (...)
+	call base#html#htw_init ()
+
+	let ref = get(a:000,0,{})
+
+	let xpath     = get(ref,'xpath','')
+	let attr_list = get(ref,'attr',[])
+
+	let attr_val=[]
+
+	let htmltext  = get(ref,'htmltext','')
+	let htmllines = get(ref,'htmllines',[])
+
+	let file      = get(ref,'file','')
+
+	if filereadable(file)
+		let htmllines = readfile(file)
+	endif
+
+	if len(htmllines)
+		 let htmltext = join(htmllines,"\n")
+	endif
+
+	let load_as      = base#html#libxml_load_as()
+	let load_as      = get(ref,'load_as',load_as)
+
+perl << eof
+		use Vim::Perl qw(:funcs :vars);
+		use XML::LibXML;
+
+		my $ref          = VimVar('ref') || {};
+
+		my $html         = VimVar('htmltext');
+		my $load_as      = VimVar('load_as');
+
+		my $xpath     = VimVar('xpath') || '';
+
+		my $attr_list = VimVar('attr_list') || [];
+		my $attr_val  = [];
+
+		my @nodes = $HTW
+			->init_dom({ 
+					html    => $html,
+			,		load_as => $load_as,
+			})
+			->nodes({ xpath => $xpath });
+
+		foreach my $attr_name (@$attr_list) {
+			foreach my $n (@nodes) {
+				my $attr = $n->getAttribute($attr_name);
+
+				my $val = ((defined $attr) ? $attr : '');
+
+				push @$attr_val, $val;
+			}
+		}
+		VimListExtend('attr_val',$attr_val);
+eof
+		return attr_val
+
 endfunction
 
 function! base#html#list_href ()
