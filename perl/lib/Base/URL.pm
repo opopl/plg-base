@@ -25,9 +25,11 @@ my @ex_vars_array=qw(
 %EXPORT_TAGS = (
 ###export_funcs
 'funcs' => [qw( 
-	url_base
-	url_normalize
 	uri_decompose
+
+	url_level
+	url_parent
+	url_normalize
 )],
 'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -37,36 +39,36 @@ $VERSION   = '0.01';
 @EXPORT    = qw();
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 
-sub url_base {
+sub url_parent {
 	my ($url) = @_;
-
+	
 	$url = url_normalize($url);
-
+	
 	my $u  = URI->new($url);
 	my $pt = path($u->path);
-
+	
 	my $parent = $pt->parent->stringify;
-
+	
 	$u->path($parent);
-
+	
 	return $u->as_string;
 }
 
 
 sub url_normalize {
 	my ($url,$ref) = @_;
-
+	
 	$ref ||= { };
-
+	
 	my $uri = URI->new($url);
-
+	
 	my $proto = $uri->scheme;
 	my $host  = $uri->host;
 	my $path  = $uri->path;
-
+	
 	$path =~ s/[\/]+/\//g;
 	$host =~ s/[\/]+/\//g;
-
+	
 	my $url_norm = $url;
 	unless ($host) {
 		$path =~ s/^\///g;
@@ -94,6 +96,9 @@ sub url_normalize {
 sub uri_decompose {
 	my ($url,$base_url) = @_;
 
+	$url      = url_normalize($url);
+	$base_url = url_normalize($base_url);
+
 	my $uri  = URI::Simple->new($url);
 
 	my @v = qw( host path protocol directory file source );
@@ -111,7 +116,35 @@ sub uri_decompose {
 	$struct->{root} = join('/' , @{$struct}{qw(host directory )} );
 	$struct->{path_base} = $path_base;
 
+	my ($pt_base,$par);
+
+	if ($path_base) {
+		$pt_base = path($path_base);
+		$par = $pt_base->parent->stringify;
+		$struct->{path_base_parent} = $par;
+		$struct->{path_base_basename} = $pt_base->basename();
+	}
+
+
 	return ($uri,$struct);
+}
+
+sub url_level {
+	my ($ref) = @_;
+
+	my $url      = $ref->{url};
+	my $base_url = $ref->{base_url};
+
+	( $url, $base_url ) = map { url_normalize($_) } @{$ref}{qw( url base_url )};
+
+	$url =~ s/$base_url//g;
+
+	my @rel = grep { !/^$/ } split(/\//, $url);
+	my $lev = scalar @rel || 1;
+	$lev--;
+	return ($lev,$url);
+
+
 }
 
 1;

@@ -21,3 +21,11 @@ snippet db
 	base#dbfile()
 snippet base#inlist
 	base#inlist(<+element+>,<+list+>)
+snippet perlusebaseurl
+	use Base::URL qw(
+		uri_decompose
+		
+		url_parent
+		url_level
+		url_normalize 
+	);

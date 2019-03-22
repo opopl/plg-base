@@ -69,9 +69,20 @@ endfunction
 function! base#htmlwork#debug_vars ()
 	let dbfile = base#htmlwork#dbfile()
 
-	let q = 'SELECT rowid,func,url,msg,var_name,var_value,details FROM log where loglevel = ?'
-	let q = input('query:',q)
+	let qs = ['']
+	"call add(qs,'SELECT rowid,func,url,msg,var_name,var_value,details FROM log WHERE loglevel = ?')
+	"call add(qs,'SELECT func,var_name,var_value FROM log WHERE loglevel = ?')
+	"call add(qs,'SELECT details FROM log WHERE loglevel = ?')
+
+	call add(qs,'SELECT var_name, var_value, details FROM log ' 
+		\	. ' WHERE loglevel = ? AND func = "list_href" AND var_name = "@href_internal_only"' )
+
+	call base#varset('this',qs)
+	"let q = input('query:','','custom,base#complete#this')
 	let p = ['debug']
+
+	let q = get(qs,1,'')
+
 
 	let lines = pymy#sqlite#query_screen({
 		\	'dbfile' : dbfile,
@@ -242,7 +253,7 @@ function! base#htmlwork#href_short ()
 	let dbfile = base#htmlwork#dbfile()
 
 	let q = 'SELECT rowid,url_parent,url_full,url_short FROM href'
-	let q = input('query:',q,)
+	let q = input('query:',q)
 
 	let lines = pymy#sqlite#query_screen({
 		\	'dbfile' : dbfile,
@@ -250,8 +261,6 @@ function! base#htmlwork#href_short ()
 		\	})
 	call base#buf#open_split({ 'lines' : lines })
 endfunction
-
-
 
 function! base#htmlwork#dbfile()
 	let dbfile = base#qw#catpath('db','html_work.sqlite')
