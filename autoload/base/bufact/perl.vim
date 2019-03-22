@@ -13,7 +13,7 @@ endf
 function! base#bufact#perl#execute ()
 	call base#buf#start()
 
-	let opts = input('perl command-line options: ',' ')
+	let opts = input('perl command-line options: ','')
 	let cmds = []
 	let cmd = 'perl ' . b:file . ' ' . opts
 

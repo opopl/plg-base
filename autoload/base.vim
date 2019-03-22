@@ -2554,19 +2554,22 @@ function! base#info (...)
 
 """info_rtp
    elseif topic == 'rtp'
-       let rtp = "\t" . join(split(&rtp,","),"\n\t")
+       let rtp_a = split(&rtp,",")
 
-       call base#echo({ 'text' : "RUNTIMEPATHS: " } )
-       call base#echo({ 'text' : "&rtp =>  " . rtp,'indentlev' : indentlev })
+			let ii=[]
+			call add(ii,'&rtp:')
+			call extend(ii,base#map#add_tabs(rtp_a,1))
+
+			call base#buf#open_split({ 'lines' : ii })
 
 """info_plugins
    elseif topic == 'plugins'
-			let plugins = base#varget('plugins',[])
-    
-       call base#echo({ 'text' : "PLUGINS: " } )
-       call base#echo({ 'text' : "plugins =>  " 
-        \   . "\n\t" . join(plugins,"\n\t"),'indentlev' : indentlev })
+			let plugins = base#plugins()
 
+			let ii=[]
+			call add(ii,'PLUGINS:')
+			call extend(ii,base#map#add_tabs(plugins,1))
+			call base#buf#open_split({ 'lines' : ii })
 
 """info_make
    elseif topic == 'make'
@@ -2592,11 +2595,15 @@ function! base#info (...)
 
 """info_opts
    elseif topic == 'opts'
-       call base#echo({ 'text' : "OPTIONS: " } )
-       call base#varcheckexist('opts')
 
-       call base#varecho('opts')
-       call base#varecho('opts_saved')
+			 let ii = [] 
+			 let opts = base#varget('opts',{})
+			 let li = base#dump#dict_tabbed (opts)
+
+			 call add(ii,'OPTIONS: ')
+			 call extend(ii,li)
+			 call base#buf#open_split({ 'lines' : li })
+
 
    endif
  endif

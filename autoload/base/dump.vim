@@ -1,9 +1,19 @@
 
-function! base#dump#py (thing)
-python << eof
-import vim
-thing = vim.eval('a:thing')
-eof
+function! base#dump#dict_tabbed (dict)
+	let dict = a:dict
+	let data = []
+	let headers = base#qw('key value')
+
+	for [k,v] in items(dict)
+		call add(data,[k,v])
+	endfor
+
+	let tabbed = pymy#data#tabulate({ 
+		\	'data'    : data,
+		\	'headers' : headers })
+	return tabbed
+
+
 	
 endfunction
 
