@@ -970,8 +970,8 @@ perl << eof
 				'nodeType='.$nodetypes{$ntype} || 'undef',
 			];
 			foreach my $cmt (@$cmts) {
-				my $cnode=XML::LibXML::Comment->new($cmt);
-				push @filtered,$cnode->toString;
+				my $cnode = XML::LibXML::Comment->new($cmt);
+				push @filtered, $cnode->toString;
 			}
 		}
 
