@@ -64,10 +64,15 @@ function! base#html#file_info (...)
 		\	'trim'       : 1,
 		\	'skip_empty' : 1,
 		\	})
-	echo f
+	let title = join(f,'')
 
-	call extend(inf,{ 'f' :  f, 'h' : h })
+	let [base] =  base#html#xpath_attr({ 
+		\	'file'       : file,
+		\	'xpath'      : '//base',
+		\	'attr'       : base#qw('href'),
+		\	})
 
+	call extend(inf,{ 'title' :  title, 'base' : base })
 
 	if exists("b:html_info")
 		unlet b:html_info
@@ -984,7 +989,7 @@ perl << eof
 		map { $_ = trim($_) } @filtered;
 	}
 	if ($ref->{skip_empty}) {
-		@filtered = map { /^\s*/ ? () : $_ } @filtered;
+		@filtered = map { /^\s*$/ ? () : $_ } @filtered;
 	}
 
 	VimListExtend('filtered',\@filtered);
