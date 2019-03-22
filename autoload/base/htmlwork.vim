@@ -132,6 +132,8 @@ function! base#htmlwork#drop_all ()
 	let yn = input('Ready to drop all tables? 1/0: ',1)
 	if !yn | return | endif
 
+	call base#htmlwork#delete_saved_files ()
+
 	let tables = base#qw('href log saved')
 	for t in tables
 		let q = 'DROP TABLE IF EXISTS ' . t

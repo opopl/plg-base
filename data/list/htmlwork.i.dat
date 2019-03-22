@@ -13,3 +13,4 @@ debug_vars
 href
 href_short
 sql_alterations
+delete_saved_files
