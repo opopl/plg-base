@@ -2290,6 +2290,14 @@ function! base#info (...)
 				endif
 			endif
 
+			if exists("b:html_info")
+				call add(info,'HTML INFO:')
+				let y = base#dump#yaml(b:html_info)
+				let y = base#map#add_tabs(y)
+				call extend(info,y)
+
+			endif
+
 			if exists("b:db_info")
 					
 				call add(info,'DB INFO:')

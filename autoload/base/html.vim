@@ -792,7 +792,7 @@ function! base#html#htw_load_buf ()
 	let load_as      = base#html#libxml_load_as()
 perl << eof
 	use Vim::Perl qw(:funcs :vars);
-	$Vim::Perl::CURBUF=$curbuf;
+	$Vim::Perl::CURBUF = $curbuf;
 
 	my $load_as = VimVar('load_as');
 	my $lines = [ $curbuf->Get(1 .. $curbuf->Count) ];
@@ -818,14 +818,20 @@ function! base#html#xpath(...)
 	let htmllines = get(ref,'htmllines',[])
 	let xpath     = get(ref,'xpath','')
 
+	let file      = get(ref,'file','')
+
 	let add_comments = get(ref,'add_comments',0)
 	let cdata2text   = get(ref,'cdata2text',0)
 
 	let load_as      = base#html#libxml_load_as()
 	let load_as      = get(ref,'load_as',load_as)
 
+	if filereadable(file)
+		let htmllines = readfile(file)
+	endif
+
 	if len(htmllines)
-		 let htmltext=join(htmllines,"\n")
+		 let htmltext = join(htmllines,"\n")
 	endif
 
 	let filtered=[]
