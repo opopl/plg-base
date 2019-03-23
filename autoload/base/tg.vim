@@ -528,6 +528,7 @@ function! base#tg#update (...)
 			\	"exts" : [ "vim"  ], 
 			\ })
 		call map(files_arr,'base#file#win2unix(v:val)')
+		call filter(files_arr,'filereadable(v:val)')
 
 		let files = ' --language-force=vim ' . plgdir_u . '/*'
 		let files = ''
