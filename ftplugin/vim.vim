@@ -63,12 +63,18 @@ if b:is_plgvim
 	
 	let b:ufile = base#file#win2unix(b:file)
 	
-	exe 'augroup base_plg_'.b:plg
-	exe '  au!'
+	let b:augroup=[]
+	
+	call add(b:augroup,'augroup base_plg_'.b:plg)
+	call add(b:augroup,'  au!')
 	for cmd in b:aucmds
-		exe join([ fr,b:ufile,cmd ],' ')
+		call add(b:augroup, join([ fr,b:ufile,cmd ],' ') )
 	endfor
-	exe 'augroup end'
+	cal add(b:augroup, 'augroup end' )
+	
+	for x in b:augroup
+		exe x
+	endfor
 
 elseif b:is_mkvimrc_com
 elseif b:is_mkvimrc_fun
