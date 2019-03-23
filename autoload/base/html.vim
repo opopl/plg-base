@@ -873,7 +873,11 @@ function! base#html#list_href ()
 	call base#html#htw_init ()
 	let href = []
 perl << eof
-	my @href = $HTW->list_href;	
+	my @href = $HTW->list_attr({ 
+		xpath       => '//a',
+		node_filter => sub{ 1 },
+		attr        => 'href',
+	});
 	VimLet('href',[@href]);
 eof
 	return href

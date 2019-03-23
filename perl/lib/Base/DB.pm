@@ -34,6 +34,7 @@ my %EXPORT_TAGS = (
 'funcs' => [qw( 
 	dbh_insert_hash
 	dbh_select
+	dbh_select_first
 	dbh_select_as_list
 	dbh_select_fetchone
 	dbh_do
@@ -163,6 +164,15 @@ sub dbh_select {
 	}
 
 	return $rows;
+}
+
+sub dbh_select_first {
+	my ($ref)  = @_;
+
+	my $rows = dbh_select($ref);
+	my $row = $rows->[0];
+	return $row;
+
 }
 
 sub dbh_select_as_list {

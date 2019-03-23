@@ -64,6 +64,12 @@ sub url_parent {
 
 sub url_normalize {
 	my ($url,$ref) = @_;
+
+	if (ref $url eq "SCALAR"){
+		my $u = $$url;
+		$u = url_normalize($u);
+		return $u;
+	}
 	
 	$ref ||= { };
 	my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
@@ -133,6 +139,23 @@ sub uri_file {
 
 	$uri;
 }
+
+=head2 url_relative
+
+=head3 Usage
+
+	my $r = url_relative($url, $base_url);
+
+	# full relative url
+	my $path = $r->{path};
+
+	# file portion
+	my $bname = $r->{basename};
+
+	# directory portion
+	my $dname = $r->{dirname};
+
+=cut
 
 sub url_relative {
 	my $struct = uri_decompose(@_);
