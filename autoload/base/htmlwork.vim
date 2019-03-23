@@ -278,10 +278,13 @@ function! base#htmlwork#view_saved ()
 	let files = pymy#sqlite#query_as_list({
 		\	'dbfile' : dbfile,
 		\	'q'      : q,
+		\	'p'      : p,
 		\	})
 
 	call base#varset('this',files)
 	let local = input('local file:','','custom,base#complete#this')
+
+	call base#fileopen({ 'files': [local] })
 
 endfunction
 
