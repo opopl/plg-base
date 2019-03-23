@@ -6,8 +6,10 @@ use warnings;
 use Path::Tiny;
 
 use URL::Normalize;
-use URI;
 use URI::Simple;
+
+use URI;
+use URI::file;
 
 use Exporter ();
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
@@ -28,10 +30,13 @@ my @ex_vars_array=qw(
 ###export_funcs
 'funcs' => [qw( 
 	uri_decompose
+	uri_file
+	uri_file_string
 
 	url_level
-	url_parent
 	url_normalize
+	url_parent
+	url_relative
 )],
 'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -115,14 +120,41 @@ sub url_normalize {
 	return $url_norm;
 }
 
+sub uri_file_string {
+	my $url = uri_file(@_)->as_string;
+	$url;
+}
+
+sub uri_file {
+	my ($file) = @_;
+
+	my $os = $^O eq 'MSWin32' ? 'win32' : '';
+	my $uri = URI::file->new($file, $os);
+
+	$uri;
+}
+
+sub url_relative {
+	my $struct = uri_decompose(@_);
+
+	my $r = {
+		path     => $struct->{path_base},
+		basename => $struct->{path_base_basename},
+		dirname  => $struct->{path_base_parent},
+	};
+
+	return $r;
+
+}
+
 sub uri_decompose {
 	my ($url,$base_url) = @_;
 
 	$url      = url_normalize($url);
 	$base_url = url_normalize($base_url);
 
-	print $url . "\n";
-	print $base_url . "\n";
+	#print $url . "\n";
+	#print $base_url . "\n";
 
 	my $uri  = URI::Simple->new($url);
 
