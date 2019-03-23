@@ -162,7 +162,7 @@ sub uri_decompose {
 	my $struct;
 
 	my $path_base = $url;
-	$path_base =~ s/$base_url//g;
+	$path_base =~ s/$base_url[\/]+//g;
 
 	foreach my $v (@v) {
 		my $val = ($uri->can($v)) ? $uri->$v : '';
