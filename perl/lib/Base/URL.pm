@@ -61,6 +61,16 @@ sub url_parent {
 	return $u->as_string;
 }
 
+=head2 url_normalize
+
+=head3 Usage
+
+	$url = url_normalize($url, $ref);
+
+	url_normalize(\$url, $ref);
+
+=cut
+
 
 sub url_normalize {
 	my ($url,$ref) = @_;
