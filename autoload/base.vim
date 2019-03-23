@@ -2207,6 +2207,7 @@ function! base#info (...)
 			 call base#buf#open_split({ 'lines' : lines })
 			 return
 
+"""info_dict
 	 elseif topic == 'dictionaries'
 			 let lines=[]
 			 call add(lines,'--------------------')
@@ -2214,6 +2215,11 @@ function! base#info (...)
 			 call add(lines,'--------------------')
 			 call add(lines,'&dictionary:')
 			 call extend(lines,base#mapsub(split(&dictionary,','),'^','\t','g'))
+
+			 if exists("b:dics")
+			 		call add(lines,'b:dics = ')
+					call extend(lines,base#dump#yaml(b:dics))
+			 endif
 
 			 call base#buf#open_split({ 'lines' : lines })
 			 return
