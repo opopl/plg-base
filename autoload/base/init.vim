@@ -79,6 +79,8 @@ fun! base#init#paths(...)
     let vrt      = base#envvar('VIMRUNTIME')
     let projsdir = base#envvar('PROJSDIR')
 
+"C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Tools\MSVC\14.16.27023\bin\Hostx64\x64
+
     call base#pathset({ 
         \ 'home'          : home ,
         \ 'hm'            : hm ,
