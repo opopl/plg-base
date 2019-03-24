@@ -37,6 +37,7 @@ my @ex_vars_array=qw(
 	url_normalize
 	url_parent
 	url_relative
+	url_type
 )],
 'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -61,6 +62,22 @@ sub url_parent {
 	return $u->as_string;
 }
 
+sub url_type {
+	my ($url) = @_;
+
+	my $type;
+	local $_ = $url;
+	
+	$type = 'relative';
+	while(1){
+		m/^#/ && do { $type = 'id'; last; };
+		m|^(\w+):://| && do { $type = 'external'; last; };
+
+		last;
+	}
+	return $type;
+}
+
 =head2 url_normalize
 
 =head3 Usage
@@ -80,25 +97,23 @@ sub url_normalize {
 		$$url = url_normalize($u);
 		return $u;
 	}
+	my $s=q{/};
 	
 	my $defs = { 
 		proto => 'http',
-
-		# url type: external, internal, id
-		type  => 'full',
 	};
 	while(my($k,$v)=each %{$defs}){
 		$ref->{$k} = $v unless defined $ref->{$k};
 	}
-	my $type = $ref->{type};
+	my $type = $ref->{type} || url_type($url);
 
 	my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
 	
-	my ($uri, $proto, $host, $path, $url_norm);
+	my ($uri, $proto, $host, $path, $url_norm, $fragment);
 
-	$uri = URI->new($url);
 	$url_norm = $url;
 	
+	$uri = URI->new($url);
 	eval { $proto = $uri->scheme; };
 	$proto ||= $ref->{proto};
 
@@ -116,6 +131,7 @@ sub url_normalize {
 		$host =~ s/[\/]+/\//g;
 	}
 	#------------------------------
+	$fragment = eval { $uri->fragment; } || '';
 
 	$path  = $uri->path;
 	if ($path) {
@@ -125,10 +141,16 @@ sub url_normalize {
 	unless ($host) {
 		$path =~ s/^\///g;
 
-		if ($type eq 'full') {
-			$url_norm = ($proto) ? $proto . '://' : '';
-		} elsif ($type eq 'internal') {
+		# what was identified as a path is actually the host
+		if ($type eq 'external') {
+			$url_norm = ($proto) ? $proto . '://' . $path . $fragment : '';
+
+		} elsif ($type eq 'relative') {
 			$url_norm = $path;
+			return $url_norm;
+
+		} elsif ($type eq 'id') {
+			return '#' . $fragment;
 		}
 	}
 

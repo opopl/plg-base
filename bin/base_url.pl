@@ -8,6 +8,19 @@ use Data::Dumper qw(Dumper);
 
 use Base::URL qw(:funcs :vars);
 
-my $url = 'a/b';
+my $urls = [];
 
-print Dumper [ $url, url_normalize($url) ];
+push @$urls, 
+   # '#a',
+	#'a/b',
+	#'a/b/c',
+	#'a',
+	#'/a',
+	'http:///a',
+	'http://a',
+	;
+
+foreach my $url (@$urls) {
+	print Dumper [ $url, url_type($url), url_normalize($url,{ type => 'external'}) ];
+}
+
