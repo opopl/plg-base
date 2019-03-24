@@ -159,7 +159,7 @@ function! base#bufact#html#pretty_perl_libxml ()
 
 	let load_as      = base#html#libxml_load_as()
 
-	let html_pp=base#html#pretty_libxml({ 
+	let html_pp = base#html#pretty_libxml({ 
 			\	'htmltext' : html,
 			\	'fillbuf'  : 1,
 			\	'load_as'  : load_as,

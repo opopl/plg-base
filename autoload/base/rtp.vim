@@ -78,4 +78,6 @@ function! base#rtp#update(...)
 
 	call base#rtp#uniq()
 
+	"let g:snippets_dir = substitute(globpath(&rtp, 'data/snippets/'), "\n", ',', 'g')
+
 endf
