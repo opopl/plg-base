@@ -81,7 +81,17 @@ sub url_normalize {
 		return $u;
 	}
 	
-	$ref ||= { };
+	my $defs = { 
+		proto => 'http',
+
+		# url type: external, internal, id
+		type  => 'full',
+	};
+	while(my($k,$v)=each %{$defs}){
+		$ref->{$k} = $v unless defined $ref->{$k};
+	}
+	my $type = $ref->{type};
+
 	my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
 	
 	my ($uri, $proto, $host, $path, $url_norm);
@@ -90,7 +100,7 @@ sub url_normalize {
 	$url_norm = $url;
 	
 	eval { $proto = $uri->scheme; };
-	$proto ||= 'http';
+	$proto ||= $ref->{proto};
 
 	#------------- host -----------
 	eval { $host  = $uri->host; };
@@ -114,8 +124,12 @@ sub url_normalize {
 	
 	unless ($host) {
 		$path =~ s/^\///g;
-		#$url_norm = ($proto) ? $proto . '://' : '';
-		$url_norm = $path;
+
+		if ($type eq 'full') {
+			$url_norm = ($proto) ? $proto . '://' : '';
+		} elsif ($type eq 'internal') {
+			$url_norm = $path;
+		}
 	}
 
 	my $norm = URL::Normalize->new($url_norm);

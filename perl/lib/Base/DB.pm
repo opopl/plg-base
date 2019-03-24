@@ -14,7 +14,14 @@ Base::DB
 use strict;
 use warnings;
 
+
 use base qw(Exporter);
+
+use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
+
+@ISA     = qw(Exporter);
+@EXPORT  = qw( );
+$VERSION = '0.01';
 
 use SQL::SplitStatement;
 use Data::Dumper;
@@ -29,7 +36,7 @@ my @ex_vars_hash=qw(
 ###export_vars_array
 my @ex_vars_array=qw();
 
-my %EXPORT_TAGS = (
+%EXPORT_TAGS = (
 ###export_funcs
 'funcs' => [qw( 
 	dbh_insert_hash
@@ -47,9 +54,7 @@ my %EXPORT_TAGS = (
 'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
 
-our @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
-our @EXPORT  = qw( );
-our $VERSION = '0.01';
+@EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 
 our ($DBH,$WARN);
 
@@ -133,8 +138,9 @@ sub dbh_select {
 	my $f = join ',' => map { $e . $_ . $e } @f;
 
 	$q ||= qq| 
-		$SELECT $f FROM `$t` $cond
+		$SELECT $f FROM `$t` 
 	|;
+	$q .= ' ' . $cond;
 
 	my $sth;
  	eval { $sth	= $dbh->prepare($q); };

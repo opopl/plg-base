@@ -280,9 +280,16 @@ function! base#htmlwork#view_saved ()
 		\	'q'      : q,
 		\	'p'      : p,
 		\	})
+	let files_h = {}
+	for file in files
+		let bname = fnamemodify(file,":p:t")
+		call extend(files_h,{ bname : file })
+	endfor
 
-	call base#varset('this',files)
-	let local = input('local file:','','custom,base#complete#this')
+	call base#varset('this', sort(keys(files_h)) )
+	let local_bname = input('local file:','','custom,base#complete#this')
+
+	let local = get(files_h,local_bname,'')
 
 	call base#fileopen({ 'files': [local] })
 
