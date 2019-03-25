@@ -196,10 +196,11 @@ endfunction
 "
 function! base#vh#heads_handle (...)
 
+		"\ 'undef_head_2' : '^\s{2,2}(\S.*)$'   ,
 	let pats = {
 		\ 'def_head_1'   : '^(\w+)\.\s+(.*)$'  ,
 		\ 'undef_head_1' : '^(\S.*)$'          ,
-		\ 'undef_head_2' : '^\s{2,2}(\S.*)$'   ,
+		\ 'undef_head_2' : '^\s*([\w_]+)\s*$'   ,
 		\	}
 
 	let pats = {
