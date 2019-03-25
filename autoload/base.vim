@@ -1945,12 +1945,35 @@ fun! base#sys(...)
 endfun
 
 
+function! base#pathset_db (ref,...)
+		let ref = a:ref
+
+		let dbfile = base#dbfile()
+
+    for [ pathid, path ] in items(ref) 
+		
+			call pymy#sqlite#insert_hash({
+				\	'dbfile' : dbfile,
+				\	't'      : 'paths',
+				\	'h'      : {
+						\	'pathid' : pathid,
+						\	'path'   : path,
+						\	},
+				\	'i'      : 'INSERT OR REPLACE',
+				\	})
+		endfor
+
+		return
+endf
+
 function! base#pathset (ref,...)
+	let ref = a:ref
 
   if ! exists("s:paths") | let s:paths={} | endif
 	let opts = get(a:000,0,{})
 
-	if exists("g:paths_from_db")
+
+	if exists('g:skip_pathset') 
 		return
 	endif
 
@@ -1962,7 +1985,7 @@ function! base#pathset (ref,...)
 		let s:paths = {}
 	endif
 
-    for [ pathid, path ] in items(a:ref) 
+    for [ pathid, path ] in items(ref) 
         let e = { pathid : path }
 				call base#log([
 					\'pathid ='.pathid,
@@ -2042,8 +2065,8 @@ eof
 	endif
 	call extend(s:paths,paths)
 
-	if !exists('g:paths_from_db')
-		let g:paths_from_db = 1
+	if !exists('g:skip_pathset')
+		let g:skip_pathset = 1
 	endif
 
 	return paths

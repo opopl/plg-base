@@ -32,12 +32,17 @@ my @ex_vars_array=qw(
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 
 sub str_split {
-	my ($str) = @_;
+	my ($str,$ref) = @_;
+
+	$ref||={};
+
+	my $c   = $ref->{comment_start}  || '#';
+	my $sep = $ref->{sep}  || "\n";
 
 	my @split = 
 		map { s/^\s*//g; $_ } 
-		grep { !/^\s*$/ && !/^\s*#/ } 
-		split("\n" => $str);
+		grep { !/^\s*$/ && !/^\s*$c/ } 
+		split($sep => $str);
 
 	return @split;
 }

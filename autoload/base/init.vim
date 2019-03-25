@@ -346,12 +346,17 @@ command! -nargs=* -complete=custom,base#complete#omnioptions
 	command! -nargs=* -complete=custom,base#complete#varlist
 	    \   BaseVarRemove call base#varremove(<f-args>) 
 
+"""BaseVarDump
 	command! -nargs=* -complete=custom,base#complete#varlist
 	    \   BaseVarDump call base#var#dump_split(<f-args>) 
 
-
+"""BasePathEcho
 	command! -nargs=* -complete=custom,base#complete#CD
 	    \   BasePathEcho call base#path#echo(<f-args>) 
+
+"""BasePathAdd
+	command! -nargs=* -complete=custom,base#complete#CD
+	    \   BasePathAdd call base#path#add(<f-args>) 
 	
 """BaseInit
 	command! -nargs=* -complete=custom,base#complete#init
