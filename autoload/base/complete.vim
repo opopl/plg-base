@@ -33,7 +33,11 @@ function! base#complete#fileadd(...)
 endfun
 
 function! base#complete#CD (...)
-  return base#complete#vars([ 'pathlist' ])
+	let pathlist = base#pathlist()
+	let comps_n = join(pathlist,"\n")
+
+  "return base#complete#vars([ 'pathlist' ])
+	return comps_n
 endfunction
 
 function! base#complete#DIR (...)

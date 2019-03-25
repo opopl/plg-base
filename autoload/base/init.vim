@@ -46,30 +46,30 @@ fun! base#init#paths(...)
 
 		let vrt = base#envvar('VIMRUNTIME')
 		let plg = base#file#catfile([  vrt, 'plg'  ])
-
+		
     call base#pathset({  'plg' : plg })
-
+		
 		let dir = base#file#catfile([  vrt, 'plg', 'base'  ])
 		
 		call base#varset('plgdir',dir)
 		call base#datadir( base#file#catfile([ dir, 'data' ]) )
-
+		
     let ref = {}
     if a:0 | let ref = a:1 | endif
-
+		
     let home     = base#envvar( (has('win32')) ? 'USERPROFILE' : 'HOME' )
     let hm       = base#envvar('hm',home)
-
+		
     let pc       = base#envvar((has('win32')) ? 'USERPROFILE' : get(split(system('hostname'),"\n"),0) )
-
+		
 		let p = base#paths_from_db()
 		if len(p)
 			return
 		endif
-
+		
 		if has('win32')
 			let pf       = base#envvar('PROGRAMFILES')
-
+		
 			call base#pathset({ 
           \ 'pf'            : pf ,
 	        \ 'include_win_sdk'   : base#envvar('INCLUDE_WIN_SDK'),

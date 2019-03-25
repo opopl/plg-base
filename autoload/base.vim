@@ -1947,10 +1947,10 @@ endfun
 
 function! base#pathset_db (ref,...)
 		let ref = a:ref
-
+		
 		let dbfile = base#dbfile()
-
-    for [ pathid, path ] in items(ref) 
+		
+		for [ pathid, path ] in items(ref) 
 		
 			call pymy#sqlite#insert_hash({
 				\	'dbfile' : dbfile,
@@ -1958,6 +1958,7 @@ function! base#pathset_db (ref,...)
 				\	'h'      : {
 						\	'pathid' : pathid,
 						\	'path'   : path,
+						\	'pcname' : base#pcname(),
 						\	},
 				\	'i'      : 'INSERT OR REPLACE',
 				\	})
@@ -2014,13 +2015,31 @@ function! base#append (...)
 
 endfunction
 
-function! base#pathlist ()
-    if ! exists("s:paths")
-        let s:paths={}
-    endif
+function! base#pathlist (...)
+		let pat = get(a:000,0,'')
 
-    let pathlist = sort(keys(s:paths))
-    call base#varset('pathlist',pathlist)
+		if ! exists("s:paths")
+			let s:paths={}
+		endif
+		
+		let pathlist = sort(keys(s:paths))
+
+		let dbfile = base#dbfile()
+		
+		let q = 'SELECT pathid FROM paths'
+
+		if strlen(pat)
+			let q .= ' WHERE pathid LIKE "%' . pat . '%"'
+		endif
+
+		let p = []
+		let pathlist = pymy#sqlite#query_as_list({
+			\	'dbfile' : dbfile,
+			\	'p'      : p,
+			\	'q'      : q,
+			\	})
+
+		call base#varset('pathlist',pathlist)
 
     return pathlist
     
