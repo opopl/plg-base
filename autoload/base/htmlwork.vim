@@ -288,7 +288,7 @@ function! base#htmlwork#view_saved ()
 	call base#varset('this', sort(keys(files_h)) )
 	let local_bname = input('local file:','','custom,base#complete#this')
 
-	let local = get(files_h,local_bname,'')
+	let local = get(files_h, local_bname, '')
 
 	call base#fileopen({ 'files': [local] })
 
