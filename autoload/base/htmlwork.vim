@@ -83,7 +83,6 @@ function! base#htmlwork#debug_vars ()
 
 	let q = get(qs,1,'')
 
-
 	let lines = pymy#sqlite#query_screen({
 		\	'dbfile' : dbfile,
 		\	'p'      : p,
@@ -152,7 +151,7 @@ function! base#htmlwork#clear_all ()
 	if !yn | return | endif
 
 	call base#htmlwork#delete_saved_files()
-	let tables = base#qw('href log saved')
+	let tables = base#qw('href log saved local_index')
 	for t in tables
 		let q = 'DELETE FROM ' . t
 		call pymy#sqlite#query({
