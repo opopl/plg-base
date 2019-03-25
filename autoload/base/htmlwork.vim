@@ -134,7 +134,7 @@ function! base#htmlwork#drop_all ()
 
 	call base#htmlwork#delete_saved_files ()
 
-	let tables = base#qw('href log saved')
+	let tables = base#qw('href log saved local_index')
 	for t in tables
 		let q = 'DROP TABLE IF EXISTS ' . t
 		call pymy#sqlite#query({
