@@ -92,9 +92,11 @@ sub url_type {
 sub url_normalize {
 	my ($url,$ref) = @_;
 
+	return '' unless $url;
+
 	if (ref $url eq "SCALAR"){
 		my $u = $$url;
-		$$url = url_normalize($u);
+		$$url = url_normalize($u,$ref);
 		return $u;
 	}
 	my $s=q{/};
