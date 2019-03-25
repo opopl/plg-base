@@ -82,6 +82,10 @@ function! base#complete#BaseAppend (...)
   return base#complete#vars([ 'opts_BaseAppend' ])
 endfunction
 
+function! base#complete#BaseSplit (...)
+  return base#complete#vars([ 'opts_BaseSplit' ])
+endfunction
+
 function! base#complete#perl_Vim_Plg_Base(...)
   return base#complete#vars([ 'opts_perl_Vim_Plg_Base' ])
 endfunction

@@ -1976,19 +1976,19 @@ function! base#pathset (ref,...)
 
 endfun
 
+function! base#split (...)
+  let opt = get(a:000,0,'')
+
+  let sub = 'base#split#'.opt
+  exe 'call '.sub.'()'
+endfun
+
 function! base#append (...)
   let opt = get(a:000,0,'')
 
   let sub = 'base#append#'.opt
   exe 'call '.sub.'()'
 
- " try
-  "catch 
-    "call base#warn({ 
-      "\  'text' : 'Failure to execute: ' . sub 
-      "\  } )
-  "endtry
-  
 endfunction
 
 function! base#pathlist ()

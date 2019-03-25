@@ -242,6 +242,9 @@ fun! base#init#cmds()
 	command! -nargs=* -complete=custom,base#complete#BaseAppend BaseAppend
 		\	call base#append(<f-args>)
 
+"""BaseSplit
+	command! -nargs=* -complete=custom,base#complete#BaseSplit BaseSplit
+		\	call base#split(<f-args>)
 
 """LCOM
 	command! -nargs=* -complete=custom,base#complete#vimcoms LCOM 

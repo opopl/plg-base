@@ -300,7 +300,7 @@ function! base#buf#start ()
 		let b:pathids  = get(b:finfo,'pathids',[])
 	endif
 
-	let b:base_buf_started=1
+	let b:base_buf_started = 1
 
 	call base#buf#is_plg()
 endfunction
