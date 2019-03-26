@@ -66,11 +66,15 @@ function! base#html#file_info (...)
 		\	})
 	let title = join(f,'')
 
-	let [base] =  base#html#xpath_attr({ 
+
+	let attr = {}
+
+	let a =  base#html#xpath_attr({ 
 		\	'file'       : file,
 		\	'xpath'      : '//base',
 		\	'attr'       : base#qw('href'),
 		\	})
+	let base = get(a,0,'')
 
 	call extend(inf,{ 'title' :  title, 'base' : base })
 
@@ -103,7 +107,8 @@ function! base#html#headings (...)
 	let xpath = '//*['.he.']'
 
 perl << eof
-	use Vim::Xml qw($PARSER $PARSER_OPTS);
+	use Base::Xml qw($PARSER $PARSER_OPTS);
+
 	use XML::LibXML;
 	use XML::LibXML::PrettyPrint;
 	use Encode qw(decode);
@@ -112,7 +117,7 @@ perl << eof
 	$parser=$PARSER || XML::LibXML->new; 
 
 	#	my $xpath    = VimVar('xpath');
-	my $html=VimVar('html');
+	my $html = VimVar('html');
 
 	my @headnums = (1 .. 5);
 	my @heads    = map { "self::h" . $_ } @headnums;
@@ -122,7 +127,7 @@ perl << eof
 #"//*[self::h1 or self::h2 or self::h3 or self::h4 or self::h5]
 #//*[preceding-sibling::h2 = 'Summary' and following-sibling::h2 = 'Location']
 
-	my $xml_libxml_parser_options=$PARSER_OPTS || 
+	my $xml_libxml_parser_options = $PARSER_OPTS || 
 	{
 			expand_entities => 0,
 			load_ext_dtd 		=> 1,
@@ -142,7 +147,7 @@ perl << eof
 	$dom = $parser->load_html(%$inp);
 
 	my $nodelist = $dom->findnodes($xpath);
-	my $sub      = sub { local $_=shift; s/^h(\d+)/$1/g; $_ };
+	my $sub      = sub { local $_ = shift; s/^h(\d+)/$1/g; $_ };
 	my @children;
 	my @sn;
 
@@ -815,7 +820,7 @@ function! base#html#xpath_attr (...)
 	let xpath     = get(ref,'xpath','')
 	let attr_list = get(ref,'attr',[])
 
-	let attr_val=[]
+	let attr_values=[]
 
 	let htmltext  = get(ref,'htmltext','')
 	let htmllines = get(ref,'htmllines',[])
@@ -845,7 +850,7 @@ perl << eof
 		my $xpath     = VimVar('xpath') || '';
 
 		my $attr_list = VimVar('attr_list') || [];
-		my $attr_val  = [];
+		my $attr_values  = [];
 
 		my @nodes = $HTW
 			->init_dom({ 
@@ -860,12 +865,12 @@ perl << eof
 
 				my $val = ((defined $attr) ? $attr : '');
 
-				push @$attr_val, $val;
+				push @$attr_values, $val;
 			}
 		}
-		VimListExtend('attr_val',$attr_val);
+		VimListExtend('attr_values',$attr_values);
 eof
-		return attr_val
+		return attr_values
 
 endfunction
 
