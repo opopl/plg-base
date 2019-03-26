@@ -143,21 +143,21 @@ perl << eof
 		
 		my @n     = $dom->findnodes($xpath);
 
-		my $n=sub { 
-			local $_=shift;
+		my $n = sub { 
+			local $_ = shift;
 			my $t = $_->toString;
 			my @t = split("\n",$t);
 			@t;
 		};
-		my @list=map { $n->($_) } @n;
+		my @list = map { $n->($_) } @n;
 
 		my $s=sub {
 			my @r;
-			local $_=shift;
+			local $_ = shift;
 
 			$_;
 		};
-		@list=map { $s->($_) } @list;
+		@list = map { $s->($_) } @list;
 		VimListExtend('list',[@list]);
 	
 eof
