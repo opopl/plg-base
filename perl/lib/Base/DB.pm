@@ -115,7 +115,7 @@ sub dbi_connect {
 	};
 
 	my $dbh = eval { DBI->connect($dsn, $user, $password, $attr ) };
-	if ($@) { $warn->([ $@ ]); return; }
+	if ($@) { $warn->([ $@, DBI->errstr ]); return; }
 	return $dbh;
 }
 

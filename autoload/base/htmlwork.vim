@@ -70,16 +70,20 @@ function! base#htmlwork#debug_vars ()
 	let dbfile = base#htmlwork#dbfile()
 
 	let qs = ['']
+	let p = []
 	"call add(qs,'SELECT rowid,func,url,msg,var_name,var_value,details FROM log WHERE loglevel = ?')
 	"call add(qs,'SELECT func,var_name,var_value FROM log WHERE loglevel = ?')
 	"call add(qs,'SELECT details FROM log WHERE loglevel = ?')
+	"
+	call add(qs,'SELECT msg,var_name,var_value FROM log ' . 
+		\	' WHERE loglevel = ? AND var_name = "href_remote"')
 
-	call add(qs,'SELECT var_name, var_value, details FROM log ' 
-		\	. ' WHERE loglevel = ? AND func = "list_href" AND var_name = "@href_internal_only"' )
+ " call add(qs,'SELECT var_name, var_value, details FROM log ' 
+		"\	. ' WHERE loglevel = ? AND func = "list_href" AND var_name = "@href_internal_only"' )
 
 	call base#varset('this',qs)
 	"let q = input('query:','','custom,base#complete#this')
-	let p = ['debug']
+	call add(p,'debug')
 
 	let q = get(qs,1,'')
 
@@ -270,7 +274,9 @@ function! base#htmlwork#view_saved ()
 
 	let siteids = base#htmlwork#siteids ()
 	call base#varset('this',siteids)
-	let siteid = input('siteid:','','custom,base#complete#this')
+
+
+	let siteid = base#input_we('siteid:','',{ 'complete' : 'custom,base#complete#this' })
 
 	let q = 'SELECT local FROM saved WHERE siteid = ?'
 	let p = [siteid]
@@ -286,7 +292,7 @@ function! base#htmlwork#view_saved ()
 	endfor
 
 	call base#varset('this', sort(keys(files_h)) )
-	let local_bname = input('local file:','','custom,base#complete#this')
+	let local_bname = base#input_we('local file:','',{ 'complete' : 'custom,base#complete#this' })
 
 	let local = get(files_h, local_bname, '')
 

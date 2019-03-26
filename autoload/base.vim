@@ -1217,12 +1217,33 @@ fun! base#input(msg,default,...)
     return
   endif
 
-  let complete=get(ref,'complete','')
+  let complete = get(ref,'complete','')
 
   if strlen(complete)
     let v = input(msg,default,complete)
   else
     let v = input(msg,default)
+  endif
+
+  return v
+endf
+
+fun! base#input_we(msg,default,...)
+  let [msg,default] = [ a:msg,a:default ]
+
+  let ref = get(a:000,0,{})
+
+  let complete = get(ref,'complete','')
+
+	let v = ''
+  if strlen(complete)
+		while !strlen(v)
+    	let v = input(msg,default,complete)
+		endw
+  else
+		while !strlen(v)
+    	let v = input(msg,default)
+		endw
   endif
 
   return v

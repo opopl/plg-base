@@ -97,7 +97,7 @@ sub url_normalize {
 	if (ref $url eq "SCALAR"){
 		my $u = $$url;
 		$$url = url_normalize($u,$ref);
-		return $u;
+		return $$url;
 	}
 	my $s=q{/};
 	
