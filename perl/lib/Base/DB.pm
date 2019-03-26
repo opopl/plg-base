@@ -66,24 +66,55 @@ our ($DBH,$WARN);
 
 =head2 dbi_connect
 
+=head3 Usage
+
+	my $ref={
+		# dbfile
+		dbfile => $dbfile,
+
+		# optional, dsn
+		dsn => $dsn,
+		
+		# optional, user + pwd
+		user => $user,
+		pwd  => $password,
+
+		# optional, DBI driver name, 
+		# 	default: sqlite
+		driver => $driver,
+		
+		# attributes passed on to DBI->connect
+		attr => $attr || {},
+
+	};
+	my $dbh = dbh_select($ref);
+
 =cut
 
 sub dbi_connect {
-	my ($ref)=@_;
+	my ($ref) = @_;
 
 	my $dbfile = $ref->{dbfile};
-	my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
+	my $warn   = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
 
-	my $dsn      = $ref->{dsn} || "dbi:SQLite:dbname=$dbfile";
+	my $drivers = {
+		sqlite => 'SQLite'
+	};
+	my $drv     = $ref->{driver} || 'sqlite';
+	my $drv_dbi = $drivers->{$drv} || $drv;
+
+	my $dsn      = $ref->{dsn} || "dbi:$drv_dbi:dbname=$dbfile";
 	my $user     = $ref->{user} || "";
 	my $password = $ref->{pwd} || "";
 
-	my $dbh = eval { DBI->connect($dsn, $user, $password, {
+	my $attr     = $ref->{attr} || {
 		PrintError       => 0,
 		RaiseError       => 1,
 		AutoCommit       => 1,
 		FetchHashKeyName => 'NAME_lc',
-	}) };
+	};
+
+	my $dbh = eval { DBI->connect($dsn, $user, $password, $attr ) };
 	if ($@) { $warn->([ $@ ]); return; }
 	return $dbh;
 }
