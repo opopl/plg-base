@@ -95,7 +95,7 @@ function! base#html#headings (...)
 	let file  = get(ref,'file','')
 
 	if filereadable(file)
-		 let lines=readfile(file)
+		 let lines = readfile(file)
 	endif
 	let html = join(lines,"\n")
 
@@ -114,7 +114,7 @@ perl << eof
 	use Encode qw(decode);
 	my ($dom,@nodes,$parser);
 
-	$parser=$PARSER || XML::LibXML->new; 
+	$parser = $PARSER || XML::LibXML->new; 
 
 	#	my $xpath    = VimVar('xpath');
 	my $html = VimVar('html');
