@@ -6,7 +6,7 @@ function! base#bufact#html#lynx_dump_split ()
 	let tmp   = tempname()
 	call writefile(lines,tmp)
 
-	let cmd = 'lynx -dump -force_html '.tmp
+	let cmd = 'lynx -dump -force_html '. tmp
 	let cmd = input('Conversion cmd:',cmd)
 
 	echo tmp

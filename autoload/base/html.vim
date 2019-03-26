@@ -289,7 +289,7 @@ perl << eof
 
 	my $html  = VimVar('htmltext');
 	
-	our $HTW ||= HTML::Work->new(
+	our $HTW = HTML::Work->new(
 		html => $html,
 	);
 	$HTW->replace_a;
@@ -891,7 +891,7 @@ function! base#html#htw_load_buf ()
 	let msg = ['start']
 	let prf = {'plugin' : 'base', 'func' : 'base#html#htw_load_buf'}
 	call base#log(msg,prf)
-	let l:start=localtime()
+	let l:start = localtime()
 	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 	let load_as      = base#html#libxml_load_as()

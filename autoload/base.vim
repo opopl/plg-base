@@ -1229,11 +1229,11 @@ fun! base#input(msg,default,...)
 endf
 
 fun! base#input_we(msg,default,...)
-  let [msg,default] = [ a:msg,a:default ]
+  let [msg, default] = [ a:msg, a:default ]
 
   let ref = get(a:000,0,{})
 
-  let complete = get(ref,'complete','')
+  let complete = get(ref, 'complete' , '')
 
 	let v = ''
   if strlen(complete)
