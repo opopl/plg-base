@@ -1,5 +1,5 @@
 
-package Base::Xml;
+package Base::XML;
 
 use strict;
 use warnings;

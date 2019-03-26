@@ -15,7 +15,7 @@ perl << eof
 
 		use XML::LibXML;
 		use Vim::Perl qw(:funcs :vars);
-		use Base::Xml qw($DOMCACHE $XPATHCACHE $DOM);
+		use Base::XML qw($DOMCACHE $XPATHCACHE $DOM);
 		#use Vim::Plg::idephp qw($doms_xml);
 
 		use String::Escape qw(quote);
@@ -67,7 +67,7 @@ perl << eof
 
 		use XML::LibXML;
 		use Vim::Perl qw(VimWarn VimVar);
-		use Base::Xml qw($DOMCACHE $XPATHCACHE $DOM);
+		use Base::XML qw($DOMCACHE $XPATHCACHE $DOM);
 
 		use IO::String;
 
@@ -99,8 +99,8 @@ function! base#xml#xpath_attr (...)
 		let attr_val=[]
 
 perl << eof
-		my $dom  = $Base::Xml::DOM;
-		my $xpc  = $Base::Xml::XPATHCACHE;
+		my $dom  = $Base::XML::DOM;
+		my $xpc  = $Base::XML::XPATHCACHE;
 
 		my $xpath     = VimVar('xpath') || '';
 
@@ -128,10 +128,10 @@ function! base#xml#xpath_lines (...)
 
 		let list=[]
 perl << eof
-		my $dom = $Base::Xml::DOM;
+		my $dom = $Base::XML::DOM;
 
 		unless (defined $dom){
-			VimWarn('$Base::Xml::DOM undefined!');
+			VimWarn('$Base::XML::DOM undefined!');
 			return;
 		}
 

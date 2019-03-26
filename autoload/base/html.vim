@@ -107,7 +107,7 @@ function! base#html#headings (...)
 	let xpath = '//*['.he.']'
 
 perl << eof
-	use Base::Xml qw($PARSER $PARSER_OPTS);
+	use Base::XML qw($PARSER $PARSER_OPTS);
 
 	use XML::LibXML;
 	use XML::LibXML::PrettyPrint;
