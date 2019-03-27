@@ -39,6 +39,9 @@ my @ex_vars_array=qw(
 	node_cdata2text
 	xml_pretty
 	pl_to_xml
+
+	dom_new
+	parser_new
 )],
 'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -78,6 +81,22 @@ use vars qw(
     XML_XINCLUDE_END            => 20,
 );
 
+sub dom_new {
+	my $parser = parser_new();
+	my $dom = $parser->createDocument( "1.0", "UTF-8" );
+	
+	return ($dom,$parser);
+}
+
+sub parser_new {
+	my (@o) = @_;
+
+	unshift @o, %{ $PARSER_OPTS || {} };
+
+	my $parser = XML::LibXML->new(@o);
+	return $parser;
+}
+
 
 sub xml_pretty {
 	my ($xml) = @_;
@@ -98,6 +117,24 @@ sub xml_pretty {
 	return $xml;
 
 }
+
+=head2 pl_to_xml
+
+=head3 Usage
+
+	my $xml = pl_to_xml(
+		# XML::LibXML DOM instance
+		dom => $dom,
+
+		# parent node, (XML::LibXML::Node instance)
+		parent => $parent,
+
+		key => $key,
+	);
+
+=head3 Purpose
+
+=cut
 
 sub pl_to_xml {
 	my ($data,$ref) = @_;
