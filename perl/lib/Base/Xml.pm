@@ -9,6 +9,8 @@ use HTML::Entities;
 use XML::LibXML;
 use XML::LibXML::PrettyPrint;
 
+use Base::Arg qw(hash_update);
+
 use Data::Dumper;
 
 use Exporter ();
@@ -83,9 +85,9 @@ use vars qw(
 
 sub dom_new {
 	my $parser = parser_new();
-	my $dom = $parser->createDocument( "1.0", "UTF-8" );
+	my $dom    = $parser->createDocument( "1.0", "UTF-8" );
 	
-	return ($dom,$parser);
+	return ($dom, $parser);
 }
 
 sub parser_new {
@@ -173,12 +175,17 @@ sub pl_to_xml {
 	my $xmlout;
 	my @res;
 
+	print Dumper($data) . "\n";
+
+	my $o = {
+		dom    => $dom,
+		parent => $parent,
+		key    => $key,
+	};
+
 	if (ref $data eq "ARRAY"){
-		my $o = { 
-			dom    => $dom,
-			parent => $parent,
-			key    => $key,
-		};
+
+		print Dumper($data) . "\n";
 		foreach my $v (@$data) {
 			my ($xml, $vnodes) = pl_to_xml($v, $o);
 
@@ -188,21 +195,15 @@ sub pl_to_xml {
 	}elsif(ref $data eq "HASH"){
 		my @knodes;
 
-		#print Dumper([ keys %$data ]);
-		#print Dumper($parent);
-		#print Dumper($dom);
-		#print Dumper($anew);
-
 		while( my($k, $v) = each %{$data} ){
 	    	my $knode = $dom->createElement( $k );
 
-			push @knodes,$knode;
+			push @knodes, $knode;
 
-			my $o = { 
-				dom    => $dom,
+			hash_update($o,{
 				parent => $knode,
 				key    => $k,
-			};
+			});
 			my ($xml, $vnodes) = pl_to_xml($v, $o);
 
 			$knode->appendChild($_) for(@$vnodes);

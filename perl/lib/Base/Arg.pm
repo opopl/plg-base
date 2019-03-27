@@ -29,6 +29,7 @@ my @ex_vars_array=qw(
 ###export_funcs
 	'funcs' => [qw( 
 		arg_to_list
+		hash_update
 	)],
 	'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -49,6 +50,14 @@ sub arg_to_list {
 		
 	}
 	return wantarray ? @list : \@list ;
+}
+
+sub hash_update {
+	my ($hash,$update) = @_;
+
+	while(my($k,$v) = each %{$update}){
+		$hash->{$k} = $update->{$v};
+	}
 }
 
 1;
