@@ -37,20 +37,22 @@ endf
 
 function! base#bufact#perl#pod_process ()
 	call base#buf#start()
-perl << eof
-	use Vim::Perl qw(:funcs :vars);
-	$Vim::Perl::CURBUF=$curbuf;
 
-	my $lines = [ $curbuf->Get(1 .. $curbuf->Count) ];
+	let pl = base#qw#catpath('plg','base perl bin pod_process.pl')
 
-	use Base::Pod;
+	"let module = base#input_we('module:','',{'complete' : 'custom,perlmy#complete#perldoc'})
+	"let opts = ' -m ' . module
+	"
+	let opts = ' -f ' . '"' . escape(b:file,'\ ') . '"'
+	"
+	let cmd = join([ 'perl', pl, opts ],' ')
+	let ok = base#sys({ 
+		\	"cmds"         : [cmd],
+		\	"split_output" : 1,
+		\	})
+	let out    = base#varget('sysout',[])
+	let outstr = base#varget('sysoutstr','')
 
-	my $pp = Base::Pod->new;
-
-	$pp->set_source($lines);
-	$pp->run;
-
-eof
 endf
 
 function! base#bufact#perl#ppi_vars ()

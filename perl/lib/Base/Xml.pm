@@ -1,6 +1,20 @@
 
 package Base::XML;
 
+=head1 NAME
+
+Base::XML -- module for working with XML
+
+=head1 SYNOPSIS
+
+	use Base::XML qw(:funcs :vars);
+
+=head1 EXPORTS
+
+=head1 METHODS
+
+=cut
+
 use strict;
 use warnings;
 
@@ -233,8 +247,6 @@ sub pl_to_xml {
 		}
 
 		push @vnodes, $vnode if $vnode;  
-
-
 
 	}
 

@@ -25,7 +25,7 @@ sub run {
             {
                 $title = $tokens[4]->text;
                 # We have the title, so we can ignore the remaining tokens
-                last;
+                #last;
             }
 
             shift @tokens;
