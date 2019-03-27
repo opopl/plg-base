@@ -200,7 +200,6 @@ sub pl_to_xml {
 			push @vnodes, $vnode;
 			$vnode = $parent->appendChild($vnode);
 		}
-		$xmlout = $parent->toString;
 		
 	}elsif( ref $data eq "HASH" ){
 
@@ -223,8 +222,6 @@ sub pl_to_xml {
 
 		}
 
-		#$xmlout = join("\n", map { $_->toString } @knodes );
-		$xmlout = $parent->toString;
 
 	}elsif(ref $data eq ""){
 
@@ -238,11 +235,12 @@ sub pl_to_xml {
 		push @vnodes, $vnode if $vnode;  
 
 
-		$xmlout = $parent->toString;
 
 	}
 
 	push @res, [@vnodes];
+
+	$xmlout = $parent->toString;
 	$xmlout = xml_pretty($xmlout);
 
 	unshift @res,$xmlout;
