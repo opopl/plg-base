@@ -7,6 +7,8 @@ use warnings;
 use XML::LibXML;
 use HTML::Entities;
 
+use XML::LibXML::PrettyPrint;
+
 use Exporter ();
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 
@@ -33,6 +35,7 @@ my @ex_vars_array=qw(
 ###export_funcs
 'funcs' => [qw( 
 	node_cdata2text
+	xml_pretty
 )],
 'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -71,5 +74,18 @@ use vars qw(
     XML_XINCLUDE_START          => 19,
     XML_XINCLUDE_END            => 20,
 );
+
+
+sub xml_pretty {
+	my ($xml) = @_;
+
+	my $dom = XML::LibXML->load_xml(string => $xml);
+	my $pp = XML::LibXML::PrettyPrint->new(indent_string => "  ");
+	$pp->pretty_print($dom); # modified in-place
+	my $xml =  $dom->toString;
+
+	return $xml;
+
+}
 
 1;

@@ -14,7 +14,7 @@ function! base#bufact#perl#execute ()
 	call base#buf#start()
 
 	let vname = 'hist_bufact_perl_execute'
-	let hist  = base#varget(v,[])
+	let hist  = base#varget(vname,[''])
 	call base#varset('this',hist)
 
 	let opts = input('perl command-line options: ','','custom,base#complete#this')
@@ -23,7 +23,7 @@ function! base#bufact#perl#execute ()
 
 	call add(cmds,cmd)
 
-	call add(hist,cmd)
+	call add(hist,opts)
 	call base#varset(vname,hist)
 
 	let ok = base#sys({ 
