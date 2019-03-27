@@ -56,7 +56,7 @@ sub hash_update {
 	my ($hash,$update) = @_;
 
 	while(my($k,$v) = each %{$update}){
-		$hash->{$k} = $update->{$v};
+		$hash->{$k} = $v;
 	}
 }
 

@@ -93,7 +93,14 @@ sub dom_new {
 sub parser_new {
 	my (@o) = @_;
 
-	unshift @o, %{ $PARSER_OPTS || {} };
+	my $defs = {
+		expand_entities => 0,
+		load_ext_dtd    => 1,
+		no_blanks       => 0,
+		no_cdata        => 1,
+		line_numbers    => 1,
+	};
+	unshift @o, %{ $PARSER_OPTS || $defs };
 
 	my $parser = XML::LibXML->new(@o);
 	return $parser;
@@ -132,6 +139,9 @@ sub xml_pretty {
 		parent => $parent,
 
 		key => $key,
+
+		# default is 'item'
+		listas => 'item',
 	);
 
 =head3 Purpose
@@ -146,22 +156,15 @@ sub pl_to_xml {
 	my $anew;
 	$anew = 1 unless $ref->{dom};
 
-    my ($dom, $parent);
+	my $listas = $ref->{listas} || 'item';
 
-	my %o = (
-		expand_entities => 0,
-		load_ext_dtd    => 1,
-		no_blanks       => 0,
-		no_cdata        => 1,
-		line_numbers    => 1,
-	);
-	my $parser = XML::LibXML->new(%o);
+	my ($dom, $parser) = dom_new();
 	
-	$dom = $ref->{dom} || $parser->createDocument( "1.0", "UTF-8" );
+	$dom = $ref->{dom} if $ref->{dom};
 
 	# parent node into which the DOM representation
 	# 	of the input Perl data will be inserted
-	$parent = $ref->{parent};
+	my $parent = $ref->{parent};
 
 	if ($anew) {
 	    my $root = $dom->createElement( 'root' );
@@ -175,52 +178,67 @@ sub pl_to_xml {
 	my $xmlout;
 	my @res;
 
-	print Dumper($data) . "\n";
-
 	my $o = {
 		dom    => $dom,
 		parent => $parent,
 		key    => $key,
 	};
 
+	my @vnodes;
 	if (ref $data eq "ARRAY"){
 
-		print Dumper($data) . "\n";
 		foreach my $v (@$data) {
-			my ($xml, $vnodes) = pl_to_xml($v, $o);
 
-			$parent->appendChild($_) for(@$vnodes);
+	    	my $vnode = $dom->createElement( $listas );
+
+			hash_update($o,{key => undef });
+			my ($xml, $cnodes) = pl_to_xml($v, $o);
+
+			$vnode->appendChild($_) for(@$cnodes);
+
+			push @vnodes, $vnode;
+			$vnode = $parent->appendChild($vnode);
 		}
+		$xmlout = $parent->toString;
 		
-	}elsif(ref $data eq "HASH"){
-		my @knodes;
+	}elsif( ref $data eq "HASH" ){
 
 		while( my($k, $v) = each %{$data} ){
-	    	my $knode = $dom->createElement( $k );
+	    	my $vnode = $dom->createElement( $k );
 
-			push @knodes, $knode;
+			push @vnodes, $vnode;
 
 			hash_update($o,{
-				parent => $knode,
 				key    => $k,
 			});
-			my ($xml, $vnodes) = pl_to_xml($v, $o);
+			my ($xml, $cnodes) = pl_to_xml($v, $o);
 
-			$knode->appendChild($_) for(@$vnodes);
-			$knode = $parent->appendChild($knode);
+			if (@$cnodes) {
+				$vnode->appendChild($_) for(@$cnodes);
+				$vnode = $parent->appendChild($vnode);
+			}
+
+   #         print Dumper($xml);
+
 		}
 
-		$xmlout = join("\n", map { $_->toString} @knodes );
-
-		push @res, [@knodes];
+		#$xmlout = join("\n", map { $_->toString } @knodes );
+		$xmlout = $parent->toString;
 
 	}elsif(ref $data eq ""){
+
 		if ($key) {
 			$parent->setAttribute( $key => $data );
+		}else{
+	    	my $vnode = $dom->createTextNode( $data );
+			push @vnodes, $vnode;
 		}
+
 		$xmlout = $parent->toString;
 
 	}
+
+	push @res, [@vnodes];
 	$xmlout = xml_pretty($xmlout);
 
 	unshift @res,$xmlout;
