@@ -208,6 +208,9 @@ function! base#list#add (ref,...)
     endif
  endfor
 
+ echo list
+ echo listname
+
 
  let eva=[]
 
@@ -227,6 +230,7 @@ function! base#list#add (ref,...)
  endif
 
  let evas = join(eva,"\n")
+ echo evas
 
  exe evas
 
