@@ -9,6 +9,8 @@ use HTML::Entities;
 use XML::LibXML;
 use XML::LibXML::PrettyPrint;
 
+use Data::Dumper;
+
 use Exporter ();
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 
@@ -80,15 +82,18 @@ use vars qw(
 sub xml_pretty {
 	my ($xml) = @_;
 
-	eval { my $dom = XML::LibXML->load_xml(
-		string          => $xml,
-		recover         => 1,
-		suppress_errors => 1,
-	);
-	my $pp = XML::LibXML::PrettyPrint->new(indent_string => "  ");
-	$pp->pretty_print($dom); # modified in-place
-	$xml =  $dom->toString;
+	my $xml_pp;
+	eval { 
+		my $dom = XML::LibXML->load_xml(
+			string          => $xml,
+			recover         => 1,
+			suppress_errors => 1,
+		);
+		my $pp = XML::LibXML::PrettyPrint->new(indent_string => "  ");
+		$pp->pretty_print($dom); # modified in-place
+		$xml_pp =  $dom->toString;
 	};
+	$xml = $xml_pp if $xml_pp;
 
 	return $xml;
 
