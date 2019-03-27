@@ -23,7 +23,7 @@ function! base#bufact#perl#execute ()
 
 	call add(cmds,cmd)
 
-	call base#list#add('hist',cmd)
+	call add(hist,cmd)
 	call base#varset(vname,hist)
 
 	let ok = base#sys({ 
