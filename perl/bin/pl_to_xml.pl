@@ -20,7 +20,7 @@ my $h = {
 };
 my $a = [ 0 .. 2 ];
 
-my ($xml_a) = pl_to_xml($a,{listas => 'a'});
+my ($xml_a) = pl_to_xml($a,{listas => 'a', attr => [qw(a)]});
 my ($xml_h) = pl_to_xml($h,{listas => 'a'});
 
 print $xml_h . "\n";

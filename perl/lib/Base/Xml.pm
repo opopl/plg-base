@@ -182,6 +182,7 @@ sub pl_to_xml {
 		dom    => $dom,
 		parent => $parent,
 		key    => $key,
+		attr   => $ref->{attr},
 	};
 
 	my @vnodes;
@@ -228,16 +229,13 @@ sub pl_to_xml {
 	}elsif(ref $data eq ""){
 
 		my $vnode;
-   #     if ($key) {
-			##$parent->setAttribute( $key => $data );
-			#$vnode = $dom->createElement( $key );
-			#$vnode->appendText($data);
-		#}else{
-			#$vnode = $dom->createTextNode( $data );
-		#}
+		if ($key && grep { /^$key$/ } @{ $ref->{attr} || []}) { 
+			$parent->setAttribute( $key => $data );
+		}else{
+			$vnode = $dom->createTextNode( $data );
+		}
 
-	    $vnode = $dom->createTextNode( $data );
-		push @vnodes, $vnode if $vnode; 
+		push @vnodes, $vnode if $vnode;  
 
 
 		$xmlout = $parent->toString;
