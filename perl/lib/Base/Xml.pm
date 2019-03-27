@@ -227,12 +227,18 @@ sub pl_to_xml {
 
 	}elsif(ref $data eq ""){
 
-		if ($key) {
-			$parent->setAttribute( $key => $data );
-		}else{
-	    	my $vnode = $dom->createTextNode( $data );
-			push @vnodes, $vnode;
-		}
+		my $vnode;
+   #     if ($key) {
+			##$parent->setAttribute( $key => $data );
+			#$vnode = $dom->createElement( $key );
+			#$vnode->appendText($data);
+		#}else{
+			#$vnode = $dom->createTextNode( $data );
+		#}
+
+	    $vnode = $dom->createTextNode( $data );
+		push @vnodes, $vnode if $vnode; 
+
 
 		$xmlout = $parent->toString;
 
