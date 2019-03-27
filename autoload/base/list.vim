@@ -169,12 +169,11 @@ eof
 endfun
 
 function! base#list#add (ref,...)
+ let ref = a:ref
         
  if a:0
-   let items=a:000
+   let items = a:000
  endif
-
- let ref=a:ref
 
  let opts={
         \ 'uniq' : 0,
@@ -182,10 +181,10 @@ function! base#list#add (ref,...)
         \ }
 
  if base#type(ref) == 'String'
-    let listname=ref
+    let listname = ref
 
  elseif base#type(ref) == 'Dictionary'
-    let listname=ref.list
+    let listname = ref.list
     for [k,v] in items(ref)
         let opts[k]=v
     endfor
@@ -201,12 +200,14 @@ function! base#list#add (ref,...)
  let list=[]
 
  for item in items
-    if base#type(item) == 'String'
-      call add(list,item)
-    elseif base#type(item) == 'List'
+
+    if base#type(item) == 'List'
       call extend(list,item)
+		else
+      call add(list,item)
     endif
  endfor
+
 
  let eva=[]
 
@@ -225,7 +226,9 @@ function! base#list#add (ref,...)
    call add(eva,'let ' . listname . '=base#uniq(' . listname . ')' )
  endif
 
- exe join(eva,"\n")
+ let evas = join(eva,"\n")
+
+ exe evas
 
 endfun
  

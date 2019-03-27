@@ -13,11 +13,18 @@ endf
 function! base#bufact#perl#execute ()
 	call base#buf#start()
 
-	let opts = input('perl command-line options: ','')
+	let vname = 'hist_bufact_perl_execute'
+	let hist  = base#varget(v,[])
+	call base#varset('this',hist)
+
+	let opts = input('perl command-line options: ','','custom,base#complete#this')
 	let cmds = []
 	let cmd = 'perl ' . b:file . ' ' . opts
 
 	call add(cmds,cmd)
+
+	call base#list#add('hist',cmd)
+	call base#varset(vname,hist)
 
 	let ok = base#sys({ 
 		\	"cmds"         : cmds,
