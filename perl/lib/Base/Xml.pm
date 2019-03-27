@@ -4,9 +4,9 @@ package Base::XML;
 use strict;
 use warnings;
 
-use XML::LibXML;
 use HTML::Entities;
 
+use XML::LibXML;
 use XML::LibXML::PrettyPrint;
 
 use Exporter ();
@@ -36,6 +36,7 @@ my @ex_vars_array=qw(
 'funcs' => [qw( 
 	node_cdata2text
 	xml_pretty
+	pl_to_xml
 )],
 'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -79,13 +80,114 @@ use vars qw(
 sub xml_pretty {
 	my ($xml) = @_;
 
-	my $dom = XML::LibXML->load_xml(string => $xml);
+	eval { my $dom = XML::LibXML->load_xml(
+		string          => $xml,
+		recover         => 1,
+		suppress_errors => 1,
+	);
 	my $pp = XML::LibXML::PrettyPrint->new(indent_string => "  ");
 	$pp->pretty_print($dom); # modified in-place
-	my $xml =  $dom->toString;
+	$xml =  $dom->toString;
+	};
 
 	return $xml;
 
 }
+
+sub pl_to_xml {
+	my ($data,$ref) = @_;
+
+	$ref ||= {};
+
+	my $anew;
+	$anew = 1 unless $ref->{dom};
+
+    my ($dom, $parent);
+
+	my %o = (
+		expand_entities => 0,
+		load_ext_dtd    => 1,
+		no_blanks       => 0,
+		no_cdata        => 1,
+		line_numbers    => 1,
+	);
+	my $parser = XML::LibXML->new(%o);
+	
+	$dom = $ref->{dom} || $parser->createDocument( "1.0", "UTF-8" );
+
+	# parent node into which the DOM representation
+	# 	of the input Perl data will be inserted
+	$parent = $ref->{parent};
+
+	if ($anew) {
+	    my $root = $dom->createElement( 'root' );
+		$dom->setDocumentElement( $root );
+
+		$parent = $dom->documentElement;
+	}
+
+	my $key = $ref->{key} || '';
+
+	my $xmlout;
+	my @res;
+
+	if (ref $data eq "ARRAY"){
+		my $o = { 
+			dom    => $dom,
+			parent => $parent,
+			key    => $key,
+		};
+		foreach my $v (@$data) {
+			my ($xml, $vnodes) = pl_to_xml($v, $o);
+
+			$parent->appendChild($_) for(@$vnodes);
+		}
+		
+	}elsif(ref $data eq "HASH"){
+		my @knodes;
+
+		#print Dumper([ keys %$data ]);
+		#print Dumper($parent);
+		#print Dumper($dom);
+		#print Dumper($anew);
+
+		while( my($k, $v) = each %{$data} ){
+	    	my $knode = $dom->createElement( $k );
+
+			push @knodes,$knode;
+
+			my $o = { 
+				dom    => $dom,
+				parent => $knode,
+				key    => $k,
+			};
+			my ($xml, $vnodes) = pl_to_xml($v, $o);
+
+			$knode->appendChild($_) for(@$vnodes);
+			$knode = $parent->appendChild($knode);
+		}
+
+		$xmlout = join("\n", map { $_->toString} @knodes );
+
+		push @res, [@knodes];
+
+	}elsif(ref $data eq ""){
+		if ($key) {
+			$parent->setAttribute( $key => $data );
+		}
+		$xmlout = $parent->toString;
+
+	}
+	$xmlout = xml_pretty($xmlout);
+
+	unshift @res,$xmlout;
+
+	return @res;
+
+	#my $xml = join("\n",map { $_->toString} @knodes );
+
+
+}
+
 
 1;
