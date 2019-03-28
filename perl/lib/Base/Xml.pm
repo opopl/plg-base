@@ -199,6 +199,11 @@ sub pl_to_xml {
 		attr   => $ref->{attr},
 	};
 
+	my $key_is_attr = sub {
+		my ($key) = @_;
+		grep { /^$key$/ } @{ $ref->{attr} || []};
+	};
+
 	my @vnodes;
 	if (ref $data eq "ARRAY"){
 
@@ -206,7 +211,7 @@ sub pl_to_xml {
 
 	    	my $vnode = $dom->createElement( $listas );
 
-			hash_update($o,{key => undef });
+			hash_update($o,{ key => undef, parent => $vnode });
 			my ($xml, $cnodes) = pl_to_xml($v, $o);
 
 			$vnode->appendChild($_) for(@$cnodes);
@@ -218,18 +223,23 @@ sub pl_to_xml {
 	}elsif( ref $data eq "HASH" ){
 
 		while( my($k, $v) = each %{$data} ){
-	    	my $vnode = $dom->createElement( $k );
-
-			push @vnodes, $vnode;
+			my $vnode;
+	    	
+			if (not $key_is_attr->($k)) {
+				$vnode = $dom->createElement( $k );
+			}
 
 			hash_update($o,{
 				key    => $k,
 			});
 			my ($xml, $cnodes) = pl_to_xml($v, $o);
 
-			if (@$cnodes) {
-				$vnode->appendChild($_) for(@$cnodes);
-				$vnode = $parent->appendChild($vnode);
+			if ($vnode) {
+				push @vnodes, $vnode;
+				if (@$cnodes) {
+					$vnode->appendChild($_) for(@$cnodes);
+					$vnode = $parent->appendChild($vnode) ;
+				}
 			}
 
    #         print Dumper($xml);
@@ -240,7 +250,7 @@ sub pl_to_xml {
 	}elsif(ref $data eq ""){
 
 		my $vnode;
-		if ($key && grep { /^$key$/ } @{ $ref->{attr} || []}) { 
+		if ( $key && $key_is_attr->($key) ) { 
 			$parent->setAttribute( $key => $data );
 		}else{
 			$vnode = $dom->createTextNode( $data );
@@ -252,8 +262,8 @@ sub pl_to_xml {
 
 	push @res, [@vnodes];
 
-	$xmlout = $parent->toString;
-	$xmlout = xml_pretty($xmlout);
+	$xmlout = $parent->toString(2);
+	#$xmlout = xml_pretty($xmlout);
 
 	unshift @res,$xmlout;
 
