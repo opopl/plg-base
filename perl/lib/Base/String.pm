@@ -34,6 +34,8 @@ my @ex_vars_array=qw(
 sub str_split {
 	my ($str,$ref) = @_;
 
+	return () unless $str;
+
 	$ref||={};
 
 	my $c   = $ref->{comment_start}  || '#';

@@ -299,28 +299,33 @@ sub node_to_pl {
 
 	my $node = $ref->{node};
 	
+	my ($data);
 
-	my ($data, $data_h, $data_a);
-
-	$data_a = [];
-	$data_h = {};
-
-	my @list_items = str_split($ref->{list_items});
-	my $is_li = sub {
+	my @listas = str_split($ref->{listas});
+	my $n_is_list = sub {
 		my ($a) = @_;
-		grep { /^$a$/ } @list_items;
+		grep { /^$a$/ } @listas;
 	};
 
-	my $pnode = $node->parentNode;
+	my $p={};
+	$p->{node} = $node->parentNode;
+
+	if ($p->{node}) {
+		$p->{name} = $p->{node}->nodeName;
+		$p->{type} = $p->{node}->nodeType;
+	}
 
 	my $name = $node->nodeName;
 	my $type = $node->nodeType;
 
-	if ($is_li->($name)) {
-	}
+	my $is_list = $n_is_list->($name);
 
-	#if ($type == XML_ELEMENT_NODE) {
-	#}
+	if ( $type == XML_ELEMENT_NODE ) {
+		$data = ($is_list) ? [] : {};
+
+	} elsif ( $type == XML_TEXT_NODE ){
+		$data = $node->nodeValue;
+	}
 
 	foreach my $cn ($node->childNodes) {
 		my $cname = $cn->nodeName;
@@ -328,12 +333,10 @@ sub node_to_pl {
 
 		my $cdata = node_to_pl({ node => $cn });
 
-		foreach my $ccn ($cn->childNodes) {
-			# body...
-		}
-
-		if ($is_li->($cname)) {
-			push @$data_a, $cdata;
+		if ($is_list) {
+			push @$data, $cdata;
+		}else{
+			$data->{$cname} = $cdata;
 		}
 
 	}
