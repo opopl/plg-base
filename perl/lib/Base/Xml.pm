@@ -299,15 +299,15 @@ sub node_to_pl {
 
 	my $node = $ref->{node};
 	
-	my ($data);
 
 	my @listas = str_split($ref->{listas});
 	my $n_is_list = sub {
 		my ($a) = @_;
-		grep { /^$a$/ } @listas;
+		my $is = grep { /^$a$/ } @listas ? 1 : 0;
+		return $is;
 	};
 
-	my $p={};
+	my $p = {};
 	$p->{node} = $node->parentNode;
 
 	if ($p->{node}) {
@@ -320,11 +320,12 @@ sub node_to_pl {
 
 	my $is_list = $n_is_list->($name);
 
+	my ($data, $v);
 	if ( $type == XML_ELEMENT_NODE ) {
 		$data = ($is_list) ? [] : {};
 
 	} elsif ( $type == XML_TEXT_NODE ){
-		$data = $node->nodeValue;
+		$data = $node->textContent;
 	}
 
 	foreach my $cn ($node->childNodes) {
@@ -334,9 +335,9 @@ sub node_to_pl {
 		my $cdata = node_to_pl({ node => $cn });
 
 		if ($is_list) {
-			push @$data, $cdata;
+			push @{$data}, $cdata;
 		}else{
-			$data->{$cname} = $cdata;
+			$data->{$name} = $cdata;
 		}
 
 	}
