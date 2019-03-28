@@ -298,6 +298,7 @@ sub node_to_pl {
 	my ($ref) = @_;
 
 	my $node = $ref->{node};
+	
 
 	my ($data, $data_h, $data_a);
 
@@ -310,21 +311,26 @@ sub node_to_pl {
 		grep { /^$a$/ } @list_items;
 	};
 
+	my $pnode = $node->parentNode;
+
 	my $name = $node->nodeName;
 	my $type = $node->nodeType;
 
-	if ($type == XML_ELEMENT_NODE) {
+	if ($is_li->($name)) {
 	}
+
+	#if ($type == XML_ELEMENT_NODE) {
+	#}
 
 	foreach my $cn ($node->childNodes) {
 		my $cname = $cn->nodeName;
 		my $ctype = $cn->nodeType;
 
+		my $cdata = node_to_pl({ node => $cn });
+
 		foreach my $ccn ($cn->childNodes) {
 			# body...
 		}
-
-		my $cdata = node_to_pl({ node => $cn });
 
 		if ($is_li->($cname)) {
 			push @$data_a, $cdata;
@@ -336,7 +342,116 @@ sub node_to_pl {
 }
 
 sub xml_to_pl {
+	my ($xml) = @_;
+
+	my $dom = XML::LibXML->load_xml(
+		string => $xml,
+	);
+	my $data = node_to_pl({ 
+		node       => $dom,
+		list_items => 'item'
+	});
+	return $data;
 }
+
+our $X2A = 0;
+our %X2A = ();
+
+our %X2H = (
+	order  => 0,
+	attr   => '-',
+	text   => '#text',
+	join   => '',
+	trim   => 1,
+	cdata  => undef,
+	comm   => undef,
+	#cdata  => '#',
+	#comm   => '//',
+);
+
+sub _x2h {
+	my ($doc) = @_;
+	my $res;
+
+		if ($doc->hasChildNodes or $doc->hasAttributes) {
+
+			if ($X2H{order}) {
+				$res = [];
+				my $attr = {};
+				for ($doc->attributes) {
+					#warn " .> ".$_->nodeName.'='.$_->getValue;
+					$attr->{ $X2H{attr} . $_->nodeName } = $_->getValue;
+				}
+				push @$res, $attr if %$attr;
+			} else {
+				$res = {};
+				for ($doc->attributes) {
+					#warn " .> ".$_->nodeName.'='.$_->getValue;
+					$res->{ $X2H{attr} . $_->nodeName } = $_->getValue;
+				}
+			}
+
+			for my $child_node ($doc->childNodes) {
+				local $_ = $child_node;	
+
+				my $child_ref = ref $child_node;
+				my $nn;
+				if ($child_ref eq 'XML::LibXML::Text') {
+					$nn = $X2H{text}
+				}
+				elsif ($child_ref eq 'XML::LibXML::CDATASection') {
+					$nn = defined $X2H{cdata} ? $X2H{cdata} : $X2H{text};
+				}
+				elsif ($child_ref eq 'XML::LibXML::Comment') {
+					$nn = defined $X2H{comm} ? $X2H{comm} : next;
+				}
+				else {
+					$nn = $child_node->nodeName;
+				}
+				my $child_data = _x2h($child_node);
+				if ($X2H{order}) {
+					if ($nn eq $X2H{text}) {
+						push @{ $res }, $child_data if length $child_data;
+					} else {
+						push @{ $res }, { $nn => $child_data };
+					}
+				} else {
+					if (( $X2A or $X2A{$nn} ) and !$res->{$nn}) { $res->{$nn} = [] }
+					if (exists $res->{$nn} ) {
+						#warn "Append to $res->{$nn}: $nn $child_data";
+						$res->{$nn} = [ $res->{$nn} ] unless ref $res->{$nn} eq 'ARRAY';
+						push @{$res->{$nn}}, $child_data if defined $child_data;
+					} else {
+						if ($nn eq $X2H{text}) {
+							$res->{$nn} = $child_data if length $child_data;
+						} else {
+							$res->{$nn} = $child_data;
+						}
+					}
+				}
+			}
+			if($X2H{order}) {
+				#warn "Ordered mode, have res with ".(0+@$res)." children = @$res";
+				return $res->[0] if @$res == 1;
+			} else {
+				if (defined $X2H{join} and exists $res->{ $X2H{text} } and ref $res->{ $X2H{text} }) {
+					$res->{ $X2H{text} } = join $X2H{join}, grep length, @{ $res->{ $X2H{text} } };
+				}
+				delete $res->{ $X2H{text} } if $X2H{trim} and keys %$res > 1 and exists $res->{ $X2H{text} } and !length $res->{ $X2H{text} };
+				return $res->{ $X2H{text} } if keys %$res == 1 and exists $res->{ $X2H{text} };
+			}
+		}
+		else {
+			$res = $doc->textContent;
+			if ($X2H{trim}) {
+				$res =~ s{^\s+}{}s;
+				$res =~ s{\s+$}{}s;
+			}
+		}
+	$res;
+	
+}
+
 
 
 1;
