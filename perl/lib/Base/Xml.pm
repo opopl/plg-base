@@ -328,13 +328,15 @@ sub node_to_pl {
 	}
 
 	my @cnodes = $node->childNodes;
+	print Dumper([ map { $_->nodeName} @cnodes ]);
+
 	my $is_text = ( grep { $_->nodeType != XML_TEXT_NODE } @cnodes ) ? 0 : 1;
 
 	if ($is_text) {
 		$data = '';
 	}
-	print $is_text . "\n";
-	print $name . "\n";
+	#print $is_text . "\n";
+	#print $name . "\n";
 
 	foreach my $cn (@cnodes) {
 		my $cname = $cn->nodeName;

@@ -32,7 +32,11 @@ push @xml,
 ;
 
 foreach my $xml (@xml) {
-	my $dom = XML::LibXML->load_xml(
+	my $prs = XML::LibXML->new(
+		no_blanks => 1,
+	);
+
+	my $dom = $prs->load_xml(
 		string => $xml,
 	);
 	my $root = $dom->documentElement;
