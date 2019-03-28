@@ -114,7 +114,7 @@ sub parser_new {
 	my $defs = {
 		expand_entities => 0,
 		load_ext_dtd    => 1,
-		no_blanks       => 0,
+		no_blanks       => 1,
 		no_cdata        => 1,
 		line_numbers    => 1,
 	};
