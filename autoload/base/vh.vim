@@ -209,6 +209,9 @@ function! base#vh#heads_handle (...)
 		\ 'undef_head_2' : input('pattern undef_head_2 : ',pats.undef_head_2),
 		\	}
 
+	let wdth = input('maximal TOC entry width: ',30)
+	let fmt  = input('TOC perlpack fmt: ','A50 A*')
+
 	let index_h2_start = input('H2 index start:','a')
 	let index_h2_end   = input('H2 index end:','z')
 
@@ -220,6 +223,9 @@ perl << eof
 	my $i=0;
 
 	my $pats       = VimVar('pats');
+
+	my $fmt  = VimVar('fmt');
+	my $wdth = VimVar('wdth');
 
 	my $index_h2_start =  VimVar('index_h2_start') || 'a';
 	my $index_h2_end   =  VimVar('index_h2_end')   || 'z';
@@ -263,8 +269,8 @@ perl << eof
 			push @heads,$last_h1;
 
 			my $h1 = join(" ",$index,$title);
+			$h1 = substr($h1,0,$wdth);
 
-			my $fmt = 'A50A*';
 
 			$i_h1++;
 
@@ -287,11 +293,11 @@ perl << eof
 
 			my $index = join('.', $last_h1->{index},  "$sub_index_h2" );  
 
-			my $fmt = 'A50A*';
-
 			my $h2  = join(" ",$index,$title);
 			my $ref = $refprefix.$index;
 			$ref=~s/[\.-]/_/g;
+
+			$h2 = substr($h2,0,$wdth);
 
 			push @toc, pack($fmt, "  ".$h2 , '|'.$ref.'|' );
 			$target="*".$ref."*";

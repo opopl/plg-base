@@ -24,8 +24,10 @@ use XML::LibXML;
 use XML::LibXML::PrettyPrint;
 
 use Base::Arg qw(hash_update);
+use Base::String qw(str_split);
 
 use Data::Dumper;
+use XML::Hash::LX qw(xml2hash);
 
 use Exporter ();
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
@@ -55,6 +57,8 @@ my @ex_vars_array=qw(
 	node_cdata2text
 	xml_pretty
 	pl_to_xml
+	node_to_pl
+	xml_to_pl
 
 	dom_new
 	parser_new
@@ -272,6 +276,66 @@ sub pl_to_xml {
 	#my $xml = join("\n",map { $_->toString} @knodes );
 
 
+}
+
+=head2 xml_to_pl
+
+=head3 Usage
+
+	node_to_pl(
+		node => $node,
+
+		# nodes which should be converted 
+		# 	to elements of a perl list
+		list_items => 'item',
+	);
+
+=head3 Purpose
+
+=cut
+
+sub node_to_pl {
+	my ($ref) = @_;
+
+	my $node = $ref->{node};
+
+	my ($data, $data_h, $data_a);
+
+	$data_a = [];
+	$data_h = {};
+
+	my @list_items = str_split($ref->{list_items});
+	my $is_li = sub {
+		my ($a) = @_;
+		grep { /^$a$/ } @list_items;
+	};
+
+	my $name = $node->nodeName;
+	my $type = $node->nodeType;
+
+	if ($type == XML_ELEMENT_NODE) {
+	}
+
+	foreach my $cn ($node->childNodes) {
+		my $cname = $cn->nodeName;
+		my $ctype = $cn->nodeType;
+
+		foreach my $ccn ($cn->childNodes) {
+			# body...
+		}
+
+		my $cdata = node_to_pl({ node => $cn });
+
+		if ($is_li->($cname)) {
+			push @$data_a, $cdata;
+		}
+
+	}
+
+	return $data;
+}
+
+sub xml_to_pl {
 }
 
 
