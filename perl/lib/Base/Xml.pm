@@ -298,7 +298,6 @@ sub node_to_pl {
 	my ($ref) = @_;
 
 	my $node = $ref->{node};
-	
 
 	my @listas = str_split($ref->{listas});
 	my $n_is_list = sub {
@@ -328,16 +327,30 @@ sub node_to_pl {
 		$data = $node->textContent;
 	}
 
-	foreach my $cn ($node->childNodes) {
+	my @cnodes = $node->childNodes;
+	my $is_text = ( grep { $_->nodeType != XML_TEXT_NODE } @cnodes ) ? 0 : 1;
+
+	if ($is_text) {
+		$data = '';
+	}
+	print $is_text . "\n";
+	print $name . "\n";
+
+	foreach my $cn (@cnodes) {
 		my $cname = $cn->nodeName;
 		my $ctype = $cn->nodeType;
 
 		my $cdata = node_to_pl({ node => $cn });
 
+		if ($ctype == XML_TEXT_NODE) {
+			$data .= $cdata;
+			next;
+		}
+
 		if ($is_list) {
 			push @{$data}, $cdata;
 		}else{
-			$data->{$name} = $cdata;
+			$data->{$cname} = $cdata;
 		}
 
 	}

@@ -35,6 +35,7 @@ foreach my $xml (@xml) {
 	my $dom = XML::LibXML->load_xml(
 		string => $xml,
 	);
+	my $root = $dom->documentElement;
 	
 	my $data = node_to_pl({ node => $dom });
 	
