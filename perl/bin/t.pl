@@ -26,7 +26,8 @@ push @xml,
 	#},
 	q{<?xml version="1.0" encoding="UTF-8"?>
 	<root>
-	  <siteid>php_net_constants</siteid>
+	  <siteid>a</siteid>
+	  <siteid>b</siteid>
 	</root>
 	},
 ;

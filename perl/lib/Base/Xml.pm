@@ -328,32 +328,39 @@ sub node_to_pl {
 	}
 
 	my @cnodes = $node->childNodes;
-	print Dumper([ map { $_->nodeName} @cnodes ]);
+	#print Dumper([ map { $_->nodeName} @cnodes ]);
 
 	my $is_text = ( grep { $_->nodeType != XML_TEXT_NODE } @cnodes ) ? 0 : 1;
-
 	if ($is_text) {
-		$data = '';
+		#$data = '';
 	}
 	#print $is_text . "\n";
 	#print $name . "\n";
 
+	my $has={};
 	foreach my $cn (@cnodes) {
-		my $cname = $cn->nodeName;
-		my $ctype = $cn->nodeType;
+		my ($cname, $ctype) = ( $cn->nodeName, $cn->nodeType );
 
 		my $cdata = node_to_pl({ node => $cn });
 
 		if ($ctype == XML_TEXT_NODE) {
-			$data .= $cdata;
+			$data = $cdata;
 			next;
 		}
 
 		if ($is_list) {
 			push @{$data}, $cdata;
 		}else{
-			$data->{$cname} = $cdata;
+			unless ($has->{$cname}) {
+				$data->{$cname} = $cdata;
+			}else{
+				my $v = $data->{$cname};
+				$data = [$v];
+				push @{$data}, $cdata;
+			}
 		}
+
+		$has->{$cname}=1;
 
 	}
 
