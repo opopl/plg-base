@@ -335,13 +335,15 @@ sub node_to_pl {
 		#$data = '';
 	}
 	#print $is_text . "\n";
-	#print $name . "\n";
+	print $name . "\n";
 
 	my $has={};
 	foreach my $cn (@cnodes) {
 		my ($cname, $ctype) = ( $cn->nodeName, $cn->nodeType );
 
-		my $cdata = node_to_pl({ node => $cn });
+		my $cdata = node_to_pl({ 
+			node => $cn 
+		});
 
 		if ($ctype == XML_TEXT_NODE) {
 			$data = $cdata;
@@ -350,17 +352,21 @@ sub node_to_pl {
 
 		if ($is_list) {
 			push @{$data}, $cdata;
+
 		}else{
 			unless ($has->{$cname}) {
 				$data->{$cname} = $cdata;
 			}else{
-				my $v = $data->{$cname};
-				$data = [$v];
-				push @{$data}, $cdata;
+				if (ref $data eq 'HASH') {
+					my $v = $data->{$cname};
+					$data = [$v];
+				}elsif(ref $data eq 'ARRAY'){
+					push @{$data}, $cdata;
+				}
 			}
 		}
 
-		$has->{$cname}=1;
+		$has->{$cname} = 1;
 
 	}
 

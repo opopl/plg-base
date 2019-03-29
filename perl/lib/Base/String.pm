@@ -36,17 +36,27 @@ sub str_split {
 
 	return () unless $str;
 
-	$ref||={};
+	my @res;
+	if (ref $str eq "ARRAY"){
+		foreach my $s (@$str) {
+			push @res, str_split($s);
+		}
+		return @res;
+	}elsif( not ( ref $str eq "" ) ){
+		return ();
+	}
+
+	$ref ||= {};
 
 	my $c   = $ref->{comment_start}  || '#';
 	my $sep = $ref->{sep}  || "\n";
 
-	my @split = 
+	@res = 
 		map { s/^\s*//g; $_ } 
 		grep { !/^\s*$/ && !/^\s*$c/ } 
-		split($sep => $str);
+		split( $sep => $str );
 
-	return @split;
+	return @res;
 }
 
 1;

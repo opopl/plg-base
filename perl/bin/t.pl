@@ -28,6 +28,7 @@ push @xml,
 	<root>
 	  <siteid>a</siteid>
 	  <siteid>b</siteid>
+	  <siteid a="c">c</siteid>
 	</root>
 	},
 ;
