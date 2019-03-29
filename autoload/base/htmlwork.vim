@@ -148,6 +148,14 @@ function! base#htmlwork#siteids ()
 
 endfunction
 
+function! base#htmlwork#info ()
+	let dbfile = base#htmlwork#dbfile()
+
+	call pymy#sqlite#dbfile(dbfile)
+	call pymy#sqlite_cmd#info()
+
+endfunction
+
 function! base#htmlwork#delete_saved_files ()
 	let dbfile = base#htmlwork#dbfile()
 

@@ -16,3 +16,4 @@ sql_alterations
 delete_saved_files
 siteid_delete
 view_saved
+info
