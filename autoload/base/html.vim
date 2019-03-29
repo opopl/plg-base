@@ -45,7 +45,7 @@ eof
 endfunction
 
 function! base#html#file_info (...)
-	let ref   = get(a:000,0,{})
+	let ref = get(a:000,0,{})
 
 	let inf = {}
 
@@ -56,7 +56,9 @@ function! base#html#file_info (...)
 	endif
 	let html = join(lines,"\n")
 
-	let h = base#html#headings({ 'file' : file })
+	"let h = base#html#headings({ 
+		"\ 'file' : file 
+		"\ })
 
 	let f =  base#html#xpath({ 
 		\	'file'       : file,
@@ -76,7 +78,10 @@ function! base#html#file_info (...)
 		\	})
 	let base = get(a,0,'')
 
-	call extend(inf,{ 'title' :  title, 'base' : base })
+	call extend(inf,{ 
+		\	'title' : title,
+		\	'base'  : base,
+		\	})
 
 	if exists("b:html_info")
 		unlet b:html_info
@@ -99,24 +104,17 @@ function! base#html#headings (...)
 	endif
 	let html = join(lines,"\n")
 
-	let headnums = base#listnewinc(1,5,1)
-	let heads    = map(headnums,'"self::h".string(v:val)')
-	let he       = join(heads,' or ')
-	let h        = []
-
-	let xpath = '//*['.he.']'
-
 perl << eof
 	use Base::XML qw($PARSER $PARSER_OPTS);
 
 	use XML::LibXML;
 	use XML::LibXML::PrettyPrint;
 	use Encode qw(decode);
-	my ($dom,@nodes,$parser);
+
+	my ($dom, @nodes, $parser);
 
 	$parser = $PARSER || XML::LibXML->new; 
 
-	#	my $xpath    = VimVar('xpath');
 	my $html = VimVar('html');
 
 	my @headnums = (1 .. 5);
@@ -131,12 +129,12 @@ perl << eof
 	{
 			expand_entities => 0,
 			load_ext_dtd 		=> 1,
-			keep_blanks     => 1,
+			no_blanks       => 0,
 			no_cdata        => 0,
 			line_numbers    => 1,
 	};
 
-	$parser->set_options(%$xml_libxml_parser_options);
+	$parser->set_options( %$xml_libxml_parser_options );
 
 	my $inp={
 			string          => decode('utf-8',$html),
@@ -156,9 +154,10 @@ perl << eof
 
 	my %added=();
 	my @nodes;
-	while(my $node = $nodelist->pop) {
+	while( my $node = $nodelist->pop ) {
 		 unshift @nodes,$node;
-		 my $lnum=$node->line_number;
+
+		 my $lnum = $node->line_number;
  		 $pp->pretty_print($node);
 
 		 my $pos = $nodelist->size;

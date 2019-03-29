@@ -173,6 +173,7 @@ function! base#htmlwork#delete_saved_files ()
 		\	'p'      : p,
 		\	'q'      : q,
 		\	})
+
 	for sfile in saved_files
 		if filereadable(sfile)
 			call delete(sfile)

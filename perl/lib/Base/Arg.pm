@@ -55,9 +55,23 @@ sub arg_to_list {
 }
 
 sub hash_update {
-	my ($hash,$update) = @_;
+	my ($hash, $update, $opts) = @_;
 
-	while(my($k,$v) = each %{$update}){
+	$opts ||= {};
+
+	while( my($k, $v) = each %{$update} ){
+		# do not update if the corresponding field
+		# 	has been already defined before and elsewhere
+		if ($opts->{keep_already_defined}) {
+			next if defined $hash->{$k};
+		}
+
+		# update $hash ONLY if the corresponding value 
+		# is defined, i.e. is not undef
+		if ($opts->{update_from_defined}) {
+			next unless defined $update->{$k};
+		}
+
 		$hash->{$k} = $v;
 	}
 }

@@ -23,13 +23,13 @@ perl << eof
 		my $file   = VimVar('file');
 		my $reload = VimVar('reload');
 
-		if(!-e $file){VimWarn('File does not exist:',$file); return; }
+		if(! -e $file ){VimWarn('File does not exist:', $file); return; }
 
-		my($fh,$dom);
+		my ( $fh, $dom );
 
 		eval {
-			open $fh, '<', $file;
-			binmode $fh; 
+				open $fh, '<', $file;
+				binmode $fh; 
 		};
 		if($@){
 			VimWarn('Errors while loading file: ',$file,$@);
@@ -45,11 +45,11 @@ perl << eof
 				close $fh;
 				return;
 			}
-			$DOMCACHE->{$file}=$dom;
+			$DOMCACHE->{$file} = $dom;
 		}
 
-		unless(defined $dom){ VimWarn('DOM is not defined!'); return;}
-		$DOM=$dom;
+		unless( defined $dom ){ VimWarn('DOM is not defined!'); return; }
+		$DOM = $dom;
 
 		#VimMsg($dom->toString);
 		close $fh;
@@ -126,7 +126,9 @@ endfunction
 function! base#xml#xpath_lines (...)
 		let xpath = get(a:000,0,'')
 
-		let list=[]
+		let ref   = get(a:000,1,{})
+
+		let list = []
 perl << eof
 		my $dom = $Base::XML::DOM;
 
@@ -184,7 +186,7 @@ perl << eof
 
 		use String::Escape qw(quote);
 
-		my $warn=sub{ 
+		my $warn = sub { 
 			VIM::Msg($_,"WarningMsg") for(@_);
 		};
 

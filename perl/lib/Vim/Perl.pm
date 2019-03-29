@@ -907,7 +907,7 @@ sub VimMsg {
 }
 
 sub VimMsg_dbh {
-    my ($text,$ref) = @_;
+    my ($text, $ref) = @_;
 	
 	my $dbh    = $ref->{dbh} || $DBH;
 	my $dbfile = $ref->{dbfile} || $DBFILE;
