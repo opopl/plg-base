@@ -110,6 +110,29 @@ function! base#htmlwork#clear_log ()
 
 endfunction
 
+function! base#htmlwork#siteid_delete ()
+	let dbfile = base#htmlwork#dbfile()
+
+	let siteid = base#input_we('siteid: ','',{ 
+		\	'complete' : 'custom,idephp#complete#dws_siteids'
+		\	})
+
+	let tables = base#qw('href log saved local_index')
+
+	for t in tables
+		let q = 'DELETE FROM ' . t  . ' WHERE siteid = ? ' 
+		let p = [ siteid ]
+
+		call pymy#sqlite#query({
+			\	'dbfile' : dbfile,
+			\	'p'      : p,
+			\	'q'      : q,
+			\	})
+	endfor
+
+
+endfunction
+
 function! base#htmlwork#delete_saved_files ()
 	let dbfile = base#htmlwork#dbfile()
 
