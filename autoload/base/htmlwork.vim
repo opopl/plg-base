@@ -133,11 +133,32 @@ function! base#htmlwork#siteid_delete ()
 
 endfunction
 
+function! base#htmlwork#siteids ()
+	let dbfile = base#htmlwork#dbfile()
+
+	let q = 'SELECT DISTINCT siteid FROM saved'
+	let p = [ ]
+	
+	let siteids = pymy#sqlite#query_as_list({
+		\	'dbfile' : dbfile,
+		\	'p'      : p,
+		\	'q'      : q,
+		\	})
+	return siteids
+
+endfunction
+
 function! base#htmlwork#delete_saved_files ()
 	let dbfile = base#htmlwork#dbfile()
 
-	let q = 'SELECT local FROM saved'
-	let p = []
+	let siteids = base#htmlwork#siteids ()
+	call base#varset('this', siteids)
+
+	let siteid = base#input_we('siteid:','',{ 
+		\	'complete' : 'custom,base#complete#this' })
+
+	let q = 'SELECT local FROM saved WHERE siteid = ? '
+	let p = [ siteid ]
 	
 	let saved_files = pymy#sqlite#query_as_list({
 		\	'dbfile' : dbfile,

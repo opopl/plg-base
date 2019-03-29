@@ -15,6 +15,8 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT  = qw( );
 $VERSION = '0.01';
 
+use Base::String qw(str_split);
+
 ###export_vars_scalar
 my @ex_vars_scalar=qw(
 );
