@@ -130,7 +130,11 @@ function! base#xml#xpath_lines (...)
 
 		let list = []
 perl << eof
+		use String::Util qw(trim);
+
 		my $dom = $Base::XML::DOM;
+
+		my $ref = VimVar('ref');
 
 		unless (defined $dom){
 			VimWarn('$Base::XML::DOM undefined!');
@@ -153,13 +157,17 @@ perl << eof
 		};
 		my @list = map { $n->($_) } @n;
 
-		my $s=sub {
+		my $s = sub {
 			my @r;
 			local $_ = shift;
 
 			$_;
 		};
 		@list = map { $s->($_) } @list;
+		if ($ref->{trim}) {
+			@list = map { trim($_) } @list;
+		}
+		@list = grep { ($_) ? 1 : 0 } @list;
 		VimListExtend('list',[@list]);
 	
 eof

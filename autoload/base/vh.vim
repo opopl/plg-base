@@ -294,13 +294,13 @@ perl << eof
 			my $index = join('.', $last_h1->{index},  "$sub_index_h2" );  
 
 			my $h2  = join(" ",$index,$title);
-			my $ref = $refprefix.$index;
-			$ref=~s/[\.-]/_/g;
+			my $ref = $refprefix . $index;
+			$ref    =~ s/[\.-]/_/g;
 
 			$h2 = substr($h2,0,$wdth);
 
 			push @toc, pack($fmt, "  ".$h2 , '|'.$ref.'|' );
-			$target="*".$ref."*";
+			$target = "*".$ref."*";
 
 			s/^\s*//g;
 			s/^/$index /g;
@@ -339,7 +339,8 @@ perl << eof
 		'_toc_ Table of Contents *_toc_*', 
 		@delim, 
 		map { $toc_prefix . $_ } @toc, 
-		@delim 
+		'_endtoc_ Table of Contents *_endtoc_*', 
+		@delim,
 	);
 
 	unshift @nlines,

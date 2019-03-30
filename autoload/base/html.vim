@@ -66,8 +66,8 @@ function! base#html#file_info (...)
 		\	'trim'       : 1,
 		\	'skip_empty' : 1,
 		\	})
-	let title = join(f,'')
 
+	let title = join(f,'')
 
 	let attr = {}
 
@@ -105,7 +105,7 @@ function! base#html#headings (...)
 	let html = join(lines,"\n")
 
 perl << eof
-	use Base::XML qw($PARSER $PARSER_OPTS);
+	use Base::XML qw( $PARSER $PARSER_OPTS );
 
 	use XML::LibXML;
 	use XML::LibXML::PrettyPrint;
