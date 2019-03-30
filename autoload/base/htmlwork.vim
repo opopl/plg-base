@@ -185,7 +185,7 @@ endfunction
 function! base#htmlwork#drop_all ()
 	let dbfile = base#htmlwork#dbfile()
 
-	let yn = input('Ready to drop all tables? 1/0: ',1)
+	let yn = input('Ready to drop all tables? 1/0: ', 1)
 	if !yn | return | endif
 
 	call base#htmlwork#delete_saved_files ()
@@ -222,7 +222,7 @@ endfunction
 function! base#htmlwork#clear_saved ()
 	let dbfile = base#htmlwork#dbfile()
 
-	let yn = input('Ready to delete saved? 1/0:',1)
+	let yn = input('Ready to delete saved? 1/0: ',1)
 
 	if !yn | return | endif
 
@@ -241,7 +241,7 @@ function! base#htmlwork#clear_saved ()
 	endfor
 
 	let q = 'DELETE FROM saved'
-	let q = input('query:',q)
+	let q = input('query: ',q)
 
 	call pymy#sqlite#query({
 		\	'dbfile' : dbfile,
@@ -252,25 +252,25 @@ endfunction
 
 function! base#htmlwork#db_backup ()
 	let dbfile = base#htmlwork#dbfile()
-
+	
 	let dirname  = fnamemodify(dbfile,':p:h')
 	let basename = fnamemodify(dbfile,':p:t')
-
+	
 	let bdir = base#file#catfile([ dirname, 'backup' ])
 	call base#mkdir(bdir)
-
+	
 	let bname = input('backup dbfile name: ',basename)
-
+	
 	let bfile = base#file#catfile([ bdir, bname ])
 	call base#file#copy(dbfile,bfile)	
-
+	
 endfunction
 
 function! base#htmlwork#db_restore ()
 
 endfunction
 
-function! base#htmlwork#url_level (url,url_base)
+function! base#htmlwork#url_level (url, url_base)
 endfunction
 
 function! base#htmlwork#sql_alterations ()
@@ -324,13 +324,12 @@ endfunction
 
 function! base#htmlwork#view_saved ()
 	let dbfile = base#htmlwork#dbfile()
-
+	
 	let siteids = base#htmlwork#siteids ()
 	call base#varset('this',siteids)
-
-
+	
 	let siteid = base#input_we('siteid:','',{ 'complete' : 'custom,base#complete#this' })
-
+	
 	let q = 'SELECT local FROM saved WHERE siteid = ?'
 	let p = [siteid]
 	let files = pymy#sqlite#query_as_list({
