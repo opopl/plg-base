@@ -247,7 +247,7 @@ function! base#tg#update (...)
 	" list of files
 	let files = ''
 
-	" list of files (to be writte to a file which will be processed by 
+	" list of files (to be written to a file which will be processed by 
 	" 	ctags via -L option)
 	let files_arr = []
 
@@ -277,7 +277,7 @@ function! base#tg#update (...)
 
 		let dirs = perlmy#perl#inc_a()
 
-		let cnt = input('(TgUpdate perl_inc) Continue? 1/0: ',0)
+		let cnt = input('(TgUpdate ty_perl_inc) Continue with making TYGS? (1/0) : ',0)
 		if !cnt | return | endif
 
 		let ref = {

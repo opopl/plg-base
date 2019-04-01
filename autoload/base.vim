@@ -2441,29 +2441,31 @@ function! base#info (...)
 """info_bufs
    elseif topic == 'bufs'
 
-       call base#echo({ 'text' : "Buffer-related stuff: " } )
-       call base#echo({ 'text' : " "  } )
-       call base#echo({ 'text' : " BuffersList     - list buffers"  } )
-       call base#echo({ 'text' : " BuffersWipeAll  - wipe out all buffers except the current one"  } )
-       call base#echo({ 'text' : " "  } )
-       call base#echo({ 'text' : " --- current buffer --- "  } )
-       call base#echo({ 'text' : " "  } )
+			 let info = []
+       call add(info," " )
+       call add(info,"Buffer-related stuff: " )
+       call add(info," " )
+       call add(info," BuffersList     - list buffers" )
+       call add(info," BuffersWipeAll  - wipe out all buffers except the current one" )
+       call add(info," " )
+       call add(info," --- current buffer --- " )
+       call add(info," " )
 
        let ex_finfo = exists('b:finfo')
        let ex_bbs   = exists('b:base_buf_started')
 
-       call base#echo({ 'text' : " b:finfo exists => " . ex_finfo  } )
-       call base#echo({ 'text' : " b:base_buf_started exists => " . ex_bbs  } )
+       call add(info," b:finfo exists => " . ex_finfo   )
+       call add(info," b:base_buf_started exists => " . ex_bbs   )
 
        if ex_finfo
-            call base#echo({ 'text' : " b:finfo  => "  } )
+            call add(info," b:finfo  => " )
             echo b:finfo
        endif
 
-       call base#echo({ 'text' : " "  } )
+       call add(info," "   )
 
        let pathids =  base#buf#pathids ()
-       call base#echo({ 'text' : " pathids => " . join(pathids,' ')  } )
+       call add(info," pathids => " . join(pathids,' ')   )
 
 """info_tagbar
    elseif topic == 'plg_tagbar'
@@ -2516,12 +2518,13 @@ function! base#info (...)
 
 """info_paths
    elseif topic == 'paths'
+			 let paths = base#pathlist()
 
-       call base#echo({ 'text'   : "Paths-related variables: " } )
-       call base#echo({ 
-        \   'text'   : 'pathlist => ' 
-            \   . "\n\t" . join(base#pathlist()," "), 
-        \   'indentlev' : indentlev })
+			 let info = []
+			 call add(info,'PATHS: ')
+			 call add(info,base#map#add_tabs(sort(paths),1))
+
+			 call base#buf#open_split({ 'lines' : info })
 
 """info_dirs
    elseif topic == 'dirs'
@@ -2549,7 +2552,6 @@ function! base#info (...)
 		 call extend(info_env,evlist_t)
 
 		 call base#buf#open_split({ 'lines' : info_env })
-
 
 """info_encodings
    elseif topic == 'encodings'
