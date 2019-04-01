@@ -54,6 +54,34 @@ sub arg_to_list {
 	return wantarray ? @list : \@list ;
 }
 
+=head2 hash_update
+
+=head3 Purpose
+
+=head3 Usage
+
+	use Base::Arg qw(hash_update);
+
+	my ($hash, $update);
+
+	my $opts = {
+		# OPTIONAL: 
+		# 	default: 0
+		keep_already_defined => 1,
+
+		# OPTIONAL: 
+		# 	default: 0
+		update_from_defined => 1,
+	};
+	# update $hash with the contents of 
+	# 	$update;
+	# 	$opts defined additional update options
+	hash_update($hash, $update, $opts);
+
+=head3 Examples
+
+=cut	
+
 sub hash_update {
 	my ($hash, $update, $opts) = @_;
 
