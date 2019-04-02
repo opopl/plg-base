@@ -2445,8 +2445,7 @@ function! base#info (...)
        call add(info," " )
        call add(info,"Buffer-related stuff: " )
        call add(info," " )
-       call add(info," BuffersList     - list buffers" )
-       call add(info," BuffersWipeAll  - wipe out all buffers except the current one" )
+       call add(info," BYFF     - buffer-related command" )
        call add(info," " )
        call add(info," --- current buffer --- " )
        call add(info," " )
@@ -2459,13 +2458,15 @@ function! base#info (...)
 
        if ex_finfo
             call add(info," b:finfo  => " )
-            echo b:finfo
+						call add(info,  pymy#var#pp( b:finfo ) )
        endif
 
        call add(info," "   )
 
        let pathids =  base#buf#pathids ()
        call add(info," pathids => " . join(pathids,' ')   )
+
+			 call base#buf#open_split({ 'lines' : info })
 
 """info_tagbar
    elseif topic == 'plg_tagbar'
