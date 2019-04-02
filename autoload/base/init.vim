@@ -341,6 +341,10 @@ command! -nargs=* -complete=custom,base#complete#omnioptions
 """BaseVarEcho
 	command! -nargs=* -complete=custom,base#complete#varlist
 	    \   BaseVarEcho call base#varecho(<f-args>) 
+	"
+"""BaseVarXml
+	command! -nargs=* -complete=custom,base#complete#varlist
+	    \   BaseVarXml call base#var#dump_xml(<f-args>) 
 
 """BaseVarRemove
 	command! -nargs=* -complete=custom,base#complete#varlist

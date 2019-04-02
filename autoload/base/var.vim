@@ -83,3 +83,19 @@ function! base#var#dump_split (varname)
 		call base#buf#open_split({ 'lines' : a })
 	
 endfunction
+
+function! base#var#to_xml (...)
+	let var_name  = get(a:000,0,'')
+	let var_value = base#varget(var_name,'')
+
+	if !strlen(var_name)
+		let vars = base#varlist()
+	endif
+
+python3 << eof
+import vim
+from dicttoxml import dicttoxml
+	
+eof
+	return py3eval('xml')
+endfunction

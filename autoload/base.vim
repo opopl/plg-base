@@ -2990,6 +2990,8 @@ function! base#varset (varname, value)
     
 endfunction
 
+
+
 function! base#varexists (varname)
     if exists("s:basevars")
         if exists("s:basevars[a:varname]")
