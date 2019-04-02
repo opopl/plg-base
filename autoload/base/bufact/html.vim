@@ -140,7 +140,7 @@ function! base#bufact#html#z_cmd_ (...)
 			" remove boring build output
 			"%s/^\[xslt\].*$/
 			" go back to the previous window
-			wincmd p
+			"wincmd p
 	endfunction
 	
 	" tab_restore prevents interruption when the task completes.
