@@ -2617,6 +2617,10 @@ function! base#info (...)
    elseif topic == 'perl'
 				PERLMY info
 
+"""info_python
+   elseif topic == 'python'
+				PYMY info
+
 """info_proj
    elseif topic == 'proj'
         call projs#info()

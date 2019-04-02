@@ -95,7 +95,21 @@ function! base#var#to_xml (...)
 python3 << eof
 import vim
 from dicttoxml import dicttoxml
+
+vars = vim.eval('vars')
+
 	
 eof
 	return py3eval('xml')
+endfunction
+
+function! base#var#dump_xml (...)
+	let var_name  = get(a:000,0,'')
+
+	let xml = base#var#to_xml(var_name)
+
+	if strlen(xml)
+		call base#buf#open_split({ 'text' : xml })
+	endif
+
 endfunction

@@ -107,6 +107,47 @@ function! base#bufact#html#info ()
 
 endfunction
 
+function! base#bufact#html#z_list_href (...)	
+	call base#bufact#html#z_cmd_('list_href')
+endfunction
+
+function! base#bufact#html#z_tables_to_txt (...)	
+	call base#bufact#html#z_cmd_('tables_to_txt')
+endfunction
+
+function! base#bufact#html#z_cmd_ (...)
+	let z_cmd = get(a:000,0,'')
+
+	let pl = base#qw#catpath('htmltool','bin htw.pl')
+
+	let opts = [ '--file', shellescape(b:file), '--cmd', z_cmd ]
+	let pl_cmd = 'perl ' . pl . ' ' . join(opts,' ')
+
+	let env = {}
+	function env.get(temp_file) dict
+			let h = ''
+			if self.return_code == 0
+				" use tiny split window height on success
+				let h = 1
+			endif
+			" open the file in a split
+			"exec h . "split " . a:temp_file
+			
+			if filereadable(a:temp_file)
+				let out = readfile(a:temp_file)
+				call base#buf#open_split({ 'lines' : out })
+			endif
+			" remove boring build output
+			"%s/^\[xslt\].*$/
+			" go back to the previous window
+			wincmd p
+	endfunction
+	
+	" tab_restore prevents interruption when the task completes.
+	" All provided asynchandlers already use tab_restore.
+	call asynccommand#run(pl_cmd, asynccommand#tab_restore(env))
+endfunction
+
 function! base#bufact#html#list_href ()
 	call base#buf#start()
 	call base#html#htw_load_buf()

@@ -29,3 +29,27 @@ snippet perlusebaseurl
 		url_level
 		url_normalize 
 	);
+snippet asyncrun
+	let env = {}
+	function env.get(temp_file) dict
+			let h = ''
+			if self.return_code == 0
+				" use tiny split window height on success
+				let h = 1
+			endif
+			" open the file in a split
+			exec h . "split " . a:temp_file
+			
+			if filereadable(a:temp_file)
+				let out = readfile(a:temp_file)
+			endif
+			call base#varset('idephp_dws_last_output',out)
+			" remove boring build output
+			"%s/^\[xslt\].*$/
+			" go back to the previous window
+			wincmd p
+	endfunction
+	
+	" tab_restore prevents interruption when the task completes.
+	" All provided asynchandlers already use tab_restore.
+	call asynccommand#run(pl_cmd, asynccommand#tab_restore(env))
