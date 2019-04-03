@@ -113,7 +113,7 @@ for var_name in var_list:
 
 def data2xml(d, name='data'):
     r = et.Element(name)
-    return et.tostring(buildxml(r, d))
+    return et.tostring(buildxml(r, d), pretty_print=True)
 
 def buildxml(r, d):
     if isinstance(d, dict):
@@ -130,7 +130,7 @@ def buildxml(r, d):
         r.text = str(d)
     return r
 
-vars_xml = data2xml(vars_p)
+vars_xml = data2xml(vars_p,name='vars')
 	
 eof
 		return py3eval('vars_xml')

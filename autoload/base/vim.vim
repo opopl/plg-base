@@ -110,13 +110,16 @@ function! base#vim#helptags (...)
 
 		call base#log([ 'try: ' . cmd	],prf)
 
-		let warn_msg=''
+		let warn_msg = ''
+		"exe cmd
+
 		try
 			silent exe cmd
 		catch /^Vim\%((\a\+)\)\=:E154/	
 			let warn_msg = 'Vim Error E154: duplicate tag for docdir: '."\n".docdir
 		catch 	
 			let warn_msg = 'Errors for helptags command, docdir: '."\n".docdir
+			let warn_msg .= "\n".v:exception
 		finally
 		endtry
 
