@@ -102,7 +102,10 @@ function! base#vim#helptags (...)
 
 		if !len(ff) | return | endif
 
-		let prf = { 'func' : 'base#vim#helptags', 'plugin' : 'base' }
+		let prf = { 
+			\	'func'   : 'base#vim#helptags',
+			\	'plugin' : 'base' }
+
 		let cmd = 'helptags ' . docdir
 
 		call base#log([ 'try: ' . cmd	],prf)
@@ -117,7 +120,7 @@ function! base#vim#helptags (...)
 		finally
 		endtry
 
-		call extend(prf,{'loglevel' : 'warn'})
+		call extend(prf,{ 'loglevel' : 'warn' })
 		if strlen(warn_msg)
 			call base#log(warn_msg,prf)
 		endif

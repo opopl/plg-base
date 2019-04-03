@@ -505,8 +505,8 @@ function! base#log (msg,...)
 			
 		let elapsed = localtime() - g:time_start
 
-		let msg_prf = prf.' '.a:msg
-		let msg_full = '<<' . time . '>>' .' '.msg_prf
+		let msg_prf   = prf.' '.a:msg
+		let msg_full  = '<<' . time . '>>' .' '.msg_prf
 
 		call add(log,{ 
 			\ 'msg'  : msg_full,
