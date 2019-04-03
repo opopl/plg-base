@@ -86,7 +86,6 @@ endfunction
 
 function! base#var#to_xml (...)
 	let var_name  = get(a:000,0,'')
-	let var_value = base#varget(var_name,'')
 
 	let vars = base#vars()
 
@@ -107,9 +106,12 @@ var_list = vim.eval('var_list')
 vars     = vim.eval('vars')
 
 vars_p = {}
+#print(var_list)
 
 for var_name in var_list:
 	vars_p[var_name] = vars.get(var_name)
+
+print(vars_p)
 
 def data2xml(d, name='data'):
     r = et.Element(name)
