@@ -42,7 +42,7 @@ perl << eof
 	my $vhtag  = VimVar('vhtag');
 	my $vhfile = VimVar('vhfile');
 	
-	my $vhref={
+	my $vhref = {
 		out_vh_file => $vhfile,
 		tag         => $vhtag,
 		actions     => [qw( replace_a replace_pre )],
