@@ -2312,7 +2312,7 @@ function! base#info (...)
 	 elseif topic == 'file'
 			call base#buf#start()
 
-			let info = []
+			let info = ['FILE INFO:']
 			
 			let info_a = [
 			\ [ 'Current file:', expand('%:p') ],
@@ -2321,16 +2321,11 @@ function! base#info (...)
 			\ [ 'Filesize:', base#file#size(b:file) ],
 			\ ]
 
-			for x in info_a
-				 call add(info,get(x,0,''))
-				 call add(info,indent . get(x,1,''))
-			endfor
-
 			let lines = pymy#data#tabulate({ 
 				\	'data'    : info_a ,
 				\	'headers' : [],
 				\	})
-			call extend(info,lines)
+			call extend(info,base#map#add_tabs(lines,1))
 
 			call add(info,'Other variables:')
 			let info_other = []
@@ -2347,7 +2342,7 @@ function! base#info (...)
 				\	'data'    : info_other,
 				\	'headers' : [],
 				\	})
-			call extend(info,lines)
+			call extend(info,base#map#add_tabs(lines,1))
 
 			call add(info,'Directories which this file belongs to:')
 			let dirs_belong = base#buf#pathids_str()
