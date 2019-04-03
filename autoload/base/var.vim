@@ -88,6 +88,8 @@ function! base#var#to_xml (...)
 	let var_name  = get(a:000,0,'')
 	let var_value = base#varget(var_name,'')
 
+	let vars = base#vars()
+
 	let var_list = []
 	if !strlen(var_name)
 		let var_list = base#varlist()
@@ -97,14 +99,41 @@ function! base#var#to_xml (...)
 
 	if has('python3')
 python3 << eof
+
 import vim
-from dicttoxml import dicttoxml
+import lxml.etree as et
 
 var_list = vim.eval('var_list')
-for var in var_list:
+vars     = vim.eval('vars')
+
+vars_p = {}
+
+for var_name in var_list:
+	vars_p[var_name] = vars.get(var_name)
+
+def data2xml(d, name='data'):
+    r = et.Element(name)
+    return et.tostring(buildxml(r, d))
+
+def buildxml(r, d):
+    if isinstance(d, dict):
+        for k, v in d.items():
+            s = et.SubElement(r, k)
+            buildxml(s, v)
+    elif isinstance(d, tuple) or isinstance(d, list):
+        for v in d:
+            s = et.SubElement(r, 'i')
+            buildxml(s, v)
+    elif isinstance(d, str):
+        r.text = d
+    else:
+        r.text = str(d)
+    return r
+
+vars_xml = data2xml(vars_p)
 	
 eof
-		return py3eval('xml')
+		return py3eval('vars_xml')
 
 	endif
 endfunction
