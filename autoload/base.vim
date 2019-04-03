@@ -2326,6 +2326,11 @@ function! base#info (...)
 				 call add(info,indent . get(x,1,''))
 			endfor
 
+			let lines = pymy#data#tabulate({ 
+				\	'data'    : info_a ,
+				\	'headers' : base#qw('key value'),
+				\	})
+
 			call add(info,'Other variables:')
 			let var_names  = base#qw("b:basename b:dirname b:file b:ext b:bufnr")
 
