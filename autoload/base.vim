@@ -491,8 +491,9 @@ function! base#log (msg,...)
 	let prf = base#varget('base_log_prf','')
 	let prf = get(ref,'prf',prf)
 
-	let fnc    = get(ref,'func','')
-	let plugin = get(ref,'plugin','')
+	let fnc      = get(ref,'func','')
+	let plugin   = get(ref,'plugin','')
+	let loglevel = get(ref,'loglevel','')
 
 	let do_echo = get(ref,'echo',0)
 
@@ -508,15 +509,16 @@ function! base#log (msg,...)
 		let msg_prf   = prf.' '.a:msg
 		let msg_full  = '<<' . time . '>>' .' '.msg_prf
 
-		call add(log,{ 
+		call extend(ref,{ 
 			\ 'msg'  : msg_full,
 			\ 'time' : time,
 			\ 'func' : fnc,
 			\	})
+		call add(log,ref)
 		call base#varset('base_log',log)
 
-		let p = [time,elapsed,msg,prf,fnc,plugin]
-		let q = 'INSERT OR IGNORE INTO log (time,elapsed,msg,prf,func,plugin) VALUES(?,?,?,?,?,?)'
+		let p = [time,loglevel,elapsed,msg,prf,fnc,plugin]
+		let q = 'INSERT OR IGNORE INTO log (time,loglevel,elapsed,msg,prf,func,plugin) VALUES(?,?,?,?,?,?,?)'
 python << eof
 
 import vim
