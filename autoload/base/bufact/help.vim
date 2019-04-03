@@ -16,6 +16,6 @@ function! base#bufact#help#replace_stars ()
 	call base#buf#start()
 
 	"perldo s/^\*([^*]*)\*/$1/gc
-	s/\*\([^*]*\)\*/\1/gc
+	%s/\*\([^*]*\)\*/\1/gc
 
 endfunction
