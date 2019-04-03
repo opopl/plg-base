@@ -943,7 +943,7 @@ function! base#html#xpath(...)
 		 let htmltext = join(htmllines,"\n")
 	endif
 
-	let filtered=[]
+	let filtered = []
 
 perl << eof
 	use utf8;
@@ -972,10 +972,10 @@ perl << eof
 	my @filtered;
 
 	for my $node (@nodes){
-		my $ntype=$node->nodeType;
+		my $ntype = $node->nodeType;
 		if ($add_comments) {
 			my $cmts = [
-				'nodeType='.$nodetypes{$ntype} || 'undef',
+				'nodeType=' . $nodetypes{$ntype} || 'undef',
 			];
 			foreach my $cmt (@$cmts) {
 				my $cnode = XML::LibXML::Comment->new($cmt);
