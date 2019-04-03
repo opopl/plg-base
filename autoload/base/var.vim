@@ -109,9 +109,9 @@ vars_p = {}
 #print(var_list)
 
 for var_name in var_list:
-	vars_p[var_name] = vars.get(var_name)
+	vars_p.update({ var_name : vars.get(var_name) })
 
-print(vars_p)
+	#print(vars_p)
 
 def data2xml(d, name='data'):
     r = et.Element(name)
