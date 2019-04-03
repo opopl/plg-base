@@ -2328,17 +2328,26 @@ function! base#info (...)
 
 			let lines = pymy#data#tabulate({ 
 				\	'data'    : info_a ,
-				\	'headers' : base#qw('key value'),
+				\	'headers' : [],
 				\	})
+			call extend(info,lines)
 
 			call add(info,'Other variables:')
+			let info_other = []
+
 			let var_names  = base#qw("b:basename b:dirname b:file b:ext b:bufnr")
 
 			for var_name in var_names
 				let var_value = exists(var_name) ? eval(var_name) : ''
-				let s = indent . var_name . '=' . var_value 
-				call add(info,s)
+
+				call add(info_other,[ var_name, var_value ])
 			endfor
+
+			let lines = pymy#data#tabulate({ 
+				\	'data'    : info_other,
+				\	'headers' : [],
+				\	})
+			call extend(info,lines)
 
 			call add(info,'Directories which this file belongs to:')
 			let dirs_belong = base#buf#pathids_str()
