@@ -226,6 +226,7 @@ fun! base#init#cmds()
 	command! -nargs=* -complete=custom,base#complete#BaseAct      BaseAct
 		\	call base#act(<f-args>) 
 
+
 """BufAct
 	command! -nargs=* -range -complete=custom,base#complete#BufAct      BufAct
 		\	call base#buf#act(<line1>,<line2>,<f-args>) 

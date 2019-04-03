@@ -88,19 +88,25 @@ function! base#var#to_xml (...)
 	let var_name  = get(a:000,0,'')
 	let var_value = base#varget(var_name,'')
 
+	let var_list = []
 	if !strlen(var_name)
-		let vars = base#varlist()
+		let var_list = base#varlist()
+	else
+		call add(var_list,var_name)
 	endif
 
+	if has('python3')
 python3 << eof
 import vim
 from dicttoxml import dicttoxml
 
-vars = vim.eval('vars')
-
+var_list = vim.eval('var_list')
+for var in var_list:
 	
 eof
-	return py3eval('xml')
+		return py3eval('xml')
+
+	endif
 endfunction
 
 function! base#var#dump_xml (...)

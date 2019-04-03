@@ -12,6 +12,35 @@ function! base#act#envvar_open_split (...)
 
 endfunction
 
+function! base#act#async_run (...)
+	let cmd = get(a:000,0,'')
+
+	let env = {}
+	function env.get(temp_file) dict
+			let h = ''
+			"if self.return_code == 0
+				" use tiny split window height on success
+				"let h = 1
+			"endif
+			" open the file in a split
+			exec h . "split " . a:temp_file
+			
+			if filereadable(a:temp_file)
+				let out = readfile(a:temp_file)
+				call base#varset('last_async_output',out)
+			endif
+			" remove boring build output
+			"%s/^\[xslt\].*$/
+			" go back to the previous window
+			wincmd p
+	endfunction
+	
+	" tab_restore prevents interruption when the task completes.
+	" All provided asynchandlers already use tab_restore.
+	call asynccommand#run(cmd, asynccommand#tab_restore(env))
+
+endfunction
+
 function! base#act#paths_to_db (...)
 	call base#paths_to_db()
 endfunction
