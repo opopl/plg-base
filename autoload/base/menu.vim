@@ -36,7 +36,7 @@ endfunction
 
 function! base#menu#add(...)
 
- let opts={ 'action' : 'add' }
+ let opts = { 'action' : 'add' }
 
  if a:0
     let menuopt = get(a:000,0,'')
@@ -44,7 +44,7 @@ function! base#menu#add(...)
       call extend(opts,a:2)
     endif
  else
-    let menuopt=base#getfromchoosedialog({ 
+    let menuopt = base#getfromchoosedialog({ 
         \ 'list'        : base#varget('menus',[]),
         \ 'startopt'    : 'projs',
         \ 'header'      : "Available menu options are: ",

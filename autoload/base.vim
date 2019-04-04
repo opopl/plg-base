@@ -2664,9 +2664,9 @@ function! base#info (...)
 
 """info_rtp
    elseif topic == 'rtp'
-       let rtp_a = split(&rtp,",")
+      let rtp_a = split(&rtp,",")
 
-			let ii=[]
+			let ii = []
 			call add(ii,'&rtp:')
 			call extend(ii,base#map#add_tabs(rtp_a,1))
 

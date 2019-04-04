@@ -26,9 +26,9 @@ statusline
 tags
 vhooks
 vim
-sqlite
+#sqlite
 #sqlite_prompt
-sqlite_sql
+#sqlite_sql
 leaders
 snippets
 dictionaries
