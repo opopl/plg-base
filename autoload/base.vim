@@ -2676,7 +2676,7 @@ function! base#info (...)
    elseif topic == 'plugins'
 			let plugins = base#plugins()
 
-			let ii=[]
+			let ii = []
 			call add(ii,'PLUGINS:')
 			call extend(ii,base#map#add_tabs(plugins,1))
 			call base#buf#open_split({ 'lines' : ii })
