@@ -17,3 +17,5 @@ delete_saved_files
 siteid_delete
 view_saved
 info
+menus_add
+menus_remove

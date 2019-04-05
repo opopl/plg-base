@@ -758,7 +758,7 @@ fun! base#fileopen(ref)
    
  endif
 
- let prf={ 
+ let prf = { 
  	\	'func'   : 'base#fileopen',
  	\	'plugin' : 'base',
  	\	}

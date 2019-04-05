@@ -201,6 +201,31 @@ function! base#htmlwork#drop_all ()
 
 endfunction
 
+
+function! base#htmlwork#menus_add ()
+	let cmds = base#varget('htmlwork',[])
+	let cmds = sort(cmds)
+
+	let lev = 25
+	for cmd in cmds
+    call base#menu#additem({
+			\   'item'      :   '&HTMLWORK.&' . cmd,
+			\   'tab'       :   cmd,
+			\   'cmd'       :   'HTMLWORK ' . cmd,
+			\   'lev'       :   lev,
+			\   })
+	endfor
+
+endf
+
+function! base#htmlwork#menus_remove ()
+		try 
+			exe 'aunmenu &HTMLWORK'
+		catch
+ 		endtry
+
+endf
+
 function! base#htmlwork#clear_all ()
 	let dbfile = base#htmlwork#dbfile()
 
