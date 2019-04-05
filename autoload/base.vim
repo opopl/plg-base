@@ -766,8 +766,6 @@ fun! base#fileopen(ref)
  	\	'opening files => ' . base#dump(files),
  	\	],prf)
 
- if strlen(a) | let action = a | endif
-
  let anew_if_absent = get(opts,'anew_if_absent',0)
 
  for file in files
