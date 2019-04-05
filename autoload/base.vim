@@ -725,27 +725,36 @@ endf
 
 
 
+" base#fileopen({ 'files' : [file], 'exec' : 'set ft=html' })
+" base#fileopen({ 
+" 	\	'files' : [ file ], 
+" 	\	'exec'  : [ 'set ft=html' ],
+" 	\	})
+" base#fileopen([ file1, file2])
+
  
 """base_fileopen
 fun! base#fileopen(ref)
- let files=[]
+ let ref = a:ref
+
+ let files = []
 
  let action = 'edit'
- let a      = base#varget('fileopen_action','')
+ let action = base#varget('fileopen_action',action)
 
  let opts={}
 
- if base#type(a:ref) == 'String'
-   let files = [ a:ref ] 
+ if base#type(ref) == 'String'
+   let files = [ ref ] 
    
- elseif base#type(a:ref) == 'List'
-   let files = a:ref  
+ elseif base#type(ref) == 'List'
+   let files = ref  
    
- elseif base#type(a:ref) == 'Dictionary'
-   let files = a:ref.files
-   let a     = get(a:ref,'action',a)
+ elseif base#type(ref) == 'Dictionary'
+   let files   = get(ref,'files',[])
+   let action  = get(ref,'action',action)
 
-   call extend(opts,a:ref)
+   call extend(opts,ref)
    
  endif
 
@@ -769,7 +778,7 @@ fun! base#fileopen(ref)
 	endif
 
   exe action . ' ' . file
-  let exec=get(opts,'exec','')
+  let exec = get(opts,'exec','')
   if len(exec)
     if type(exec) == type([])
       for e in exec
