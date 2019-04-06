@@ -96,14 +96,23 @@ function! base#var#to_xml (...)
 		call add(var_list,var_name)
 	endif
 
+	"echo vars
+
+	" return value
+	let xml = ''
+
 	if has('python3')
 python3 << eof
 
 import vim
+import re
 import lxml.etree as et
 
 var_list = vim.eval('var_list')
 vars     = vim.eval('vars')
+
+#legal_chars = string.ascii_lowercase + string.digits + "!#$%&'*+-.^_`|~:"
+#print('[%s]+' % re.escape(legal_chars))
 
 vars_p = {}
 #print(var_list)
@@ -120,24 +129,29 @@ def data2xml(d, name='data'):
 def buildxml(r, d):
     if isinstance(d, dict):
         for k, v in d.items():
-            s = et.SubElement(r, k)
+            #s = et.SubElement(r, k)
+            s = et.SubElement(r, 'var')
+            s.set('name',k)
             buildxml(s, v)
     elif isinstance(d, tuple) or isinstance(d, list):
         for v in d:
             s = et.SubElement(r, 'i')
             buildxml(s, v)
     elif isinstance(d, str):
-        r.text = d
+        r.text = re.escape(d)
     else:
-        r.text = str(d)
+        r.text = re.escape(str(d))
     return r
 
 vars_xml = data2xml(vars_p,name='vars')
 	
 eof
-		return py3eval('vars_xml')
-
+		let decl = '<?xml version="1.0" encoding="UTF-8"?>'
+		let xml = py3eval('vars_xml')
+		let xml = decl."\n".xml
 	endif
+
+	return xml
 endfunction
 
 function! base#var#dump_xml (...)
@@ -146,7 +160,10 @@ function! base#var#dump_xml (...)
 	let xml = base#var#to_xml(var_name)
 
 	if strlen(xml)
-		call base#buf#open_split({ 'text' : xml })
+		call base#buf#open_split({ 
+			\ 'text'     : xml,
+			\ 'cmds_pre' : ['set ft=xml'],
+			\	})
 	endif
 
 endfunction

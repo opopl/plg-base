@@ -2989,15 +2989,6 @@ function! base#varget (varname,...)
     
 endfunction
 
-function! base#vars()
-
-    if ! exists("s:basevars")
-        let s:basevars={}
-    endif
-
-		return s:basevars
-
-endfunction
 
 function! base#varset (varname, value)
 
@@ -3010,6 +3001,17 @@ function! base#varset (varname, value)
     endif
     let s:basevars[a:varname] = a:value
     
+endfunction
+
+
+function! base#vars()
+
+    if ! exists("s:basevars")
+        let s:basevars={}
+    endif
+
+		return s:basevars
+
 endfunction
 
 

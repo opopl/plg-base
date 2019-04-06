@@ -245,7 +245,10 @@ function! base#bufact#html#xpath ()
 				\	'load_as'      : load_as,
 				\	})
 
-	call base#buf#open_split({ 'lines' : filtered })
+	call base#buf#open_split({ 
+		\ 'lines'    : filtered ,
+		\ 'cmds_pre' : [ 'set ft=html' ],
+		\	})
 
 endfunction
 
