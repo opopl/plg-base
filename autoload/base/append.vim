@@ -23,6 +23,17 @@ function! base#append#arr (...)
 
 endfunction
 
+function! base#append#delim (...)
+		let lnum = get(a:000,1,line('.'))
+
+		let s = input('delim symbol:','*')
+		let n = input('delim length:',50)
+
+		let delim = repeat(s,n)
+		call append(lnum,delim)
+
+endfunction
+
 
 function! base#append#csv_headers_numeric (...)
 
