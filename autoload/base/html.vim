@@ -51,10 +51,12 @@ function! base#html#file_info (...)
 
 	let file  = get(ref,'file','')
 
+	let lines = []
 	if filereadable(file)
 		 let lines = readfile(file)
 	endif
 	let html = join(lines,"\n")
+	if !strlen(html) | return {} | endif
 
 	"let h = base#html#headings({ 
 		"\ 'file' : file 

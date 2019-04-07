@@ -20,6 +20,12 @@ function! base#bufact#html#db_info ()
 
 endfunction
 
+function! base#bufact#html#set_ft_php ()
+	call base#buf#start()
+
+	setlocal ft=php
+endfunction
+
 function! base#bufact#html#save_to_vh ()
 	call base#buf#start()
 	call base#html#htw_load_buf()
