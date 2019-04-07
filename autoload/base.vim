@@ -2122,11 +2122,19 @@ eof
 
 endfunction
 
+function! base#paths_update (...)
+	let ref = get(a:000,0,{})
+	if !exists('s:paths') | let s:paths = {} | endif
+
+	call extend(s:paths,ref)
+	call base#pathset_db(ref)
+
+endfunction
+
 function! base#paths_to_db ()
 	let dbfile = base#dbfile()
-	if !exists('s:paths')
-		let s:paths = {}
-	endif
+	if !exists('s:paths') | let s:paths = {} | endif
+
 python << eof
 import vim,sqlite3
 

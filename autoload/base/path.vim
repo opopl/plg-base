@@ -15,7 +15,8 @@ function! base#path#add (...)
 		let path   = input('Path: '  ,path,'file')
 	endw
 
-	call base#pathset_db({
+	call base#paths_update({
 		\ pathid : path
 		\	})
+
 endfunction
