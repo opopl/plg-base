@@ -122,10 +122,13 @@ perl << EOF
   };
 
   for my $dir (@$dirs){
-      $D=$dir;
+      $D = $dir;
       next unless -d $dir;
 	  	chdir $dir;
-	  	File::Find::find({ wanted => $w, preprocess => $pp}, "." );
+	  	File::Find::find({ 
+				wanted     => $w,
+				preprocess => $pp,
+			}, "." );
   }
   VimListExtend('files',[@files]);
 EOF
