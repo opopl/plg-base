@@ -40,7 +40,7 @@ use base qw(
 use File::Path qw(mkpath);
 use File::stat qw(stat);
 
-our @TYPES = qw(list dict listlines );
+our @TYPES = qw( list dict listlines );
 
 
 =head1 SYNOPSIS
@@ -349,7 +349,7 @@ sub db_tables {
 		ORDER BY 1
 	};
 
-	my $rows = dbh_select({ 
+	my ($rows) = dbh_select({ 
 		q    => $q,
 	});
 
@@ -373,7 +373,7 @@ sub db_table_empty {
 
 	my $q = qq{select * from $tb limit 1};
 
-	my $rows = dbh_select({ q => $q });
+	my ($rows) = dbh_select({ q => $q });
 
 	return (@$rows) ? 0 : 1;
 
@@ -566,7 +566,7 @@ sub init_dat_plugins {
 sub init_plugins {
 	my ($self)=@_;
 
-	my $rows = dbh_select({ 
+	my ($rows) = dbh_select({ 
 		q => q{select datfile from datfiles where key = ? },
 		p => [qw(plugins)],
    	});

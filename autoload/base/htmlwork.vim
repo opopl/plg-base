@@ -24,6 +24,31 @@ function! base#htmlwork#log ()
 	
 endfunction
 
+function! base#htmlwork#local_index ()
+	let dbfile = base#htmlwork#dbfile()
+
+	let q = 'SELECT rowid, vh_file, vh_tag FROM local_index'
+	let q = input('query:',q)
+	let p = []
+
+	let siteid = base#varget('htw_siteid','')
+	let cond = ''
+	if strlen(siteid)
+		let cond = ' WHERE siteid = ? '
+		call add(p,siteid)
+	endif
+	let q .= cond
+
+	let lines = pymy#sqlite#query_screen({
+		\	'dbfile' : dbfile,
+		\	'p'      : p,
+		\	'q'      : q,
+		\	})
+
+	call base#buf#open_split({ 'lines' : lines })
+	
+endfunction
+
 function! base#htmlwork#log_debug ()
 	let dbfile = base#htmlwork#dbfile()
 
