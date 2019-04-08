@@ -125,7 +125,7 @@ function! base#buf#open_split (ref)
 			return
 		endif
 		
-		split
+		exe 'split '
 		enew
     setlocal buftype=nofile
     setlocal nobuflisted

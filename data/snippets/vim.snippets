@@ -67,3 +67,14 @@ snippet ifsid
 		call add(p,siteid)
 	endif
 	let q .= cond
+snippet j
+	join(<++>,<++>)
+snippet up
+	" let r = {
+	" 	\	'h' : {},
+	" 	\	't' : table,
+	" 	\	'u' : 'UPDATE',
+	" 	\	'w' : {},
+	" \	}
+	"
+	" call pymy#sqlite#update_hash(r)
