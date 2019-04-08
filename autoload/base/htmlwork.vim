@@ -27,7 +27,7 @@ endfunction
 function! base#htmlwork#local_index ()
 	let dbfile = base#htmlwork#dbfile()
 
-	let q = 'SELECT rowid, vh_file, vh_tag FROM local_index'
+	let q = 'SELECT rowid, vh_file, vh_tag, remote FROM local_index '
 	let q = input('query:',q)
 	let p = []
 
@@ -38,6 +38,8 @@ function! base#htmlwork#local_index ()
 		call add(p,siteid)
 	endif
 	let q .= cond
+
+	let q .= ' ORDER BY remote '
 
 	let lines = pymy#sqlite#query_screen({
 		\	'dbfile' : dbfile,
