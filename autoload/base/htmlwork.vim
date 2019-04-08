@@ -2,9 +2,17 @@
 function! base#htmlwork#log ()
 	let dbfile = base#htmlwork#dbfile()
 
-	let q = 'SELECT rowid,func,url,msg FROM log where loglevel in (?,?)'
+	let q = 'SELECT rowid,func,url,msg FROM log WHERE loglevel IN (?,?)'
 	let q = input('query:',q)
 	let p = [ '' , 'log' ]
+
+	let siteid = base#varget('htw_siteid','')
+	let cond = ''
+	if strlen(siteid)
+		let cond = ' AND siteid = ? '
+		call add(p,siteid)
+	endif
+	let q .= cond
 
 	let lines = pymy#sqlite#query_screen({
 		\	'dbfile' : dbfile,
@@ -19,9 +27,17 @@ endfunction
 function! base#htmlwork#log_debug ()
 	let dbfile = base#htmlwork#dbfile()
 
-	let q = 'SELECT rowid,func,url,msg FROM log where loglevel in (?)'
+	let q = 'SELECT rowid,func,url,msg FROM log WHERE loglevel in (?)'
 	let q = input('query:',q)
 	let p = [ 'debug' ]
+
+	let siteid = base#varget('htw_siteid','')
+	let cond = ''
+	if strlen(siteid)
+		let cond = ' AND siteid = ? '
+		call add(p,siteid)
+	endif
+	let q .= cond
 
 	let lines = pymy#sqlite#query_screen({
 		\	'dbfile' : dbfile,
@@ -55,6 +71,29 @@ function! base#htmlwork#fails ()
 
 	let q = 'SELECT rowid,msg,url,details FROM log where msg = ?'
 	let p = ['FAIL']
+
+	let lines = pymy#sqlite#query_screen({
+		\	'dbfile' : dbfile,
+		\	'p'      : p,
+		\	'q'      : q,
+		\	})
+
+	call base#buf#open_split({ 'lines' : lines })
+
+endfunction
+
+function! base#htmlwork#warn_details ()
+	let dbfile = base#htmlwork#dbfile()
+
+	let qs = ['']
+	let p = []
+	
+	call add(qs,'SELECT msg,details FROM log ' . 
+		\ 	' WHERE loglevel = ? ')
+
+	call add(p,'warn')
+
+	let q = get(qs,1,'')
 
 	let lines = pymy#sqlite#query_screen({
 		\	'dbfile' : dbfile,
@@ -110,6 +149,16 @@ function! base#htmlwork#clear_log ()
 
 endfunction
 
+function! base#htmlwork#siteid_set ()
+	let dbfile = base#htmlwork#dbfile()
+
+	let siteid = base#input_we('select siteid: ','',{ 
+		\	'complete' : 'custom,idephp#complete#dws_siteids'
+		\	})
+	call base#varset('htw_siteid',siteid)
+
+endfunction
+
 function! base#htmlwork#siteid_delete ()
 	let dbfile = base#htmlwork#dbfile()
 
@@ -118,6 +167,19 @@ function! base#htmlwork#siteid_delete ()
 		\	})
 
 	let tables = base#qw('href log saved local_index')
+
+	let msg_a = [' ']
+ 	call add(msg_a,repeat('-',70))
+ 	call add(msg_a,'This command will delete values from tables: ')
+	call add(msg_a,"\t" . join(tables,' '))
+	call add(msg_a,"for the following siteid:")
+	call add(msg_a,"\t" . siteid)
+	call add(msg_a,"Are you ready to delete? 1/0: ")
+
+	let msg = join(msg_a,"\n")
+
+	let yn = input(msg,0)
+	if !yn | return | endif
 
 	for t in tables
 		let q = 'DELETE FROM ' . t  . ' WHERE siteid = ? ' 
@@ -129,7 +191,6 @@ function! base#htmlwork#siteid_delete ()
 			\	'q'      : q,
 			\	})
 	endfor
-
 
 endfunction
 
@@ -148,11 +209,20 @@ function! base#htmlwork#siteids ()
 
 endfunction
 
-function! base#htmlwork#info ()
+function! base#htmlwork#info (...)
+	let ref = get(a:000,0,{})
+
 	let dbfile = base#htmlwork#dbfile()
 
+	let info = []
+
 	call pymy#sqlite#dbfile(dbfile)
-	call pymy#sqlite_cmd#info()
+	call extend(info, pymy#sqlite_cmd#info({ 'skip_split' : 1 }) )
+	call add(info,'SITEID: ')
+	call add(info,"\t".base#varget('htw_siteid',''))
+
+	call base#buf#open_split({ 'lines' : info })
+	return info
 
 endfunction
 
@@ -399,7 +469,7 @@ endfunction
 function! base#htmlwork#saved ()
 	let dbfile = base#htmlwork#dbfile()
 
-	let q = 'SELECT rowid,remote,local FROM saved'
+	let q = ' SELECT rowid, remote, local FROM saved '
 	let q = input('query:',q)
 	let np = input('number of params:',0)
 
@@ -411,6 +481,13 @@ function! base#htmlwork#saved ()
 				call add(p,par)
 		 endw
 	endif
+
+	let siteid = base#varget('htw_siteid','')
+	if strlen(siteid)
+		let cond = ' WHERE siteid = ? '
+		call add(p,siteid)
+	endif
+	let q .= cond
 
 	let lines = pymy#sqlite#query_screen({
 		\	'dbfile' : dbfile,

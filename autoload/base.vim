@@ -2278,6 +2278,8 @@ function! base#info (...)
 	 elseif topic == 'dbext'
 			call base#info#dbext()
 
+	 elseif topic == 'htmlwork'
+
 """info__sql
 	 elseif topic == '_sql'
 			 let lines=[]

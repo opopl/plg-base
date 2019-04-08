@@ -53,3 +53,17 @@ snippet asyncrun
 	" tab_restore prevents interruption when the task completes.
 	" All provided asynchandlers already use tab_restore.
 	call asynccommand#run(pl_cmd, asynccommand#tab_restore(env))
+snippet ifyn
+	if !yn | return | endif
+snippet ifs
+	if strlen(<++>)
+		<++>
+	endif
+snippet ifsid
+	let siteid = base#varget('htw_siteid','')
+	let cond = ''
+	if strlen(siteid)
+		let cond = ' WHERE siteid = ? '
+		call add(p,siteid)
+	endif
+	let q .= cond

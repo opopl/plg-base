@@ -14,8 +14,10 @@ href
 href_short
 sql_alterations
 delete_saved_files
-siteid_delete
 view_saved
 info
 menus_add
 menus_remove
+warn_details
+siteid_delete
+siteid_set
