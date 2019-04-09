@@ -83,6 +83,14 @@ function! base#htmlwork#log_warnings ()
 	let q = input('query:',q)
 	let p = [ 'warn' ]
 
+	let siteid = base#varget('htw_siteid','')
+	let cond = ''
+	if strlen(siteid)
+		let cond = ' AND siteid = ? '
+		call add(p,siteid)
+	endif
+	let q .= cond
+
 	let lines = pymy#sqlite#query_screen({
 		\	'dbfile' : dbfile,
 		\	'p'      : p,
