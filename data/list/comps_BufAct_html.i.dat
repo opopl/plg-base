@@ -31,5 +31,8 @@ info
 # using HTML::Work::App::Z
 z_list_href
 z_tables_to_txt
+z_vh_convert
+z_vh_outline
+###
 set_ft_php
 vh_outline

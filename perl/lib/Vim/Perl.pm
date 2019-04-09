@@ -884,6 +884,7 @@ sub VimMsg {
     return  unless defined $text;
 
 	$ref ||= {};
+	$ref = {} unless (ref $ref eq 'HASH');
 
     if ( ref $text eq "ARRAY" ) {
 		VimMsg($_,$ref) for(@$text);
@@ -895,10 +896,10 @@ sub VimMsg {
 
 	my $hl = $ref->{hl} || '';
 
- 	VIM::Msg($text,$hl) ;
+ 	VIM::Msg($text,$hl);
 
-	$ref->{dbfile}=$DBFILE;
-	$ref->{dbh}=$DBH;
+	$ref->{dbfile} = $DBFILE;
+	$ref->{dbh}    = $DBH;
 
 	VimMsg_dbh($text,$ref);
 
@@ -942,8 +943,10 @@ sub VimWarn {
 		hl       => 'WarningMsg',
 		loglevel => 'warn',
 	};
-	for (keys %$h){
-		$ref->{$_} = $h->{$_};
+	if (ref $ref eq 'HASH') {
+		for (keys %$h){
+			$ref->{$_} = $h->{$_};
+		}
 	}
 	VimMsg($text,$ref);
 

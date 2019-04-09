@@ -36,7 +36,8 @@ perl << eof
 	my $vh_outline = $HTW->vh_outline;
 	VimLet('vh_outline',$vh_outline);
 eof
-	return vh_outline
+	call base#buf#open_split({ 'text' : vh_outline })
+	return 1
 endfunction
 
 function! base#bufact#html#save_to_vh ()
@@ -126,8 +127,20 @@ function! base#bufact#html#info ()
 
 endfunction
 
+"""z_list_href
 function! base#bufact#html#z_list_href (...)	
 	call base#bufact#html#z_cmd_('list_href')
+endfunction
+
+function! base#bufact#html#z_vh_outline (...)	
+	call base#bufact#html#z_cmd_('vh_outline')
+endfunction
+
+function! base#bufact#html#z_vh_convert (...)	
+	let r = {
+			\	'cmds_vim' : [ 'setlocal ft=help' ],
+			\	}
+	call base#bufact#html#z_cmd_('vh_convert',r)
 endfunction
 
 function! base#bufact#html#z_tables_to_txt (...)	
@@ -137,6 +150,9 @@ endfunction
 function! base#bufact#html#z_cmd_ (...)
 	let z_cmd = get(a:000,0,'')
 
+	let ref   = get(a:000,1,{})
+	call base#varset('z_cmd_ref',ref)
+
 	let pl = base#qw#catpath('htmltool','bin htw.pl')
 
 	let opts = [ '--file', shellescape(b:file), '--cmd', z_cmd ]
@@ -144,27 +160,24 @@ function! base#bufact#html#z_cmd_ (...)
 
 	let env = {}
 	function env.get(temp_file) dict
-			let h = ''
-			if self.return_code == 0
-				" use tiny split window height on success
-				let h = 1
-			endif
-			" open the file in a split
-			"exec h . "split " . a:temp_file
-			
+			let ref      = base#varget('z_cmd_ref',{})
+			let cmds_vim = get(ref,'cmds_vim',[])
+
 			if filereadable(a:temp_file)
 				let out = readfile(a:temp_file)
-				call base#buf#open_split({ 'lines' : out })
+				call base#buf#open_split({ 
+					\	'lines'    : out,
+					\	'cmds_pre' : cmds_vim,
+					\	})
 			endif
-			" remove boring build output
-			"%s/^\[xslt\].*$/
-			" go back to the previous window
-			"wincmd p
 	endfunction
 	
 	" tab_restore prevents interruption when the task completes.
 	" All provided asynchandlers already use tab_restore.
-	call asynccommand#run(pl_cmd, asynccommand#tab_restore(env))
+	call asynccommand#run({ 
+		\	'cmd' : pl_cmd, 
+		\	'Fn'  : asynccommand#tab_restore(env) 
+		\	})
 endfunction
 
 function! base#bufact#html#list_href ()
