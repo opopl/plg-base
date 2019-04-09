@@ -2533,17 +2533,23 @@ function! base#info (...)
         let stl = g:F_StatusLine
     endif
 
-    let stl    = base#var('stl')
-    let stlopt = base#var('stlopt')
-
-       call base#echo({ 'text'   : "Statusline: " } )
-       call base#echo({ 'text'   : " " } )
-       call base#echo({ 'text'   : "\t"."stlopt               =>  " .stlopt } )
-       call base#echo({ 'text'   : " " } )
-       call base#echo({ 'text'   : "\t"."g:F_StatusLine       =>  " . stl } )
-       call base#echo({ 'text'   : "\t"."&stl                 =>  " . &stl } )
-       call base#echo({ 'text'   : "\t"."stl (StatusLine cmd) =>  " . stl } )
-       call base#echo({ 'text'   : " " } )
+		let stl    = base#varget('stl','')
+		let stlopt = base#varget('stlopt','')
+		
+		let d = base#delim()
+		let info = []
+		call add(info,d)
+		call add(info,'Statusline Info')
+		call add(info,d)
+		call add(info,'BaseVarEcho stlopt:')
+		call add(info,"\t" . stlopt )
+		call add(info,'BaseVarEcho stl:')
+		call add(info,"\t" . stl )
+		call add(info,'&stl:')
+		call add(info,"\t" . &stl )
+		call add(info,' ')
+		
+		call base#buf#open_split({ 'lines' : info })
 
 """info_paths
    elseif topic == 'paths'
@@ -2873,6 +2879,12 @@ function! base#datadir (...)
     endif
 
     return base#varget('datadir','')
+endf    
+
+function! base#delim (...)
+	 let d = '-'
+	 let num = 70
+	 return repeat(d,num)
 endf    
 
 " go to base plugin root directory
