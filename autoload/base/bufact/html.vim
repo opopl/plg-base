@@ -26,6 +26,19 @@ function! base#bufact#html#set_ft_php ()
 	setlocal ft=php
 endfunction
 
+function! base#bufact#html#vh_outline ()
+	call base#buf#start()
+	call base#html#htw_load_buf()
+
+	let vh_outline=''
+perl << eof
+	use Vim::Perl qw(VimLet);
+	my $vh_outline = $HTW->vh_outline;
+	VimLet('vh_outline',$vh_outline);
+eof
+	return vh_outline
+endfunction
+
 function! base#bufact#html#save_to_vh ()
 	call base#buf#start()
 	call base#html#htw_load_buf()

@@ -60,7 +60,7 @@ sub subnames {
 	# matching pattern
 	my $pat = $ref->{pat} || '';
 
-	my $rows = dbh_select({ 
+	my ($rows) = dbh_select({ 
 		f => [qw(namespace subname_short)], 
 		t => 'tags',
 	});
@@ -93,7 +93,7 @@ sub namespaces {
 	# matching pattern
 	my $pat = $ref->{pat} || '';
 
-	my $rows = dbh_select({ 
+	my ($rows) = dbh_select({ 
 		f => [qw(namespace)], 
 		t => 'tags',
 	});
@@ -367,7 +367,7 @@ sub files_from_db {
 		t    => 'files',
 		cond => $cond,
 	};
-	my $rows = dbh_select($r);
+	my ($rows) = dbh_select($r);
 	$self->{filelist} = [ map { $_->{file} } @$rows ];
 
 	return $rows;
@@ -734,7 +734,7 @@ sub write_tags {
 			`tag`
 		ASC
 	};
-	my $rows = dbh_select({
+	my ($rows) = dbh_select({
 		q     => $q,
 		fetch => 'fetchrow_arrayref',
 	});
@@ -827,7 +827,7 @@ sub tags_add {
 
 	$self->log({ msg => 'tags_add: ' , ih => { dump => Dumper($ref) } });
 
-	my $rows = dbh_select({
+	my ( $rows ) = dbh_select({
 		q     => $query,
 		p     => $params,
 		fetch => 'fetchrow_arrayref',
