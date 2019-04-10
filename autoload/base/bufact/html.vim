@@ -465,9 +465,9 @@ perl << eof
 	use Vim::Perl qw(:funcs :vars);
 
 	my $xpath = '//*';
-	my @nodes=$HTW->nodes({ xpath => $xpath});
+	my @nodes = $HTW->nodes({ xpath => $xpath});
 	foreach my $node (@nodes) {
-		my @attr = $node->findnodes('./attribute::*');
+		my @attr = $node->attributes;
 		my @names = map { $_->nodeName } @attr;
 		foreach my $name (@names) {
 			$node->removeAttribute($name);
