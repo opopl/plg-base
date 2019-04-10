@@ -503,8 +503,6 @@ function! base#bufact#html#toc_generate ()
 	call base#buf#start()
 	call base#html#htw_load_buf()
 perl << eof
-    use HTML::Toc;
-    use HTML::TocGenerator;
 
 		use Vim::Perl qw(VimVar CurBufSet);
 		

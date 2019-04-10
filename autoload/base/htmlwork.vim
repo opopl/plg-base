@@ -334,16 +334,41 @@ endf
 function! base#htmlwork#clear_all ()
 	let dbfile = base#htmlwork#dbfile()
 
-	let yn = input('Ready to delete everything? 1/0: ',1)
+	let siteid = base#varget('htw_siteid','')
+
+	let delim = repeat('-',50)
+
+	let msg  = ''
+	let msg .= "\n"   . 'HTMLWORK clear_all ' 
+	let msg .= "\n"   . delim
+	let msg .= "\n"   . 'siteid = ' . siteid 
+	let msg .= "\n"   . ' ' 
+	let msg .= "\n"   . 'This will do the following: ' 
+	let msg .= "\n"   . '- remove files' 
+	let msg .= "\n"   . '- delete table rows' 
+	let msg .= "\n"   . delim
+	let msg .= "\n"   . 'Ready to delete everything? 1/0: '
+
+	let yn = input(msg,1)
 	if !yn | return | endif
 
+	let p = []
+	if strlen(siteid)
+		let cond = ' WHERE siteid = ? '
+		call add(p,siteid)
+	endif
+
 	call base#htmlwork#delete_saved_files()
+
 	let tables = base#qw('href log saved local_index')
 	for t in tables
-		let q = 'DELETE FROM ' . t
+		let q = 'DELETE FROM ' . t 
+		let q.= cond
+
 		call pymy#sqlite#query({
 			\	'dbfile' : dbfile,
 			\	'q'      : q,
+			\	'p'      : p,
 			\	})
 	endfor
 
