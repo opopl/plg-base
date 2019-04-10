@@ -388,6 +388,45 @@ eof
 
 endfunction
 
+function! base#bufact#html#remove_attr (...)
+	call base#buf#start()
+	call base#html#htw_load_buf()
+
+	let ref    = get(a:000,0,{})
+	let xpath  = get(ref,'xpath','')
+
+	if ! strlen(xpath)
+		let xpath = idephp#hist#input({ 
+					\	'msg'  : 'XPATH:',
+					\	'hist' : 'xpath',
+					\	})
+	endif
+perl << eof
+	use Vim::Perl qw(:funcs :vars);
+
+	my $xpath = VimVar('xpath') || './/*';
+	my $ref   = VimVar('ref') || {};
+
+	$HTW
+		->findnodes($xpath)
+		->map(
+				sub{ 
+					my ($n) = @_; 
+					my @a = map { $_->nodeName} $n->attributes;
+					for(@a){
+						$n->remoteAttribute($_);
+					}
+				} 
+		);
+
+	my $html = $HTW
+		->htmlstr;
+		
+	CurBufSet({ text => $html, curbuf => $curbuf });
+eof
+
+endfunction
+
 """bufact_htw_load_buf
 function! base#bufact#html#htw_load_buf ()
 	call base#buf#start()
