@@ -388,45 +388,6 @@ eof
 
 endfunction
 
-function! base#bufact#html#remove_attr (...)
-	call base#buf#start()
-	call base#html#htw_load_buf()
-
-	let ref    = get(a:000,0,{})
-	let xpath  = get(ref,'xpath','')
-
-	if ! strlen(xpath)
-		let xpath = idephp#hist#input({ 
-					\	'msg'  : 'XPATH:',
-					\	'hist' : 'xpath',
-					\	})
-	endif
-perl << eof
-	use Vim::Perl qw(:funcs :vars);
-
-	my $xpath = VimVar('xpath') || './/*';
-	my $ref   = VimVar('ref') || {};
-
-	$HTW
-		->findnodes($xpath)
-		->map(
-				sub{ 
-					my ($n) = @_; 
-					my @a = map { $_->nodeName} $n->attributes;
-					for(@a){
-						$n->remoteAttribute($_);
-					}
-				} 
-		);
-
-	my $html = $HTW
-		->htmlstr;
-		
-	CurBufSet({ text => $html, curbuf => $curbuf });
-eof
-
-endfunction
-
 """bufact_htw_load_buf
 function! base#bufact#html#htw_load_buf ()
 	call base#buf#start()
@@ -549,23 +510,6 @@ perl << eof
 		
 		my $file = VimVar('b:file');
 
-#    my $toc          = HTML::Toc->new();
-#    my $tocGenerator = HTML::TocGenerator->new();
-#
-#    $tocGenerator->generateFromFile($toc, $file);
-#    my $html_toc = $toc->format();
-#
-#		my $xpath = '//html/body';
-#		my $el_toc = XML::LibXML->load_html(string => $html_toc);
-#		my $sub = sub{ 
-#				my $node = shift;
-#				$node->appendChild($el_toc);
-#		};
-#		$DOM->findnodes($xpath)->map($sub);
-#		my $html=$DOM->toString;
-
-#        $tocInsertor->insertIntoFile($toc, $file);
-
 		use HTML::Toc;
 		use HTML::TocInsertor;
 		
@@ -576,7 +520,6 @@ perl << eof
 		my $html = join("\n",@$lines);
 		
 		$tocInsertor->insert($toc, $html, {'output' => \$html});
-		print $html;
 
 		CurBufSet({ text => $html, curbuf => $curbuf });
 eof

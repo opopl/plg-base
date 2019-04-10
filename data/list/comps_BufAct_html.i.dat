@@ -1,7 +1,6 @@
 lynx_dump_split
 pretty_perl_libxml
 pretty_beautifulsoup
-remove_xpath
 xpath
 xpath_to_literal
 find_style
@@ -9,8 +8,11 @@ find_form
 find_script
 quickfix_xpath
 headings
+###attr
 attr_remove
+###remove
 remove_extra
+remove_xpath
 # perl_
 perl_html_formattext
 # htw
