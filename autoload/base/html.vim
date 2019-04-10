@@ -1009,6 +1009,43 @@ eof
 
 endfunction
 
+function! base#html#xpath_to_literal(...)
+	if !has('perl') | return | endif
+
+	let ref      = get(a:000,0,{})
+
+	let htmltext  = get(ref,'htmltext','')
+	let htmllines = get(ref,'htmllines',[])
+	let xpath     = get(ref,'xpath','')
+
+	if len(htmllines)
+		 let htmltext = join(htmllines,"\n")
+	endif
+	let text = ''
+
+perl << eof
+	use Vim::Perl qw(:funcs :vars);
+	use XML::LibXML;
+	use XML::LibXML::PrettyPrint;
+
+	my $html  = VimVar('htmltext');
+	my $xpath = VimVar('xpath');
+
+	my ($dom,@nodes,@filtered);
+
+	$dom = XML::LibXML->load_html(
+			string          => decode('utf-8',$html),
+			recover         => 1,
+			suppress_errors => 1,
+	);
+
+	my $s = $dom->findnodes($xpath)->to_literal;
+	VimLet('text',"$s");
+eof
+	return text
+
+endfunction
+
 function! base#html#xpath_lineno(...)
 	if !has('perl') | return | endif
 
@@ -1019,7 +1056,7 @@ function! base#html#xpath_lineno(...)
 	let xpath     = get(ref,'xpath','')
 
 	if len(htmllines)
-		 let htmltext=join(htmllines,"\n")
+		 let htmltext = join(htmllines,"\n")
 	endif
 
 	let filtered=split(htmltext,"\n")
@@ -1052,7 +1089,7 @@ perl << eof
 			suppress_errors => 1,
 	);
 
-	@nodes=$dom->findnodes($xpath);
+	@nodes = $dom->findnodes($xpath);
 
 	for my $node (@nodes){
 		VimLet('string',$node->toString);

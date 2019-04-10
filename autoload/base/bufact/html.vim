@@ -284,6 +284,33 @@ function! base#bufact#html#xpath ()
 
 endfunction
 
+function! base#bufact#html#xpath_to_literal ()
+	call base#buf#start()
+
+	let lines = getline(0,'$')
+	let html  = join(lines,"\n")
+
+	let xpath = idephp#hist#input({ 
+			\	'msg'  : 'XPATH:',
+			\	'hist' : 'xpath',
+			\	})
+
+	let filtered = []
+
+	let load_as = base#html#libxml_load_as()
+
+	let literal = base#html#xpath_to_literal({
+				\	'htmltext'     : html,
+				\	'xpath'        : xpath,
+				\	})
+
+	call base#buf#open_split({ 
+		\ 'text'     : literal ,
+		\ 'cmds_pre' : [ 'set ft=html' ],
+		\	})
+
+endfunction
+
 function! base#bufact#html#quickfix_xpath ()
 	call base#buf#start()
 

@@ -3,6 +3,7 @@ pretty_perl_libxml
 pretty_beautifulsoup
 remove_xpath
 xpath
+xpath_to_literal
 find_style
 find_form
 find_script
