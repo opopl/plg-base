@@ -226,6 +226,15 @@ eof
 
 endf
 
+function! base#file#tmp()
+    let tmp      = tempname()
+    let tmp_dir  = expand(fnamemodify(tmp,':p:h'))
+    let tmp_name = fnamemodify(tmp,':t')
+    
+    let tmp = base#file#catfile([ tmp_dir, tmp_name ])
+		return tmp
+endf
+
 function! base#file#basename(file)
 	let file  = a:file
 	let bname = fnamemodify(file,':p:t')
