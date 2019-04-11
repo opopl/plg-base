@@ -4,7 +4,7 @@ function! base#bufact#idat#update_var ()
 
 	if !exists("b:plg") | return | endif
 
-	let vname = substitute(b:basename,'\.i\.dat$','','g')
+	let vname     = substitute(b:basename,'\.i\.dat$','','g')
 	let b:dattype = fnamemodify(b:file,':h:t')
 
 	let kf = vname

@@ -119,15 +119,17 @@ endfunction
 function! base#sqlite#datlist ()
 	call base#init#sqlite()
 
-	let q = 'select keyfull from datfiles'
+	let q = 'SELECT keyfull FROM datfiles'
 	let [ rows_h, cols ] =  pymy#sqlite#query({
-		\	'q' : q,
 		\	'dbfile' : base#dbfile(),
+		\	'q'      : q,
 		\	})
 	let list = []
 	for rh in rows_h
 			call add(list,get(rh,'keyfull',''))
 	endfor
+	let list = base#uniq(list)
+
 	return list
 
 endfunction

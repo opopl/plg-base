@@ -189,8 +189,8 @@ function! base#complete#tagids (...)
   return base#complete#vars([ 'tagids' ])
 endfunction
 
-function! base#complete#buff (...)
-  return base#complete#vars([ 'cmds_BUFF' ])
+function! base#complete#BYFF (...)
+  return base#complete#vars([ 'cmds_BYFF' ])
 endfunction
 
 function! base#complete#VH (...)

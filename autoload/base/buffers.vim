@@ -104,7 +104,7 @@ endfun
 fun! base#buffers#cmd(...)
 	let cmd = get(a:000,0,'')
 
-	let cmds = base#varget('cmds_BUFF',[])
+	let cmds = base#varget('cmds_BYFF',[])
 
 	let sub = 'call base#buffers#'.cmd.'()'
 	exe sub

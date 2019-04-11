@@ -1,16 +1,26 @@
 """BufAct_lynx_dump_split
-function! base#bufact#html#lynx_dump_split ()
+function! base#bufact#html#dump_split ()
 	call base#buf#start()
 
 	let lines = getline(0,'$') 
 	let tmp   = tempname()
 	call writefile(lines,tmp)
 
-	let cmd = 'lynx -dump -force_html '. tmp
-	let cmd = input('Conversion cmd:',cmd)
+	let exe_dump = ''
+perl << eof
+	use Base::Const qw(EXE_DUMP_HTML);
+	my $exe = EXE_DUMP_HTML;
+
+	VimLet('exe_dump',"$exe");
+eof
+
+	let cmd = exe_dump . ' ' . tmp
+	let cmd = input('Conversion cmd: ',cmd)
 
 	echo tmp
-	call base#sys({ "cmds" : [cmd], 'split_output' : 1 })
+	call base#sys({ 
+		\	"cmds"         : [cmd],
+		\	'split_output' : 1 })
 
 endfunction
 

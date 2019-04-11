@@ -264,22 +264,25 @@ endfunction
 function! base#htmlwork#delete_saved_files ()
 	let dbfile = base#htmlwork#dbfile()
 
-	let siteids = base#htmlwork#siteids ()
-	call base#varset('this', siteids)
+	let siteid = base#varget('htw_siteid','')
 
-	let siteid = base#input_we('siteid:','',{ 
-		\	'complete' : 'custom,base#complete#this' })
-
-	let q = 'SELECT local FROM saved WHERE siteid = ? '
-	let p = [ siteid ]
-	
-	let saved_files = pymy#sqlite#query_as_list({
+	let local_files = pymy#sqlite#query_as_list({
 		\	'dbfile' : dbfile,
-		\	'p'      : p,
-		\	'q'      : q,
+		\	'q'      : 'SELECT local FROM saved WHERE siteid = ?',
+		\	'p'      : [siteid],
 		\	})
 
-	for sfile in saved_files
+	let vh_files = pymy#sqlite#query_as_list({
+		\	'dbfile' : dbfile,
+		\	'q'      : 'SELECT vh_file FROM saved WHERE siteid = ?',
+		\	'p'      : [siteid],
+		\	})
+
+	let files = []
+	call extend(files,vh_files)
+	call extend(files,local_files)
+
+	for sfile in files 
 		if filereadable(sfile)
 			call delete(sfile)
 		endif
@@ -338,6 +341,8 @@ function! base#htmlwork#clear_all ()
 
 	let delim = repeat('-',50)
 
+	let tables = base#qw('href log saved local_index')
+
 	let msg  = ''
 	let msg .= "\n"   . 'HTMLWORK clear_all ' 
 	let msg .= "\n"   . delim
@@ -345,11 +350,12 @@ function! base#htmlwork#clear_all ()
 	let msg .= "\n"   . ' ' 
 	let msg .= "\n"   . 'This will do the following: ' 
 	let msg .= "\n"   . '- remove files' 
-	let msg .= "\n"   . '- delete table rows' 
+	let msg .= "\n"   . '- delete table rows for tables:' 
+	let msg .= "\n"   . '    ' . join(tables,' ')
 	let msg .= "\n"   . delim
-	let msg .= "\n"   . 'Ready to delete everything? 1/0: '
+	let msg .= "\n"   . 'Ready to delete everything? (1/0): '
 
-	let yn = input(msg,1)
+	let yn = input(msg,0)
 	if !yn | return | endif
 
 	let p = []
@@ -360,10 +366,9 @@ function! base#htmlwork#clear_all ()
 
 	call base#htmlwork#delete_saved_files()
 
-	let tables = base#qw('href log saved local_index')
 	for t in tables
-		let q = 'DELETE FROM ' . t 
-		let q.= cond
+		let q  = 'DELETE FROM ' . t 
+		let q .= cond
 
 		call pymy#sqlite#query({
 			\	'dbfile' : dbfile,
@@ -374,36 +379,6 @@ function! base#htmlwork#clear_all ()
 
 endfunction
 
-function! base#htmlwork#clear_saved ()
-	let dbfile = base#htmlwork#dbfile()
-
-	let yn = input('Ready to delete saved? 1/0: ',1)
-
-	if !yn | return | endif
-
-	let q = 'SELECT local FROM saved'
-	let p = []
-	
-	let saved_files = pymy#sqlite#query_as_list({
-		\	'dbfile' : dbfile,
-		\	'p'      : p,
-		\	'q'      : q,
-		\	})
-	for sfile in saved_files
-		if filereadable(sfile)
-			call delete(sfile)
-		endif
-	endfor
-
-	let q = 'DELETE FROM saved'
-	let q = input('query: ',q)
-
-	call pymy#sqlite#query({
-		\	'dbfile' : dbfile,
-		\	'q'      : q,
-		\	})
-
-endfunction
 
 function! base#htmlwork#db_backup ()
 	let dbfile = base#htmlwork#dbfile()

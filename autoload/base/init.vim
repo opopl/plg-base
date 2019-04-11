@@ -405,7 +405,7 @@ command! -nargs=* -complete=custom,base#complete#omnioptions
 
 
 """BYFF
-	command! -nargs=*  -complete=custom,base#complete#buff BYFF
+	command! -nargs=*  -complete=custom,base#complete#BYFF BYFF
 		\	call base#buffers#cmd(<f-args>) 
 	 
 
