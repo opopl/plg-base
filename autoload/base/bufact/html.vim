@@ -142,6 +142,10 @@ function! base#bufact#html#z_list_href (...)
 	call base#bufact#html#z_cmd_('list_href')
 endfunction
 
+function! base#bufact#html#z_toc_remove (...)	
+	call base#bufact#html#z_cmd_('toc_remove')
+endfunction
+
 function! base#bufact#html#z_vh_outline (...)	
 	call base#bufact#html#z_cmd_('vh_outline')
 endfunction

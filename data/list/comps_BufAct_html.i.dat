@@ -36,6 +36,7 @@ z_list_href
 z_tables_to_txt
 z_vh_convert
 z_vh_outline
+z_toc_remove
 ###
 set_ft_php
 vh_outline
