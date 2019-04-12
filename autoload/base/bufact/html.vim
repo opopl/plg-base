@@ -290,6 +290,10 @@ function! base#bufact#html#xpath ()
 				\	'cdata2text'   : 1,
 				\	'load_as'      : load_as,
 				\	})
+	let lines = []
+	call extend(lines,['XPATH:',xpath])
+	call extend(lines,['RESULT:'])
+	call extend(lines,filtered)
 
 	call base#buf#open_split({ 
 		\ 'lines'    : filtered ,
