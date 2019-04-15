@@ -8,18 +8,18 @@ fun! base#buffers#get()
   let blines  = split(lsvar,'\n')
   let bufnums = []
 
-  let types=base#varget('buf_types',{})
+  let types = base#varget('buf_types',{})
 
   let [all, allwidths, listedwidths] = [[], {}, {}]
 
   for n in keys(types)
-    let allwidths[n] = []
+    let allwidths[n]    = []
     let listedwidths[n] = []
   endfor
 
   " Contains buffer structures
-  let bufs=[]
-  let bufh=[]
+  let bufs = []
+  let bufh = []
 
   for buf in blines
         let bits = split(buf, '"')
@@ -70,8 +70,6 @@ fun! base#buffers#get()
 
 	call base#varset('bufs',all)
 	call base#varset('bufnums',bufnums)
-
-
 
 endfun
 

@@ -1,1 +1,3 @@
 set_ft_html
+exec_async
+syntax_check

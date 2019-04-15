@@ -12,6 +12,17 @@ function! base#act#envvar_open_split (...)
 
 endfunction
 
+function! base#act#file_view (...)
+	let fileid = get(a:000,0,'')
+
+
+	let dbfile = base#dbfile()
+endfunction
+
+function! base#act#file_add_to_db (...)
+	let dbfile = base#dbfile()
+endfunction
+
 function! base#act#async_run (...)
 	let cmd = get(a:000,0,'')
 

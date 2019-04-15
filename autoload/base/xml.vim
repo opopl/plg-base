@@ -14,9 +14,8 @@ perl << eof
 		use warnings;
 
 		use XML::LibXML;
-		use Vim::Perl qw(:funcs :vars);
-		use Base::XML qw($DOMCACHE $XPATHCACHE $DOM);
-		#use Vim::Plg::idephp qw($doms_xml);
+		use Vim::Perl qw(VimVar VimWarn);
+		use Base::XML qw($DOMCACHE $DOM);
 
 		use String::Escape qw(quote);
 
@@ -51,7 +50,6 @@ perl << eof
 		unless( defined $dom ){ VimWarn('DOM is not defined!'); return; }
 		$DOM = $dom;
 
-		#VimMsg($dom->toString);
 		close $fh;
 eof
 	

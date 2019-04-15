@@ -291,12 +291,12 @@ function! base#bufact#html#xpath ()
 				\	'load_as'      : load_as,
 				\	})
 	let lines = []
-	call extend(lines,['XPATH:',xpath])
-	call extend(lines,['RESULT:'])
+	call extend(lines,['<!-- XPATH:',xpath])
+	call extend(lines,['RESULT:','-->'])
 	call extend(lines,filtered)
 
 	call base#buf#open_split({ 
-		\ 'lines'    : filtered ,
+		\ 'lines'    : lines,
 		\ 'cmds_pre' : [ 'set ft=html' ],
 		\	})
 
