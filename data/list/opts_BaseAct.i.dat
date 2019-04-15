@@ -27,4 +27,3 @@ paths_from_db
 async_run
 ###file
 file_view
-file_add_to_db

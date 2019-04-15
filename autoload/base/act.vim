@@ -15,13 +15,13 @@ endfunction
 function! base#act#file_view (...)
 	let fileid = get(a:000,0,'')
 
-
 	let dbfile = base#dbfile()
+
+	let file = base#db#file_path('fileid')
+
+	call base#fileopen({ 'files': [file] })
 endfunction
 
-function! base#act#file_add_to_db (...)
-	let dbfile = base#dbfile()
-endfunction
 
 function! base#act#async_run (...)
 	let cmd = get(a:000,0,'')
