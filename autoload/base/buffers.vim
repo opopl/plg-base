@@ -132,7 +132,7 @@ fun! base#buffers#list()
 endfun
 
 fun! base#buffers#wipeall(...)
-  let currnum=bufnr('%')
+  let currnum = bufnr('%')
 
   for bnum in base#varget('bufnums',[])
      if bnum != currnum  
