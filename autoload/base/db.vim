@@ -2,10 +2,10 @@
 function! base#db#file_add (...)
 		let ref    = get(a:000,0,{})
 
-		let dbfile = base#dbfile()
-
 		let file   = get(ref,'file','')
 		let fileid = get(ref,'fileid','')
+
+		let dbfile = base#dbfile()
 		
 		let [ rowid ] = pymy#sqlite#insert_hash({
 			\	'dbfile' : dbfile,
@@ -22,14 +22,11 @@ function! base#db#file_add (...)
 	
 endfunction
 
-function! base#db#file_path (...)
-		let ref    = get(a:000,0,{})
-		
+function! base#db#file_path (fileid)
+		let fileid = a:fileid
+
 		let dbfile = base#dbfile()
-		
-		let fileid = get(ref,'fileid','')
-		
-		let dbfile = base#dbfile()
+
 		let pcname = base#pcname()
 		
 		let q = 'SELECT file FROM files WHERE fileid = ? AND pcname = ? '
