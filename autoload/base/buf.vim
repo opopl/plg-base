@@ -60,9 +60,15 @@ function! base#buf#act(...)
 		"endfor
    "else
 	"endif
-
-	let sub  = 'base#bufact#'.ft.'#'.act
+	"
+	let sub = ''
+	if base#inlist(act, base#comps#bufact_common() )
+		let sub  = 'base#bufact_common#'.act
+	else
+		let sub  = 'base#bufact#'.ft.'#'.act
+	endif
 	call add(subs,sub)
+
 
 	for sub in subs
 		exe 'call '. sub.'()'
