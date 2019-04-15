@@ -1,2 +1,2 @@
 
-let b:comps_BufAct = base#varget('comps_BufAct_perl',[])
+let b:comps_BufAct = base#comps#bufact('perl') 

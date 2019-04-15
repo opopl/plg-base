@@ -1,5 +1,6 @@
 
-let s:comps = base#varget('comps_BufAct_html',[])
+
+let s:comps = base#comps#bufact('html') 
 
 if exists("b:db_info")
 	let c_db = base#varget('comps_db_info',[])

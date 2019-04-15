@@ -33,7 +33,7 @@ function! base#db#file_path (...)
 		let pcname = base#pcname()
 		
 		let q = 'SELECT file FROM files WHERE fileid = ? AND pcname = ? '
-		let p = [fileid, pcname]
+		let p = [ fileid, pcname ]
 		
 		let file = pymy#sqlite#query_fetchone({
 			\	'dbfile' : dbfile,

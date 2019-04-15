@@ -1,5 +1,5 @@
 
-let comps = base#varget('comps_BufAct_vim',[])
+let comps = base#comps#bufact('vim') 
 call add(comps,'stat')
 
 let b:comps_BufAct = comps
