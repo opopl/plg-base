@@ -42,8 +42,9 @@ fun! base#buffers#get()
             let b.shortname = "<DIRECTORY>"
         endif
 
-		let attr_a=split(b.attr,'\s\+')
-		let bnum=str2nr( attr_a[0] )
+		let attr_a = split(b.attr,'\s\+')
+		let bnum   = str2nr( attr_a[0] )
+
 		call extend(b,{ 'num' : bnum })
 		call add(bufnums,bnum)
 
@@ -78,7 +79,9 @@ fun! base#buffers#fill_db(...)
 
 	let sqlf   = base#qw#catpath('plg', 'base data sql create_table_buffers.sql')
 
-	let sql   = join(readfile(sqlf),"\n")
+	let sql    = join(readfile(sqlf),"\n")
+
+	call base#buffers#get()
 	
 	call pymy#sqlite#query({
 		\	'dbfile' : base#dbfile(),
@@ -89,12 +92,12 @@ fun! base#buffers#fill_db(...)
 	for buf in bufs
 			let ref = {
 					\ "dbfile" : dbfile,
-					\ "i" : "INSERT OR REPLACE",
-					\ "t" : 'buffers', 
-					\ "h" : buf,
+					\ "i"      : "INSERT OR REPLACE",
+					\ "t"      : 'buffers',
+					\ "h"      : buf,
 					\ }
 					
-			call pymy#sqlite#insert_hash(ref)
+			let [rowid] = pymy#sqlite#insert_hash(ref)
 	endfor
 
 endfun
