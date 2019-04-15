@@ -15,9 +15,13 @@ endfunction
 function! base#act#file_view (...)
 	let fileid = get(a:000,0,'')
 
-	let dbfile = base#dbfile()
+	while !strlen(fileid)
+		let msg    = 'fileid: '
+		let fileid = base#input_we(msg,'',{
+			\ 'complete' : 'custom,base#complete#db_fileids' })
+	endw
 
-	let file = base#db#file_path('fileid')
+	let file = base#db#file_path(fileid)
 
 	call base#fileopen({ 'files': [file] })
 endfunction

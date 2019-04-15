@@ -193,6 +193,12 @@ function! base#complete#BYFF (...)
   return base#complete#vars([ 'cmds_BYFF' ])
 endfunction
 
+function! base#complete#db_fileids (...)
+	let ids = base#db#file_ids()
+	return join(ids,"\n")
+
+endfunction
+
 function! base#complete#VH (...)
   return base#complete#vars([ 'opts_VH' ])
 endfunction
