@@ -322,6 +322,8 @@ function! base#bufact#html#_select (...)
 	 	\	})
 	 let xpath = base#html#xp({ 'id' : xpid })
 
+	 call base#bufact#html#xpath({ 'xpath' : xpath })
+
 endfunction
 
 """bufact_xpath
