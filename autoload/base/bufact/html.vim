@@ -337,7 +337,7 @@ function! base#bufact#html#xpath (...)
 
 	let xpath = get(ref,'xpath','')
 
-	if strlen(xpath)
+	if ! strlen(xpath)
 		let xpath = idephp#hist#input({ 
 				\	'msg'  : 'XPATH:',
 				\	'hist' : 'xpath',
