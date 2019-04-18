@@ -1,12 +1,14 @@
 dump_split
 pretty_perl_libxml
 pretty_beautifulsoup
+###xpath
 xpath
 xpath_to_literal
+quickfix_xpath
+_select
 find_style
 find_form
 find_script
-quickfix_xpath
 headings
 ###attr
 attr_remove

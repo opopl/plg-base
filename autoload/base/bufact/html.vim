@@ -268,16 +268,64 @@ eof
 
 endfunction
 
-function! base#bufact#html#xpath ()
+"""bufact__select
+function! base#bufact#html#_select (...)
+	 let data_h = [
+	 		\	{ 
+	 			\	'id'   : 'a', 
+	 			\	'desc' : '(xpath) select nodes between two comments',
+	 			\	'xpid' : 'nodes_between_two_comments',
+	 		\	}
+	 		\	]
+	 let headers = [ 'id', 'desc' ]
+	 let tlines = pymy#data#tabulate({ 
+	 		\	'data_h'  : data_h,
+	 		\	'headers' : headers })
+
+	 let msg = ''
+	 let msg .= join(tlines,"\n")
+	 let msg .= "\n" . 'choose id: '
+
+	 let id = base#input_we(msg,'',{})
+
+	 let dbfile = base#dbfile()
+	 
+	 call pymy#sqlite#query({
+	 	\	'dbfile' : ':memory:',
+	 	\	'p'      : p,
+	 	\	'q'      : q,
+	 	\	})
+	 let r = {
+			\	'dbfile' : base#dbfile_tmp(),
+			\	't'      : 'hist_AC',
+			\	'c'      : [ 
+							\	'cmd TEXT', 
+							\	'time INTEGER', 
+							\	'output TEXT', 
+							\	'code INTEGER' ],
+			\	'rw'     : 1,
+			\ }
+		call pymy#sqlite#table_create(r)
+
+endfunction
+
+"""bufact_xpath
+function! base#bufact#html#xpath (...)
 	call base#buf#start()
+
+	let ref   = get(a:000,0,{})
 
 	let lines = getline(0,'$')
 	let html  = join(lines,"\n")
 
-	let xpath = idephp#hist#input({ 
-			\	'msg'  : 'XPATH:',
-			\	'hist' : 'xpath',
-			\	})
+	let xpath = get(ref,'xpath','')
+
+	if strlen(xpath)
+		let xpath = idephp#hist#input({ 
+				\	'msg'  : 'XPATH:',
+				\	'hist' : 'xpath',
+				\	})
+	endif
 
 	let filtered = []
 

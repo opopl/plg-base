@@ -458,12 +458,22 @@ function! base#htw_dbfile()
 		return dbfile
 endf
 
+function! base#dbfile_tmp (...)
+		let dbfile = base#dbdir . '/tmp_vim_base.db'
+		return dbfile
+endf
+
+function! base#dbdir (...)
+		let dbdir = $HOME . '/db'
+		call base#mkdir(dbdir)
+		return dbdir
+endf
+
 function! base#dbfile (...)
 	let dbname = get(a:000,0,'')
 
 	if !strlen(dbname)
-		let dbdir = $HOME . '/db'
-		call base#mkdir(dbdir)
+		let dbdir = base#dbdir()
 	
 		let dbfile = dbdir . '/vim_plg_base.db'
 	else

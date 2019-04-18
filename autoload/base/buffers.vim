@@ -119,7 +119,7 @@ fun! base#buffers#file_is_loaded(file)
 	let bref     = base#buffers#get()
 	let buffiles = get(bref,'buffiles',[])
 
-	return base#inlist(file,buffiles)
+	return base#inlist(file, buffiles)
 
 endfun
 

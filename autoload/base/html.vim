@@ -918,6 +918,16 @@ eof
 	
 endfunction
 
+function! base#html#xp (...)
+	let ref=get(a:000,0,{})
+	let id = get(ref,'id','')
+perl << eof
+	my $id = VimVar('id');
+	use Base::HTML qw(xp);
+eof
+
+endfunction
+
 function! base#html#xpath(...)
 	if !has('perl') | return | endif
 

@@ -80,5 +80,11 @@ snippet perlvl
 snippet bi
 	let <++> = base#input_we(<++>,<++>,{ 
 		\ 'complete' : <++>})
+snippet biz
+	let <++> = base#input_we(<++>,<++>,{})
 snippet ba
 	let b:comps_BufAct = base#comps#bufact('<++>') 
+snippet ifs
+	if strlen(<++>)
+		<++>
+	endif
