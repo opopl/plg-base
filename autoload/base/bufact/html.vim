@@ -288,21 +288,13 @@ function! base#bufact#html#_select (...)
 
 	 let id = base#input_we(msg,'',{})
 
-	 let dbfile = base#dbfile()
-	 
-	 call pymy#sqlite#query({
-	 	\	'dbfile' : ':memory:',
-	 	\	'p'      : p,
-	 	\	'q'      : q,
-	 	\	})
 	 let r = {
 			\	'dbfile' : base#dbfile_tmp(),
-			\	't'      : 'hist_AC',
+			\	't'      : 'bufact_html__select',
 			\	'c'      : [ 
-							\	'cmd TEXT', 
-							\	'time INTEGER', 
-							\	'output TEXT', 
-							\	'code INTEGER' ],
+							\	'id TEXT', 
+							\	'desc TEXT', 
+							\	'xpid TEXT' ],
 			\	'rw'     : 1,
 			\ }
 		call pymy#sqlite#table_create(r)
