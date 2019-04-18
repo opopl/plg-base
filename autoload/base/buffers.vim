@@ -6,7 +6,9 @@ fun! base#buffers#get()
   redir END 
 
   let blines  = split(lsvar,'\n')
+
   let bufnums = []
+	let buffiles = []
 
   let types = base#varget('buf_types',{})
 
@@ -37,16 +39,17 @@ fun! base#buffers#get()
         for [key, val] in items(types)
             let b[key] = fnamemodify(name, val)
         endfor
+				call add(buffiles,b.fullname)
 
         if getftype(b.fullname) == "dir" && base#opttrue('buf_showdirs')
             let b.shortname = "<DIRECTORY>"
         endif
-
-		let attr_a = split(b.attr,'\s\+')
-		let bnum   = str2nr( attr_a[0] )
-
-		call extend(b,{ 'num' : bnum })
-		call add(bufnums,bnum)
+	
+				let attr_a = split(b.attr,'\s\+')
+				let bnum   = str2nr( attr_a[0] )
+		
+				call extend(b,{ 'num' : bnum })
+				call add(bufnums,bnum)
 
         call add(all, b)
 
@@ -72,6 +75,14 @@ fun! base#buffers#get()
 	call base#varset('bufs',all)
 	call base#varset('bufnums',bufnums)
 
+	let bref = {
+			\	'bufs'     : bufs,
+			\	'buffiles' : buffiles,
+			\	'bufnums'  : bufnums,
+			\	}
+
+	return bref
+
 endfun
 
 fun! base#buffers#fill_db(...)
@@ -81,7 +92,7 @@ fun! base#buffers#fill_db(...)
 
 	let sql    = join(readfile(sqlf),"\n")
 
-	call base#buffers#get()
+	let bref =  base#buffers#get()
 	
 	call pymy#sqlite#query({
 		\	'dbfile' : base#dbfile(),
@@ -99,6 +110,16 @@ fun! base#buffers#fill_db(...)
 					
 			let [rowid] = pymy#sqlite#insert_hash(ref)
 	endfor
+
+endfun
+
+fun! base#buffers#file_is_loaded(file)	
+	let file     = a:file
+
+	let bref     = base#buffers#get()
+	let buffiles = get(bref,'buffiles',[])
+
+	return base#inlist(file,buffiles)
 
 endfun
 

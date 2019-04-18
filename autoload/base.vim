@@ -775,6 +775,10 @@ fun! base#fileopen(ref)
 		endif
 	endif
 
+	if base#buffers#file_is_loaded(file)
+		continue
+	endif
+
   exe action . ' ' . file
   let exec = get(opts,'exec','')
   if len(exec)
