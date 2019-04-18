@@ -286,11 +286,14 @@ function! base#bufact#html#_select (...)
 	 let msg .= join(tlines,"\n")
 	 let msg .= "\n" . 'choose id: '
 
-	 let id = base#input_we(msg,'',{})
+
+	 let dbfile = base#dbfile_tmp()
+
+	 let t = "bufact_html__select"
 
 	 let r = {
-			\	'dbfile' : base#dbfile_tmp(),
-			\	't'      : 'bufact_html__select',
+			\	'dbfile' : dbfile,
+			\	't'      : t,
 			\	'c'      : [ 
 							\	'id TEXT', 
 							\	'desc TEXT', 
@@ -298,6 +301,26 @@ function! base#bufact#html#_select (...)
 			\	'rw'     : 1,
 			\ }
 		call pymy#sqlite#table_create(r)
+		for rh in data_h
+			let h = rh
+			
+			let ref = {
+				\	'dbfile' : dbfile,
+				\ "i" : "INSERT OR REPLACE",
+				\ "t" : t, 
+				\ "h" : h, 
+				\ }
+			call pymy#sqlite#insert_hash(ref)
+		endfor
+
+	 let id = base#input_we(msg,'',{})
+	 
+	 let xpid = pymy#sqlite#query_fetchone({
+	 	\	'dbfile' : dbfile,
+	 	\	'p'      : [id],
+	 	\	'q'      : 'SELECT xpid FROM ' . t . ' WHERE id = ? ',
+	 	\	})
+	 let xpath = base#html#xp({ 'id' : xpid })
 
 endfunction
 

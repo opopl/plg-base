@@ -919,13 +919,18 @@ eof
 endfunction
 
 function! base#html#xp (...)
-	let ref=get(a:000,0,{})
-	let id = get(ref,'id','')
+	let ref = get(a:000,0,{})
+	let id  = get(ref,'id','')
+
+	let xpath = ''
 perl << eof
 	my $id = VimVar('id');
 	use Base::HTML qw(xp);
-eof
 
+	my $xpath = xp($id);
+	VimLet('xpath',$xpath);
+eof
+	return xpath
 endfunction
 
 function! base#html#xpath(...)

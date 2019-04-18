@@ -459,7 +459,7 @@ function! base#htw_dbfile()
 endf
 
 function! base#dbfile_tmp (...)
-		let dbfile = base#dbdir . '/tmp_vim_base.db'
+		let dbfile = base#dbdir() . '/tmp_vim_base.db'
 		return dbfile
 endf
 
