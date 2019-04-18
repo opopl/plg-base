@@ -306,21 +306,44 @@ function! base#bufact#html#_select (...)
 			
 			let ref = {
 				\	'dbfile' : dbfile,
-				\ "i" : "INSERT OR REPLACE",
-				\ "t" : t, 
-				\ "h" : h, 
+				\ "i"      : "INSERT OR REPLACE",
+				\ "t"      : t,
+				\ "h"      : h,
 				\ }
 			call pymy#sqlite#insert_hash(ref)
 		endfor
 
-	 let id = base#input_we(msg,'',{})
-	 
-	 let xpid = pymy#sqlite#query_fetchone({
-	 	\	'dbfile' : dbfile,
-	 	\	'p'      : [id],
-	 	\	'q'      : 'SELECT xpid FROM ' . t . ' WHERE id = ? ',
-	 	\	})
-	 let xpath = base#html#xp({ 'id' : xpid })
+		let id = base#input_we(msg,'',{})
+		
+		let xpid = pymy#sqlite#query_fetchone({
+			\	'dbfile' : dbfile,
+			\	'p'      : [id],
+			\	'q'      : 'SELECT xpid FROM ' . t . ' WHERE id = ? ',
+			\	})
+		let xpath = base#html#xp({ 'id' : xpid })
+
+		if xpid == 'nodes_between_two_comments'
+
+			let begin = ''
+			let end   = ''
+			
+			let begin = ' #BeginTocAnchorNameBegin '
+			let end   = ' #EndTocAnchorNameBegin '
+
+			let begin = base#input_we('_BEGIN_: ',begin,{})
+			let end   = base#input_we('_END_: ',end,{})
+
+			let xpath = substitute(xpath,'_BEGIN_',begin,'g')
+			let xpath = substitute(xpath,'_END_',end,'g')
+	 endif
+
+	 let msg = ''
+	 let msg .=  "\n" . 'XPATH to be run: '
+	 let msg .=  "\n" . xpath
+	 let msg .=  "\n" . 'Continue? (1/0): '
+
+	 let yn = base#input_we(msg,1,{})
+	 if !yn | return | endif
 
 	 call base#bufact#html#xpath({ 'xpath' : xpath })
 
