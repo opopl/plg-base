@@ -13,7 +13,7 @@ function! base#bufact#php#server_run ()
 	call base#cd(b:dirname)
 	let port = base#input_we('port: ',8000,{})
 
-	let cmd = 'AC php -S localhost:' . port . ' ' . shellescape(b:file)
+	let cmd = 'AC php -S localhost:' . port . ' ' . shellescape(b:basename)
 	exe cmd
 
 endfunction
