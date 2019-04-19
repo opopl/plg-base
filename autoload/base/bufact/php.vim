@@ -7,6 +7,17 @@ function! base#bufact#php#set_ft_html ()
 	
 endfunction
 
+function! base#bufact#php#server_run ()
+	call base#buf#start()
+
+	call base#cd(b:dirname)
+	let port = base#input_we('port: ',8000,{})
+
+	let cmd = 'AC php -S localhost:' . port . ' ' . shellescape(b:file)
+	exe cmd
+
+endfunction
+
 function! base#bufact#php#syntax_check ()
 	call base#buf#start()
 	call base#html#htw_load_buf()

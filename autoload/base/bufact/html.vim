@@ -313,7 +313,12 @@ function! base#bufact#html#_select (...)
 			call pymy#sqlite#insert_hash(ref)
 		endfor
 
-		let id = base#input_we(msg,'',{})
+		let ids = pymy#sqlite#query_as_list({
+			\	'dbfile' : dbfile,
+			\	'q'      : 'SELECT DISTINCT id FROM ' . t,
+			\	})
+		call base#varset('this',ids)
+		let id = base#input_we(msg,'',{ 'complete' : 'custom,base#complete#this'})
 		
 		let xpid = pymy#sqlite#query_fetchone({
 			\	'dbfile' : dbfile,
