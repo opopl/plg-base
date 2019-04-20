@@ -2343,11 +2343,24 @@ function! base#info (...)
 	 elseif topic == 'file'
 			call base#buf#start()
 
+			let info = []
+
+			call add(info,'General Info:')
+			let info_g = [
+			\ [ 'Current dir (cwd):', getcwd() ],
+			\ ]
+
+			let lines = pymy#data#tabulate({ 
+				\	'data'    : info_g,
+				\	'headers' : [],
+				\	})
+			call extend(info,base#map#add_tabs(lines,1))
+
 			let info = ['FILE INFO:']
 			
 			let info_a = [
 			\ [ 'Current file:', expand('%:p') ],
-			\ [ 'Current directory:', expand('%:p:h') ],
+			\ [ 'File directory (dirname):', expand('%:p:h') ],
 			\ [ 'Filetype:', &ft ],
 			\ [ 'Filesize:', base#file#size(b:file) ],
 			\ ]
