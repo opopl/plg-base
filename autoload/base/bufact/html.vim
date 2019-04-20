@@ -24,6 +24,15 @@ eof
 
 endfunction
 
+function! base#bufact#html#find_by_css_selector ()
+	call base#buf#start()
+
+perl << eof
+	use Mojo::DOM;
+eof
+
+endfunction
+
 function! base#bufact#html#db_info ()
 	call base#buf#start()
 	call base#buf#db_info()

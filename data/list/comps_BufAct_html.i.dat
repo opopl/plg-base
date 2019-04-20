@@ -1,6 +1,8 @@
 dump_split
 pretty_perl_libxml
 pretty_beautifulsoup
+###css
+find_by_css_selector
 ###xpath
 xpath
 xpath_to_literal
