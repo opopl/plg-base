@@ -2356,7 +2356,7 @@ function! base#info (...)
 				\	})
 			call extend(info,base#map#add_tabs(lines,1))
 
-			let info = ['FILE INFO:']
+			call extend(info,['FILE INFO:'])
 			
 			let info_a = [
 			\ [ 'Current file:', expand('%:p') ],
