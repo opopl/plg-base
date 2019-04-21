@@ -88,3 +88,7 @@ snippet ifs
 	if strlen(<++>)
 		<++>
 	endif
+snippet bref
+	let bref     = base#buffers#get()
+	let bufs     = get(bref,'bufs',[])
+	let buffiles = get(bref,'buffiles',[])

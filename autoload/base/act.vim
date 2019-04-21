@@ -26,6 +26,28 @@ function! base#act#file_view (...)
 	call base#fileopen({ 'files': [file] })
 endfunction
 
+function! base#act#buf_loclist (...)
+	let exts_s = base#input_we('extensions (separated by space) : ','',{})
+	let exts   = split(exts_s," ")
+	
+	let bref     = base#buffers#get()
+	let bufs     = get(bref,'bufs',[])
+	let buffiles = get(bref,'buffiles',[])
+
+	let llist = []
+	for bff in buffiles
+		let ext = fnamemodify(bff,':e')
+		if base#inlist(ext,exts)
+			 call add(llist,{ 'filename' : bff, 'text' : fnamemodify(bff,':t') })
+		endif
+	endfor
+
+	if len(llist)
+		call setloclist(winnr(), llist)
+		lopen
+	endif
+
+endfunction
 
 function! base#act#async_run (...)
 	let cmd = get(a:000,0,'')
