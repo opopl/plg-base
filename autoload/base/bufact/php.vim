@@ -26,6 +26,21 @@ function! base#bufact#php#syntax_check ()
 	setlocal errorformat=%m\ in\ %f\ on\ line\ %l	
 
 	AsyncMake
+	cclose
+
+	let list = getqflist()
+	let new = []
+	for item in list
+		let lnum = get(item,'lnum',0)
+		if lnum == 0
+			continue
+		endif
+		call add(new,item)
+	endfor
+	call setqflist(new)
+	if len(new)
+		copen
+	endif
 endfunction
 
 function! base#bufact#php#exec_async ()
