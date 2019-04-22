@@ -399,6 +399,22 @@ function! base#htmlwork (...)
 	
 endfunction
 
+function! base#CD(pathid, ... )
+    let ref = {}
+
+		let pathid = a:pathid
+
+    if a:0 | let ref = a:1 | endif
+
+    let dir = base#path(pathid)
+    if isdirectory(dir)
+        call base#cd(dir,ref)
+    else
+        call base#warn({ "text" : "Is NOT a directory: " . dir })
+    endif
+endf
+
+
 function! base#cd(dir,...)
     let ref = {}
     if a:0 | let ref = a:1 | endif
@@ -686,17 +702,6 @@ function! base#DIR(...)
 
 endfunction
 
-function! base#CD(dirid,...)
-    let ref = {}
-    if a:0 | let ref = a:1 | endif
-
-    let dir = base#path(a:dirid)
-    if isdirectory(dir)
-        call base#cd(dir,ref)
-    else
-        call base#warn({ "text" : "Is NOT a directory: " . dir })
-    endif
-endf
 
 "call base#catpath(key,[a,b,c])
 

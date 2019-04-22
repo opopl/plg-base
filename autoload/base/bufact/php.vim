@@ -31,16 +31,18 @@ function! base#bufact#php#syntax_check ()
 	let list = getqflist()
 	let new = []
 	for item in list
-		let lnum = get(item,'lnum',0)
+		let lnum = str2nr(get(item,'lnum',0))
 		if lnum == 0
 			continue
 		endif
+		echo lnum
 		call add(new,item)
 	endfor
-	call setqflist(new)
-	if len(new)
-		copen
-	endif
+
+	"if len(new)
+		"call setqflist(new)
+		"copen
+	"endif
 endfunction
 
 function! base#bufact#php#exec_async ()
