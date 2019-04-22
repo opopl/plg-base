@@ -407,6 +407,7 @@ function! base#CD(pathid, ... )
     if a:0 | let ref = a:1 | endif
 
     let dir = base#path(pathid)
+		call base#varset('pathid',pathid)
     if isdirectory(dir)
         call base#cd(dir,ref)
     else
@@ -2178,6 +2179,23 @@ eof
 
 endfunction
 
+function! base#pathid_cwd ()
+	let path = getcwd()
+
+	let dbfile = base#dbfile()
+	let q      = 'SELECT pathid FROM paths WHERE path = ? '
+	let p      = [path]
+
+	let pathid = pymy#sqlite#query_fetchone({
+		\	'dbfile' : dbfile,
+		\	'p'      : p,
+		\	'q'      : q,
+		\	})
+
+	return pathid
+
+endfunction
+
 function! base#pathids (path)
     let path = a:path
     let ids =[]
@@ -2352,7 +2370,8 @@ function! base#info (...)
 
 			call add(info,'General Info:')
 			let info_g = [
-			\ [ 'Current dir (cwd):', getcwd() ],
+			\ [ '(cwd)  dir   :', getcwd() ],
+			\ [ '(cwd)  pathid:', base#pathid_cwd() ],
 			\ ]
 
 			let lines = pymy#data#tabulate({ 
