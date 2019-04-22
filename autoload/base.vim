@@ -2183,8 +2183,8 @@ function! base#pathid_cwd ()
 	let path = getcwd()
 
 	let dbfile = base#dbfile()
-	let q      = 'SELECT pathid FROM paths WHERE path = ? '
-	let p      = [path]
+	let q      = 'SELECT pathid FROM paths WHERE lower(path) = ? '
+	let p      = [ tolower(path) ]
 
 	let pathid = pymy#sqlite#query_fetchone({
 		\	'dbfile' : dbfile,
