@@ -792,6 +792,8 @@ fun! base#fileopen(ref)
 	endif
 
 	if base#buffers#file_is_loaded(file)
+		let nr = bufnr(file)
+		exe 'buffer ' . nr
 		continue
 	endif
 

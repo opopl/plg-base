@@ -355,8 +355,8 @@ endfunction
 
 function! base#menu#additem (ref)
 
- let cmd='anoremenu '
- let cmds=[]
+ let cmd  = 'anoremenu '
+ let cmds = []
 
  let ref={
 			 	\	'icon'    : '',
@@ -394,7 +394,7 @@ function! base#menu#additem (ref)
 		 call base#warn('menu command not defined!')
 		 return
 	 else
-		 let cmd=ref.fullcmd
+		 let cmd = ref.fullcmd
  	 endif
  else
 	 let cmd.=':' . ref.cmd . '<CR>'
@@ -406,7 +406,12 @@ function! base#menu#additem (ref)
  endif
 
  for cmd in cmds
-	exe cmd
+	try
+		exe cmd
+	catch 
+		echo v:exception
+		echo cmd
+	endtry
  endfor
 
  let isloaded = base#varget('isloaded',{})
