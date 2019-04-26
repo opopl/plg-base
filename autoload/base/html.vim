@@ -933,6 +933,13 @@ eof
 	return xpath
 endfunction
 
+function! base#html#css_select(...)
+	if !has('perl') | return | endif
+
+	call base#html#htw_init()
+
+endfunction
+
 function! base#html#xpath(...)
 	if !has('perl') | return | endif
 

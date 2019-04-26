@@ -41,6 +41,7 @@ info
 #z_vh_outline
 #z_toc_remove
 z_vh_convert
+z_css_select
 ###
 set_ft_php
 vh_outline
