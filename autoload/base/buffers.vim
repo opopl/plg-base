@@ -12,7 +12,7 @@ fun! base#buffers#get()
 
   let types = base#varget('buf_types',{})
 
-  let [all, allwidths, listedwidths] = [[], {}, {}]
+  let [ allwidths, listedwidths] = [ {}, {} ]
 
   for n in keys(types)
     let allwidths[n]    = []
@@ -28,7 +28,7 @@ fun! base#buffers#get()
 
         " Use first and last components after the split on '"', in case a
         " filename with an embedded '"' is present.
-        let b = {"attr": bits[0], "line": substitute(bits[-1], '\s*', '', '')}
+        let b = { "attr" : bits[0], "line": substitute(bits[-1], '\s*', '', '')}
 
         let name = bufname(str2nr(b.attr))
         let b["hasNoName"] = empty(name)
@@ -39,7 +39,7 @@ fun! base#buffers#get()
         for [key, val] in items(types)
             let b[key] = fnamemodify(name, val)
         endfor
-				call add(buffiles,b.fullname)
+				call add(buffiles, b.fullname)
 
         if getftype(b.fullname) == "dir" && base#opttrue('buf_showdirs')
             let b.shortname = "<DIRECTORY>"
@@ -51,8 +51,8 @@ fun! base#buffers#get()
 				call extend(b,{ 'num' : bnum })
 				call add(bufnums,bnum)
 
-        call add(all, b)
-
+				call add(bufs, b)
+				
         for n in keys(types)
             call add(allwidths[n], base#sw(b[n]))
 
@@ -72,7 +72,7 @@ fun! base#buffers#get()
 	call base#varset('buf_allpads',allpads)
 	call base#varset('buf_listedpads',listedpads)
 
-	call base#varset('bufs',all)
+	call base#varset('bufs',bufs)
 	call base#varset('bufnums',bufnums)
 
 	let bref = {

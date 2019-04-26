@@ -223,67 +223,31 @@ function! base#menu#add(...)
      catch
      endtry
 
-   call base#buffers#get()
+	 let bref     = base#buffers#get()
+	 
+	 let bufs     = get(bref,'bufs',[])
+	 let bufnums  = get(bref,'bufnums',[])
+	 let buffiles = get(bref,'buffiles',[])
+
    let bufmenus={}
 
-   for buf in base#varget('bufs',[])
+
+   for buf in bufs
 		 let path = get(buf,'fullname','')
 		 let num  = get(buf,'num',0)
+
 
      let mn  = ''
      let tab = ''
 
-     "let path     = matchstr(path,'^"\zs.*\ze"$')
-
      let basename = fnamemodify(path,':p:t')
      let dirname  = fnamemodify(path,':p:h')
+		 let ext      = fnamemodify(path,':p:e')
 
      let basename_escape = substitute(basename,'\.','\\.','g')
      let dirname_escape  = substitute(dirname,'\.','\\.','g')
 
-
-     if path =~ '\.pm$'
-        "let module=
-            "\   F_sss("get_perl_package_name.pl --ifile " . path)
-				let module = ''
-        let mn='&BUFFERS.&PERL_MODULES.&' . module
-       
-     elseif path =~ '_fun_/\w\+\.vim$'
-        let vimfun=matchstr(path,'_fun_/\zs\w\+\ze\.vim$')
-
-        let mn='&BUFFERS.&VIM_FUNS.&' . vimfun
-
-     elseif path =~ '_coms_/\w\+\.vim$'
-        let vimcom=matchstr(path,'_coms_/\zs\w\+\ze\.vim$')
-
-        let mn='&BUFFERS.&VIM_COMS.&' . vimcom
-
-     elseif path =~ '\.i\.dat$' 
-
-       let dat=matchstr(basename,'^\zs.*\ze\.i\.dat$')
-       
-       if base#equalpaths(dirname,base#path('mkvimrc'))
-            let mn='&BUFFERS.&DAT_VIM.&' . dat
-       else
-            let mn='&BUFFERS.&DAT.&' . dat
-       endif
-
-     elseif path =~ '\.tex$' 
-
-       if base#equalpaths(dirname,base#path('projs'))
-            
-            let mn='&BUFFERS.&TEX.&PROJS.&' . basename_escape
-
-       endif
-
-     else 
-            let width    = 70
-            let sepwidth = width-strlen(basename_escape)-strlen(dirname_escape)
-
-            let mn  = '&BUFFERS.&OTHER.&' . basename_escape
-            let tab = dirname_escape
-
-     endif
+     let mn = printf('&BUFFERS.&%s.&%s',ext,basename_escape)
 
      if len(mn)
         let menu={
@@ -296,10 +260,9 @@ function! base#menu#add(...)
      endif
 
    endfor
-   """ end loop over g:bufs
 
    for mn in sort(keys(bufmenus))
-     let menu=bufmenus[mn]
+     let menu = bufmenus[mn]
      call base#menu#additem(menu)
    endfor
 
