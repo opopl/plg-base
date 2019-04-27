@@ -171,7 +171,11 @@ function! base#bufact#html#z_tables_to_txt (...)
 endfunction
 
 function! base#bufact#html#z_css_select (...)	
-	let r = { }
+	let css  = base#input_we('css selector: ','',{})
+	let opts = [ '--sel_css', css ]
+
+	let r = { 'opts' : opts }
+
 	call base#bufact#html#z_cmd_('css_select',r)
 endfunction
 
