@@ -42,6 +42,7 @@ info
 #z_toc_remove
 z_vh_convert
 z_css_select
+z_xpath_select
 ###
 set_ft_php
 vh_outline

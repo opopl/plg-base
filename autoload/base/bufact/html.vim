@@ -170,6 +170,11 @@ function! base#bufact#html#z_tables_to_txt (...)
 	call base#bufact#html#z_cmd_('tables_to_txt')
 endfunction
 
+function! base#bufact#html#z_css_select (...)	
+	let r = { }
+	call base#bufact#html#z_cmd_('css_select',r)
+endfunction
+
 function! base#bufact#html#z_cmd_ (...)
 	let z_cmd = get(a:000,0,'')
 
@@ -179,6 +184,8 @@ function! base#bufact#html#z_cmd_ (...)
 	let pl = base#qw#catpath('htmltool','bin htw.pl')
 
 	let opts = [ '--file', shellescape(b:file), '--cmd', z_cmd ]
+	call extend(opts,get(ref,'opts',[]))
+
 	let pl_cmd = 'perl ' . pl . ' ' . join(opts,' ')
 
 	let env = {}
