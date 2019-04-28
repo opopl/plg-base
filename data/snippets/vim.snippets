@@ -56,6 +56,8 @@ snippet ifs
 	if strlen(<++>)
 		<++>
 	endif
+snippet ifns
+	if ! strlen(<++>) | <++> | endif
 snippet ifsid
 	let siteid = base#varget('htw_siteid','')
 	let cond = ''
@@ -84,10 +86,6 @@ snippet biz
 	let <++> = base#input_we(<++>,<++>,{})
 snippet ba
 	let b:comps_BufAct = base#comps#bufact('<++>') 
-snippet ifs
-	if strlen(<++>)
-		<++>
-	endif
 snippet bref
 	let bref     = base#buffers#get()
 	let bufs     = get(bref,'bufs',[])

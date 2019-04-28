@@ -393,9 +393,7 @@ function! base#tg#update (...)
 
 		echo "Calling ctags command for: " . tgid 
 
-
-
-			let ok = base#sys(refsys)
+		let ok = base#sys(refsys)
 
 		let okref = { 
 				\	"cmd"  : cmd,
@@ -406,6 +404,10 @@ function! base#tg#update (...)
 		let ok= base#tg#ok(okref)
 	
 		return  ok
+
+	elseif tgid == 'php_z'
+		let dir   = base#qw#catpath('z_fetch_url','php')
+		let libs .= ' ' . dir
 
 """tgupdate_php_urltotxt
 	elseif tgid == 'php_urltotxt'
@@ -427,11 +429,6 @@ function! base#tg#update (...)
 
 		let dir   = 'c:\src\webgui-master\lib'
 		let libs .= ' ' . dir
-
-"""tgupdate_perl_as
-	elseif tgid == 'perl_as'
-
-		let libs.=' ' . libs_as
 
 	elseif tgid == 'perl_inc_plg_browser'
 

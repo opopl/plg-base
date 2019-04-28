@@ -16,6 +16,17 @@ function! base#menu#remove(...)
  if menuopt == 'projs'
 		call projs#menus#remove()
 
+ elseif menuopt == '_vim_'
+		let mns = base#varget('menus_remove__vim_',[])
+
+		for mn in mns
+			try 
+				exe 'aunmenu &' . mn 
+			catch
+				echo v:exception
+	 		endtry
+		endfor
+
  elseif menuopt == 'sqlite'
 		try 
 			exe 'aunmenu &SQLITE.&COMMANDS'
@@ -221,6 +232,7 @@ function! base#menu#add(...)
      try
         silent exe 'aunmenu BUFFERS'
      catch
+				echo v:exception
      endtry
 
 	 let bref     = base#buffers#get()
@@ -246,6 +258,8 @@ function! base#menu#add(...)
 
      let basename_escape = substitute(basename,'\.','\\.','g')
      let dirname_escape  = substitute(dirname,'\.','\\.','g')
+
+		 if ! strlen(ext) | continue | endif
 
      let mn = printf('&BUFFERS.&%s.&%s',ext,basename_escape)
 
