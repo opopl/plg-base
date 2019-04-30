@@ -43,6 +43,8 @@ info
 z_vh_convert
 z_xpath_select
 z_css_select
+z_list_css
+z_list_js
 ###
 set_ft_php
 vh_outline

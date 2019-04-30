@@ -151,6 +151,14 @@ function! base#bufact#html#z_list_href (...)
 	call base#bufact#html#z_cmd_('list_href')
 endfunction
 
+function! base#bufact#html#z_list_css (...)	
+	call base#bufact#html#z_cmd_('list_css')
+endfunction
+
+function! base#bufact#html#z_list_js (...)	
+	call base#bufact#html#z_cmd_('list_js')
+endfunction
+
 function! base#bufact#html#z_toc_remove (...)	
 	call base#bufact#html#z_cmd_('toc_remove')
 endfunction
