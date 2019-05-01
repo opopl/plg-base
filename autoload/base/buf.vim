@@ -142,7 +142,7 @@ function! base#buf#open_split (ref)
 			exe cmd
 		endfor
 
-		let lnum=line('.')
+		let lnum = line('.')
 		if len(lines)
 			for l in lines
 				call append(lnum,l)

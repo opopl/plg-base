@@ -1210,6 +1210,17 @@ fun! base#rmwh(ivar)
 
 endf
 
+fun! base#trim(ivar)
+ 
+  let var=a:ivar
+
+  let var=substitute(var,'^\s*','','g')
+  let var=substitute(var,'\s*$','','g')
+
+  return var
+
+endf
+
 "call base#prompt(msg,default)
 "call base#prompt(msg,default,complete)
 

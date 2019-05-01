@@ -248,6 +248,7 @@ function! base#menu#add(...)
 		 let path = get(buf,'fullname','')
 		 let num  = get(buf,'num',0)
 
+		 let path = base#trim(path)
 
      let mn  = ''
      let tab = ''
@@ -258,10 +259,17 @@ function! base#menu#add(...)
 
      let basename_escape = substitute(basename,'\.','\\.','g')
      let dirname_escape  = substitute(dirname,'\.','\\.','g')
-
+		
 		 if ! strlen(ext) | continue | endif
-
-     let mn = printf('&BUFFERS.&%s.&%s',ext,basename_escape)
+		
+		 let list = []
+		 call extend(list, [ '('.num.')' ])
+		 call extend(list, [ basename_escape ])
+		 call extend(list, [ escape(dirname_escape,'\\') ])
+		
+		 let str = base#text#pack_perl ('A10 A50 A*', list )
+		 let str = escape(str,' ')
+     let mn = printf('&BUFFERS.&%s.&%s', ext, str)
 
      if len(mn)
         let menu={

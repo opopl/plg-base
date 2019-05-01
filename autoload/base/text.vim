@@ -57,3 +57,24 @@ function! base#text#append (...)
 	endfor
 
 endfunction
+
+" wrapper around perl pack() function
+function! base#text#pack_perl (fmt, list)
+	 if ! has('perl') | return | endif 
+
+	 let fmt  = a:fmt
+	 let list = a:list
+	 let s = ''
+perl << eof
+	 use Vim::Perl qw( VimVar VimLet );
+
+	 my $list = VimVar('list');
+	 my $fmt  = VimVar('fmt');
+
+	 my $s = pack($fmt, @$list);
+	 VimLet('s',$s);
+	
+eof
+	return s
+
+endfunction
