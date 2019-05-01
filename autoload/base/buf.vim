@@ -117,8 +117,9 @@ endfunction
 function! base#buf#open_split (ref)
 		let ref      = a:ref
 
-		let lines    = get(ref,'lines',[])
-		let text     = get(ref,'text','')
+		let lines  = get(ref,'lines',[])
+		let text   = get(ref,'text','')
+		let action = get(ref,'action','split')
 
 		let cmds_pre = get(ref,'cmds_pre',[])
 
@@ -131,7 +132,7 @@ function! base#buf#open_split (ref)
 			return
 		endif
 		
-		exe 'split '
+		exe action . ' '
 		enew
     setlocal buftype=nofile
     setlocal nobuflisted
