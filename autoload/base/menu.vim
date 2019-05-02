@@ -243,7 +243,6 @@ function! base#menu#add(...)
 
    let bufmenus={}
 
-
    for buf in bufs
 		 let path = get(buf,'fullname','')
 		 let num  = get(buf,'num',0)

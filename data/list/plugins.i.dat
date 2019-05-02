@@ -106,7 +106,7 @@ vim-latex
 vimtex
 tex
 projs
-asynccommand
+asc
 asyncrun
 asyncmakegreen
 vim-addon-background-cmd
