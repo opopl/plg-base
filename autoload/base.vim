@@ -783,6 +783,7 @@ fun! base#fileopen(ref)
  	\	],prf)
 
  let anew_if_absent = get(opts,'anew_if_absent',0)
+ let load_buf       = get(opts,'load_buf',0)
 
  for file in files
 	if ! filereadable(file)
@@ -793,7 +794,9 @@ fun! base#fileopen(ref)
 
 	if base#buffers#file_is_loaded(file)
 		let nr = bufnr(file)
-		exe 'buffer ' . nr
+		if load_buf
+			exe 'buffer ' . nr
+		endif
 		continue
 	endif
 
