@@ -3,6 +3,29 @@ function! base#bufact#perl#insert_snip ()
 	call base#buf#insert_snip ()
 endf
 
+function! base#bufact#perl#insert_pod ()
+	let pod_id = base#input_we('POD snippet ID: ','',{})
+	if pod_id == 'hesub'
+		let sub = base#input_we('subname: ',,{})
+
+		let s =''
+perl << eof
+	my $sub = VimVar('sub');
+	my $s = qq{
+=head2 $sub
+
+=head3 Purpose
+
+=head3 Usage
+
+=cut
+	};
+	VimLet('s',$s);
+eof
+		call base#buf#open_split({ 'text' : s })
+	endif
+endf
+
 function! base#bufact#perl#pod_to_vimhelp ()
 	call base#buf#start()
 perl << eof
