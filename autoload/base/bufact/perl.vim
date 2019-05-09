@@ -6,7 +6,7 @@ endf
 function! base#bufact#perl#insert_pod ()
 	let pod_id = base#input_we('POD snippet ID: ','',{})
 	if pod_id == 'hesub'
-		let sub = base#input_we('subname: ',,{})
+		let sub = base#input_we('subname: ','',{})
 
 		let s =''
 perl << eof

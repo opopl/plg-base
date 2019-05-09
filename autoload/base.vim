@@ -824,6 +824,13 @@ fun! base#inlist(element,list)
 
 endfun
 
+fun! base#eval(expr)
+
+	let val = exists(expr) ? eval(expr) : ''
+	return val
+
+endfun
+
 function! base#getfromchoosedialog_nums (ref)
   let ref  = a:ref
   let opts = get(ref,'list',{})
