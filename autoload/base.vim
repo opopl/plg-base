@@ -825,6 +825,7 @@ fun! base#inlist(element,list)
 endfun
 
 fun! base#eval(expr)
+	let expr = a:expr
 
 	let val = exists(expr) ? eval(expr) : ''
 	return val

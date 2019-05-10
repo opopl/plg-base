@@ -185,7 +185,7 @@ endfunction
 function! base#buf#onload ()
 	call base#buf#start()
 
-	StatusLine simple
+	"StatusLine simple
 
 	if b:ext == 'tags'
 		setf tags

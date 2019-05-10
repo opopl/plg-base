@@ -2,14 +2,14 @@
 function! base#stl#set (...)
 
     if a:0
-      let opt=a:1
+      let opt = a:1
     else
-      let opt='neat'
+      let opt = 'neat'
 
-      let listcomps=base#varget('stlkeys',[])
+      let listcomps = base#varget('stlkeys',[])
   
       let liststr = join(listcomps,"\n")
-      let dialog  = "Available status line keys  are: " . "\n"
+      let dialog  = "Available status line keys are: " . "\n"
       let dialog .= base#createprompt(liststr, 1, "\n") . "\n"
       let dialog .= "Choose status line key by number: " . "\n"
 
@@ -18,7 +18,7 @@ function! base#stl#set (...)
 
     endif
 
-	let evs=''
+	let evs   = ''
 	let sline = ''
 
 	if opt == 'ap'
