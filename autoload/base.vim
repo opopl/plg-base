@@ -792,13 +792,13 @@ fun! base#fileopen(ref)
 		endif
 	endif
 
-	if base#buffers#file_is_loaded(file)
-		let nr = bufnr(file)
-		if load_buf
-			exe 'buffer ' . nr
-		endif
-		continue
-	endif
+ " if base#buffers#file_is_loaded(file)
+		"let nr = bufnr(file)
+		"if load_buf
+			"exe 'buffer ' . nr
+		"endif
+		"continue
+	"endif
 
   exe action . ' ' . file
   let exec = get(opts,'exec','')
