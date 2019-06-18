@@ -25,7 +25,7 @@ function! base#bufact#php#syntax_check ()
 	setlocal makeprg=php\ -l\ %
 	setlocal errorformat=%m\ in\ %f\ on\ line\ %l	
 
-	AsyncMake
+	call asc#make()
 	cclose
 
 	let list = getqflist()

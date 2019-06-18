@@ -24,12 +24,12 @@ ScrollColor
 tabular
 ### databases
 #database_client
-dbext
-simpledb
-sqhell
+#dbext
+#simpledb
+#sqhell
 #
 vim_prettyprint
-vim-misc
+#vim-misc
 xmledit
 xmlparser
 #vim-perl
@@ -47,7 +47,7 @@ xmlparser
 #vimexplorer
 #vimfiler
 #my_java
-jde
+#jde
 ## added 14:46:23 23-01-17
 #tern_for_vim
 ## added 15:19:10 23-01-17
@@ -81,24 +81,26 @@ jde
 #vim-mysql-mode
 #idecpp
 #gps
-webapi
+#webapi
 vdbi
-google
+#google
 keymaps
 vimproc
-unite
-devdocs
-tlib
-ttags
+#unite
+#devdocs
+#### --- ttags + tlib ------
+#tlib
+#ttags
+#### -----------------------
 #phpunitqf
 #phpqa
 #msbuild
-library
+#library
 vim-addon-mw-utils
-efm_nodejs
-nodejs
+#efm_nodejs
+#nodejs
 grep
-taskman
+#taskman
 #vcscommand
 #svnj
 ###tex
@@ -107,9 +109,9 @@ vimtex
 tex
 projs
 asc
-asyncrun
-asyncmakegreen
-vim-addon-background-cmd
+#asyncrun
+#asyncmakegreen
+#vim-addon-background-cmd
 textconv
 ###python
 pymy
