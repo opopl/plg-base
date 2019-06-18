@@ -19,30 +19,8 @@ function! base#bufact#php#server_run ()
 endfunction
 
 function! base#bufact#php#syntax_check ()
-	call base#buf#start()
-	call base#html#htw_load_buf()
-
-	setlocal makeprg=php\ -l\ %
-	setlocal errorformat=%m\ in\ %f\ on\ line\ %l	
-
-	call asc#make()
-	cclose
-
-	let list = getqflist()
-	let new = []
-	for item in list
-		let lnum = str2nr(get(item,'lnum',0))
-		if lnum == 0
-			continue
-		endif
-		echo lnum
-		call add(new,item)
-	endfor
-
-	"if len(new)
-		"call setqflist(new)
-		"copen
-	"endif
+	call idephp#buf#php_check_syntax ()
+	
 endfunction
 
 function! base#bufact#php#exec_async ()
