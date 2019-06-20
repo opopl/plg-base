@@ -2,6 +2,10 @@ snippet base#buf#open_split
 	base#buf#open_split({ "lines" : <++>, "text" : <++>, "cmds_pre" : <++>})
 snippet base#listnewinc
 	let list = base#listnewinc(<+start+>,<+end+>,<+inc+>)
+snippet bfw
+	base#file#write_lines
+snippet base#file#write_lines
+	call base#file#write_lines(<++>)
 snippet prf
 	let prf = { 'plugin' : '<++>', 'func' : '<++>', 'prf' : '<++>' }
 snippet base#file#write_lines
