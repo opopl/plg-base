@@ -404,15 +404,24 @@ function! base#bufact#html#xpath (...)
 
 	let load_as = base#html#libxml_load_as()
 
+	let decode_entities = input('Decode entities? (1/0):',1)
+	let cdata2text      = input('cdata2text? (1/0):',0)
+
 	let filtered = base#html#xpath({
-				\	'htmltext'     : html,
-				\	'xpath'        : xpath,
-				\	'add_comments' : 0,
-				\	'cdata2text'   : 1,
-				\	'load_as'      : load_as,
+				\	'htmltext'        : html,
+				\	'xpath'           : xpath,
+				\	'add_comments'    : 0,
+				\	'cdata2text'      : cdata2text,
+				\	'decode_entities' : decode_entities,
+				\	'load_as'         : load_as,
 				\	})
+
 	let lines = []
+
 	call extend(lines,['<!-- XPATH:',xpath])
+	call extend(lines,['   OPTIONS:'])
+	call extend(lines,['      cdata2text      => ' . cdata2text ])
+	call extend(lines,['      decode_entities => ' . decode_entities ])
 	call extend(lines,['RESULT:','-->'])
 	call extend(lines,filtered)
 

@@ -562,6 +562,7 @@ endfunction
 function! base#html#xpath(...)
 	if !has('perl') | return | endif
 
+	"initialize perl's global $HTW variable (instance of HTML::Work)
 	call base#html#htw_init()
 
 	let ref      = get(a:000,0,{})
@@ -572,8 +573,9 @@ function! base#html#xpath(...)
 
 	let file      = get(ref,'file','')
 
-	let add_comments = get(ref,'add_comments',0)
-	let cdata2text   = get(ref,'cdata2text',0)
+	let add_comments    = get(ref,'add_comments',0)
+	let cdata2text      = get(ref,'cdata2text',0)
+	let decode_entities = get(ref,'decode_entities',0)
 
 	let load_as      = base#html#libxml_load_as()
 	let load_as      = get(ref,'load_as',load_as)
@@ -594,12 +596,14 @@ perl << eof
 
 	use Vim::Perl qw(:funcs :vars);
 	use XML::LibXML;
-	use HTML::Entities;
+	use HTML::Entities qw(decode_entities);
 	use String::Util qw(trim);
 
 	my $html         = VimVar('htmltext');
 	my $xpath        = VimVar('xpath');
 	my $ref          = VimVar('ref') || {};
+
+	my $decode_entities = VimVar('decode_entities');
 
 	my $add_comments = VimVar('add_comments');
 	my $cdata2text   = VimVar('cdata2text');
@@ -632,13 +636,16 @@ perl << eof
 				dom    => $dom,
 				parser => $parser });
 		}
-		push @filtered,split("\n",$node->toString);
+		push @filtered, split("\n",$node->toString);
 	}
-	@filtered = map { decode_entities($_) } @filtered;
+	if ($decode_entities) {
+		@filtered = map { decode_entities($_) } @filtered;
+	}
 
 	if ($ref->{trim}) {
 		map { $_ = trim($_) } @filtered;
 	}
+
 	if ($ref->{skip_empty}) {
 		@filtered = map { /^\s*$/ ? () : $_ } @filtered;
 	}
@@ -672,7 +679,7 @@ perl << eof
 	my $html  = VimVar('htmltext');
 	my $xpath = VimVar('xpath');
 
-	my ($dom,@nodes,@filtered);
+	my ($dom, @nodes, @filtered);
 
 	$dom = XML::LibXML->load_html(
 			string          => decode('utf-8',$html),
