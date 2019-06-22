@@ -646,12 +646,14 @@ perl << eof
 			push @filtered, split("\n",$node->textContent);
 
 		} elsif ($mode eq 'node_children_toString') {
+			
 			my $s = sub {
-								my($n) = @_;
+								my ($n) = @_;
 								push @filtered, $n->toString;
 							};
 			$node
-				->findnodes('./*')
+				->childNodes()
+				#->findnodes('./*')
 				->map($s);
 			
 		}
