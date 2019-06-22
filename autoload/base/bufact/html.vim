@@ -407,6 +407,12 @@ function! base#bufact#html#xpath (...)
 	let decode_entities = input('Decode entities? (1/0):',1)
 	let cdata2text      = input('cdata2text? (1/0):',0)
 
+	let modes = base#varget('modes_html_xpath',[])
+	call base#varset('this',modes)
+
+	let mode = base#input_we('mode:','node_toString',{ 
+		\ 'complete' : 'custom,base#complete#this'})
+
 	let filtered = base#html#xpath({
 				\	'htmltext'        : html,
 				\	'xpath'           : xpath,
@@ -414,15 +420,21 @@ function! base#bufact#html#xpath (...)
 				\	'cdata2text'      : cdata2text,
 				\	'decode_entities' : decode_entities,
 				\	'load_as'         : load_as,
+				\	'mode'            : mode,
 				\	})
 
 	let lines = []
 
-	call extend(lines,['<!-- XPATH:',xpath])
+	call extend(lines,['<!-- ' ])
+	call extend(lines,['   XPATH:' ])
+	call extend(lines,['     ' . xpath ])
 	call extend(lines,['   OPTIONS:'])
+	call extend(lines,['      load_as         => ' . load_as ])
 	call extend(lines,['      cdata2text      => ' . cdata2text ])
 	call extend(lines,['      decode_entities => ' . decode_entities ])
-	call extend(lines,['RESULT:','-->'])
+	call extend(lines,['      mode            => ' . mode ])
+	call extend(lines,['   RESULT:'])
+	call extend(lines,['-->'])
 	call extend(lines,filtered)
 
 	call base#buf#open_split({ 

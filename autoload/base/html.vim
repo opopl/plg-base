@@ -580,6 +580,8 @@ function! base#html#xpath(...)
 	let load_as      = base#html#libxml_load_as()
 	let load_as      = get(ref,'load_as',load_as)
 
+	let mode         = get(ref,'mode','node_toString')
+
 	if filereadable(file)
 		let htmllines = readfile(file)
 	endif
@@ -608,6 +610,7 @@ perl << eof
 	my $add_comments = VimVar('add_comments');
 	my $cdata2text   = VimVar('cdata2text');
 	my $load_as      = VimVar('load_as');
+	my $mode         = VimVar('mode');
 
 	my @nodes = $HTW
 		->init_dom({ 
@@ -636,7 +639,22 @@ perl << eof
 				dom    => $dom,
 				parser => $parser });
 		}
-		push @filtered, split("\n",$node->toString);
+		if ($mode eq 'node_toString') {
+			push @filtered, split("\n",$node->toString);
+
+		} elsif ($mode eq 'node_textContent') {
+			push @filtered, split("\n",$node->textContent);
+
+		} elsif ($mode eq 'node_children_toString') {
+			my $s = sub {
+								my($n) = @_;
+								push @filtered, $n->toString;
+							};
+			$node
+				->findnodes('./*')
+				->map($s);
+			
+		}
 	}
 	if ($decode_entities) {
 		@filtered = map { decode_entities($_) } @filtered;
