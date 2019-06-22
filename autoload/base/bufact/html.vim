@@ -402,16 +402,24 @@ function! base#bufact#html#xpath (...)
 
 	let filtered = []
 
-	let load_as = base#html#libxml_load_as()
+	let load_as         = base#html#libxml_load_as()
+	let decode_entities = 1
+	let cdata2text      = 0
+	let mode            = 'node_toString'
+	let mode            = 'node_children_toString'
 
-	let decode_entities = input('Decode entities? (1/0):',1)
-	let cdata2text      = input('cdata2text? (1/0):',0)
-
-	let modes = base#varget('modes_html_xpath',[])
-	call base#varset('this',modes)
-
-	let mode = base#input_we('mode:','node_toString',{ 
-		\ 'complete' : 'custom,base#complete#this'})
+	if prompt
+		let load_as = input('load_as (xml/html):',load_as)
+	
+		let decode_entities = input('Decode entities? (1/0):',decode_entities)
+		let cdata2text      = input('cdata2text? (1/0):',cdata2text)
+	
+		let modes = base#varget('modes_html_xpath',[])
+		call base#varset('this',modes)
+	
+		let mode = base#input_we('mode:',mode,{ 
+			\ 'complete' : 'custom,base#complete#this'})
+	endif
 
 	let filtered = base#html#xpath({
 				\	'htmltext'        : html,

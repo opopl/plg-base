@@ -649,7 +649,7 @@ perl << eof
 			
 			my $s = sub {
 								my ($n) = @_;
-								push @filtered, $n->toString;
+								push @filtered, split "\n" => $n->toString;
 							};
 			$node
 				->childNodes()
