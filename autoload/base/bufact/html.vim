@@ -400,16 +400,14 @@ function! base#bufact#html#xpath (...)
 				\	})
 	endif
 
-	let filtered = []
-
 	let load_as         = base#html#libxml_load_as()
 	let decode_entities = 1
 	let cdata2text      = 0
-	let mode            = 'node_toString'
 	let mode            = 'node_children_toString'
 
+	let prompt  = input('prompt? (1/0)',0)
 	if prompt
-		let load_as = input('load_as (xml/html):',load_as)
+		let load_as = input('load_as (xml, html):',load_as)
 	
 		let decode_entities = input('Decode entities? (1/0):',decode_entities)
 		let cdata2text      = input('cdata2text? (1/0):',cdata2text)
@@ -421,6 +419,7 @@ function! base#bufact#html#xpath (...)
 			\ 'complete' : 'custom,base#complete#this'})
 	endif
 
+	let filtered = []
 	let filtered = base#html#xpath({
 				\	'htmltext'        : html,
 				\	'xpath'           : xpath,

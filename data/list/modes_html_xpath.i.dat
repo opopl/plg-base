@@ -1,3 +1,4 @@
 node_toString
 node_textContent
 node_children_toString
+node_children_to_literal

@@ -649,13 +649,22 @@ perl << eof
 			
 			my $s = sub {
 								my ($n) = @_;
-								push @filtered, split "\n" => $n->toString;
+								my @split = split "\n" => $n->toString;
+								push @filtered, @split;
 							};
 			$node
 				->childNodes()
-				#->findnodes('./*')
 				->map($s);
 			
+		}  elsif ($mode eq 'node_children_to_literal') {
+			my $s = sub {
+								my ($n) = @_;
+								my @split = split "\n" => $n->to_literal;
+								push @filtered, @split;
+							};
+			$node
+				->childNodes()
+				->map($s);
 		}
 	}
 	if ($decode_entities) {
