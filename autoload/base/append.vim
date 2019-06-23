@@ -80,7 +80,7 @@ endfunction
 function! base#append#vh_from_basename (...)
   let n = expand('%:p:t:r')
   let vh = '*'.n.'*'
-	call append(line('.'), basename)
+	call append(line('.'), vh)
 
 endfunction
 
