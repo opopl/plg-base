@@ -5,6 +5,7 @@ env_path
 envvar
 ###buf
 buf_full_path
+buf_basename
 hist_cmd
 csv_headers_numeric
 makeprg

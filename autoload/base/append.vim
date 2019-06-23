@@ -77,6 +77,12 @@ function! base#append#hist_cmd (...)
 
 endfunction
 
+function! base#append#buf_basename (...)
+  let basename = expand('%:p:t')
+	call append(line('.'),basename)
+
+endfunction
+
 
 function! base#append#buf_full_path (...)
 	let file = b:file
