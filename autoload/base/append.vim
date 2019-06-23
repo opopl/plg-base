@@ -79,7 +79,7 @@ endfunction
 
 function! base#append#buf_basename (...)
   let basename = expand('%:p:t')
-	call append(line('.'),basename)
+	call append(line('.'), basename)
 
 endfunction
 
