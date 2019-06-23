@@ -77,6 +77,13 @@ function! base#append#hist_cmd (...)
 
 endfunction
 
+function! base#append#vh_from_basename (...)
+  let n = expand('%:p:t:r')
+  let vh = '*'.n.'*'
+	call append(line('.'), basename)
+
+endfunction
+
 function! base#append#buf_basename (...)
   let basename = expand('%:p:t')
 	call append(line('.'), basename)
