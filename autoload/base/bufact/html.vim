@@ -216,9 +216,9 @@ function! base#bufact#html#z_cmd_ (...)
 	
 	" tab_restore prevents interruption when the task completes.
 	" All provided asynchandlers already use tab_restore.
-	call asynccommand#run({ 
+	call asc#run({ 
 		\	'cmd' : pl_cmd, 
-		\	'Fn'  : asynccommand#tab_restore(env) 
+		\	'Fn'  : asc#tab_restore(env) 
 		\	})
 endfunction
 
