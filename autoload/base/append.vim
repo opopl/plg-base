@@ -84,6 +84,14 @@ function! base#append#vh_from_basename (...)
 
 endfunction
 
+function! base#append#delim (...)
+	let char  = input('delim char:','-')
+	let times = input('repeat:',50)
+	let d     = repeat(char, times)
+
+	call append(line('.'), d)
+endfunction
+
 function! base#append#buf_basename (...)
   let basename = expand('%:p:t')
 	call append(line('.'), basename)

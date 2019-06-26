@@ -10,3 +10,4 @@ vh_from_basename
 hist_cmd
 csv_headers_numeric
 makeprg
+delim
