@@ -136,6 +136,9 @@ function! base#tg#tfile (...)
 	elseif tgid == 'help_python'
 		let tfile = base#qw#catpath('plg','pymy doc tags')
 
+	elseif tgid == 'help_javascript'
+		let tfile = base#qw#catpath('plg','idephp help javascript tags')
+
 	else
 		let tfile = base#file#catfile([ tdir, tgid . '.tags' ])
 	endif
@@ -325,6 +328,20 @@ function! base#tg#update (...)
 			\	}
 
 		let ok= base#tg#ok(okref)
+		return
+
+	elseif tgid == 'help_javascript'
+		let hdir   = base#qw#catpath('plg', 'idephp help javascript')
+
+		call base#vim#helptags({ 'dir' : hdir })
+
+		let okref = { 
+			\	"tgid" : tgid,
+			\	"ok"   : 1,
+			\	"add"  : 0, 
+			\	}
+
+		let ok = base#tg#ok(okref)
 		return
 
 """tgupdate_help_python
