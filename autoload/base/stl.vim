@@ -216,7 +216,6 @@ function! base#stl#setorders ()
                 \   'file_encoding' ,
                 \       ],
         \   'perl_pm'   :   [ 
-		        \   'user_name' ,
 		        \   'perl_module_name' ,
 		        \   'buffer_number'    ,
 		        \   'file_type'        ,

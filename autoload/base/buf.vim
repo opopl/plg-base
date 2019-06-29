@@ -159,6 +159,9 @@ function! base#buf#pathids_str ()
 endfunction
 
 function! base#buf#pathid_first ()
+	if exists("b:pathid_first")
+		return b:pathid_first
+	endif
 	let ids = base#buf#pathids()
 	return get(ids,0,'')
 

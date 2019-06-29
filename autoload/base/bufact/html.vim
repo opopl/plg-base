@@ -167,6 +167,7 @@ function! base#bufact#html#z_vh_outline (...)
 	call base#bufact#html#z_cmd_('vh_outline')
 endfunction
 
+"""z_vh_convert
 function! base#bufact#html#z_vh_convert (...)	
 	let r = {
 			\	'cmds_vim' : [ 'setlocal ft=help' ],
