@@ -18,6 +18,13 @@ function! base#bufact#php#server_run ()
 
 endfunction
 
+function! base#bufact#php#tags_nice ()
+	 %s/\([\t]\+\)\s*/\1/g
+	 %s/$this->\s\+/$this->/g
+	 %s/->\s\+/->/g
+
+endfunction
+
 function! base#bufact#php#syntax_check ()
 	call idephp#buf#php_check_syntax ()
 	
