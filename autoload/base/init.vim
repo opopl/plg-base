@@ -483,14 +483,6 @@ fun! base#init#au()
 
 	let datfiles = base#varget('datfiles',{})
 
- " exe 'augroup base_au_datfiles'
-	"exe '   au!'
-	"for [dat,datfile] in items(datfiles)
-		"exe '   autocmd BufWritePost ' 
-			"\	. datfile . ' call base#initvars()'
-	"endfor
-	"exe 'augroup end'
-
 	au BufNewFile,BufWritePost,BufRead,BufWinEnter *.i.dat setf idat
 	au BufRead,BufNewFile,BufWinEnter *.csv		set filetype=csv
 	au BufRead,BufNewFile,BufWinEnter *.tsv		set filetype=tsv

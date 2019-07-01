@@ -6,3 +6,4 @@ let b:base_did_ftplugin_help=1
 
 setlocal iskeyword+=<,>
 setlocal iskeyword+=/
+setlocal iskeyword+=$

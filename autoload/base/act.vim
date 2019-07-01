@@ -26,6 +26,10 @@ function! base#act#file_view (...)
 	call base#fileopen({ 'files': [file] })
 endfunction
 
+function! base#act#buf_onload (...)
+	call base#buf#onload()
+endfunction
+
 function! base#act#buf_loclist (...)
 	let exts_s = base#input_we('extensions (separated by space) : ','',{})
 	let exts   = split(exts_s," ")

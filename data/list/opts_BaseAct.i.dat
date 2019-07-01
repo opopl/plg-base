@@ -29,3 +29,4 @@ async_run
 file_view
 ###buf
 buf_loclist
+buf_onload

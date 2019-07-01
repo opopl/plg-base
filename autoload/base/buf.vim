@@ -202,6 +202,12 @@ function! base#buf#onload ()
 
 	elseif b:filetype == 'idat'
 		"BufAct update_var 
+
+	elseif b:filetype == 'help'
+
+		setlocal iskeyword+=<,>
+		setlocal iskeyword+=/
+		setlocal iskeyword+=$
 	endif
 	
 endfunction
@@ -299,8 +305,9 @@ function! base#buf#start ()
 	let b:basename = expand('%:p:t')
 	let b:ext      = expand('%:p:e')
 	let b:dirname  = expand('%:p:h')
-	let b:filetype = &ft
 	let b:bufnr    = bufnr(0)
+
+	let b:filetype = &ft
 	
 	if exists('b:finfo') | unlet b:finfo | endif
 
