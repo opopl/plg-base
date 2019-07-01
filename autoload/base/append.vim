@@ -23,18 +23,6 @@ function! base#append#arr (...)
 
 endfunction
 
-function! base#append#delim (...)
-		let lnum = get(a:000,1,line('.'))
-
-		let s = input('delim symbol:','*')
-		let n = input('delim length:',50)
-
-		let delim = repeat(s,n)
-		call append(lnum,delim)
-
-endfunction
-
-
 function! base#append#csv_headers_numeric (...)
 
 	let start = 0
@@ -87,9 +75,14 @@ endfunction
 function! base#append#delim (...)
 	let char  = input('delim char:','-')
 	let times = input('repeat:',50)
-	let d     = repeat(char, times)
+	let delim  = repeat(char, times)
 
-	call append(line('.'), d)
+	let ind = input('delim spaces indent:',5)
+	let inds = repeat(" ",ind)
+
+	let delim = inds . delim
+
+	call append(line('.'), delim)
 endfunction
 
 function! base#append#buf_basename (...)

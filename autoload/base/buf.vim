@@ -192,18 +192,19 @@ function! base#buf#onload ()
 
 	if b:ext == 'tags'
 		setf tags
+
 	elseif b:ext == 'nsh'
 		setf nsis
 
-	elseif b:filetype == 'vim'
+	elseif &ft == 'vim'
 		if b:basename == 'html.vim'
 			TgAdd perl_html
 		endif
 
-	elseif b:filetype == 'idat'
+	elseif &ft == 'idat'
 		"BufAct update_var 
 
-	elseif b:filetype == 'help'
+	elseif &ft == 'help'
 
 		setlocal iskeyword+=<,>
 		setlocal iskeyword+=/

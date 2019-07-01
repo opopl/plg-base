@@ -638,7 +638,7 @@ function! base#tg#update (...)
 	echo "Calling ctags command for: " . tgid 
 
 	if async && ( exists(':AsyncCommand') == 2 )
-		call asynccommand#run({ 'cmd' : execmd })
+		call asc#run({ 'cmd' : execmd })
 		let ok = 1
 	else
 		call extend(refsys,{ 'cmds' : [ execmd ] })
