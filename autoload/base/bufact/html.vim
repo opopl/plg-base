@@ -401,10 +401,14 @@ function! base#bufact#html#xpath (...)
 				\	})
 	endif
 
-	let load_as         = base#html#libxml_load_as()
+	"let load_as         = base#html#libxml_load_as()
+	let load_as         = &ft
+
 	let decode_entities = 1
 	let cdata2text      = 0
-	let mode            = 'node_children_toString'
+
+	"let mode            = 'node_children_toString'
+	let mode            = 'node_toString'
 
 	let prompt  = input('prompt? (1/0)',0)
 	if prompt
@@ -441,13 +445,17 @@ function! base#bufact#html#xpath (...)
 	call extend(lines,['      cdata2text      => ' . cdata2text ])
 	call extend(lines,['      decode_entities => ' . decode_entities ])
 	call extend(lines,['      mode            => ' . mode ])
-	call extend(lines,['   RESULT:'])
+	call extend(lines,['   '])
+	call extend(lines,['   VIM CALLS:'])
+	call extend(lines,['     call base#bufact#html#xpath()'])
+	call extend(lines,['   '])
+	call extend(lines,['   XPATH QUERY RESULT:'])
 	call extend(lines,['-->'])
 	call extend(lines,filtered)
 
 	call base#buf#open_split({ 
 		\ 'lines'    : lines,
-		\ 'cmds_pre' : [ 'set ft=html' ],
+		\ 'cmds_pre' : [ 'set ft=' . load_as ],
 		\	})
 
 endfunction
