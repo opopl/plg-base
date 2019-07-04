@@ -268,3 +268,31 @@ function! base#xml#encode (...)
 	endif
 	
 endfunction
+
+function! base#xml#a_rename_input (...)
+
+	let xpath = '//*' 
+	let xpath = base#input_we('xpath:', xpath)
+
+	let msg_a = [
+			\	'old, new; old1, new1; '
+			\	,' attributes to be renamed:'
+			\	]
+	let msg = join(msg_a, "\n")
+
+	"attributes to be renamed
+	let attr_rn   = {}
+
+	let attr_s = base#input_we(msg, '')
+	let pairs  = base#map#trim( split(attr_s,";") )
+
+	for pair in pairs
+		let pair_a = split(pair,",")
+		let old = get(pair_a,0,'')
+		let new = get(pair_a,1,'')
+		call extend(attr_rn,{ old : new })
+	endfor
+
+	return [ xpath, attr_rn ] 
+
+endfunction
