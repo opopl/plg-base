@@ -37,7 +37,7 @@ function! base#bufact#xml#a_rename ()
 		let pair_a = split(pair,",")
 		let old = get(pair_a,0,'')
 		let new = get(pair_a,1,'')
-		call extend(attr,{ old : new })
+		call extend(attr_rn,{ old : new })
 	endfor
 perl << eof
 	use Vim::Perl qw(:funcs :vars);
