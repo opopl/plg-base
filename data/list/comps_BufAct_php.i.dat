@@ -3,4 +3,4 @@ exec_async
 syntax_check
 echo_tag
 server_run
-tags_nice
+tabs_nice

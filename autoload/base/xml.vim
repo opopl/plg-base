@@ -284,12 +284,14 @@ function! base#xml#a_rename_input (...)
 	let attr_rn   = {}
 
 	let xx = base#varget('xml_rename_attr',[])
+	let last = get(xx,-1,'')
+
 	call base#varset('this',xx)
-	let complete = 'custom,base#complete#this'
+	let cmpl = 'custom,base#complete#this'
 
-	let attr_s = base#input_we(msg, '',{ 'complete' : cmpl })
+	let attr_s = base#input_we(msg, last,{ 'complete' : cmpl })
 
-	call add(xx,attr_s)
+	call add(xx, attr_s)
 	call base#varset('xml_rename_attr',xx)
 
 	call base#varset('this','attr_s')

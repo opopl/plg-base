@@ -18,7 +18,7 @@ function! base#bufact#php#server_run ()
 
 endfunction
 
-function! base#bufact#php#tags_nice ()
+function! base#bufact#php#tabs_nice ()
 	 %s/\([\t]\+\)\s*/\1/g
 	 %s/$this->\s\+/$this->/g
 	 %s/->\s\+/->/g
