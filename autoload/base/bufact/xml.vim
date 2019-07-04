@@ -18,6 +18,8 @@ endf
 function! base#bufact#xml#a_rename ()
 	call base#html#htw_load_buf()
 
+	let [ xpath, attr_rn ] = base#xml#a_rename_input ()
+
 perl << eof
 	use Vim::Perl qw(:funcs :vars);
 

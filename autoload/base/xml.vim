@@ -283,7 +283,17 @@ function! base#xml#a_rename_input (...)
 	"attributes to be renamed
 	let attr_rn   = {}
 
-	let attr_s = base#input_we(msg, '')
+	let xx = base#varget('xml_rename_attr',[])
+	call base#varset('this',xx)
+	let complete = 'custom,base#complete#this'
+
+	let attr_s = base#input_we(msg, '',{ 'complete' : cmpl })
+
+	call add(xx,attr_s)
+	call base#varset('xml_rename_attr',xx)
+
+	call base#varset('this','attr_s')
+
 	let pairs  = base#map#trim( split(attr_s,";") )
 
 	for pair in pairs
