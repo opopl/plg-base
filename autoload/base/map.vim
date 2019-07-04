@@ -8,6 +8,12 @@ function! base#map#fnamemodify (arr,mods)
 	return arr
 endfunction
 
+function! base#map#trim (arr,...)
+	let arr  = copy(a:arr)
+	call map(arr,"base#trim(v:val)")
+	return arr
+endfunction
+
 function! base#map#add_tabs (arr,...)
 	let arr  = copy(a:arr)
 
