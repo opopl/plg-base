@@ -128,12 +128,14 @@ def data2xml(d, name='data'):
 
 def buildxml(r, d):
     if isinstance(d, dict):
+        r.set('type','dict')
         for k, v in d.items():
             #s = et.SubElement(r, k)
             s = et.SubElement(r, 'var')
             s.set('name',k)
             buildxml(s, v)
     elif isinstance(d, tuple) or isinstance(d, list):
+        r.set('type','list')
         for v in d:
             s = et.SubElement(r, 'i')
             buildxml(s, v)
@@ -143,7 +145,7 @@ def buildxml(r, d):
         r.text = re.escape(str(d))
     return r
 
-vars_xml = data2xml(vars_p,name='vars')
+vars_xml = data2xml(vars_p, name='vars')
 	
 eof
 		let decl = '<?xml version="1.0" encoding="UTF-8"?>'
