@@ -351,6 +351,10 @@ function! base#html#htw_init (...)
 	let dbfile = base#htw_dbfile() 
 	let dbfile = get(ref,'dbfile',dbfile)
 
+	let load_as = 'html'
+	let load_as = strlen(&ft) ? &ft : load_as
+	let load_as = get(ref,'load_as',load_as)
+
 	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 	let msg = ['start']
 	let prf = {'plugin' : 'base', 'func' : 'base#html#htw_init'}
@@ -361,14 +365,16 @@ function! base#html#htw_init (...)
 perl << eof
 	use HTML::Work;
 
-	my $dbfile = VimVar('dbfile');
+	my $dbfile  = VimVar('dbfile');
+
+	my $load_as = VimVar('load_as');
 
 	my $prf = { dbfile => $dbfile };
 	our $HTW ||= HTML::Work->new(
 			def_PRINT => sub { VimMsg([@_],$prf) },
 			def_WARN  => sub { VimWarn([@_],$prf) },
 			dbfile    => $dbfile,
-			load_as   => 'html',
+			load_as   => $load_as,
 	);
 eof
 endfunction
@@ -509,7 +515,7 @@ eof
 
 endfunction
 
-function! base#html#htw_load_buf ()
+function! base#html#htw_load_buf ( ... )
 	call base#html#htw_init ()
 
 	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -518,6 +524,7 @@ function! base#html#htw_load_buf ()
 	call base#log(msg,prf)
 	let l:start = localtime()
 	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
 
 	let load_as      = base#html#libxml_load_as()
 	let load_as      = &ft

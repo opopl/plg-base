@@ -16,13 +16,13 @@ endf
 function! base#bufact#xml#attr_remove ()
 	call base#html#htw_load_buf()
 
-	let xpath = '//*' ;
+	let xpath = '//*' 
 	let xpath = base#input_we('xpath:',xpath)
 
 	let attr_s = ''
 	let attr_s = base#input_we('comma-separated list of attributes: ',attr_s,{})
 
-	let attr = split(attr_s,",")
+	let attr = split(attr_s, ",")
 
 perl << eof
 	use Vim::Perl qw(:funcs :vars);
