@@ -2,3 +2,4 @@ pretty_perl_libxml
 remove_xpath
 xpath
 quickfix_xpath
+attr_remove

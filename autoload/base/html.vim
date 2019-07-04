@@ -520,6 +520,7 @@ function! base#html#htw_load_buf ()
 	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 	let load_as      = base#html#libxml_load_as()
+	let load_as      = &ft
 perl << eof
 	use Vim::Perl qw(:funcs :vars);
 	$Vim::Perl::CURBUF = $curbuf;

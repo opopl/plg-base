@@ -67,7 +67,11 @@ endfunction
 
 function! base#append#vh_from_basename (...)
   let n = expand('%:p:t:r')
+
+	let indent = repeat(' ',5)
   let vh = '*'.n.'*'
+	let vh = indent . vh
+
 	call append(line('.'), vh)
 
 endfunction
