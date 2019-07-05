@@ -12,3 +12,9 @@ function! base#bufact#javascript#exe_split ()
 	let outstr = base#varget('sysoutstr','')
 	
 endfunction
+
+"""js_syntax_check
+function! base#bufact#javascript#syntax_check ()
+	call idephp#buf#js_syntax_check ()
+
+endfunction

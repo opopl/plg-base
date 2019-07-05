@@ -25,8 +25,9 @@ function! base#bufact#php#tabs_nice ()
 
 endfunction
 
+"""php_syntax_check
 function! base#bufact#php#syntax_check ()
-	call idephp#buf#php_check_syntax ()
+	call idephp#buf#php_syntax_check ()
 	
 endfunction
 
