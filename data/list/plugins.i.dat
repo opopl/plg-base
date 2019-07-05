@@ -32,6 +32,7 @@ vim_prettyprint
 #vim-misc
 xmledit
 xmlparser
+efm_nodejs
 #vim-perl
 #syntastic
 #browser
