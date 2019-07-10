@@ -14,6 +14,12 @@ function! base#map#trim (arr,...)
 	return arr
 endfunction
 
+"add one tab 
+"		call base#map#add_tabs (list)
+"
+"add two tabs
+"		call base#map#add_tabs (list,2)
+
 function! base#map#add_tabs (arr,...)
 	let arr  = copy(a:arr)
 
