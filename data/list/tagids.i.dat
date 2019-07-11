@@ -61,6 +61,7 @@ idephp_help
 help_perlmy
 # python
 help_python
+help_latex
 help_javascript
 ty_perl_htmltool
 ty_perl_inc
