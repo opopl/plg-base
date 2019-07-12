@@ -388,7 +388,7 @@ function! base#cdfile(...)
 endf
 
 function! base#htmlwork (...)
-	let cmd = get(a:000,0,'')
+	let cmd  = get(a:000,0,'')
 	let cmds = base#varget('htmlwork',[])
 
 	if base#inlist(cmd,cmds)

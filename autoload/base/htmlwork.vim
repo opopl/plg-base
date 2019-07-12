@@ -334,6 +334,15 @@ function! base#htmlwork#menus_remove ()
 
 endf
 
+function! base#htmlwork#help ()
+	let cmds = base#varget('htmlwork',[])
+	let cmds = base#uniq(cmds)
+	let cmds = sort(cmds)
+
+	call base#buf#open_split({ 'lines' : cmds })
+
+endf
+
 function! base#htmlwork#clear_all ()
 	let dbfile = base#htmlwork#dbfile()
 
