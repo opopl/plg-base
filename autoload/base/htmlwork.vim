@@ -504,10 +504,36 @@ function! base#htmlwork#href_short ()
 	call base#buf#open_split({ 'lines' : lines })
 endfunction
 
-function! base#htmlwork#dbfile()
-	let dbfile = base#qw#catpath('db','html_work.sqlite')
+function! base#htmlwork#dbfile(...)
+	let dbfile = get(a:000,0,'')
+
+	if ! strlen(dbfile)
+		let dbfile = base#qw#catpath('db','html_work.sqlite')
+		let dbfile = base#varget('htmlwork_dbfile',dbfile)
+	else
+		call base#varset('htmlwork_dbfile',dbfile)
+	endif
+
 	return dbfile
+
 	
+endfunction
+
+function! base#htmlwork#db_connect(...)
+		let dbname = input('dbname:','','custom,base#complete#dbnames')
+		
+		let q = 'SELECT dbfile FROM dbfiles WHERE dbname = ? AND dbdriver = ?'
+		let p = [ dbname , "sqlite" ]
+		
+		let list = pymy#sqlite#query_as_list({
+			\	'dbfile' : base#dbfile(),
+			\	'p'      : p,
+			\	'q'      : q,
+			\	})
+		let dbfile = get(list,0,'')
+
+		call base#htmlwork#dbfile(dbfile)
+
 endfunction
 
 function! base#htmlwork#saved ()

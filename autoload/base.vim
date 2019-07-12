@@ -457,7 +457,7 @@ endf
 function! base#dbnames ()
 	let dbfile = base#dbfile()
 	
-	let q = 'select dbname from dbfiles where dbdriver = ?'
+	let q = 'SELECT dbname FROM dbfiles WHERE dbdriver = ?'
 	let p = ['sqlite']
 	let dbnames = pymy#sqlite#query_as_list({
 		\	'dbfile' : dbfile,
@@ -494,7 +494,7 @@ function! base#dbfile (...)
 	
 		let dbfile = dbdir . '/vim_plg_base.db'
 	else
-		let q = 'select dbfile from dbfiles where dbname = ?'
+		let q = 'SELECT dbfile FROM dbfiles WHERE dbname = ?'
 		let p = [dbname]
 		let r = pymy#sqlite#query_as_list({
 			\	'dbfile' : base#dbfile(),
