@@ -136,6 +136,12 @@ function! base#tg#tfile (...)
 	elseif tgid == 'help_python'
 		let tfile = base#qw#catpath('plg','pymy doc tags')
 
+	elseif tgid == 'help_latex'
+		let tfile = base#qw#catpath('plg','idephp help latex tags')
+
+	elseif tgid == 'help_css'
+		let tfile = base#qw#catpath('plg','idephp help css tags')
+
 	elseif tgid == 'help_javascript'
 		let tfile = base#qw#catpath('plg','idephp help javascript tags')
 
