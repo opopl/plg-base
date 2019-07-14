@@ -353,6 +353,19 @@ function! base#tg#update (...)
 		let ok = base#tg#ok(okref)
 		return
 
+	elseif tgid == 'help_bootstrap'
+		let hdir   = base#qw#catpath('plg', 'idephp help bootstrap')
+
+		call base#vim#helptags({ 'dir' : hdir })
+		let okref = { 
+			\	"tgid" : tgid,
+			\	"ok"   : 1,
+			\	"add"  : 0, 
+			\	}
+
+		let ok = base#tg#ok(okref)
+		return
+
 	elseif tgid == 'help_html'
 		let hdir   = base#qw#catpath('plg', 'idephp help html')
 
