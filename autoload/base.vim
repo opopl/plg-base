@@ -2516,14 +2516,20 @@ function! base#info (...)
 
 """info_grep
    elseif topic == 'grep'
-       call base#echo({ 'text' : "Grep configuration: " } )
+				let lines = []
 
-       call base#echo({ 'text' : " "  } )
-       call base#echo({ 'text' : " &grepformat    => " . &grepformat } )
-       call base#echo({ 'text' : " &grepprg       => " . &grepprg } )
-       call base#echo({ 'text' : " "  } )
-       call base#echo({ 'text' : " base#grepopt   => " . base#grepopt() } )
-       call base#echo({ 'text' : " "  } )
+			 	call add(lines,'--------------------')
+				call add(lines,'GREP INFO')
+			 	call add(lines,'--------------------')
+				call add(lines,'&grepprg:')
+				call add(lines,'  '.&grepprg)
+				call add(lines,'&grepformat:')
+				call add(lines,'  '.&grepformat)
+				call add(lines,'base#grepopt():')
+				call add(lines,'  ' . base#grepopt() )
+
+			 call base#buf#open_split({ 'lines' : lines })
+			 return
 
 """info_java
    elseif topic == 'java'
