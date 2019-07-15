@@ -5,6 +5,7 @@ _this_tagfile_
 #php_urltotxt
 #php_adminer_src
 php_z
+php_funcs
 ###perl
 perl_inc
 perl_inc_select

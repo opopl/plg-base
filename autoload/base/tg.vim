@@ -488,6 +488,10 @@ function! base#tg#update (...)
 		let dir   = base#qw#catpath('z_fetch_url','php')
 		let libs .= ' ' . dir
 
+	elseif tgid == 'php_funcs'
+		let dir   = base#qw#catpath('php_funcs','')
+		let libs .= ' ' . dir
+
 """tgupdate_php_urltotxt
 	elseif tgid == 'php_urltotxt'
 
