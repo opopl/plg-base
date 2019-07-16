@@ -67,5 +67,6 @@ help_css
 help_html
 help_bootstrap
 help_javascript
+help_jquery
 ty_perl_htmltool
 ty_perl_inc

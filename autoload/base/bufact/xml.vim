@@ -13,6 +13,20 @@ function! base#bufact#xml#remove_xpath ()
   call base#bufact#html#remove_xpath ()
 endf
 
+function! base#bufact#xml#r_win2unix ()
+	 try
+			%s/\\/\//g
+	 catch
+	 endtry
+endf
+
+function! base#bufact#xml#r_unix2win ()
+	 try
+			%s/\//\\/g
+	 catch
+	 endtry
+endf
+
 " rename attributes
 "
 function! base#bufact#xml#a_rename ()
