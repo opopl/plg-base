@@ -12,6 +12,13 @@ eof
 endfunction
 
 
+function! base#bufact#help#nicer ()
+	try
+		%s/​//g
+	catch
+	endtry
+endfunction
+
 function! base#bufact#help#replace_stars ()
 	call base#buf#start()
 

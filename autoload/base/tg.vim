@@ -343,7 +343,7 @@ function! base#tg#update (...)
 		return
 
 	elseif tgid == 'help_jquery'
-		let hdir   = base#qw#catpath('plg', 'idephp help jquery')
+		let hdir   = base#qw#catpath('plg', 'idephp help javascript jquery')
 
 		call base#vim#helptags({ 'dir' : hdir })
 
