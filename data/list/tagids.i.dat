@@ -42,6 +42,7 @@ plg_vim_prettyprint
 plg_idephp
 plg_lasu
 plg_make
+plg_mailmy
 plg_taskman
 plg_my
 plg_jde
