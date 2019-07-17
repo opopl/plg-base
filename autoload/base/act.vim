@@ -33,6 +33,7 @@ endfunction
 """thisfile_copy_to
 function! base#act#thisfile_copy_to (...)
 	let file = expand('%:p')
+	let basename = expand('%:p:t')
 
 	let msg_a = [ 
 			\ 'This will copy the current file ' ,
@@ -41,15 +42,27 @@ function! base#act#thisfile_copy_to (...)
 			\	]
 	let msg = join(msg_a,"\n")
 	let dirid = base#input_we(msg,'',{ 'complete' : 'custom,base#complete#CD'})
+	let dir = base#path(dirid)
 
-	let subpathqw = base#input('destination subpathqw:','')
+	let msg_a = [ 
+			\	'',
+			\ 'This dirid corresponds to directory:' ,
+			\	' ' . dir,
+			\ 'Now enter the destination subpathqw - space separated list',
+			\	'	of subdirectory parts, e.g. entering "a b c" corresponds to ',
+			\	'	subdirectory a/b/c.',
+			\	'	subpathqw: ',
+			\	]
+	let msg = join(msg_a,"\n")
+	let subpathqw = base#input(msg,'',{ 'do_redraw' : 1 })
 
 	" destination directory
 	let dir_dest = base#qw#catpath(dirid, subpathqw)
 	
-	let new = base#file#catfile([ dir_dest, new ])
+	let new = base#file#catfile([ dir_dest, basename ])
 
 	let msg_a = [ 
+			\	'',
 			\ 'New file location is:' ,
 			\ ' ' . new,
 			\ 'Copy? (1/0): ',

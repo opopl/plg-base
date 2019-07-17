@@ -1265,9 +1265,14 @@ fun! base#input(msg,default,...)
   let prompt = get(o,'base#input_prompt',prompt)
 
   let prompt = get(ref,'prompt',prompt)
+  let do_redraw = get(ref,'do_redraw',0)
 
   if !prompt
     return
+  endif
+
+  if do_redraw
+		 redraw!
   endif
 
   let complete = get(ref,'complete','')
