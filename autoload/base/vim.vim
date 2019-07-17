@@ -73,6 +73,23 @@ function! base#vim#in_visual_mode (...)
 
 endfunction
 
+function! base#vim#vars (...)
+	let ref = {
+		\	'regex' : '',
+		\	}
+	let ref = extend(ref, get(a:000,0,{}) )
+
+	redir => v
+	silent exe 'let '
+	redir END
+
+	let r = { 'regex' : regex }
+	let vars = split(v, "\n")
+	let vars = base#map#filter( vars, r)
+	return vars
+
+endfunction
+
 function! base#vim#helptags (...)
 	let ref    = get(a:000,0,{})
 

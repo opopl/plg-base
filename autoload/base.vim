@@ -2355,6 +2355,7 @@ function! base#info (...)
 			 call base#buf#open_split({ 'lines' : lines })
 			 return
 
+
 """info_dict
 	 elseif topic == 'dictionaries'
 			 let lines=[]
@@ -2582,9 +2583,15 @@ function! base#info (...)
 
 			 call base#buf#open_split({ 'lines' : info })
 
+"""info_vars
+   elseif topic == 'vars'
+			let vars = base#vim#vars()
+			call base#buf#open_split({ 'lines' : vars })
+
 """info_tagbar
    elseif topic == 'plg_tagbar'
-       call base#echo({ 'text' : "Tagbar variables: " } )
+			 	let info = []
+				call add(info,'Tagbar Plugin Info:')
 
         let vars = base#var('tagbar_vars')
         for v in vars

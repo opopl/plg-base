@@ -23,7 +23,7 @@ function! base#act#file_view (...)
 
 	let file = base#db#file_path(fileid)
 
-	call base#fileopen({ 'files': [file] })
+	call base#fileopen({ 'files': [ file ] })
 endfunction
 
 function! base#act#buf_onload (...)
@@ -32,7 +32,7 @@ endfunction
 
 """thisfile_copy_to
 function! base#act#thisfile_copy_to (...)
-	let file = expand('%:p')
+	let file     = expand('%:p')
 	let basename = expand('%:p:t')
 
 	let msg_a = [ 
@@ -40,9 +40,10 @@ function! base#act#thisfile_copy_to (...)
 			\ '		into another location;'        ,
 			\	'Enter destination dirid: '
 			\	]
-	let msg = join(msg_a,"\n")
-	let dirid = base#input_we(msg,'',{ 'complete' : 'custom,base#complete#CD'})
-	let dir = base#path(dirid)
+
+	let msg   = join(msg_a,"\n")
+	let dirid = base#input_we(msg,'',{ 'complete' : 'custom,base#complete#CD' })
+	let dir   = base#path(dirid)
 
 	let msg_a = [ 
 			\	'',
@@ -123,7 +124,7 @@ function! base#act#async_run (...)
 	
 	" tab_restore prevents interruption when the task completes.
 	" All provided asynchandlers already use tab_restore.
-	call asynccommand#run(cmd, asynccommand#tab_restore(env))
+	call asc#run({ 'cmd' : cmd, 'Fn' : asc#tab_restore(env) })
 
 endfunction
 

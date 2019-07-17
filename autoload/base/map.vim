@@ -14,6 +14,19 @@ function! base#map#trim (arr,...)
 	return arr
 endfunction
 
+function! base#map#filter (arr,...)
+	let arr  = copy(a:arr)
+
+	let ref = {
+	 	\	'regex' : '',
+	 	\	}
+	let ref = extend(ref, get(a:000,0,{}) )
+
+	call filter(arr,"strlen(matchstr(v:val, regex))")
+	return arr
+
+endfunction
+
 "add one tab 
 "		call base#map#add_tabs (list)
 "
