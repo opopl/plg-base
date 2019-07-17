@@ -9,6 +9,13 @@ function! base#env#echo (...)
 	
 endfunction
 
+function! base#env#list()
+    redir => s
+    sil! exe "norm!:ec$\<c-a>'\<c-b>\<right>\<right>\<del>'\<cr>"
+    redir END
+    return split(s)
+endfunction
+
 function! base#env#init (...)
 
 endfunction
