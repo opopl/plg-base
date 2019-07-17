@@ -86,7 +86,7 @@ snippet ifsid
 	endif
 	let q .= cond
 snippet j
-	join(<++>,<++>)
+	join(<++>, <++>)
 snippet up
 	" let r = {
 	" 	\	'h' : {},
@@ -98,6 +98,13 @@ snippet up
 	" call pymy#sqlite#update_hash(r)
 snippet perlvl
 	VimLet('<++>',<++>);
+snippet yn
+	let msg_a = [ 
+			\ '<++>',
+			\ '<++>? (1/0): ',
+			\	]
+	let msg = join(msg_a,"\n")
+	if !base#input(msg, 1) | return | endif
 snippet r
 	let ref = {
 		\	'<++>' : <++>,

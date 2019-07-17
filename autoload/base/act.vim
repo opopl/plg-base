@@ -49,6 +49,14 @@ function! base#act#thisfile_copy_to (...)
 	
 	let new = base#file#catfile([ dir_dest, new ])
 
+	let msg_a = [ 
+			\ 'New file location is:' ,
+			\ ' ' . new,
+			\ 'Copy? (1/0): ',
+			\	]
+	let msg = join(msg_a,"\n")
+	if !base#input(msg, 1) | return | endif
+
 	call base#file#copy(file, new, { 'prompt' : 1 })
 endfunction
 
