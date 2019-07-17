@@ -73,7 +73,7 @@ function! base#vim#in_visual_mode (...)
 
 endfunction
 
-function! base#vim#vars (...)
+function! base#vim#varlist (...)
 	let ref = {
 		\	'regex' : '',
 		\	}
@@ -86,8 +86,17 @@ function! base#vim#vars (...)
 
 	let r = { 'regex' : regex }
 	let vars = split(v, "\n")
-	let vars = base#map#filter( vars, r)
-	return vars
+
+	let varlist = []
+	for var in vars
+		let vname = substitute(var,'^\(\w\+\)','\1','g')
+		call add(varlist,vname)
+	endfor
+
+	if strlen(regex)
+		call filter(varlist,"strlen(matchstr(v:val, regex))")
+	endif
+	return varlist
 
 endfunction
 

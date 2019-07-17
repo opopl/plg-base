@@ -1665,7 +1665,7 @@ endf
 
 fun! base#mapsub(array,pat,subpat,subopts)
 
-  let arr=copy(a:array)
+  let arr = copy(a:array)
 
   call map(arr,"substitute(v:val,'" . a:pat .  "','" . a:subpat . "','" . a:subopts . "')")
 
@@ -2585,15 +2585,16 @@ function! base#info (...)
 
 """info_vars
    elseif topic == 'vars'
-			let vars = base#vim#vars()
-			call base#buf#open_split({ 'lines' : vars })
+			let regex = input('regex: ','')
+			let varlist = base#vim#varlist({ 'regex' : regex })
+			call base#buf#open_split({ 'lines' : varlist })
 
 """info_tagbar
    elseif topic == 'plg_tagbar'
 			 	let info = []
 				call add(info,'Tagbar Plugin Info:')
 
-        let vars = base#var('tagbar_vars')
+        let vars = base#varget('tagbar_vars',[])
         for v in vars
             let val = ''
             let gv  = "g:tagbar_" . v 
