@@ -89,13 +89,14 @@ function! base#vim#varlist (...)
 
 	let varlist = []
 	for var in vars
-		let vname = substitute(var,'^\(\w\+\)','\1','g')
+		let vname = matchstr(var, '^\zs\(\S\+\)\ze\s\+.*$')
 		call add(varlist,vname)
 	endfor
 
 	if strlen(regex)
 		call filter(varlist,"strlen(matchstr(v:val, regex))")
 	endif
+	let varlist = sort(varlist)
 	return varlist
 
 endfunction
