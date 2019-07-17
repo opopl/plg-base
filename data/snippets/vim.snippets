@@ -99,10 +99,20 @@ snippet up
 snippet perlvl
 	VimLet('<++>',<++>);
 snippet bi
-	let <++> = base#input_we(<++>,<++>,{ 
+	let msg_a = [
+		\	"<++>",	
+		\	"<++>",	
+		\	]
+	let msg = join(msg_a,"\n")
+	let <++> = base#input_we(msg,<++>,{ 
 		\ 'complete' : <++>})
 snippet biz
-	let <++> = base#input_we(<++>,<++>,{})
+	let msg_a = [
+		\	"<++>",	
+		\	"<++>",	
+		\	]
+	let msg = join(msg_a,"\n")
+	let <++> = base#input_we(msg,<++>,{ })
 snippet ba
 	let b:comps_BufAct = base#comps#bufact('<++>') 
 snippet bref

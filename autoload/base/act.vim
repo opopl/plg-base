@@ -30,18 +30,32 @@ function! base#act#buf_onload (...)
 	call base#buf#onload()
 endfunction
 
-function! base#act#buf_loclist (...)
+function! base#act#thisfile_copy_to (...)
+	let file = expand('%:p')
+
+	let msg_a = [ 
+			\ 'This will copy the current file ' ,
+			\ '		into another location;'        ,
+			\	'Enter destination dirid: '
+			\	]
+	let msg = join(msg_a,"\n")
+	let dirid = base#input_we(msg,<++>,{})
+endfunction
+
+"""buffs_loclist
+function! base#act#buffs_loclist (...)
 	let exts_s = base#input_we('extensions (separated by space) : ','',{})
 	let exts   = split(exts_s," ")
 	
+	"" retrive list of buffers from ls command
 	let bref     = base#buffers#get()
-	let bufs     = get(bref,'bufs',[])
-	let buffiles = get(bref,'buffiles',[])
+	let bufs     = get(bref, 'bufs', [])
+	let buffiles = get(bref, 'buffiles', [])
 
 	let llist = []
 	for bff in buffiles
 		let ext = fnamemodify(bff,':e')
-		if base#inlist(ext,exts)
+		if base#inlist(ext, exts)
 			 call add(llist,{ 'filename' : bff, 'text' : fnamemodify(bff,':t') })
 		endif
 	endfor

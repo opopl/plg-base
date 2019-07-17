@@ -28,5 +28,5 @@ async_run
 ###file
 file_view
 ###buf
-buf_loclist
+buffs_loclist
 buf_onload
