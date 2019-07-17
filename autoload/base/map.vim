@@ -21,8 +21,11 @@ function! base#map#filter (arr,...)
 	 	\	'regex' : '',
 	 	\	}
 	let ref = extend(ref, get(a:000,0,{}) )
+	let regex = get(ref,'regex','')
 
-	call filter(arr,"strlen(matchstr(v:val, regex))")
+	if strlen(regex)
+		call filter(arr,"strlen(matchstr(v:val, regex))")
+	endif
 	return arr
 
 endfunction
