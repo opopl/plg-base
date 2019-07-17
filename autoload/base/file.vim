@@ -14,20 +14,46 @@ function! base#file#exists(file)
 
 endfunction
 
-function! base#file#copy(old,new)
-	if !filereadable(a:old)
-		call base#warn({ 'text' : 'Old file does not exist:'."\n\t" . a:old })
+"Usage:
+"	call base#file#copy(old,new)
+"	call base#file#copy(old,new,{ 'prompt' : 1})
+
+function! base#file#copy(old,new,...)
+	let old = a:old
+	let new = a:new
+
+	let ref = {
+			\	'prompt' : 0,
+			\	}
+	let ref = extend(ref, get(a:000,0,{}) )
+	let prompt = get(ref,'prompt')
+
+	if !filereadable(old)
+		call base#warn({ 'text' : 'Old file does not exist:'."\n\t" . old })
 		return 
 	endif
-	let cmd = ''
+
+	let cp_cmd = ''
 	if has('win32')
-		let cmd = 'copy ' . '"'.a:old.'"' . ' ' . '"'.a:new.'"'
+		" /y - suppress prompt for overwriting existing file
+		let cp_cmd = 'copy /y'
 	else
-		let cmd = 'cp ' . '"'.a:old.'"' . ' ' . '"'.a:new.'"'
+		let cp_cmd = 'cp'
 	endif
+
+	let cmd = join([ cp_cmd, shellescape(old), shellescape(new) ]," ")
 
 	if !strlen(cmd)
 		return 
+	endif
+
+	if prompt
+		if filereadable(new)
+			let rw = input('Overwrite existing file? (1/0): ',1)
+			if !rw
+				 return
+			endif
+		endif
 	endif
 
 	let ok = base#sys({ "cmds" : [cmd]})

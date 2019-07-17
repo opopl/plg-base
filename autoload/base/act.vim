@@ -30,6 +30,7 @@ function! base#act#buf_onload (...)
 	call base#buf#onload()
 endfunction
 
+"""thisfile_copy_to
 function! base#act#thisfile_copy_to (...)
 	let file = expand('%:p')
 
@@ -39,7 +40,16 @@ function! base#act#thisfile_copy_to (...)
 			\	'Enter destination dirid: '
 			\	]
 	let msg = join(msg_a,"\n")
-	let dirid = base#input_we(msg,<++>,{})
+	let dirid = base#input_we(msg,'',{ 'complete' : 'custom,base#complete#CD'})
+
+	let subpathqw = base#input('destination subpathqw:','')
+
+	" destination directory
+	let dir_dest = base#qw#catpath(dirid, subpathqw)
+	
+	let new = base#file#catfile([ dir_dest, new ])
+
+	call base#file#copy(file, new, { 'prompt' : 1 })
 endfunction
 
 """buffs_loclist

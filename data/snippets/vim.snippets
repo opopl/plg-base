@@ -98,12 +98,17 @@ snippet up
 	" call pymy#sqlite#update_hash(r)
 snippet perlvl
 	VimLet('<++>',<++>);
+snippet r
+	let ref = {
+		\	'<++>' : <++>,
+		\	}
+	let ref = extend(ref, get(a:000,0,{}) )
 snippet bi
 	let msg_a = [
 		\	"<++>",	
 		\	"<++>",	
 		\	]
-	let msg = join(msg_a,"\n")
+	let msg = join(msg_a, "\n")
 	let <++> = base#input_we(msg,<++>,{ 
 		\ 'complete' : <++>})
 snippet biz

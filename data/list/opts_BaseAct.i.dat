@@ -30,3 +30,4 @@ file_view
 ###buf
 buffs_loclist
 buf_onload
+thisfile_copy_to
