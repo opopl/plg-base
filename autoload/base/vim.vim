@@ -77,7 +77,8 @@ function! base#vim#vars (...)
 	let ref = {
 		\	'regex' : '',
 		\	}
-	let ref = extend(ref, get(a:000,0,{}) )
+	let ref   = extend(ref, get(a:000,0,{}) )
+	let regex = get(ref,'regex','')
 
 	redir => v
 	silent exe 'let '
