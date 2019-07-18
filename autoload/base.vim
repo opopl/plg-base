@@ -1292,12 +1292,26 @@ fun! base#input_we(msg,default,...)
   let ref = get(a:000,0,{})
 
   let complete = get(ref, 'complete' , '')
+  let hist_name = get(ref, 'hist_name' , '')
+
+
+	let hist = []
+  if strlen(hist_name)
+		 let hist = base#varget(hist_name,[])
+		 let complete = 'custom,base#complete#this'
+		 call base#varset('this',hist)
+	endif
 
 	let v = ''
   if strlen(complete)
 		while !strlen(v)
     	let v = input(msg,default,complete)
 		endw
+
+  	if strlen(hist_name)
+			call add(hist,v)
+		 	call base#varset(hist_name,hist)
+		endif
   else
 		while !strlen(v)
     	let v = input(msg,default)
