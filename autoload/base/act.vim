@@ -30,6 +30,13 @@ function! base#act#buf_onload (...)
 	call base#buf#onload()
 endfunction
 
+"""buf_filetype_view_snippets
+function! base#act#buf_filetype_view_snippets (...)
+	 if strlen(&ft)
+	 		call snipMate#SnippetView(&ft)
+	 endif
+endfunction
+
 """thisfile_copy_to
 function! base#act#thisfile_copy_to (...)
 	let file     = expand('%:p')
