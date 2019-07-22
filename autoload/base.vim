@@ -1805,14 +1805,14 @@ endfunction
  
 fun! base#setglobalvarfromdat(ref,...)
 
- let ref=a:ref
+ let ref = a:ref
 
- let opts={}
+ let opts = {}
  if a:0
-   let opts=a:1
+   let opts = a:1
  endif
 
- if type(ref) == type("")
+ if type(ref) == type( "" )
      let varname = ref
  elseif type(ref) == type([])
      for dat in ref
@@ -1822,7 +1822,7 @@ fun! base#setglobalvarfromdat(ref,...)
      return
  endif
 
- let varname=substitute(varname,'^g:','','g')
+ let varname = substitute(varname,'^g:','','g')
 
  if exists("g:" . varname)
     exe 'unlet g:' . varname
@@ -1838,7 +1838,6 @@ fun! base#setglobalvarfromdat(ref,...)
  
 endfun
 
- 
 fun! base#getfileinfo(...)
 
  let path     = ''
@@ -1861,7 +1860,7 @@ fun! base#getfileinfo(...)
  " root filename without all extensions removed
  let filename_root = get(split(filename,'\.'),0)
 
- let ext = fnamemodify(path,':e')
+ let ext = fnamemodify(path, ':e')
 
  let pathids  = base#buf#pathids()
  let fileinfo = {
@@ -1873,6 +1872,7 @@ fun! base#getfileinfo(...)
     \   'filetype'      : &ft,
     \   'pathids'       : pathids,
     \   }
+
  let fileinfo   = fileinfo
  let b:fileinfo = fileinfo
 

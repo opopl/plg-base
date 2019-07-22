@@ -183,7 +183,12 @@ function! base#buf#pathids ()
 	return ids
 endfunction
 
-""" used in : base#init#au()
+" Usage
+" 	call base#buf#onload()
+"
+" call tree: 
+"   called by: 
+"     base#init#au
 
 function! base#buf#onload ()
 	call base#buf#start()
