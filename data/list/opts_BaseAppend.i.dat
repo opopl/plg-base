@@ -11,3 +11,4 @@ hist_cmd
 csv_headers_numeric
 makeprg
 delim
+license_mit

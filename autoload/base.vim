@@ -2102,8 +2102,18 @@ endfun
 function! base#append (...)
   let opt = get(a:000,0,'')
 
-  let sub = 'base#append#'.opt
-  exe 'call '.sub.'()'
+	" BaseDatView opts_BaseAppend
+	if strlen(opt)
+	  let sub = 'base#append#'.opt
+	  exe 'call '. sub .'()'
+	else
+		let opts = base#varget( 'opts_BaseAppend', [])
+		let info = []
+		call add(info,'Available options for BaseAppend: ')
+		call add(info, base#map#add_tabs(opts,1) )
+		
+		call base#buf#open_split({ 'lines' : info })
+	endif
 
 endfunction
 

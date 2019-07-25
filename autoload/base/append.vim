@@ -18,8 +18,21 @@ function! base#append#arr (...)
 
 	for line in arr
 		call append(lnum,line)
-		let lnum+=1
+		let lnum += 1
 	endfor
+
+endfunction
+
+function! base#append#license_mit (...)
+	let txt = base#qw#catpath('plg','base data txt license_mit.txt')
+
+	if filereadable(txt)
+		let lines = readfile(txt)
+		let lnum  = line('.')
+		call append(lnum, lines)
+	else
+		echo 'BaseAppend: cannot find license file!'
+	endif
 
 endfunction
 
