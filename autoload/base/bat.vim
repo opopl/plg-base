@@ -1,14 +1,14 @@
 
 function! base#bat#exe (...)
 	 let ref      = get(a:000, 0, {})
+
 	 let bat_file = get(ref, 'bat_file' ,'')
 
 	if !strlen(bat_file)
 		 return
-	}
+	endif
 
 	let blines   = base#bat#lines(ref)
-	let bcontent = join(blines,"\n")
 
 	let r_f = {
 			\	'lines' : blines,
@@ -18,9 +18,9 @@ function! base#bat#exe (...)
 	call base#file#write_lines(r_f)
 
 	if !filereadable(bat_file)
-		 let msg = ['bat_file NOT exist', bat_file]
-		 let prf = {'plugin' : 'base', 'func' : 'base#bat#exe'}
-		 call base#log(msg,prf)
+		 let msg = [ 'bat_file NOT exist' , bat_file ]
+		 let prf = { 'plugin' : 'base', 'func' : 'base#bat#exe' }
+		 call base#log(msg, prf)
 		return
 	endif
 
@@ -29,9 +29,9 @@ function! base#bat#exe (...)
 			"call exec($cmd, $output, $code)
 
 	let res = {
-			\			'output' => output,
-			\			'code'   => code,
-			\			'cmd'    => cmd,
+			\			'output' : output,
+			\			'code'   : code,
+			\			'cmd'    : cmd,
 			\	}
 
 	return res
