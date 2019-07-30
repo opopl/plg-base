@@ -20,3 +20,21 @@ function! base#path#add (...)
 		\	})
 
 endfunction
+
+function! base#path#delete (...)
+	let pathid = get(a:000,0,'')
+
+	let dbfile = base#dbfile()
+
+	while !strlen(pathid)
+		let pathid = input('Pathid: ', pathid, 'custom,base#complete#CD')
+	endw
+
+	call pymy#sqlite#query({
+		\	'dbfile' : dbfile,
+		\	'q'      : 'DELETE FROM paths WHERE pathid = ?',
+		\	'p'      : [pathid],
+		\	})
+
+	return
+endfunction

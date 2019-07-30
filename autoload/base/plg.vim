@@ -207,14 +207,11 @@ function! base#plg#help(...)
 endf	
 
 function! base#plg#grep(...)
-	if a:0
-		let plg = a:1
-	else
-		let plg = ''
-		while !strlen(plg)
-			let plg = input('Plugin name:','base','custom,base#complete#plg')
-		endw
-	endif
+	let plg = get(a:000,0,'')
+
+	while !strlen(plg)
+		let plg = input('Plugin name:','base','custom,base#complete#plg')
+	endw
 
 	let plgdir = base#catpath('plg',plg)
 
@@ -255,7 +252,7 @@ function! base#plg#act(...)
 	let act = get(aa,1,'')
 
 	if !len(plg)
-		let plg=input('Plugin:','','custom,ap#complete#plg')
+		let plg = input('Plugin:','','custom,ap#complete#plg')
 		if !len(plg) | redraw! | return | endif
 	endif
 

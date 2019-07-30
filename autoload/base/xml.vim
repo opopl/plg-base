@@ -89,12 +89,17 @@ eof
 	
 endfunction
 
+"Usage:
+"	let attr_val = base#xml#xpath_attr (xpath,attr_list)
+"
+"Examples:
+"	let [name] = base#xml#xpath_attr (xpath,[ 'name' ])
 
 function! base#xml#xpath_attr (...)
 		let xpath     = get(a:000,0,'')
 		let attr_list = get(a:000,1,[])
 
-		let attr_val=[]
+		let attr_val = []
 
 perl << eof
 		my $dom  = $Base::XML::DOM;
@@ -121,6 +126,42 @@ eof
 
 endfunction
 
+"Usage:
+"	let text = base#xml#xpath_text_content (xpath)
+
+function! base#xml#xpath_text_content (...)
+		let xpath = get(a:000,0,'')
+
+		let ref   = get(a:000,1,{})
+
+		let text_content = []
+perl << eof
+		my $dom = $Base::XML::DOM;
+
+		unless (defined $dom){
+			VimWarn('$Base::XML::DOM undefined!');
+			return;
+		}
+
+		my $ref = VimVar('ref') || {};
+		my @content;
+
+		my $s = sub {
+			my $n = shift;
+			my $t = $n->textContent || '';
+			push @content, $t;
+		};
+		$dom->findnodes($xpath)->map($s);
+		VimLet('text_content',[@content]);
+eof
+		return text_content
+
+endfunction
+
+"Usage:
+"  let lines = base#xml#xpath_lines(xpath)
+"  let lines = base#xml#xpath_lines(xpath, { 'trim' : 1 })
+
 function! base#xml#xpath_lines (...)
 		let xpath = get(a:000,0,'')
 
@@ -132,12 +173,12 @@ perl << eof
 
 		my $dom = $Base::XML::DOM;
 
-		my $ref = VimVar('ref');
-
 		unless (defined $dom){
 			VimWarn('$Base::XML::DOM undefined!');
 			return;
 		}
+
+		my $ref = VimVar('ref') || {};
 
 		my $xpath = VimVar('xpath');
 		unless ($xpath){
@@ -155,13 +196,6 @@ perl << eof
 		};
 		my @list = map { $n->($_) } @n;
 
-		my $s = sub {
-			my @r;
-			local $_ = shift;
-
-			$_;
-		};
-		@list = map { $s->($_) } @list;
 		if ($ref->{trim}) {
 			@list = map { trim($_) } @list;
 		}

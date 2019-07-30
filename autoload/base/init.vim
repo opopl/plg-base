@@ -362,6 +362,10 @@ command! -nargs=* -complete=custom,base#complete#omnioptions
 """BasePathAdd
 	command! -nargs=* -complete=custom,base#complete#CD
 	    \   BasePathAdd call base#path#add(<f-args>) 
+
+"""BasePathDelete
+	command! -nargs=* -complete=custom,base#complete#CD
+	    \   BasePathDelete call base#path#delete(<f-args>) 
 	
 """BaseInit
 	command! -nargs=* -complete=custom,base#complete#init

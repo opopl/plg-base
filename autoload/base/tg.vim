@@ -501,8 +501,8 @@ function! base#tg#update (...)
 	
 		return  ok
 
-	elseif tgid == 'php_z'
-		let dir   = base#qw#catpath('z_fetch_url','php')
+	elseif tgid == 'x_php'
+		let dir   = base#qw#catpath('x_php','')
 		let libs .= ' ' . dir
 
 	elseif tgid == 'php_funcs'
