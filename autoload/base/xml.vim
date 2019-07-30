@@ -127,15 +127,17 @@ eof
 endfunction
 
 "Usage:
-"	let text = base#xml#xpath_text_content (xpath)
+"	let text = base#xml#xpath_text_split (xpath)
 
-function! base#xml#xpath_text_content (...)
+function! base#xml#xpath_text_split (...)
 		let xpath = get(a:000,0,'')
 
 		let ref   = get(a:000,1,{})
 
-		let text_content = []
+		let text_split = []
 perl << eof
+		use Base::String qw(str_split);
+
 		my $dom = $Base::XML::DOM;
 
 		unless (defined $dom){
@@ -149,12 +151,12 @@ perl << eof
 		my $s = sub {
 			my $n = shift;
 			my $t = $n->textContent || '';
-			push @content, $t;
+			push @content, str_split( $t );
 		};
 		$dom->findnodes($xpath)->map($s);
-		VimLet('text_content',[@content]);
+		VimLet('text_split',[@content]);
 eof
-		return text_content
+		return text_split
 
 endfunction
 
