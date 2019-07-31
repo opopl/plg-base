@@ -12,11 +12,10 @@ endf
 
 function! base#buf#tabs_nice(...)
 	try
-			%s/\([\t]\+\)\s*/\1/g
-
 			let spaces =  repeat('\s', &ts)
-			exe '%s/^\([' . spaces . ']\+\)/\t/g'
+			exe '%s/^' . spaces . '/\t/g'
 
+			%s/\([\t]\+\)\s*/\1/g
 	catch 
 	 		echo v:exception
 	endtry
