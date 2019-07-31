@@ -134,7 +134,7 @@ function! base#buf#open_split (ref)
 
 		if len(text)
 			let textlines = split(text,"\n")
-			call extend(lines,textlines)
+			call extend(lines, textlines)
 		endif
 
 		if !len(lines)

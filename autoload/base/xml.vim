@@ -99,7 +99,7 @@ function! base#xml#xpath_attr (...)
 		let xpath     = get(a:000,0,'')
 		let attr_list = get(a:000,1,[])
 
-		let attr_val = []
+		let attr_vals = []
 
 perl << eof
 		my $dom  = $Base::XML::DOM;
@@ -108,7 +108,7 @@ perl << eof
 		my $xpath     = VimVar('xpath') || '';
 
 		my $attr_list = VimVar('attr_list') || [];
-		my $attr_val  = [];
+		my $attr_vals  = [];
 
 		my $nodes     = $xpc->{$xpath} || [ $dom->findnodes($xpath) ];
 		foreach my $attr_name (@$attr_list) {
@@ -117,12 +117,14 @@ perl << eof
 
 				my $val = ((defined $attr) ? $attr : '');
 
-				push @$attr_val, $val;
+				push @$attr_vals, $val;
 			}
 		}
-		VimListExtend('attr_val',$attr_val);
+		VimListExtend('attr_vals',$attr_vals);
 eof
-		return attr_val
+		"let attr_vals = map(attr_vals,'substitute(v:val,"\\\\","\\","g")')
+	
+		return attr_vals
 
 endfunction
 

@@ -2318,13 +2318,16 @@ function! base#warn (ref)
 		let prefix = get(ref,'prefix',prefix)
 		let hl     = get(ref,'hl','WarningMsg')
 
-		let text = prefix . text
+		if type(text) == type('')
+			let text = prefix . text
+		elseif type(text) == type([])
+		endif
 
 		let prf = {}
 		call extend(prf,ref)
 		call extend(prf,{ 'loglevel' : 'warn' })
 
-		call base#log([text],prf)
+		call base#log(text,prf)
     
 endfunction
 

@@ -21,11 +21,21 @@ endfunction
 function! base#bufact#php#tabs_nice ()
 
 	try
-			 %s/\([\t]\+\)\s*/\1/g
-			 %s/$this->\s\+/$this->/g
-			 %s/->\s\+/->/g
+		%s/\([\t]\+\)\s*/\1/g
+		%s/$this->\s\+/$this->/g
+		%s/->\s\+/->/g
 	catch 
-	 		echo v:exception
+			echo v:exception
+	endtry
+
+endfunction
+
+function! base#bufact#php#quotes_enclose ()
+	try
+		%s/^\(\s*\)\(\w\+\)\(\s*=>\)/\1'\2'\3/g
+		%s/\(\s\+\)\(\w\+\)\(\s*=>\)/\1'\2'\3/g 
+	catch 
+		echo v:exception
 	endtry
 
 endfunction

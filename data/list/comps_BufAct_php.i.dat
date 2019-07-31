@@ -4,3 +4,4 @@ syntax_check
 echo_tag
 server_run
 tabs_nice
+quotes_enclose

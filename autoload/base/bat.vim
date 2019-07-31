@@ -19,9 +19,9 @@ function! base#bat#cmd_for_exe (...)
 
 	if !filereadable(bat_file)
 		let msg = [ 'bat_file NOT exist' , bat_file ]
-		let prf = { 'plugin' : 'base', 'func' : 'base#bat#exe' }
-		call base#log(msg, prf)
-		return
+		let w = { 'text' : msg, 'plugin' : 'base', 'func' : 'base#bat#cmd_for_exe' }
+		call base#warn(w)
+		return ''
 	endif
 
 	let cmd = shellescape( bat_file )
@@ -33,6 +33,14 @@ function! base#bat#exe (...)
 	let ref = get(a:000,0,{})
 
 	let cmd = base#bat#cmd_for_exe(ref)
+
+	if !strlen(cmd)
+		let msg = [ 'no cmd provided!' ]
+		let w = { 'text' : msg, 'plugin' : 'base', 'func' : 'base#bat#exe' }
+		call base#warn(w)
+		return 
+	endif
+
 	let ok = base#sys({ 
 		\	"cmds"         : [cmd],
 		\	"split_output" : 0,
@@ -85,7 +93,7 @@ function! base#bat#lines (...)
 	call add(bat_lines,' ')
 	call add(bat_lines,'set exe=' . exe )
 	call add(bat_lines,' ')
-	call add(bat_lines,'cmd /c %exe% %opts% %args %* ')
+	call add(bat_lines,'cmd /c %exe% %opts% %args% %* ')
 	call add(bat_lines,' ')
 
 	return bat_lines
