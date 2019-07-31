@@ -3027,13 +3027,13 @@ function! base#envvar_a (varname,...)
 endf    
 
 
-function! base#envvar_open_split (varname,...)
+function! base#envvar_open_split (varname, ... )
 	let a = base#envvar_a(a:varname)
 	call base#buf#open_split({'lines' : a})
 
 endf    
 
-function! base#envvar (varname,...)
+function! base#envvar (varname, ... )
 		let default = get(a:000,0,'')
 
     let var  = '$' . a:varname
@@ -3044,14 +3044,13 @@ perl << eof
 	use Vim::Perl qw(VimLet VimEval);
 
 	my $default = VimEval('default');
-	my $env=sub { my $vname=shift; $ENV{$vname} || $default; };
+	my $env = sub { my $vname = shift; $ENV{$vname} || $default; };
 
 	my $varname = VimEval('a:varname');
 	my $val     = $env->($varname);
 
-
 	if($^O eq 'MSWin32'){
-		local $_=$val;
+		local $_ = $val;
 		while(/%(\w+)%/){
 			my $vname = $1;
 			my $vval  = $env->($vname);
@@ -3107,6 +3106,35 @@ function! base#dump (...)
 		endtry
 
     return dump
+endfunction
+
+function! base#varget_nz (varname,...)
+
+    if ! exists("s:basevars") | let s:basevars = {} | endif
+    
+    if exists("s:basevars[a:varname]")
+      let l:val = copy( s:basevars[a:varname] )
+		endif
+
+		"" var already exists and is non zero
+		if exists("l:val") 
+			if ( type(l:val) == type("") && strlen(l:val) )
+				return l:val
+			elseif ( type(l:val) == type([]) && len(l:val) )
+				return l:val
+			elseif ( type(l:val) == type({}) && len(l:val) )
+				return l:val
+			endif
+		endif
+
+		let l:val = ''
+		if a:0
+			let default = a:1
+			unlet l:val | let l:val = default
+		endif
+
+		return l:val
+    
 endfunction
 
 function! base#varget (varname,...)
