@@ -3120,10 +3120,13 @@ function! base#varget_nz (varname,...)
 		if exists("l:val") 
 			if ( type(l:val) == type("") && strlen(l:val) )
 				return l:val
+
 			elseif ( type(l:val) == type([]) && len(l:val) )
 				return l:val
+
 			elseif ( type(l:val) == type({}) && len(l:val) )
 				return l:val
+
 			endif
 		endif
 
