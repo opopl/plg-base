@@ -25,18 +25,25 @@ function! base#bufact#php#tabs_nice ()
 		%s/$this->\s\+/$this->/g
 		%s/->\s\+/->/g
 	catch 
-			echo v:exception
+		echo v:exception
 	endtry
 
 endfunction
 
 function! base#bufact#php#quotes_enclose ()
-	try
-		%s/^\(\s*\)\(\w\+\)\(\s*=>\)/\1'\2'\3/g
-		%s/\(\s\+\)\(\w\+\)\(\s*=>\)/\1'\2'\3/g 
-	catch 
-		echo v:exception
-	endtry
+	let pats = []
+	call add(pats, '%s/^\(\s*\)\(\w\+\)\(\s*=>\)/\1\"\2"\3/g' )
+	call add(pats, '%s/\(\s\+\)\(\w\+\)\(\s*=>\)/\1\"\2"\3/g' )
+
+	for pat in pats
+		try
+			exe pat	
+		catch 
+			let exc = v:exception
+			let w = { 'text' : 'quotes_enclose ' . exc, 'prefix' : '' }
+			call base#warn(w)
+		endtry
+	endfor
 
 endfunction
 
