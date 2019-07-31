@@ -1,15 +1,21 @@
 
-
-"
 function! base#buf#type(...)
 		let aa=a:000
 		let type = get(aa,0,'')
 		if len(type)
-				let b:base_buftype=type
+				let b:base_buftype = type
 				return type
 		endif
 		let type = exists("b:base_buftype") ? b:base_buftype : ''
 		return type
+endf
+
+function! base#buf#tabs_nice(...)
+	try
+			%s/\([\t]\+\)\s*/\1/g
+	catch 
+	 		echo v:exception
+	endtry
 endf
 
 function! base#buf#act(...)

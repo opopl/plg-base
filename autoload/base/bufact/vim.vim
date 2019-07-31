@@ -7,3 +7,6 @@ function! base#bufact#vim#stat ()
 	call base#buf#stat()
 endfunction
 
+function! base#bufact#vim#tabs_nice ()
+	call base#buf#tabs_nice()
+endfunction

@@ -19,6 +19,7 @@ function! base#bufact#php#server_run ()
 endfunction
 
 function! base#bufact#php#tabs_nice ()
+
 	try
 			 %s/\([\t]\+\)\s*/\1/g
 			 %s/$this->\s\+/$this->/g
