@@ -32,8 +32,9 @@ endfunction
 
 function! base#bufact#php#quotes_enclose ()
 	let pats = []
-	call add(pats, '%s/^\(\s*\)\(\w\+\)\(\s*=>\)/\1\"\2"\3/g' )
-	call add(pats, '%s/\(\s\+\)\(\w\+\)\(\s*=>\)/\1\"\2"\3/g' )
+
+	call add(pats, '%s/^\(\s*\)\(\w\+\)\(\s*=>\)/\1' . "'" . '\2'  . "'" . '\3/g' )
+	call add(pats, '%s/\(\s\+\)\(\w\+\)\(\s*=>\)/\1' . "'" . '\2'  . "'" . '\3/g' )
 
 	for pat in pats
 		try
