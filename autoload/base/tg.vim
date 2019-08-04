@@ -270,6 +270,7 @@ function! base#tg#update (...)
 	let filelist = ''
 
 	let libs_as = join(base#qw("C:/Perl/site/lib C:/Perl/lib" ),' ')
+	let execmd = ''
 
 	if tgid  == ''
 
@@ -289,27 +290,11 @@ function! base#tg#update (...)
 		return
 
 	elseif tgid == 'ty_perl_inc'
-
-		let dirs = perlmy#perl#inc_a()
-
 		let cnt = input('(TgUpdate ty_perl_inc) Continue with making TYGS? (1/0) : ',0)
 		if !cnt | return | endif
 
-		let ref = {
-					\	'dirs' : dirs,
-					\	'tfile' : tfile,
-					\	}
-		let ok = base#ty#make(ref)
-
-		let okref = { 
-				\	"tgid" : tgid,
-				\	"ok"   : ok,
-				\	"add"  : 0, 
-				\	}
-	
-		let ok= base#tg#ok(okref)
-		return
-
+		let execmd = 'ty --inc --tfile ' . tfile
+		
 	elseif tgid == 'ty_perl_htmltool'
 			let dir = base#path('htmltool')
 			let lib = base#file#catfile([ dir, 'lib' ])
@@ -497,7 +482,7 @@ function! base#tg#update (...)
 				\	"ok"   : ok,
 				\	"add"  : get(opts,'add',0) }
 
-		let ok= base#tg#ok(okref)
+		let ok = base#tg#ok(okref)
 	
 		return  ok
 
@@ -716,7 +701,10 @@ function! base#tg#update (...)
 			\	'libs'       : libs,
 			\	}
 
-	let [ cmd, execmd ] = base#tg#update_w_bat(r_bat)
+	let cmd = ''
+	if !strlen(execmd)
+		let [ cmd, execmd ] = base#tg#update_w_bat(r_bat)
+	endif
 
 	echo "Calling ctags command for: " . tgid 
 
@@ -737,11 +725,17 @@ function! base#tg#update (...)
 
 			redraw!
 			if code == 0
+				let msg = 'OK: TgUpdate ' . tgid . l:els
 				echohl MoreMsg
-				echo 'OK: TgUpdate ' . tgid . l:els
+				echo msg
+				let msg = [msg]
+				let prf = {'plugin' : 'base', 'func' : 'base#tg#update'}
+				call base#log(msg,prf)
 			else
+				let msg = 'FAIL: TgUpdate ' . tgid  . l:els
 				echohl WarningMsg
-				echo 'FAIL: TgUpdate ' . tgid  . l:els
+				echo msg
+				call base#warn({ 'text' : msg, 'prefix' : ''})
 			endif
 			echohl None
 		endfunction
