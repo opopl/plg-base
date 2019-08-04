@@ -719,31 +719,31 @@ function! base#tg#update (...)
 	let [ cmd, execmd ] = base#tg#update_w_bat(r_bat)
 
 	echo "Calling ctags command for: " . tgid 
-	let stack = base#varget('tgupdate_stack',[])
-	call add(stack,{ 'tgid' : tgid })
-	call base#varset('tgupdate_stack',stack)
+
+	let l:start = localtime()
 
 	let async = 1
 	if async && ( exists(':AsyncCommand') == 2 )
 		let ok = 1
 
-		let env = {}
+		let env = { 'tgid' : tgid, 'start' : l:start }
 		function env.get(temp_file) dict
 		  let code = self.return_code
+			let tgid = self.tgid
 
-			let stack = base#varget('tgupdate_stack',[])
-			if len(stack)
-				let data  = remove(stack,-1)
-				call base#varset('tgupdate_stack',stack)
-				let tgid  = get(data,'tgid','')
-			endif
+			let l:end = localtime()
+			let l:el = l:end - self.start
+			let l:els = ' ' . l:el . ' secs'
 
 			redraw!
 			if code == 0
-				echo 'OK: TgUpdate ' . tgid
+				echohl MoreMsg
+				echo 'OK: TgUpdate ' . tgid . l:els
 			else
-				echo 'FAIL: TgUpdate ' . tgid
+				echohl WarningMsg
+				echo 'FAIL: TgUpdate ' . tgid  . l:els
 			endif
+			echohl None
 		endfunction
 """tgupdate_async
 		
