@@ -719,10 +719,40 @@ function! base#tg#update (...)
 	let [ cmd, execmd ] = base#tg#update_w_bat(r_bat)
 
 	echo "Calling ctags command for: " . tgid 
+	let stack = base#varget('tgupdate_stack',[])
+	call add(stack,{ 'tgid' : tgid })
+	call base#varset('tgupdate_stack',stack)
 
+	let async = 1
 	if async && ( exists(':AsyncCommand') == 2 )
-		call asc#run({ 'cmd' : execmd })
 		let ok = 1
+
+		let env = {}
+		function env.get(temp_file) dict
+		  let code = self.return_code
+
+			let stack = base#varget('tgupdate_stack',[])
+			if len(stack)
+				let data  = remove(stack,-1)
+				call base#varset('tgupdate_stack',stack)
+				let tgid  = get(data,'tgid','')
+			endif
+
+			redraw!
+			if code == 0
+				echo 'OK: TgUpdate ' . tgid
+			else
+				echo 'FAIL: TgUpdate ' . tgid
+			endif
+		endfunction
+"""tgupdate_async
+		
+		call asc#run({ 
+			\	'cmd' : execmd, 
+			\	'Fn'  : asc#tab_restore(env) 
+			\	})
+
+		return
 	else
 		call extend(refsys,{ 'cmds' : [ execmd ] })
 		let ok = base#sys(refsys)
@@ -734,7 +764,7 @@ function! base#tg#update (...)
 			\	"ok"   : ok,
 			\	"add"  : get(opts,'add',0) }
 
-	let ok= base#tg#ok(okref)
+	let ok = base#tg#ok(okref)
 
 	return  ok
 endfunction
