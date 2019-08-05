@@ -729,13 +729,13 @@ function! base#tg#update (...)
 				echohl MoreMsg
 				echo msg
 				let msg = [msg]
-				let prf = {'plugin' : 'base', 'func' : 'base#tg#update'}
-				call base#log(msg,prf)
+				let prf = { 'plugin' : 'base', 'func' : 'base#tg#update' }
+				call base#log(msg, prf)
 			else
 				let msg = 'FAIL: TgUpdate ' . tgid  . l:els
 				echohl WarningMsg
 				echo msg
-				call base#warn({ 'text' : msg, 'prefix' : ''})
+				call base#warn({ 'text' : msg, 'prefix' : '' })
 			endif
 			echohl None
 		endfunction
