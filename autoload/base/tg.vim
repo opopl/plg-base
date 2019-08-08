@@ -643,12 +643,6 @@ function! base#tg#update (...)
 				let proj  = projs#proj#name()
 				let exts  = base#qw('tex vim bib')
 		
- "       let files_arr = projs#proj#files({ 
-						"\	"exts"         : exts,
-						"\	"exclude_dirs" : [ 'joins', 'builds' ],
-						"\	})
-		
-				"let files = join(files_arr,' ')
 				let files = proj . '.*.tex' . ' ' . proj . '.tex'
 		
 				let tfile = projs#path([ proj . '.tags' ])
