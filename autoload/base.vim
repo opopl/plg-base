@@ -2391,10 +2391,14 @@ function! base#info (...)
 			 call add(lines,'&dictionary:')
 			 call extend(lines,base#mapsub(split(&dictionary,','),'^','\t','g'))
 
-			 if exists("b:dics")
-			 		call add(lines,'b:dics = ')
-					call extend(lines,base#dump#yaml(b:dics))
-			 endif
+			 let vars = base#qw('b:dics b:dicfiles b:dicts')
+			 for var in vars
+				 if exists(var)
+				 		call add(lines,var . ' = ')
+						exe 'let dump = base#dump#yaml('.var.')'
+						call extend(lines,dump)
+				 endif
+			 endfor
 
 			 call base#buf#open_split({ 'lines' : lines })
 			 return
