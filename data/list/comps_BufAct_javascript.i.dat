@@ -1,3 +1,5 @@
 exe_split
 tabs_nice
 syntax_check
+browserify
+help_browserify
