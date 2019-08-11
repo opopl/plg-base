@@ -203,6 +203,8 @@ function! base#buf#onload ()
 	call base#buf#start()
 
 	"StatusLine simple
+	"
+	exe 'nnoremap <buffer><silent> ;sv :SnippetView '.&ft.'<CR>'
 
 	if b:ext == 'tags'
 		setf tags
