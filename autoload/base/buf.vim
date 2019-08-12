@@ -205,6 +205,7 @@ function! base#buf#onload ()
 	"StatusLine simple
 	"
 	exe 'nnoremap <buffer><silent> ;sv :SnippetView '.&ft.'<CR>'
+	exe 'nnoremap <buffer><silent> ;fo :PJact file_open<CR>'
 
 	if b:ext == 'tags'
 		setf tags

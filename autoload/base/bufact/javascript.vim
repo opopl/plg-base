@@ -21,6 +21,11 @@ function! base#bufact#javascript#syntax_check ()
 
 endfunction
 
+function! base#bufact#javascript#funcs_to_class ()
+	perldo s/^function\s*(\w+)\s*(\(.*\))/\tthis.$1 = function $2/g
+
+endfunction
+
 function! base#bufact#javascript#browserify ()
 	 let result_js = b:dirname . '/_bundle.js' 
 	 let cmd_a = [ 'browserify', shellescape(b:file), "-o", result_js ]

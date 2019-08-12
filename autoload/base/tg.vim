@@ -708,30 +708,47 @@ function! base#tg#update (...)
 	if async && ( exists(':AsyncCommand') == 2 )
 		let ok = 1
 
-		let env = { 'tgid' : tgid, 'start' : l:start }
+		let env = { 
+			\	'tgid'  : tgid, 
+			\	'cmd'   : cmd, 
+			\	'start' : l:start,
+			\	'opts'  : opts,
+			\	}
+
 		function env.get(temp_file) dict
 		  let code = self.return_code
+
 			let tgid = self.tgid
+			let cmd  = self.cmd
+			let opts = self.opts
 
 			let l:end = localtime()
-			let l:el = l:end - self.start
+			let l:el  = l:end - self.start
 			let l:els = ' ' . l:el . ' secs'
 
 			redraw!
+			let ok = 0
 			if code == 0
-				let msg = 'OK: TgUpdate ' . tgid . l:els
-				echohl MoreMsg
-				echo msg
-				let msg = [msg]
+				let ok = 1
+
+				let m = 'OK: TgUpdate ' . tgid . l:els
 				let prf = { 'plugin' : 'base', 'func' : 'base#tg#update' }
-				call base#log(msg, prf)
+				call base#log([m], prf)
+
 			else
-				let msg = 'FAIL: TgUpdate ' . tgid  . l:els
-				echohl WarningMsg
-				echo msg
-				call base#warn({ 'text' : msg, 'prefix' : '' })
+				let ok = 0
+				let m = 'FAIL: TgUpdate ' . tgid  . l:els
+				call base#warn({ 'text' : m, 'prefix' : '' })
+
 			endif
-			echohl None
+
+			let okref = { 
+						\	"cmd"  : cmd,
+						\	"tgid" : tgid,
+						\	"ok"   : ok,
+						\	"add"  : get(opts,'add',0) }
+
+			let ok = base#tg#ok(okref)
 		endfunction
 """tgupdate_async
 		

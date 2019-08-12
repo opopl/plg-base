@@ -3,3 +3,4 @@ tabs_nice
 syntax_check
 browserify
 help_browserify
+funcs_to_class
