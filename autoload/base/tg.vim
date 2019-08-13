@@ -558,16 +558,18 @@ function! base#tg#update (...)
 
 		let async = input('Use async? 1/0: ',1)
 
+"""tgupdate_x_php
 	elseif tgid == 'x_php'
-		"let dir   = base#qw#catpath('x_php','')
-		"let libs .= ' ' . dir
+		let dir   = base#qw#catpath('x_php','')
+		let libs = ' '
+		let files = ' '
 
-		let pj = idephp#pj#name()
-		if pj == 'x_php'
-			let files = idephp#pj#files_load()
-		else
+		let pj = idephp#pj#get()
+
+		if pj != 'x_php'
 			call idephp#pj#load('x_php')
 		endif
+		let files_arr = idephp#pj#files_load()
 
 """basetg_update_mkvimrc
 	elseif tgid =~ 'mkvimrc'
