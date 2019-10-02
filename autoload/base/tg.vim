@@ -299,19 +299,17 @@ function! base#tg#update (...)
 			let dir = base#path('htmltool')
 			let lib = base#file#catfile([ dir, 'lib' ])
 
+			let dbfile = base#qw#catpath('db', 'ty_perl_htmltool.db')
+
+			let tgid = 'ty_perl_htmltool'
 			let ref = {
-					\	'dirs'  : [lib],
-					\	'tfile' : tfile,
+					\	'dirs'   : [lib],
+					\	'tfile'  : tfile,
+					\	'tgid'   : tgid,
+					\	'dbfile' : dbfile,
 					\	}
 			let ok = base#ty#make(ref)
 
-			let okref = { 
-				\	"tgid" : tgid,
-				\	"ok"   : ok,
-				\	"add"  : 0, 
-				\	}
-	
-			let ok = base#tg#ok(okref)
 			return
 
 """tgupdate_help_perlmy

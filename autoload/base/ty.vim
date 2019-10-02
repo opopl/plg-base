@@ -1,58 +1,61 @@
 
 function! base#ty#make (...)
-	let ref = get(a:000,0,{})
+	let ref = get(a:000, 0, {})
 
 	let dirs  = get(ref,'dirs',[])
 	let tfile = get(ref,'tfile','')
+	let tgid  = get(ref,'tgid','')
+	let dbfile  = get(ref,'dbfile','')
 
 	let ok = 1
 
-perl << eof
-	use String::Escape qw(escape);
+	let args = []
+	let opts = [ 
+				\	'--tfile', tfile,
+				\	]
+	let bat_file = base#qw#catpath('tmp_bat' , tgid . '.bat')
 
-	my $dirs           = VimVar('dirs');
-	my $tfile          = VimVar('tfile');
+	for dir in dirs
+		call extend(opts,[ '--dir', dir ])
+	endfor
+	call extend(opts,[ '--db', dbfile ])
+	call extend(opts,[ '--action', 'generate_from_fs' ])
 
-	my $ok=1;
-
-	my %o = (
-		dirs    => $dirs,
-		tagfile => $tfile,
-		sub_log  => sub { 
-			VimLog(@_); 
-		},
-		sub_warn => sub { 
-			VimLog(@_); 
-			VimWarn(@_); 
-		},
-		add => [qw( subs packs vars include )],
-	);
-
-	my $s = sub {
-		eval { 
-			use Base::PerlFile;
+	let cmd = base#bat#cmd_for_exe({ 
+		\	'opts'     : opts,
+		\	'args'     : args,
+		\	'exe'      : 'ty',
+		\	'bat_file' : bat_file,
+		\	})
 	
-			VimLog('Running Base::PerlFile...');
-	
-			my $pf =  Base::PerlFile->new(%o);
-			$pf
-				->load_files_source
-				->ppi_process
-				->tagfile_rm
-				->write_tags
-				;
-		};
-		if($@){
-			VimWarn($@);
-			my $s = escape('printable',$@);
-			VimCmd(qq{ call base#log("$s") });
-			$ok=0;
-		}
-		VimLet('ok',$ok);
-	};
-	$s->();
+	let env = { 
+		\	'tgid' : tgid,
+		\	}
 
-eof
+	function env.get(temp_file) dict
+		let code = self.return_code
+		let ok   = ( code == 0 ) ? 1 : 0 
+
+		let tgid = get(self, 'tgid', '' )
+	
+		if filereadable(a:temp_file)
+			let out = readfile(a:temp_file)
+			call base#buf#open_split({ 'lines' : out })
+		endif
+
+		let okref = { 
+			\	"tgid" : tgid,
+			\	"ok"   : ok,
+			\	"add"  : 1, 
+			\	}
+
+		let ok = base#tg#ok(okref)
+	endfunction
+	
+	call asc#run({ 
+		\	'cmd' : cmd, 
+		\	'Fn'  : asc#tab_restore(env) 
+		\	})
 
 	return ok
 	

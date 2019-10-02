@@ -29,6 +29,36 @@ function! base#bat#cmd_for_exe (...)
 
 endf
 
+function! base#bat#exe_async (...)
+	let ref = get(a:000,0,{})
+
+	let cmd = base#bat#cmd_for_exe(ref)
+
+	if !strlen(cmd)
+		let msg = [ 'no cmd provided!' ]
+		let w = { 'text' : msg, 'plugin' : 'base', 'func' : 'base#bat#exe_async' }
+		call base#warn(w)
+		return 
+	endif
+
+	let env = get(ref, 'env', {} )
+	function env.get(temp_file) dict
+		let code = self.return_code
+	
+		if filereadable(a:temp_file)
+			let out = readfile(a:temp_file)
+		endif
+	endfunction
+	
+	call asc#run({ 
+		\	'cmd' : execmd, 
+		\	'Fn'  : asc#tab_restore(env) 
+		\	})
+
+	return 1
+
+endf
+
 function! base#bat#exe (...)
 	let ref = get(a:000,0,{})
 
@@ -56,6 +86,17 @@ function! base#bat#exe (...)
 	return res
 
 endf
+
+"
+" Usage: 
+" 	let ref = {
+"			\	'exe'  : exe,
+"			\	'args' : [ 'a', 'b' ],
+"			\	'opts' : [ '--x', 'y' ],
+"			\	}
+"
+" let lines = base#bat#lines (ref)
+"
 
 function! base#bat#lines (...)
 	let ref      = get(a:000, 0, {})
