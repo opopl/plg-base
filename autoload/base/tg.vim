@@ -302,11 +302,32 @@ function! base#tg#update (...)
 			let dbfile = base#qw#catpath('db', 'ty_perl_htmltool.db')
 
 			let tgid = 'ty_perl_htmltool'
+
+			let msg_a = [
+				\	" ",	
+				\	"REDO flag - sets redo flag in Base::PerlFile, and does all",	
+				\	"		calculations from the file system",	
+				\	" ",	
+				\	"redo (1/0): ",	
+				\	]
+			let msg = join(msg_a,"\n")
+
+			let redo = base#input_we(msg,1,{})
+
+			let exe_perl = 'perl'
+
+			let do_nyt_prof = input('profiling with Devel::NYTProf ? (1/0): ', 1)
+			if do_nyt_prof
+				let exe_perl .= ' -d:NYTProf'
+			endif
+
 			let ref = {
 					\	'dirs'   : [lib],
 					\	'tfile'  : tfile,
 					\	'tgid'   : tgid,
 					\	'dbfile' : dbfile,
+					\	'redo'   : redo,
+					\	'exe_perl'   : exe_perl,
 					\	}
 			let ok = base#ty#make(ref)
 
@@ -789,11 +810,18 @@ function! base#tg#ok (...)
 	let ok   = get(okref,'ok','')
 	let tgid = get(okref,'tgid','')
 	let add  = get(okref,'add',0)
+	
+	"elapsed time
+	let l:els  = get(okref,'els','')
 
 	if ok
 		redraw!
 		echohl MoreMsg
-		echo "CTAGS UPDATE OK: " .  tgid
+		let msg = "TAGS UPDATE OK: " .  tgid 
+		if strlen(l:els)
+			let msg .= ' ' . l:els
+		endif
+		echo msg 
 		echohl None
 
 		let h = { "update_ifabsent" : 0 }
@@ -806,7 +834,11 @@ function! base#tg#ok (...)
 	else
 		redraw!
 		echohl Error
-		echo "CTAGS UPDATE FAIL: " .  tgid
+		let msg = "CTAGS UPDATE FAIL: " .  tgid
+		if strlen(l:els)
+			let msg .= ' ' . l:els
+		endif
+		echo msg
 		echohl None
 	endif
 
