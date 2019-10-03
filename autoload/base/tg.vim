@@ -321,14 +321,21 @@ function! base#tg#update (...)
 				let exe_perl .= ' -d:NYTProf'
 			endif
 
+			let files_limit = input('files limit (0 for no limit): ', 0)
+
 			let ref = {
-					\	'dirs'   : [lib],
-					\	'tfile'  : tfile,
-					\	'tgid'   : tgid,
-					\	'dbfile' : dbfile,
-					\	'redo'   : redo,
-					\	'exe_perl'   : exe_perl,
+					\	'dirs'     : [lib],
+					\	'tfile'    : tfile,
+					\	'tgid'     : tgid,
+					\	'dbfile'   : dbfile,
+					\	'redo'     : redo,
+					\	'exe_perl' : exe_perl,
 					\	}
+
+			if files_limit
+				call extend(ref,{ 'files_limit' : files_limit })
+			endif
+
 			let ok = base#ty#make(ref)
 
 			return
