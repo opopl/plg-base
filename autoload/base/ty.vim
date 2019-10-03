@@ -8,6 +8,7 @@ function! base#ty#make (...)
 	let dbfile = get(ref, 'dbfile' ,'')
 
 	let redo   = get(ref, 'redo', 0 )
+	let files_limit   = get(ref, 'files_limit', 0 )
 
 	let ok = 1
 
@@ -23,6 +24,10 @@ function! base#ty#make (...)
 	call extend(opts,[ '--db', dbfile ])
 	call extend(opts,[ '--action', 'generate_from_fs' ])
 	call extend(opts,[ '--redo', redo ])
+
+	if files_limit
+		call extend(opts,[ '--files_limit', files_limit ])
+	endif
 
 	let ty_pl = base#qw#catpath('htmltool', 'bin ty.pl')
 	let exe_perl = get(ref, 'exe_perl', 'perl')
@@ -66,6 +71,8 @@ function! base#ty#make (...)
 			\	}
 
 		let ok = base#tg#ok(okref)
+		"call base#tg#view(tgid)
+
 	endfunction
 	
 	call asc#run({ 

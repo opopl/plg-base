@@ -321,7 +321,8 @@ function! base#tg#update (...)
 				let exe_perl .= ' -d:NYTProf'
 			endif
 
-			let files_limit = input('files limit (0 for no limit): ', 0)
+			let files_limit = 2
+			let files_limit = str2nr( input('files limit (0 for no limit): ', files_limit ) )
 
 			let ref = {
 					\	'dirs'     : [lib],
