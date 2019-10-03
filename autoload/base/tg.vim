@@ -228,6 +228,66 @@ function! base#tg#update_w_bat (...)
 
 endf
 
+"Call tree:
+"	Called by:
+"		base#tg#update
+"
+function! base#tg#update_tygs (...)
+	let ref = get(a:000, 0, {})
+
+	let tgid = get(ref, 'tgid', '' )
+	let dirs = get(ref, 'dirs', [] )
+	let prompt = get(ref, 'prompt', 0 )
+
+	let tfile = base#tg#tfile(tgid)
+
+	let dbfile = base#qw#catpath('db', tgid . '.db')
+
+	let redo        = 1
+	let do_nyt_prof = 1
+	let files_limit = 0
+
+	let exe_perl    = 'perl'
+
+	if prompt
+		let msg_a = [
+			\	" ",	
+			\	"REDO flag - sets redo flag in Base::PerlFile, and does all",	
+			\	"		calculations from the file system",	
+			\	" ",	
+			\	"redo (1/0): ",	
+			\	]
+		let msg = join(msg_a,"\n")
+	
+		let redo = base#input_we(msg, redo, {})
+
+		let do_nyt_prof = input('profiling with Devel::NYTProf ? (1/0): ', do_nyt_prof )
+
+		let files_limit = str2nr( input('files limit (0 for no limit): ', files_limit ) )
+	endif
+
+	if do_nyt_prof
+		let exe_perl .= ' -d:NYTProf'
+	endif
+
+	let ref = {
+			\	'dirs'     : dirs,
+			\	'tfile'    : tfile,
+			\	'tgid'     : tgid,
+			\	'dbfile'   : dbfile,
+			\	'redo'     : redo,
+			\	'exe_perl' : exe_perl,
+			\	}
+
+	if files_limit
+			call extend(ref, { 'files_limit' : files_limit } )
+	endif
+
+	let ok = base#ty#make(ref)
+	return ok
+endf
+
+
 "call base#tg#update (tgid)
 "call base#tg#update ()
 
@@ -294,52 +354,20 @@ function! base#tg#update (...)
 		if !cnt | return | endif
 
 		let execmd = 'ty --inc --tfile ' . tfile
-		
+
 	elseif tgid == 'ty_perl_htmltool'
-			let dir = base#path('htmltool')
-			let lib = base#file#catfile([ dir, 'lib' ])
 
-			let dbfile = base#qw#catpath('db', 'ty_perl_htmltool.db')
+		let dir  = base#path('htmltool')
+		let lib  = base#file#catfile([ dir, 'lib' ])
+		let dirs = [ lib ]
 
-			let tgid = 'ty_perl_htmltool'
+		call base#tg#update_tygs({ 
+			\	'tgid'   : tgid ,
+			\	'dirs'   : dirs ,
+			\	'prompt' : 1 ,
+			\	})
 
-			let msg_a = [
-				\	" ",	
-				\	"REDO flag - sets redo flag in Base::PerlFile, and does all",	
-				\	"		calculations from the file system",	
-				\	" ",	
-				\	"redo (1/0): ",	
-				\	]
-			let msg = join(msg_a,"\n")
-
-			let redo = base#input_we(msg,1,{})
-
-			let exe_perl = 'perl'
-
-			let do_nyt_prof = input('profiling with Devel::NYTProf ? (1/0): ', 1)
-			if do_nyt_prof
-				let exe_perl .= ' -d:NYTProf'
-			endif
-
-			let files_limit = 2
-			let files_limit = str2nr( input('files limit (0 for no limit): ', files_limit ) )
-
-			let ref = {
-					\	'dirs'     : [lib],
-					\	'tfile'    : tfile,
-					\	'tgid'     : tgid,
-					\	'dbfile'   : dbfile,
-					\	'redo'     : redo,
-					\	'exe_perl' : exe_perl,
-					\	}
-
-			if files_limit
-				call extend(ref,{ 'files_limit' : files_limit })
-			endif
-
-			let ok = base#ty#make(ref)
-
-			return
+		return
 
 """tgupdate_help_perlmy
 	elseif tgid == 'help_perlmy'
