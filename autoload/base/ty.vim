@@ -12,6 +12,8 @@ function! base#ty#make (...)
 	let redo   = get(ref, 'redo', 0 )
 	let files_limit   = get(ref, 'files_limit', 0 )
 
+	let view_output = get(ref, 'view_output' , 0)
+
 	let ok = 1
 
 	let args = []
@@ -56,6 +58,7 @@ function! base#ty#make (...)
 		\	'tgid'  : tgid,
 		\	'tfile' : tfile,
 		\	'start' : l:start,
+		\	'view_output' : view_output,
 		\	}
 
 	function env.get(temp_file) dict
@@ -72,7 +75,9 @@ function! base#ty#make (...)
 	
 		if filereadable(a:temp_file)
 			let out = readfile(a:temp_file)
-			"call base#buf#open_split({ 'lines' : out })
+			if get(self,'view_output',0)
+				call base#buf#open_split({ 'lines' : out })
+			endif
 		endif
 
 		let okref = { 
