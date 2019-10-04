@@ -2768,26 +2768,25 @@ function! base#info (...)
 				call add(info,"\t" . t )
 			endfor
 
-					
 			call base#buf#open_split({ 'lines' : info })
 
 """info_perl
    elseif topic == 'perl'
-				PERLMY info
+			call perlmy#info()
 
 """info_python
    elseif topic == 'python'
-				PYMY info
+			PYMY info
 
 """info_proj
    elseif topic == 'proj'
-        call projs#info()
+      call projs#info()
 
    elseif topic == 'proj_usedpacks'
-        call projs#info#usedpacks()
+      call projs#info#usedpacks()
        
    elseif topic == 'perl'
-       call base#echo({ 'text' : "PERL ", 'hl' : 'Title' } )
+      call base#echo({ 'text' : "PERL ", 'hl' : 'Title' } )
 
        if exists("g:PMOD_ModuleName")
            call base#echo({ 'text' : "Current Perl module: " } )

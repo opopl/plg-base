@@ -10,6 +10,8 @@ pod_to_vimhelp
 view_pod
 ###executing
 execute
+### ty
+ty_thisfile
 ###other
 #knutov
 #extract_subs

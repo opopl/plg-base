@@ -26,6 +26,10 @@ eof
 	endif
 endf
 
+function! base#bufact#perl#ty_thisfile ()
+
+endf
+
 function! base#bufact#perl#pod_to_vimhelp ()
 	call base#buf#start()
 perl << eof
