@@ -2,7 +2,9 @@
 function! base#ty#make (...)
 	let ref = get(a:000, 0, {})
 
-	let dirs   = get(ref, 'dirs'  ,[])
+	let dirs    = get(ref, 'dirs'  ,[])
+	let files   = get(ref, 'files'  ,[])
+
 	let tfile  = get(ref, 'tfile' ,'')
 	let tgid   = get(ref, 'tgid'  ,'')
 	let dbfile = get(ref, 'dbfile' ,'')
@@ -18,10 +20,17 @@ function! base#ty#make (...)
 				\	]
 	let bat_file = base#qw#catpath('tmp_bat' , tgid . '.bat')
 
+	for file in files
+		call extend(opts, [ '--file', file ] )
+	endfor
+
+	if strlen(dbfile)
+		call extend(opts, [ '--db', dbfile ] )
+	endif
+
 	for dir in dirs
 		call extend(opts,[ '--dir', dir ])
 	endfor
-	call extend(opts,[ '--db', dbfile ])
 	call extend(opts,[ '--action', 'generate_from_fs' ])
 	call extend(opts,[ '--redo', redo ])
 
@@ -44,7 +53,8 @@ function! base#ty#make (...)
 	let l:start = localtime()
 	
 	let env = { 
-		\	'tgid' : tgid,
+		\	'tgid'  : tgid,
+		\	'tfile' : tfile,
 		\	'start' : l:start,
 		\	}
 
@@ -52,7 +62,8 @@ function! base#ty#make (...)
 		let code = self.return_code
 		let ok   = ( code == 0 ) ? 1 : 0 
 
-		let tgid  = get(self, 'tgid', '' )
+		let tgid   = get(self, 'tgid', '' )
+		let tfile  = get(self, 'tfile', '' )
 
 		let l:start = get(self, 'start', '' )
 		let l:end = localtime()
@@ -61,13 +72,14 @@ function! base#ty#make (...)
 	
 		if filereadable(a:temp_file)
 			let out = readfile(a:temp_file)
-			call base#buf#open_split({ 'lines' : out })
+			"call base#buf#open_split({ 'lines' : out })
 		endif
 
 		let okref = { 
-			\	"tgid" : tgid,
-			\	"ok"   : ok,
-			\	"add"  : 0, 
+			\	"tgid"  : tgid,
+			\	"tfile" : tfile,
+			\	"ok"    : ok,
+			\	"add"   : 0, 
 			\	}
 
 		let ok = base#tg#ok(okref)

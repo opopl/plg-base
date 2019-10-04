@@ -27,6 +27,19 @@ eof
 endf
 
 function! base#bufact#perl#ty_thisfile ()
+	let head = fnamemodify(b:file,':p:h')
+	let tail = fnamemodify(b:file,':p:t')
+
+	let tfile = base#file#catfile([ head, tail . '.tygs' ])
+
+	let r = {
+			\	'files'  : [ b:file ],
+			\	'tgid'   : 'ty_thisfile',
+			\	'tfile'  : tfile,
+			\	'redo'   : 1,
+			\	}
+
+	call base#ty#make(r)
 
 endf
 

@@ -10,6 +10,7 @@ function! base#tg#set (...)
 	if a:0 > 1 | let ref = a:2 | endif
 
 	let tfile = base#tg#tfile(tgid)
+	let tfile = get(ref,'tfile',tfile)
 
 	if get(ref,'update_ifabsent',1)
 		if !filereadable(tfile)
@@ -22,6 +23,25 @@ function! base#tg#set (...)
 	let b:tgids=[tgid]
 	
 endfunction
+
+function! base#tg#add (...)
+	if a:0 | let tgid = a:1 | endif
+
+	let ref = {}
+	if a:0 > 1 | let ref = a:2 | endif
+
+	let tfile = base#tg#tfile(tgid)
+	let tfile = get(ref,'tfile',tfile)
+
+	let tfile=escape(tfile,' \')
+	exe 'setlocal tags+=' . tfile
+	let tgs = base#tg#ids() 
+	call add(tgs,tgid)
+
+	let tgs     = base#uniq(tgs)
+	let b:tgids = tgs
+
+endf
 
 function! base#tg#go (...)
 	let tgs = get(a:000,0,'')
@@ -61,20 +81,7 @@ function! base#tg#go (...)
 
 endfunction
 
-function! base#tg#add (...)
-	if a:0 | let tgid = a:1 | endif
 
-	let tfile = base#tg#tfile(tgid)
-
-	let tfile=escape(tfile,' \')
-	exe 'setlocal tags+=' . tfile
-	let tgs = base#tg#ids() 
-	call add(tgs,tgid)
-
-	let tgs     = base#uniq(tgs)
-	let b:tgids = tgs
-
-endf
 
 
 function! base#tg#ids (...)
@@ -844,8 +851,10 @@ function! base#tg#ok (...)
 	if a:0 | let okref = a:1 | endif
 
 	let ok   = get(okref,'ok','')
-	let tgid = get(okref,'tgid','')
 	let add  = get(okref,'add',0)
+
+	let tgid  = get(okref,'tgid','')
+	let tfile = get(okref,'tfile','')
 	
 	"elapsed time
 	let l:els  = get(okref,'els','')
@@ -860,7 +869,11 @@ function! base#tg#ok (...)
 		echo msg 
 		echohl None
 
-		let h = { "update_ifabsent" : 0 }
+		let h = { 
+			\ "update_ifabsent" : 0,
+			\	"tfile" : tfile
+			\	}
+
 		if add 
 			call base#tg#add (tgid,h)
 		else
