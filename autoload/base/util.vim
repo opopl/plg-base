@@ -12,7 +12,10 @@ function! base#util#dirs_from_str (...)
 		let qw    = base#trim( qw )
 		let dir   = base#qw#catpath(dirid, qw)
 
-		call add(dirs, dir)
+		if strlen(dir) 
+			call add(dirs, dir)
+		endif
+
 	endfor
 
 	return dirs
