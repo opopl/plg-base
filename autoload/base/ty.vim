@@ -55,9 +55,9 @@ function! base#ty#make (...)
 	let l:start = localtime()
 	
 	let env = { 
-		\	'tgid'  : tgid,
-		\	'tfile' : tfile,
-		\	'start' : l:start,
+		\	'tgid'        : tgid,
+		\	'tfile'       : tfile,
+		\	'start'       : l:start,
 		\	'view_output' : view_output,
 		\	}
 
