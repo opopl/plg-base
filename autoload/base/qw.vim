@@ -1,12 +1,16 @@
 
 fun! base#qw#catpath(...)
+
 	let key = get(a:000, 0, '')
 	let s   = get(a:000, 1, '')
 
+	if ! strlen(key) | return '' | endif
+
 	let pieces = base#qw(key)
+
 	let first  = remove(pieces, 0)
 
-	let s      = join(pieces,' ') . ' ' . s
+	let s      = join(pieces, ' ') . ' ' . s
 
 	let pa = base#qw(s)
 	let p  = base#catpath(first, pa)
