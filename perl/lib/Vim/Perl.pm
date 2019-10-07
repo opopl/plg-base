@@ -241,6 +241,7 @@ sub VimSo {
 
     return unless $file;
 
+	$file =~ s/\\/\//g;
     VimCmd("source $file");
 
 }
