@@ -32,3 +32,4 @@ buffs_loclist
 buf_onload
 thisfile_copy_to
 buf_filetype_view_snippets
+au_print

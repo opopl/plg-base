@@ -26,6 +26,20 @@ function! base#act#file_view (...)
 	call base#fileopen({ 'files': [ file ] })
 endfunction
 
+function! base#act#au_print (...)
+
+	if exists("ww") | unlet ww | endif
+
+	let ww=''
+	redir => ww
+	silent au
+	redir END
+
+	let wwa = split(ww,"\n")
+	call base#buf#open_split({ 'lines' : wwa })
+
+endfunction
+
 function! base#act#buf_onload (...)
 	call base#buf#onload()
 endfunction
