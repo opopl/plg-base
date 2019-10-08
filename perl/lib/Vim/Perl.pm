@@ -39,10 +39,11 @@ use DBI;
 use Base::DB qw(
 	dbh_insert_hash
 );
+
 use Base::Util qw(
 	replace_undefs
+	file_w
 );
-
 
 $VERSION = '0.01';
 @ISA     = qw(Exporter);
@@ -130,6 +131,7 @@ my @ex_vars_array = qw(
           VimSetLine
           VimSetTags
           VimSo
+          VimExecAu
           VimStrToOpts
           VimThisLine
           VimVar
@@ -233,6 +235,24 @@ sub VimArg {
     my $arg = VimEval("a:$num");
 
     $arg;
+
+}
+
+sub VimExecAu {
+	my ($ref) = @_;
+
+	my $au      = $ref->{au} || [];
+	my $tmp_dir = $ref->{tmp_dir} || '';
+	my $tmp     = $ref->{tmp} || 'tmp.vim';
+
+	my $tmp_vim = catfile($tmp_dir, $tmp);
+	$tmp_vim =~ s/\\/\//g;
+
+	file_w({ 
+			file  => $tmp_vim,
+			lines => $au,
+	});
+	VimSo($tmp_vim);
 
 }
 
