@@ -132,9 +132,9 @@ endfunction
 "	let text = base#xml#xpath_text_split (xpath)
 
 function! base#xml#xpath_text_split (...)
-		let xpath = get(a:000,0,'')
+		let xpath = get(a:000, 0, '')
 
-		let ref   = get(a:000,1,{})
+		let ref   = get(a:000, 1, {})
 
 		let text_split = []
 perl << eof
