@@ -679,7 +679,7 @@ function! base#tg#update (...)
 		let pat = '^plg_\(.\+\)$'
 		let plg = substitute(tgid,pat,'\1','g')
 
-		let plgdir = base#catpath('plg',plg)
+		let plgdir   = base#catpath('plg',plg)
 		let plgdir_u = base#file#win2unix(plgdir)
 
 		let files_arr = base#find({ 
@@ -818,7 +818,7 @@ function! base#tg#update (...)
 						\	"cmd"  : cmd,
 						\	"tgid" : tgid,
 						\	"ok"   : ok,
-						\	"add"  : get(opts,'add',0) }
+						\	"add"  : get(opts, 'add', 0) }
 
 			let ok = base#tg#ok(okref)
 		endfunction
