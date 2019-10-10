@@ -31,7 +31,7 @@ function! base#tg#add (...)
 	if a:0 > 1 | let ref = a:2 | endif
 
 	let tfile = base#tg#tfile(tgid)
-	let tfile = get(ref,'tfile',tfile)
+	let tfile = get(ref, 'tfile', tfile)
 
 	let tfile=escape(tfile,' \')
 	exe 'setlocal tags+=' . tfile
@@ -855,7 +855,9 @@ function! base#tg#ok (...)
 	let add  = get(okref,'add',0)
 
 	let tgid  = get(okref,'tgid','')
-	let tfile = get(okref,'tfile','')
+
+	let tfile = base#tg#tfile(tgid)
+	let tfile = get(okref, 'tfile', tfile)
 	
 	"elapsed time
 	let l:els  = get(okref, 'els', '')
@@ -872,8 +874,11 @@ function! base#tg#ok (...)
 
 		let h = { 
 			\ "update_ifabsent" : 0,
-			\	"tfile"           : tfile
 			\	}
+
+		if strlen(tfile)
+			call extend(h, { 'tfile' : tfile })
+		endif
 
 		if add 
 			call base#tg#add (tgid, h)
