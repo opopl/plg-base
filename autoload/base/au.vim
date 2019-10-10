@@ -12,7 +12,7 @@ function! base#au#install (...)
 	for f in files
 		let fu = base#file#win2unix(f)
 		for [ auname, func ] in items(aucmds)
-			exe 'autocmd ' . auname . ' ' . fu . ' ' . 'call ' .func.'("'.fu.'")'  
+			exe 'autocmd ' . auname . ' ' . fu . ' ' . 'call ' . func . '("' . fu .'")'  
 		endfor
 	endfor
 

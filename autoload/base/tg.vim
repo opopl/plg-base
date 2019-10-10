@@ -845,6 +845,7 @@ function! base#tg#update (...)
 
 	return  ok
 endfunction
+"""endf_base_tg_update
 
 function! base#tg#ok (...)
 	let okref = {}
