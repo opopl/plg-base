@@ -857,7 +857,7 @@ function! base#tg#ok (...)
 	let tfile = get(okref,'tfile','')
 	
 	"elapsed time
-	let l:els  = get(okref,'els','')
+	let l:els  = get(okref, 'els', '')
 
 	if ok
 		redraw!
@@ -871,13 +871,13 @@ function! base#tg#ok (...)
 
 		let h = { 
 			\ "update_ifabsent" : 0,
-			\	"tfile" : tfile
+			\	"tfile"           : tfile
 			\	}
 
 		if add 
-			call base#tg#add (tgid,h)
+			call base#tg#add (tgid, h)
 		else
-			call base#tg#set (tgid,h)
+			call base#tg#set (tgid, h)
 		endif
 
 	else

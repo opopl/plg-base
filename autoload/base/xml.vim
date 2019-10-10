@@ -148,6 +148,8 @@ perl << eof
 		}
 
 		my $ref = VimVar('ref') || {};
+		my $xpath = VimVar('xpath') || '';
+
 		my @content;
 
 		my $s = sub {
