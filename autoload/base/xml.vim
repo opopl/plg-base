@@ -5,9 +5,10 @@
 
 function! base#xml#load_from_file(file,...)
 		let file = a:file
-		let opts = get(a:000,0,{})
 
-		let reload = get(opts,'reload',1)
+		let opts = get(a:000, 0, {})
+
+		let reload = get(opts, 'reload', 1)
 
 perl << eof
 		use strict;
@@ -15,14 +16,16 @@ perl << eof
 
 		use XML::LibXML;
 		use Vim::Perl qw(VimVar VimWarn);
-		use Base::XML qw($DOMCACHE $DOM);
-
-		use String::Escape qw(quote);
+		use Base::XML qw();
 
 		my $file   = VimVar('file');
-		my $reload = VimVar('reload');
 
-		if(! -e $file ){VimWarn('File does not exist:', $file); return; }
+		if(! -e $file ){ 
+			VimWarn('File does not exist:', $file); 
+			return;
+		}
+
+		my $reload = VimVar('reload');
 
 		my ( $fh, $dom );
 
@@ -31,11 +34,11 @@ perl << eof
 				binmode $fh; 
 		};
 		if($@){
-			VimWarn('Errors while loading file: ',$file,$@);
+			VimWarn('Errors while loading file: ', $file, $@);
 			return;
 		}
 
-		$dom = $DOMCACHE->{$file};
+		$dom = $Base::XML::DOMCACHE->{$file};
 
 		if( $reload || not defined $dom){
 			eval { $dom = XML::LibXML->load_xml(IO => $fh); };
@@ -44,11 +47,11 @@ perl << eof
 				close $fh;
 				return;
 			}
-			$DOMCACHE->{$file} = $dom;
+			$Base::XML::DOMCACHE->{$file} = $dom;
 		}
 
 		unless( defined $dom ){ VimWarn('DOM is not defined!'); return; }
-		$DOM = $dom;
+		$Base::XML::DOM = $dom;
 
 		close $fh;
 eof
