@@ -15,6 +15,8 @@ perl << eof
 		use warnings;
 
 		use XML::LibXML;
+		use XML::LibXML::Cache;
+
 		use Vim::Perl qw(VimVar VimWarn);
 		use Base::XML qw();
 
@@ -27,33 +29,16 @@ perl << eof
 
 		my $reload = VimVar('reload');
 
-		my ( $fh, $dom );
+    my $cache = XML::LibXML::Cache->new;
+		my $dom = $cache->parse_file($file);
 
-		eval {
-				open $fh, '<', $file;
-				binmode $fh; 
-		};
 		if($@){
 			VimWarn('Errors while loading file: ', $file, $@);
 			return;
 		}
 
-		$dom = $Base::XML::DOMCACHE->{$file};
-
-		if( $reload || not defined $dom){
-			eval { $dom = XML::LibXML->load_xml(IO => $fh); };
-			if($@){
-				VimWarn('Errors while XML::LibXML->load_xml(IO => $fh): ',$@);
-				close $fh;
-				return;
-			}
-			$Base::XML::DOMCACHE->{$file} = $dom;
-		}
-
-		unless( defined $dom ){ VimWarn('DOM is not defined!'); return; }
 		$Base::XML::DOM = $dom;
 
-		close $fh;
 eof
 	
 endfunction
