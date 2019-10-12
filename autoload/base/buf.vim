@@ -325,6 +325,10 @@ function! base#buf#start ()
 	let b:dirname  = expand('%:p:h')
 	let b:bufnr    = bufnr(0)
 
+	let msg = [ 'b:basename = ' . b:basename, 'b:bufnr = ' . b:bufnr ]
+	let prf = { 'plugin' : 'base', 'func' : 'base#buf#start' }
+	call base#log(msg,prf)
+
 	let b:filetype = &ft
 	
 	if exists('b:finfo') | unlet b:finfo | endif
