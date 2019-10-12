@@ -54,7 +54,7 @@ function! base#var#update (varname)
 		return
 	endif
 
-	let prf={ 'func' : 'base#var#update','plugin' : 'base' }
+	let prf = { 'func' : 'base#var#update', 'plugin' : 'base' }
 	call base#log([
 		\	'updated: ' . varname,
 		\	],prf)
@@ -62,9 +62,19 @@ function! base#var#update (varname)
 
 endfunction
 
-function! base#var#dump_split (varname)
+function! base#var#dump(varname)
 		let val       = base#varget(a:varname)
     let dump      = base#dump(val)
+		return dump
+endfunction
+
+function! base#var#dump_lines(varname)
+		let dump = base#var#dump(a:varname)
+		return split(dump, "\n" )
+endfunction
+
+function! base#var#dump_split (varname)
+		let dump = base#var#dump(a:varname)
 		
 		let dumplines = split(dump,"\n")
 		let sz   = len(dumplines)
@@ -73,9 +83,9 @@ function! base#var#dump_split (varname)
 		let a = []
 		call add(a,'if exists("w") | unlet w | endif')
 		call add(a,' ')
-		call add(a,'let w='.base#list#get(dumplines,0))
+		call add(a,'let w=' . base#list#get(dumplines,0))
 
-		if last>0
+		if last > 0
 			let b = base#list#get(dumplines,'1:'.last)
 			call extend(a,map(b,"'\t\\ ' . v:val"))
 		endif
