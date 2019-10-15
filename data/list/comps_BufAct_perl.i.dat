@@ -5,8 +5,9 @@ ppi_list_subs
 ppi_vars
 ppi_process
 ###pod
-pod_process
-pod_to_vimhelp
+#pod_process
+#pod_to_vimhelp
+pod_to_text
 view_pod
 ###executing
 execute

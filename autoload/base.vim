@@ -2250,11 +2250,12 @@ endfunction
 
 function! base#pathids (path)
     let path = a:path
-    let ids =[]
+    let ids  = []
+
     for id in base#pathlist()
-        let rdir = base#file#reldir(path,base#path(id))
+        let rdir = base#file#reldir(path, base#path(id) )
         if strlen(rdir)
-            call add(ids,id)
+            call add(ids, id)
         endif
     endfor
 
