@@ -1,5 +1,5 @@
 
-function! base#bufact#perl#pod_to_text ()
+function! base#bufact#pod#pod_to_text ()
 	call base#buf#start()
 
 	let cmd = join([ 'pod2text', shellescape(b:file), '' ],' ')

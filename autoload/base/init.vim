@@ -359,6 +359,10 @@ command! -nargs=* -complete=custom,base#complete#omnioptions
 	command! -nargs=* -complete=custom,base#complete#CD
 	    \   BasePathEcho call base#path#echo(<f-args>) 
 
+"""BasePathUpdate
+	command! -nargs=* -complete=custom,base#complete#CD
+	    \   BasePathUpdate call base#path#update(<f-args>) 
+
 """BasePathAdd
 	command! -nargs=* -complete=custom,base#complete#CD
 	    \   BasePathAdd call base#path#add(<f-args>) 
