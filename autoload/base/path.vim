@@ -7,7 +7,7 @@ function! base#path#cmd (...)
 	let cmd = get(cmd,0,'')
 	let cmds = base#varget('cmds_BasePath',[])
 
-	if base#inlist(<+element+>,<+list+>)
+	if base#inlist(cmd, cmds)
 		" code
 	endif
 
