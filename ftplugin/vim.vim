@@ -30,6 +30,7 @@ let b:is_mkvimrc_com=0
 let b:is_mkvimrc_fun=0
 
 setlocal iskeyword+=#
+setlocal sw=2
 
 let dict_funcs = base#qw#catpath('plg','base dictionaries vim funcs.txt')
 let b:dicts = {
