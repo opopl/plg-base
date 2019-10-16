@@ -4,11 +4,12 @@ function! base#path#echo (pathid)
 endfunction
 
 function! base#path#cmd (...)
-	let cmd = get(cmd,0,'')
-	let cmds = base#varget('cmds_BasePath',[])
+	let cmd  = get(cmd,0,'')
+	let cmds = base#varget( 'cmds_BasePath', [] )
 
 	if base#inlist(cmd, cmds)
-		" code
+		let c = 'call base#path#' . cmd . '()'
+		exe c
 	endif
 
 endfunction
