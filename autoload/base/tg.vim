@@ -155,6 +155,9 @@ function! base#tg#tfile (...)
 	elseif tgid == 'help_javascript'
 		let tfile = base#qw#catpath('plg','idephp help javascript tags')
 
+	elseif tgid == 'help_mysql'
+		let tfile = base#qw#catpath('plg','idephp help mysql tags')
+
 	elseif tgid == 'help_jquery'
 		let tfile = base#qw#catpath('plg','idephp help javascript jquery tags')
 
@@ -387,6 +390,20 @@ function! base#tg#update (...)
 			\	}
 
 		let ok= base#tg#ok(okref)
+		return
+
+	elseif tgid == 'help_mysql'
+		let hdir   = base#qw#catpath('plg', 'idephp help mysql')
+
+		call base#vim#helptags({ 'dir' : hdir })
+
+		let okref = { 
+			\	"tgid" : tgid,
+			\	"ok"   : 1,
+			\	"add"  : 0, 
+			\	}
+
+		let ok = base#tg#ok(okref)
 		return
 
 	elseif tgid == 'help_jquery'

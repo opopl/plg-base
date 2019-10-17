@@ -27,6 +27,7 @@ projs_this
 plg
 plg_ap
 plg_asc
+plg_burdev
 plg_simsim
 plg_vim-addon-background-cmd
 plg_base
@@ -69,5 +70,6 @@ help_html
 help_bootstrap
 help_javascript
 help_jquery
+help_mysql
 ty_perl_htmltool
 ty_perl_inc

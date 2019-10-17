@@ -186,8 +186,10 @@ endfunction
 "endfunction
 
 function! base#complete#tagids (...)
-  return base#complete#vars([ 'tagids' ])
-endfunction
+	let comps = base#varget('tagids', [] )
+	call extend(comps, base#varget('ap_tg', [] ) )
+	return join(comps, "\n")
+endfunction 
 
 function! base#complete#BYFF (...)
   return base#complete#vars([ 'cmds_BYFF' ])
