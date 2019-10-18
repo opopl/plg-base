@@ -2318,10 +2318,18 @@ function! base#warn (ref)
 		let prefix = base#echoprefix()
 		let prefix = get(ref,'prefix',prefix)
 		let hl     = get(ref,'hl','WarningMsg')
+		let rdw     = get(ref,'rdw',0)
 
 		if type(text) == type('')
 			let text = prefix . text
 		elseif type(text) == type([])
+		endif
+
+		if rdw
+			redraw!
+			exe 'echohl ' . hl
+			echo text
+			echohl None
 		endif
 
 		let prf = {}
