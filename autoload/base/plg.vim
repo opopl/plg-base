@@ -98,6 +98,11 @@ function! base#plg#loadvars (...)
 		let datpaths = base#plg#datpaths({ 'plg' : plg, 'type' : type })
 	
 		for [ keyfull, datpath ] in items(datpaths)
+			if !filereadable(datpath)
+				call base#warn({ 'text' : 'NOT exist: ' . datpath, 'prefix' : ''})
+				continue
+			endif
+
 			let vname = keyfull
 
 			if type == 'list'
