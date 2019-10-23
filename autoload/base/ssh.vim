@@ -25,6 +25,8 @@ function! base#ssh#run (...)
 	
 		if filereadable(a:temp_file)
 			let out = readfile(a:temp_file)
+			call base#qf_list#set({ 'arr' : out })
+
 			call base#buf#open_split({ 
 				\	'lines'    : out ,
 				\	'cmds_pre' : [ 
