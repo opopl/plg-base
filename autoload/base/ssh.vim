@@ -1,4 +1,28 @@
 
+function! base#ssh#scp_file_open (...)
+	let ref  = get(a:000, 0, {})
+
+	""" should be of type scp://
+	let path = get(ref,'path','')
+
+			"\	'scp' : '^\zsscp://\(\w\+\)@\ze\([\S\+^:]\):\(\d\+\)/\(.*\)',
+
+	let pats = {
+			\	'scp' : '^\zsscp://\(\w\+\)@\(\S\+\):\(\d\+\)/\(.*\)',
+			\	}
+	let m = matchlist(path, pats.scp)
+
+	let user = get(m,1,'')
+	let host = get(m,2,'')
+	let port = get(m,3,'')
+
+	let path_host = get(m,4,'')
+	let path_scp = user . '@' . host . ':' . path_host
+
+	let scp_cmd = join(['scp -P', port, path_scp ], ' ')
+
+endfunction
+
 function! base#ssh#run (...)
 	let ref = get(a:000,0,{})
 
