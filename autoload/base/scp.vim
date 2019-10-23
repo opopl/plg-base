@@ -33,13 +33,18 @@ function! base#scp#open (...)
 	endif
 
 	let scp_cmd = join([ 'scp -P' , port, path_scp, local_file ], ' ')
-	
-	let env = { 
+
+	let scp_data = { 
 		\	'basename'   : basename,
 		\	'local_file' : local_file,
 		\	'scp_cmd'    : scp_cmd,
+		\	'path_host'  : path_host,
 		\	}
-	"echo scp_cmd
+
+	let env = {}
+	call extend(env,scp_data)
+
+	call base#varset('scp_data',scp_data)
 
 	function env.get(temp_file) dict
 
@@ -47,10 +52,12 @@ function! base#scp#open (...)
 
 		let local_file = self.local_file
 		let scp_cmd    = self.scp_cmd
+		let path_host  = self.path_host
 		
 		let msg = [ 
 			\	"local_file: " . local_file, 
 			\	"scp_cmd: " . scp_cmd, 
+			\	"path_host: " . path_host,
 	 		\	]
 
 		let prf = {'plugin' : 'base', 'func' : 'base#scp#open' }
@@ -59,7 +66,14 @@ function! base#scp#open (...)
 		if filereadable(a:temp_file)
 			let out = readfile(a:temp_file)
 			if filereadable(local_file)
-				call base#fileopen({ 'files': [local_file] })
+				let vc = 'setlocal statusline=REMOTE["%s"]'
+				let vc = printf(vc, path_host)
+
+				let r = { 
+					\	'files' : [ local_file ],
+					\	'exec'  : [ ],
+					\	}
+				call base#fileopen(r)
 			endif
 			"call base#buf#open_split({ 'lines' : out })
 		endif
@@ -72,3 +86,16 @@ function! base#scp#open (...)
 
 endfunction
 
+function! base#scp#data (...)
+
+	let scp_data = base#varget('scp_data',{})
+	if a:0
+		let id = get(a:000,0,'')
+		let val = get(scp_data,id,'')
+		return val
+	else
+		return scp_data
+	endif
+
+endfunction
+	
