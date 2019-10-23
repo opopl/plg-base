@@ -2,6 +2,10 @@
 function! base#scp#data (...)
 
 	let scp_data = base#varget('scp_data',{})
+	if exists("b:scp_data")
+		let scp_data = b:scp_data
+	endif
+
 	if a:0
 		let id = get(a:000,0,'')
 		let val = get(scp_data,id,'')
@@ -42,6 +46,16 @@ function! base#scp#fetch (...)
 		let msg = ['scp fetch file: ' . basename ]
 		let prf = {'plugin' : 'base', 'func' : 'base#scp#fetch' }
 		call base#log(msg,prf)
+
+		redraw!
+		if code == 0
+			echohl MoreMsg
+			echo 'SCP FETCH OK'
+		else
+			echohl WarningMsg
+			echo 'SCP FETCH FAIL'
+		endif
+		echohl None
 	
 	endfunction
 	
@@ -69,6 +83,16 @@ function! base#scp#send (...)
 		let msg = [ 'scp send file: ' . basename ]
 		let prf = { 'plugin' : 'base', 'func' : 'base#scp#send' }
 		call base#log(msg,prf)
+
+		redraw!
+		if code == 0
+			echohl MoreMsg
+			echo 'SCP SEND OK'
+		else
+			echohl WarningMsg
+			echo 'SCP SEND FAIL'
+		endif
+		echohl None
 	
 	endfunction
 	
