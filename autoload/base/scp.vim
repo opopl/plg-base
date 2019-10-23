@@ -1,4 +1,26 @@
 
+function! base#scp#data (...)
+
+	let scp_data = base#varget('scp_data',{})
+	if a:0
+		let id = get(a:000,0,'')
+		let val = get(scp_data,id,'')
+		return val
+	else
+		return scp_data
+	endif
+
+endfunction
+
+function! base#scp#stl()
+	let stl = 'REMOTE\ %1*\ %{base#scp#data_path_host()}'
+	return stl
+endfunction
+	
+function! base#scp#data_path_host()
+	return base#scp#data("path_host")
+endfunction
+
 function! base#scp#open (...)
 	let ref  = get(a:000, 0, {})
 
@@ -66,12 +88,12 @@ function! base#scp#open (...)
 		if filereadable(a:temp_file)
 			let out = readfile(a:temp_file)
 			if filereadable(local_file)
-				let vc = 'setlocal statusline=REMOTE\ %1*\ %{base#scp#data_path_host()}'
-				"let vc = printf(vc, path_host)
+				let vc = []
+				call add(vc, 'setlocal statusline=' . base#scp#stl() )
 
 				let r = { 
 					\	'files' : [ local_file ],
-					\	'exec'  : [ vc ],
+					\	'exec'  : vc,
 					\	}
 				call base#fileopen(r)
 			endif
@@ -86,20 +108,4 @@ function! base#scp#open (...)
 
 endfunction
 
-function! base#scp#data (...)
 
-	let scp_data = base#varget('scp_data',{})
-	if a:0
-		let id = get(a:000,0,'')
-		let val = get(scp_data,id,'')
-		return val
-	else
-		return scp_data
-	endif
-
-endfunction
-	
-
-function! base#scp#data_path_host()
-	return base#scp#data("path_host")
-endfunction
