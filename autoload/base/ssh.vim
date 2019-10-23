@@ -61,14 +61,14 @@ function! base#ssh#run (...)
 
 endfunction
 
-function! base#ssh#file_size (...)
+function! base#ssh#get_file_size (...)
 	let ref = get(a:000, 0, {})
 
 	let path = get(ref,'path','')
 
 	let cmd_core = burdev#opt#get("cmd_ssh_remote")
 
-	let start_dir = fnamemodify(':h',path)
+	let start_dir = fnamemodify(':h', path)
 	let start_dir = base#file#win2unix(start_dir)
 
 	let cmd = 'wc -c ' . path
@@ -76,7 +76,12 @@ function! base#ssh#file_size (...)
 
 	let s:dict = {}
 	function s:dict.init(code, out) dict
+		let line = get(out,0,'')
+		let size = substitute(line,'^\(\d\+\).*','\1','g')
+		call base#varset('ssh_file_size',size)
 	endfunction 
+
+	call base#varset('ssh_file_size','')
 
 	let r = {
 		\	'start_dir' : start_dir,
