@@ -2,12 +2,13 @@
 function! base#ssh#run (...)
 	let ref = get(a:000,0,{})
 
-	let start_dir = get(ref,'start_dir','')
-	let cmd_user  = get(ref,'cmd_user','')
+	let start_dir  = get(ref, 'start_dir', '')
+	let cmds_user  = get(ref, 'cmds_user', [])
+	let cmd_core   = get(ref, 'cmd_core', [])
 
 	let cmds_remote = []
 	call add(cmds_remote, 'cd ' . start_dir )
-	call add(cmds_remote, cmd_user )
+	call extend(cmds_remote, cmds_user )
 
 	let cmd_remote = join(cmds_remote, ' ; ')
 

@@ -135,3 +135,9 @@ snippet pack
 	base#text#pack_perl (<+fmt+>, <+list+>)
 snippet inlist
 	base#inlist( <+element+>, <+list+> )
+snippet bsr
+	let r = {
+		\	'start_dir' : start_dir,
+		\	'cmds_user' : [ cmd_user ],
+		\	}
+	call base#ssh#run(r)
