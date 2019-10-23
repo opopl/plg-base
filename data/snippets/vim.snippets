@@ -141,3 +141,13 @@ snippet bsr
 		\	'cmds_user' : [ cmd_user ],
 		\	}
 	call base#ssh#run(r)
+snippet bft
+	base#file#tempname
+snippet base#file#tempname
+	let r = {
+		\	'dir'      : dir,
+		\	'suffix'   : '',
+		\	'template' : '',
+		\	}
+		
+	let tmp_name = base#file#tempname(r)

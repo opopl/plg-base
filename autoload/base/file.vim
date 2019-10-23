@@ -180,7 +180,11 @@ perl << eof
 	mkpath $dir unless -d $dir;
 
 	my $tmp;
-  (undef, $tmp) = tempfile($template, OPEN => 0, DIR => $dir, SUFFIX => $suffix);
+  (undef, $tmp) = tempfile($template, 
+		OPEN   => 0,
+		DIR    => $dir,
+		SUFFIX => $suffix
+	);
 
 	VimLet('tmpname',$tmp);
 eof
