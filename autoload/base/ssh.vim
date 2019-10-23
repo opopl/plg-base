@@ -8,7 +8,7 @@ function! base#ssh#run (...)
 	let cmd_core   = get(ref, 'cmd_core', '')
 
 	let s:dict = {}
-	function s:dict.init(out) dict
+	function s:dict.init(code, out) dict
 	endfunction 
 
 	let Fc   = get(ref, 'Fc', s:dict.init )
@@ -36,7 +36,11 @@ function! base#ssh#run (...)
 		if filereadable(a:temp_file)
 			let out = readfile(a:temp_file)
 
-			"call call(Fc,out)
+			try
+				call call(Fc,[ code, out ])
+			catch
+				echo v:exception
+			endtry
 
 			call base#qf_list#set({ 'arr' : out })
 			call base#varset('ssh_run_out',out)
@@ -62,21 +66,23 @@ function! base#ssh#file_size (...)
 
 	let path = get(ref,'path','')
 
+	let cmd_core = burdev#opt#get("cmd_ssh_remote")
+
 	let start_dir = fnamemodify(':h',path)
 	let start_dir = base#file#win2unix(start_dir)
 
 	let cmd = 'wc -c ' . path
 	let cmds_user = [ cmd ] 
 
-	let cmd_core = burdev#opt#get("cmd_ssh_remote")
-
-	let c = "substitute(v:val,'__',basename,'g')"
-	let cmds_user = map(cmds_user,c)
+	let s:dict = {}
+	function s:dict.init(code, out) dict
+	endfunction 
 
 	let r = {
 		\	'start_dir' : start_dir,
 		\	'cmds_user' : cmds_user,
 		\	'cmd_core' : '',
+		\	'Fc'       : s:dict.init,
 		\	}
 	call base#ssh#run(r)
 
