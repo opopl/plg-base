@@ -84,7 +84,6 @@ function! base#buf#act(...)
 
 	call add(subs,sub)
 
-
 	for sub in subs
 		exe 'call '. sub.'()'
 	endfor
@@ -232,15 +231,6 @@ function! base#buf#onload ()
 		setlocal iskeyword+=<,>
 		setlocal iskeyword+=/
 		setlocal iskeyword+=$
-	endif
-
-	if exists("b:comps_BufAct")
-		if exists("b:scp_data")
-			if !exists("b:scp_comps_added")
-				call extend(b:comps_BufAct, base#varget('comps_scp_bufact',[]) )
-				let b:scp_comps_added = 1
-			endif
-		endif
 	endif
 
 	if exists("b:scp_data")
