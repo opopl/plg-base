@@ -21,6 +21,19 @@ function! base#bufact_scp#scp_data ()
 
 endfunction
 
+function! base#bufact_scp#ssh_file_size ()
+	if !exists("b:scp_data") | return	| endif
+
+	let path_host = get(b:scp_data, 'path_host', '')
+
+	let size = base#ssh#file_size({ 'path' : path_host })
+	redraw!
+	echohl MoreMsg
+	echo 'size:' . size
+	echohl None
+
+endfunction
+
 function! base#bufact_scp#ssh_cmd ()
 	if !exists("b:scp_data") | return	| endif
 
