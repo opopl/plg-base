@@ -66,12 +66,12 @@ function! base#scp#open (...)
 		if filereadable(a:temp_file)
 			let out = readfile(a:temp_file)
 			if filereadable(local_file)
-				let vc = 'setlocal statusline=REMOTE["%s"]'
-				let vc = printf(vc, path_host)
+				let vc = 'setlocal statusline=REMOTE\ %1*\ %{base#scp#data_path_host()}'
+				"let vc = printf(vc, path_host)
 
 				let r = { 
 					\	'files' : [ local_file ],
-					\	'exec'  : [ ],
+					\	'exec'  : [ vc ],
 					\	}
 				call base#fileopen(r)
 			endif
@@ -99,3 +99,7 @@ function! base#scp#data (...)
 
 endfunction
 	
+
+function! base#scp#data_path_host()
+	return base#scp#data("path_host")
+endfunction
