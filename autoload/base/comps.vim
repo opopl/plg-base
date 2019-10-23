@@ -8,6 +8,12 @@ function! base#comps#bufact (...)
 	return comps
 endfunction
 
+function! base#comps#bufact_scp (...)	
+	let comps = base#varget('comps_scp_bufact',[])
+
+	return comps
+endfunction
+
 function! base#comps#bufact_common (...)	
 	let ft = get(a:000,0,&ft)
 

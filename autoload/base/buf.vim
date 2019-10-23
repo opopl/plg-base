@@ -73,9 +73,15 @@ function! base#buf#act(...)
 	let sub = ''
 	if base#inlist(act, base#comps#bufact_common() )
 		let sub  = 'base#bufact_common#'.act
+
+	elseif base#inlist(act, base#comps#bufact_scp() )
+		let sub  = 'base#bufact_scp#'.act
+
 	else
 		let sub  = 'base#bufact#'.ft.'#'.act
+
 	endif
+
 	call add(subs,sub)
 
 
@@ -350,6 +356,12 @@ function! base#buf#start ()
 
 	if exists('b:finfo') && type(b:finfo) == type({})
 		let b:pathids  = get(b:finfo,'pathids',[])
+	endif
+
+	if exists("b:comps_BufAct")
+		if exists("b:scp_data")
+			call extend(b:comps_BufAct, base#varget('comps_scp_bufact',[]) )
+		endif
 	endif
 
 	let b:base_buf_started = 1
