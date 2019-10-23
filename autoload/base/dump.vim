@@ -12,8 +12,6 @@ function! base#dump#dict_tabbed (dict)
 		\	'data'    : data,
 		\	'headers' : headers })
 	return tabbed
-
-
 	
 endfunction
 
