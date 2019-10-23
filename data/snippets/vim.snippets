@@ -138,7 +138,8 @@ snippet inlist
 snippet bsr
 	let r = {
 		\	'start_dir' : start_dir,
-		\	'cmds_user' : [ cmd_user ],
+		\	'cmds_user' : cmds_user,
+		\	'cmd_core' : '',
 		\	}
 	call base#ssh#run(r)
 snippet bft

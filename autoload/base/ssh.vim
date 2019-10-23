@@ -5,7 +5,7 @@ function! base#ssh#run (...)
 
 	let start_dir  = get(ref, 'start_dir', '')
 	let cmds_user  = get(ref, 'cmds_user', [])
-	let cmd_core   = get(ref, 'cmd_core', [])
+	let cmd_core   = get(ref, 'cmd_core', '')
 
 	let cmds_remote = []
 	call add(cmds_remote, 'cd ' . start_dir )
