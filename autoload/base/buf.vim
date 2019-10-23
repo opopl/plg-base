@@ -230,6 +230,15 @@ function! base#buf#onload ()
 	
 endfunction
 
+function! base#buf#onwrite ()
+	call base#buf#start()
+
+	if exists("b:scp_data")
+		call base#scp#send({ 'scp_data' : b:scp_data })
+	endif
+
+endfunction
+
 function! base#buf#stat ()
 	call base#buf#start()
 	let st = base#file#stat(b:file)

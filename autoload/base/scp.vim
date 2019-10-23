@@ -12,13 +12,50 @@ function! base#scp#data (...)
 
 endfunction
 
-function! base#scp#stl()
-	let stl = 'REMOTE\ %1*\ %{base#scp#data_path_host()}'
-	return stl
-endfunction
-	
 function! base#scp#data_path_host()
 	return base#scp#data("path_host")
+endfunction
+
+function! base#scp#data_basename()
+	return base#scp#data("basename")
+endfunction
+
+function! base#scp#stl()
+	let stl = 'SCP\ %1*\ %{base#scp#data_basename()}\ %4*\ %l%0*'
+	return stl
+endfunction
+
+function! base#scp#fetch (...)
+	let ref = get(a:000,0,{})
+	let scp_data = get(ref,'scp_data',{})
+
+endfunction
+
+function! base#scp#send (...)
+	let ref = get(a:000,0,{})
+	let scp_data = get(ref,'scp_data',{})
+
+	let scp_cmd_send = get(scp_data, 'scp_cmd_send' ,'' )
+	let local_file = get(scp_data, 'local_file' ,'' )
+
+	let env = { 'local_file' : local_file }
+	function env.get(temp_file) dict
+
+		let code = self.return_code
+
+		let local_file = self.local_file
+
+		let msg = ['scp send file: ' . local_file ]
+		let prf = {'plugin' : 'base', 'func' : 'base#scp#send' }
+		call base#log(msg,prf)
+	
+	endfunction
+	
+	call asc#run({ 
+		\	'cmd' : scp_cmd_send, 
+		\	'Fn'  : asc#tab_restore(env) 
+		\	})
+
 endfunction
 
 function! base#scp#open (...)
@@ -26,6 +63,11 @@ function! base#scp#open (...)
 
 	""" should be of type scp://
 	let path = get(ref,'path','')
+
+	""" additional vim commands to be run
+	"""		when remote file is downloaded via scp
+	"""   and then opened locally in a new buffer
+	let exec = get(ref,'exec',[])
 
 			"\	'scp' : '^\zsscp://\(\w\+\)@\ze\([\S\+^:]\):\(\d\+\)/\(.*\)',
 
@@ -39,6 +81,7 @@ function! base#scp#open (...)
 	let port = get(m,3,'')
 
 	let path_host = get(m, 4, '')
+
 	let path_scp  = user . '@' . host . ':' . path_host
 
 	let basename = fnamemodify(path_host,':t')
@@ -50,21 +93,28 @@ function! base#scp#open (...)
 	let local_file = join([local_dir,basename],"/")
 	let local_file = base#file#win2unix(local_file)
 
-	if filereadable(local_file)
-		call delete(local_file)
-	endif
-
-	let scp_cmd = join([ 'scp -P' , port, path_scp, local_file ], ' ')
+	let scp_cmd_fetch = join([ 'scp -P' , port, path_scp, local_file ], ' ')
+	let scp_cmd_send = join([ 'scp -P' , port, local_file, path_scp ], ' ')
 
 	let scp_data = { 
 		\	'basename'   : basename,
 		\	'local_file' : local_file,
-		\	'scp_cmd'    : scp_cmd,
+		\	'scp_cmd_fetch' : scp_cmd_fetch,
+		\	'scp_cmd_send' : scp_cmd_send,
 		\	'path_host'  : path_host,
+		\	'user'       : user,
+		\	'host'       : host,
+		\	'port'       : port,
 		\	}
 
-	let env = {}
-	call extend(env,scp_data)
+	if filereadable(local_file)
+		call delete(local_file)
+	endif
+
+	let env = {
+		\	'exec'       : exec,
+		\	'scp_data'       : scp_data,
+		\	}
 
 	call base#varset('scp_data',scp_data)
 
@@ -72,13 +122,16 @@ function! base#scp#open (...)
 
 		let code = self.return_code
 
-		let local_file = self.local_file
-		let scp_cmd    = self.scp_cmd
-		let path_host  = self.path_host
+		let scp_data = self.scp_data
+		let exec  = self.exec
+
+		let local_file = scp_data.local_file
+		let scp_cmd_fetch    = scp_data.scp_cmd_fetch
+		let path_host  = scp_data.path_host
 		
 		let msg = [ 
 			\	"local_file: " . local_file, 
-			\	"scp_cmd: " . scp_cmd, 
+			\	"scp_cmd_fetch: " . scp_cmd_fetch, 
 			\	"path_host: " . path_host,
 	 		\	]
 
@@ -90,19 +143,22 @@ function! base#scp#open (...)
 			if filereadable(local_file)
 				let vc = []
 				call add(vc, 'setlocal statusline=' . base#scp#stl() )
+				call extend(vc,exec)
 
 				let r = { 
 					\	'files' : [ local_file ],
 					\	'exec'  : vc,
 					\	}
 				call base#fileopen(r)
+
+				let b:scp_data = scp_data
 			endif
 			"call base#buf#open_split({ 'lines' : out })
 		endif
 	endfunction
 	
 	call asc#run({ 
-		\	'cmd' : scp_cmd, 
+		\	'cmd' : scp_cmd_fetch, 
 		\	'Fn'  : asc#tab_restore(env) 
 		\	})
 

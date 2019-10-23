@@ -507,6 +507,8 @@ fun! base#init#au()
 	"au BufRead,BufWinEnter * call base#buf#onload()
   au BufRead,BufNewFile,BufWinEnter * call base#buf#start() 
   au BufRead,BufNewFile,BufWinEnter * call base#buf#onload() 
+
+  au BufWrite * call base#buf#onwrite() 
      
 endfun
 
