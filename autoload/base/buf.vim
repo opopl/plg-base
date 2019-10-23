@@ -234,6 +234,15 @@ function! base#buf#onload ()
 		setlocal iskeyword+=$
 	endif
 
+	if exists("b:comps_BufAct")
+		if exists("b:scp_data")
+			if !exists("b:scp_comps_added")
+				call extend(b:comps_BufAct, base#varget('comps_scp_bufact',[]) )
+				let b:scp_comps_added = 1
+			endif
+		endif
+	endif
+
 	if exists("b:scp_data")
 		call base#scp#fetch({ 'scp_data' : b:scp_data })
 	endif
@@ -358,11 +367,6 @@ function! base#buf#start ()
 		let b:pathids  = get(b:finfo,'pathids',[])
 	endif
 
-	if exists("b:comps_BufAct")
-		if exists("b:scp_data")
-			call extend(b:comps_BufAct, base#varget('comps_scp_bufact',[]) )
-		endif
-	endif
 
 	let b:base_buf_started = 1
 
