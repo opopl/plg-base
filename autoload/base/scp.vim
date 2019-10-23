@@ -29,6 +29,27 @@ function! base#scp#fetch (...)
 	let ref = get(a:000,0,{})
 	let scp_data = get(ref,'scp_data',{})
 
+	let scp_cmd_fetch = get(scp_data, 'scp_cmd_fetch' ,'' )
+	let basename = get(scp_data, 'basename' ,'' )
+
+	let env = { 'basename' : basename }
+	function env.get(temp_file) dict
+
+		let code = self.return_code
+
+		let basename = self.basename
+
+		let msg = ['scp fetch file: ' . basename ]
+		let prf = {'plugin' : 'base', 'func' : 'base#scp#fetch' }
+		call base#log(msg,prf)
+	
+	endfunction
+	
+	call asc#run({ 
+		\	'cmd' : scp_cmd_fetch, 
+		\	'Fn'  : asc#tab_restore(env) 
+		\	})
+
 endfunction
 
 function! base#scp#send (...)
@@ -36,17 +57,17 @@ function! base#scp#send (...)
 	let scp_data = get(ref,'scp_data',{})
 
 	let scp_cmd_send = get(scp_data, 'scp_cmd_send' ,'' )
-	let local_file = get(scp_data, 'local_file' ,'' )
+	let basename = get(scp_data, 'basename' ,'' )
 
-	let env = { 'local_file' : local_file }
+	let env = { 'basename' : basename }
 	function env.get(temp_file) dict
 
 		let code = self.return_code
 
-		let local_file = self.local_file
+		let basename = self.basename
 
-		let msg = ['scp send file: ' . local_file ]
-		let prf = {'plugin' : 'base', 'func' : 'base#scp#send' }
+		let msg = [ 'scp send file: ' . basename ]
+		let prf = { 'plugin' : 'base', 'func' : 'base#scp#send' }
 		call base#log(msg,prf)
 	
 	endfunction

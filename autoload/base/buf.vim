@@ -227,6 +227,10 @@ function! base#buf#onload ()
 		setlocal iskeyword+=/
 		setlocal iskeyword+=$
 	endif
+
+	if exists("b:scp_data")
+		call base#scp#fetch({ 'scp_data' : b:scp_data })
+	endif
 	
 endfunction
 
