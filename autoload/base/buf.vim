@@ -341,7 +341,7 @@ function! base#buf#start ()
 	let b:basename = expand('%:p:t')
 	let b:ext      = expand('%:p:e')
 	let b:dirname  = expand('%:p:h')
-	let b:bufnr    = bufnr(0)
+	let b:bufnr    = bufnr('%')
 
 	let msg = [ 'b:basename = ' . b:basename, 'b:bufnr = ' . b:bufnr ]
 	let prf = { 'plugin' : 'base', 'func' : 'base#buf#start' }

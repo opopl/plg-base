@@ -16,6 +16,18 @@ function! base#scp#data (...)
 
 endfunction
 
+function! base#scp#data_host(...)
+	let slen = get(a:000,0,0)
+	let host = base#scp#data("host")
+
+	if slen
+		if ( slen <	strlen(host) )
+			let host = host[ 0:slen-1 ]
+		endif
+	endif
+	return host
+endfunction
+
 function! base#scp#data_path_host()
 	return base#scp#data("path_host")
 endfunction
@@ -25,7 +37,9 @@ function! base#scp#data_basename()
 endfunction
 
 function! base#scp#stl()
-	let stl = 'SCP\ %1*\ %{base#scp#data_basename()}\ %4*\ %l%0*'
+	let stl = 'SCP\ #%n\ %1*\ '
+	let stl .= '%{base#scp#data_basename()}\ %4*\ %l%0*'
+	let stl .= '%{base#scp#data_host(5)}\ %4*\ %l%0*'
 	return stl
 endfunction
 
