@@ -39,7 +39,7 @@ endfunction
 function! base#scp#stl()
 	let stl = 'SCP\ #%n\ %1*\ '
 	let stl .= '%{base#scp#data_basename()}\ %4*\ %l%0*'
-	let stl .= '%{base#scp#data_host(10)}\ %4*\ %l%0*'
+	let stl .= '%5*\ %{base#scp#data_host(10)}\ %4*'
 	return stl
 endfunction
 
