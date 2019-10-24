@@ -174,6 +174,18 @@ fun! base#init#cmds()
 """XmlPretty
 	command! XmlPretty call base#xml#pretty()
 
+"""FIND
+	command! -nargs=* -complete=custom,base#complete#FIND  FIND 
+		\	call base#cmd#FIND(<f-args>) 
+
+"""SSH
+	command! -nargs=* -complete=custom,base#complete#SSH      SSH
+		\	call base#cmd#SSH(<f-args>) 
+
+"""SCP
+	command! -nargs=* -complete=custom,base#complete#SCP      SCP
+		\	call base#cmd#SCP(<f-args>) 
+
 """CD
 	command! -nargs=* -complete=custom,base#complete#CD      CD
 		\	call base#CD(<f-args>) 
@@ -202,9 +214,6 @@ fun! base#init#cmds()
 	command! -nargs=*  -complete=custom,base#complete#imageact ImageAct 
 		\	call base#image#act(<f-args>)
 
-"""FIND
-	command! -nargs=* -complete=custom,base#complete#FIND  FIND 
-		\	call base#cmd#FIND(<f-args>) 
 
 """VH
 	command! -nargs=* -range -complete=custom,base#complete#VH  VH

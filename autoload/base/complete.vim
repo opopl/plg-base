@@ -174,8 +174,17 @@ function! base#complete#basesys (...)
 endfunction
 
 function! base#complete#FIND (...)
-  return base#complete#vars([ 'opts_FIND' ])
+  return base#complete#vars([ 'cmds_FIND' ])
 endfunction
+
+function! base#complete#SCP (...)
+  return base#complete#vars([ 'cmds_SCP' ])
+endfunction
+
+function! base#complete#SSH (...)
+  return base#complete#vars([ 'cmds_SSH' ])
+endfunction
+
 
 function! base#complete#info (...)
   return base#complete#vars([ 'info_topics' ])

@@ -43,3 +43,22 @@ function! base#cmd#FIND (...)
 	
 endfunction
 
+"cmds:
+"  base#cmd_SSH#run
+
+function! base#cmd#SSH (...)
+	let cmd = get(a:000,0,'')
+
+	let sub = 'base#cmd_SSH#' . cmd 
+	exe 'call ' . sub . '()'
+endfunction
+
+"cmds:
+"  base#cmd_SCP#list_bufs
+
+function! base#cmd#SCP (...)
+	let cmd = get(a:000,0,'')
+
+	let sub = 'base#cmd_SCP#' . cmd
+	exe 'call ' . sub . '()'
+endfunction
