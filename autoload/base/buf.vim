@@ -233,6 +233,11 @@ function! base#buf#onload ()
 		setlocal iskeyword+=$
 	endif
 
+	""" list of buffer variables for this buffer
+	let bbv = base#buf#vars()
+	let buf_vars = base#varget('buf_vars',{})
+	call extend(buf_vars,{ b:bufnr : bbv })
+
 	if exists("b:scp_data")
 		call base#scp#fetch({ 'scp_data' : b:scp_data })
 	endif
@@ -362,3 +367,20 @@ function! base#buf#start ()
 
 	call base#buf#is_plg()
 endfunction
+
+fun! base#buf#vars()
+  redir => bv
+  silent let b:
+  redir END 
+
+	let bv_lines = split(bv,"\n")
+	let vars = []
+	for line in bv_lines
+		let v = matchstr(line, '^b:\zs\(\w\+\)\ze\s\+' )
+		if strlen(v)
+			call add(vars, v)
+		endif
+	endfor
+
+	return vars
+endfun
