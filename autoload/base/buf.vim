@@ -382,6 +382,7 @@ fun! base#buf#vars()
 			call add(vars, v)
 		endif
 	endfor
+	let vars = sort(vars)
 
 	return vars
 endfun

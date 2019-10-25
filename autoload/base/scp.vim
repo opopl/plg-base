@@ -157,7 +157,7 @@ function! base#scp#open (...)
 	let local_dir = tmp_scp . '/' . fnamemodify(path_host,':h')
 	call base#mkdir(local_dir)
 
-	let local_file = join([local_dir,basename],"/")
+	let local_file = join([ local_dir, basename ], "/" )
 	let local_file = base#file#win2unix(local_file)
 
 	let scp_cmd_fetch = join([ 'scp -P' , port, path_scp, local_file ], ' ')
