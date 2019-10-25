@@ -803,6 +803,14 @@ fun! base#fileopen(ref)
   exe action . ' ' . file
   let exec = get(opts,'exec','')
 
+  let au      = get(opts,'au',{})
+  for [ aucmd, auexec ] in items(au)
+    
+    let f = base#file#win2unix(fnamemodify(':p',file))
+    exe join(['aucmd', aucmd, f, auexec ],' ')
+    
+  endfor
+
   let Fc      = get(opts,'Fc','')
   let Fc_args = get(opts,'Fc_args',[])
 

@@ -215,11 +215,14 @@ function! base#scp#open (...)
 				call extend(vc,exec)
 
 				let r = { 
-					\	'files'   : [ local_file ],
-					\	'exec'    : vc,
-          \	'Fc'      : Fc,
-          \	'Fc_args' : Fc_args,
-					\	}
+						\	'files'   : [ local_file ],
+						\	'exec'    : vc,
+						\	'Fc'      : Fc,
+						\	'Fc_args' : Fc_args,
+						\	'au'      : {
+              \ 'BufWrite' : []
+            \ },
+						\	}
 
         call base#fileopen(r)
 
