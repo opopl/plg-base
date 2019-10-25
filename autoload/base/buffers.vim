@@ -1,11 +1,17 @@
  
-
 fun! base#buffers#vars()
-  redir => bvar 
-  silent echo(b:)
+  redir => bv
+  silent let b:
   redir END 
 
-	return bvar
+python << eof
+import vim, json
+bv = vim.eval('bv')
+
+print(bv)
+eof
+
+	return bv
 endfun
 
 fun! base#buffers#get()
