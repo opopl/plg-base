@@ -801,7 +801,6 @@ fun! base#fileopen(ref)
 	"endif
 
   exe action . ' ' . file
-  let exec = get(opts,'exec','')
 
   let au      = get(opts,'au',{})
   for [ aucmd, auexec ] in items(au)
@@ -817,6 +816,8 @@ fun! base#fileopen(ref)
   if type(Fc) == type(function('call'))
     call call(Fc,Fc_args)
   endif
+
+  let exec = get(opts,'exec','')
 
   if len(exec)
     if type(exec) == type([])
