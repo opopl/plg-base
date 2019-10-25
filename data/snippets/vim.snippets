@@ -152,3 +152,10 @@ snippet base#file#tempname
 		\	}
 		
 	let tmp_name = base#file#tempname(r)
+snippet fc
+	let s:obj={}
+	function! s:o.init () dict
+		<++>
+	endfunction
+	
+	let Fc = s:obj.init

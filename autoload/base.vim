@@ -802,6 +802,14 @@ fun! base#fileopen(ref)
 
   exe action . ' ' . file
   let exec = get(opts,'exec','')
+
+  let Fc      = get(opts,'Fc','')
+  let Fc_args = get(opts,'Fc_args',[])
+
+  if type(Fc) == type(function('call'))
+    call call(Fc,Fc_args)
+  endif
+
   if len(exec)
     if type(exec) == type([])
       for e in exec
