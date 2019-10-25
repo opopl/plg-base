@@ -237,6 +237,7 @@ function! base#buf#onload ()
 	let bbv = base#buf#vars()
 	let buf_vars = base#varget('buf_vars',{})
 	call extend(buf_vars,{ b:bufnr : bbv })
+	call base#varset('buf_vars',buf_vars)
 
 	if exists("b:scp_data")
 		call base#scp#fetch({ 'scp_data' : b:scp_data })
