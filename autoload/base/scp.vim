@@ -129,7 +129,8 @@ function! base#scp#open (...)
 	let exec = get(ref,'exec',[])
 
   """ Funcref to be executed
-	let Fc = get(ref,'Fc','')
+	let Fc      = get(ref,'Fc','')
+	let Fc_args = get(ref,'Fc_args',[])
   
 			"\	'scp' : '^\zsscp://\(\w\+\)@\ze\([\S\+^:]\):\(\d\+\)/\(.*\)',
 
@@ -175,9 +176,11 @@ function! base#scp#open (...)
 
 	let env = {
 		\	'exec'     : exec,
-		\	'Fc'       : Fc,
 		\	'scp_data' : scp_data,
 		\	}
+
+		"\	'Fc'       : Fc,
+		"\	'Fc_args'  : Fc_args,
 
 	call base#varset('scp_data',scp_data)
 
@@ -186,8 +189,10 @@ function! base#scp#open (...)
 		let code = self.return_code
 
 		let scp_data = self.scp_data
-		let exec     = get(self,exec,[])
-		let Fc       = get(self,'Fc','')
+		let exec     = get(self,'exec',[])
+
+    let Fc      = get(self,'Fc','')
+    let Fc_args = get(self,'Fc_args',[])
 
 		let local_file    = scp_data.local_file
 		let scp_cmd_fetch = scp_data.scp_cmd_fetch
@@ -210,11 +215,13 @@ function! base#scp#open (...)
 				call extend(vc,exec)
 
 				let r = { 
-					\	'files' : [ local_file ],
-					\	'exec'  : vc,
-					\	'Fc'    : Fc,
+					\	'files'   : [ local_file ],
+					\	'exec'    : vc,
 					\	}
-				call base#fileopen(r)
+
+					"\	'Fc'      : Fc,
+					"\	'Fc_args' : Fc_args,
+				"call base#fileopen(r)
 
 				let b:scp_data = scp_data
 			endif

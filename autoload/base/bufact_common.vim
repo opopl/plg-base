@@ -9,3 +9,7 @@ function! base#bufact_common#_file_add_to_db ()
 		\	'fileid' : fileid })
 	
 endfunction
+
+function! base#bufact_common#tabs_to_spaces ()
+  setlocal et | retab
+endfunction
