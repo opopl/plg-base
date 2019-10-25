@@ -219,7 +219,7 @@ function! base#scp#open (...)
 			if filereadable(local_file)
 				let vc = []
 				call add(vc, 'setlocal statusline=' . base#scp#stl() )
-				call extend(vc,exec)
+				call extend(vc, exec )
 
 				let r = { 
 						\	'files'   : [ local_file ],
@@ -229,7 +229,17 @@ function! base#scp#open (...)
 						\	'au'      : au,
 						\	}
 
-        call base#fileopen(r)
+				try
+        	call base#fileopen(r)
+				catch 
+					let msg = [ '(base#fileopen call) exception: ' . v:exception ]
+					let prf = {
+							\ 'plugin'   : 'base',
+							\	'func'     : 'base#scp#open',
+							\	'loglevel' : 'warn'
+							\	}
+					call base#log(msg,prf)
+				endtry
 
 				let b:scp_data = scp_data
 			endif

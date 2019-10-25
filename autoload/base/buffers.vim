@@ -1,4 +1,13 @@
  
+
+fun! base#buffers#vars()
+  redir => bvar 
+  silent echo(b:)
+  redir END 
+
+	return bvar
+endfun
+
 fun! base#buffers#get()
 
   redir => lsvar 
@@ -122,6 +131,7 @@ fun! base#buffers#file_is_loaded(file)
 	return base#inlist(file, buffiles)
 
 endfun
+
 
 fun! base#buffers#cmd(...)
 	let cmd = get(a:000,0,'')

@@ -3118,7 +3118,7 @@ endfunction
 function! base#varecho (varname,...)
     let val =  base#varget(a:varname)
 
-    let ref = { 'text' : a:varname .' => '. base#dump(val),'prefix':'' }
+    let ref = { 'text' : a:varname .' => '. base#dump(val), 'prefix' : '' }
     if a:0
         if base#type(a:1) == 'Dictionary'
             call extend(ref,a:1)
@@ -3126,6 +3126,12 @@ function! base#varecho (varname,...)
     endif
     call base#echo(ref)
 
+endfunction
+
+function! base#dump_split (...)
+	let val = get(a:000,0,'')
+	let dump = base#dump(val)
+	return split(dump,"\n")
 endfunction
 
 function! base#dump (...)
