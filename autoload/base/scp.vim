@@ -128,6 +128,10 @@ function! base#scp#open (...)
 	"""   and then opened locally in a new buffer
 	let exec = get(ref,'exec',[])
 
+  """ autocommands to be applied to the local
+  """   copy of the remote file
+	let au = get(ref,'au',{})
+
   """ Funcref to be executed
 	let Fc      = get(ref,'Fc','')
 	let Fc_args = get(ref,'Fc_args',[])
@@ -160,14 +164,14 @@ function! base#scp#open (...)
 	let scp_cmd_send = join([ 'scp -P' , port, local_file, path_scp ], ' ')
 
 	let scp_data = { 
-		\	'basename'   : basename,
-		\	'local_file' : local_file,
+		\	'basename'      : basename,
+		\	'host'          : host,
+		\	'local_file'    : local_file,
+		\	'path_host'     : path_host,
+		\	'port'          : port,
 		\	'scp_cmd_fetch' : scp_cmd_fetch,
-		\	'scp_cmd_send' : scp_cmd_send,
-		\	'path_host'  : path_host,
-		\	'user'       : user,
-		\	'host'       : host,
-		\	'port'       : port,
+		\	'scp_cmd_send'  : scp_cmd_send,
+		\	'user'          : user,
 		\	}
 
 	if filereadable(local_file)
@@ -177,10 +181,11 @@ function! base#scp#open (...)
 	let env = {
 		\	'exec'     : exec,
 		\	'scp_data' : scp_data,
+    \	'au'       : au,
+    \	'Fc'       : Fc,
+    \	'Fc_args'  : Fc_args,
 		\	}
 
-		"\	'Fc'       : Fc,
-		"\	'Fc_args'  : Fc_args,
 
 	call base#varset('scp_data',scp_data)
 
@@ -190,6 +195,8 @@ function! base#scp#open (...)
 
 		let scp_data = self.scp_data
 		let exec     = get(self,'exec',[])
+
+    let au      = get(self,'au',{})
 
     let Fc      = get(self,'Fc','')
     let Fc_args = get(self,'Fc_args',[])
@@ -219,9 +226,7 @@ function! base#scp#open (...)
 						\	'exec'    : vc,
 						\	'Fc'      : Fc,
 						\	'Fc_args' : Fc_args,
-						\	'au'      : {
-              \ 'BufWrite' : []
-            \ },
+						\	'au'      : au,
 						\	}
 
         call base#fileopen(r)
