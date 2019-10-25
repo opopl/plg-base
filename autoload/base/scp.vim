@@ -217,11 +217,11 @@ function! base#scp#open (...)
 				let r = { 
 					\	'files'   : [ local_file ],
 					\	'exec'    : vc,
+          \	'Fc'      : Fc,
+          \	'Fc_args' : Fc_args,
 					\	}
 
-					"\	'Fc'      : Fc,
-					"\	'Fc_args' : Fc_args,
-				"call base#fileopen(r)
+        call base#fileopen(r)
 
 				let b:scp_data = scp_data
 			endif
