@@ -192,6 +192,9 @@ function! base#scp#open_Fn (self,temp_file)
 
 endfunction
 
+"	Usage:
+"		call base#scp#open ({ 'path' : 'scp://...' })
+
 function! base#scp#open (...)
 	let ref  = get(a:000, 0, {})
 
