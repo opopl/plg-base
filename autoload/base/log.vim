@@ -40,6 +40,29 @@ function! base#log#warnings ()
 
 endfunction
 
+function! base#log#v_exception ()
+	let dbfile = base#dbfile()
+
+	let q = 'SELECT prf,plugin,func,msg,v_exception FROM log ' 
+	let q .= ' WHERE loglevel = ? AND v_exception IS NOT NULL'
+
+	let p = [ 'warn' ]
+	let q = input('log view query: ',q)
+
+	let rq = {
+			\	'dbfile' : dbfile,
+			\	'q'      : q,
+			\	'p'      : p,
+			\	}
+	let lines = []
+	let delim = repeat('x',50)
+	call extend(lines,[delim,'base#time_start():' , "\t" . base#time_start(),delim ])
+
+	call extend(lines, pymy#sqlite#query_screen(rq))
+	call base#buf#open_split({ 'lines' : lines })
+
+endfunction
+
 function! base#log#debug ()
 	let dbfile = base#dbfile()
 

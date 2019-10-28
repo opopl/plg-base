@@ -522,6 +522,8 @@ function! base#log (msg,...)
 	let plugin   = get(ref,'plugin','')
 	let loglevel = get(ref,'loglevel','')
 
+	let v_exception = get(ref,'v_exception','')
+
 	let do_echo = get(ref,'echo',0)
 
 	if base#type(a:msg) == 'String'
@@ -544,8 +546,8 @@ function! base#log (msg,...)
 		call add(log,ref)
 		call base#varset('base_log',log)
 
-		let p = [time,loglevel,elapsed,msg,prf,fnc,plugin]
-		let q = 'INSERT OR IGNORE INTO log (time,loglevel,elapsed,msg,prf,func,plugin) VALUES(?,?,?,?,?,?,?)'
+		let p = [time,loglevel,elapsed,msg,prf,fnc,plugin,v_exception]
+		let q = 'INSERT OR IGNORE INTO log (time,loglevel,elapsed,msg,prf,func,plugin,v_exception) VALUES(?,?,?,?,?,?,?,?)'
 python << eof
 
 import vim
@@ -599,7 +601,8 @@ if not table_exists({ 'table' : 'log', 'cur' : base_cur }):
 					loglevel TEXT,
 					func TEXT,
 					plugin TEXT,
-					prf TEXT
+					prf TEXT,
+					v_exception TEXT
 				);
 	'''
 	base_cur.execute(q)
@@ -827,12 +830,12 @@ fun! base#fileopen(ref)
 			let msg = [
 				\	'callback fail:', 
 				\	'  args        => ' . base#dump(Fc_args),
-				\	'  v:exception => ' . v:exception,
 				\	]
 			let prf = {
-				\	'loglevel' : 'warn',
-				\	'plugin'   : 'base',
-				\	'func'     : 'base#fileopen'
+				\	'loglevel'    : 'warn',
+				\	'v_exception' : v:exception,
+				\	'plugin'      : 'base',
+				\	'func'        : 'base#fileopen'
 				\	}
 			call base#log(msg,prf)
 		endtry
