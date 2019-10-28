@@ -44,7 +44,7 @@ function! base#log#v_exception ()
 	let dbfile = base#dbfile()
 
 	let q = 'SELECT prf,plugin,func,msg,v_exception FROM log ' 
-	let q .= ' WHERE loglevel = ? AND v_exception IS NOT ""'
+	let q .= ' WHERE loglevel = ? AND length(v_exception) > 0'
 
 	let p = [ 'warn' ]
 	let q = input('log view query: ',q)

@@ -389,14 +389,15 @@ endfun
 "	call base#buf#vars_buf(buf_num, var_name)
 
 fun! base#buf#vars_buf(...)
-	let buf_num = get(a:000,0,0)
+	let buf_num  = get(a:000,0,0)
 	let var_name = get(a:000,1,'')
+	let default  = get(a:000,2,'')
 
 	let bv = base#varget('buf_vars',{})
 	if buf_num
 		let bvn = get(bv,buf_num,{})
 		if strlen(var_name)
-			let val = get(bvn,var_name,'')
+			let val = get(bvn,var_name,default)
 			return val
 		else
 			return bvn

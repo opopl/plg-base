@@ -1502,3 +1502,5 @@ snippet bfget
 	let buffiles = get(bref,'buffiles',[])
 snippet nbf
 	if ( !strlen(bufname('%')) || &buftype == 'nofile' ) | return | endif
+snippet bfcp
+	call base#file#copy(<++>,<++>)
