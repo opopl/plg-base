@@ -89,15 +89,9 @@ function! base#scp#fetch (...)
 
 endfunction
 
-function! base#scp#send (...)
-	let ref = get(a:000,0,{})
-	let scp_data = get(ref,'scp_data',{})
-
-	let scp_cmd_send = get(scp_data, 'scp_cmd_send' ,'' )
-	let basename = get(scp_data, 'basename' ,'' )
-
-	let env = { 'basename' : basename }
-	function env.get(temp_file) dict
+function! base#scp#send_Fn (self,temp_file)
+	let self = a:self
+	let temp_file = a:temp_file
 
 		let code = self.return_code
 
@@ -116,7 +110,18 @@ function! base#scp#send (...)
 			echo 'SCP SEND FAIL'
 		endif
 		echohl None
-	
+endfunction
+
+function! base#scp#send (...)
+	let ref = get(a:000,0,{})
+	let scp_data = get(ref,'scp_data',{})
+
+	let scp_cmd_send = get(scp_data, 'scp_cmd_send' ,'' )
+	let basename = get(scp_data, 'basename' ,'' )
+
+	let env = { 'basename' : basename }
+	function env.get(temp_file) dict
+		call base#scp#send_Fn(self,a:temp_file)
 	endfunction
 	
 	call asc#run({ 
