@@ -164,7 +164,15 @@ snippet sf
 	let temp_file = a:temp_file
 snippet bl
 	let msg = []
-	let prf = {'plugin' : '<++>', 'func' : '<++>'}
+	let prf = { 'plugin' : '<++>', 'func' : '<++>' }
+	call base#log(msg, prf)
+snippet blw
+	let msg = []
+	let prf = {
+		\	'loglevel' : 'warn',
+		\	'plugin'   : '<++>',
+		\	'func'     : '<++>'
+		\	}
 	call base#log(msg,prf)
 snippet blstart
 	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
