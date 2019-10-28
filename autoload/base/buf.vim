@@ -383,6 +383,25 @@ fun! base#buf#varlist()
 	return varlist
 endfun
 
+fun! base#buf#vars_buf(...)
+	let buf_num = get(a:000,0,0)
+	let var_name = get(a:000,1,'')
+
+	let bv = base#varget('buf_vars',{})
+	if buf_num
+		let bvn = get(bv,buf_num,{})
+		if strlen(var_name)
+			let val = get(bvn,var_name,'')
+			return val
+		else
+			return bvn
+		endif
+	else
+		return bv
+	endif
+
+endfun
+
 fun! base#buf#vars()
   redir => bv
   silent let b:
