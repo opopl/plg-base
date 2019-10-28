@@ -514,10 +514,11 @@ fun! base#init#au()
 	au BufWritePost *.i.dat call base#buf#au_write_post()
 
 	"au BufRead,BufWinEnter * call base#buf#onload()
-  au BufRead,BufNewFile,BufWinEnter * call base#buf#start() 
-  au BufRead,BufNewFile,BufWinEnter * call base#buf#onload() 
+  au BufRead,BufWinEnter,BufNewFile * call base#buf#start() 
+  au BufRead,BufWinEnter,BufNewFile * call base#buf#onload() 
 
   au BufWrite * call base#buf#onwrite() 
+  au BufRead * call base#buf#onread() 
      
 endfun
 

@@ -239,10 +239,15 @@ function! base#buf#onload ()
 	call extend(buf_vars,{ b:bufnr : bbv })
 	call base#varset('buf_vars', buf_vars )
 
+endfunction
+
+function! base#buf#onread ()
+	call base#buf#start()
+
 	if exists("b:scp_data")
 		call base#scp#fetch({ 'scp_data' : b:scp_data })
 	endif
-	
+
 endfunction
 
 function! base#buf#onwrite ()

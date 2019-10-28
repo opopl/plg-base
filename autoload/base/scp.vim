@@ -43,15 +43,12 @@ function! base#scp#stl()
 	return stl
 endfunction
 
-function! base#scp#fetch (...)
-	let ref = get(a:000,0,{})
-	let scp_data = get(ref,'scp_data',{})
+" used by:
+" 	base#scp#fetch
 
-	let scp_cmd_fetch = get(scp_data, 'scp_cmd_fetch' ,'' )
-	let basename = get(scp_data, 'basename' ,'' )
-
-	let env = { 'basename' : basename }
-	function env.get(temp_file) dict
+function! base#scp#fetch_Fn (self,temp_file)
+		let self      = a:self
+		let temp_file = a:temp_file
 
 		let code = self.return_code
 
@@ -70,7 +67,19 @@ function! base#scp#fetch (...)
 			echo 'SCP FETCH FAIL'
 		endif
 		echohl None
-	
+
+endfunction
+
+function! base#scp#fetch (...)
+	let ref = get(a:000,0,{})
+	let scp_data = get(ref,'scp_data',{})
+
+	let scp_cmd_fetch = get(scp_data, 'scp_cmd_fetch' ,'' )
+	let basename = get(scp_data, 'basename' ,'' )
+
+	let env = { 'basename' : basename }
+	function env.get(temp_file) dict
+		call base#scp#fetch_Fn(self,a:temp_file)
 	endfunction
 	
 	call asc#run({ 
@@ -114,6 +123,67 @@ function! base#scp#send (...)
 		\	'cmd' : scp_cmd_send, 
 		\	'Fn'  : asc#tab_restore(env) 
 		\	})
+
+endfunction
+
+function! base#scp#open_Fn (self,temp_file)
+		let self      = a:self
+		let temp_file = a:temp_file
+
+		let code = self.return_code
+
+		let scp_data = self.scp_data
+		let exec     = get(self,'exec',[])
+
+    let au      = get(self,'au',{})
+
+    let Fc      = get(self,'Fc','')
+    let Fc_args = get(self,'Fc_args',[])
+
+		let local_file    = scp_data.local_file
+		let scp_cmd_fetch = scp_data.scp_cmd_fetch
+		let path_host     = scp_data.path_host
+		
+		let msg = [ 
+			\	"local_file: " . local_file, 
+			\	"scp_cmd_fetch: " . scp_cmd_fetch, 
+			\	"path_host: " . path_host,
+	 		\	]
+
+		let prf = {'plugin' : 'base', 'func' : 'base#scp#open' }
+		call base#log(msg,prf)
+	
+		if filereadable(temp_file)
+			let out = readfile(temp_file)
+			if filereadable(local_file)
+				let vc = []
+				call add(vc, 'setlocal statusline=' . base#scp#stl() )
+				call extend(vc, exec )
+
+				let r = { 
+						\	'files'   : [ local_file ],
+						\	'exec'    : vc,
+						\	'Fc'      : Fc,
+						\	'Fc_args' : Fc_args,
+						\	'au'      : au,
+						\	}
+
+				try
+        	call base#fileopen(r)
+				catch 
+					let msg = [ '(base#fileopen call) exception: ' . v:exception ]
+					let prf = {
+							\ 'plugin'   : 'base',
+							\	'func'     : 'base#scp#open',
+							\	'loglevel' : 'warn'
+							\	}
+					call base#log(msg,prf)
+				endtry
+
+				let b:scp_data = scp_data
+			endif
+			"call base#buf#open_split({ 'lines' : out })
+		endif
 
 endfunction
 
@@ -178,6 +248,8 @@ function! base#scp#open (...)
 		call delete(local_file)
 	endif
 
+	call base#varset('scp_data',scp_data)
+
 	let env = {
 		\	'exec'     : exec,
 		\	'scp_data' : scp_data,
@@ -186,65 +258,8 @@ function! base#scp#open (...)
     \	'Fc_args'  : Fc_args,
 		\	}
 
-
-	call base#varset('scp_data',scp_data)
-
 	function env.get(temp_file) dict
-
-		let code = self.return_code
-
-		let scp_data = self.scp_data
-		let exec     = get(self,'exec',[])
-
-    let au      = get(self,'au',{})
-
-    let Fc      = get(self,'Fc','')
-    let Fc_args = get(self,'Fc_args',[])
-
-		let local_file    = scp_data.local_file
-		let scp_cmd_fetch = scp_data.scp_cmd_fetch
-		let path_host     = scp_data.path_host
-		
-		let msg = [ 
-			\	"local_file: " . local_file, 
-			\	"scp_cmd_fetch: " . scp_cmd_fetch, 
-			\	"path_host: " . path_host,
-	 		\	]
-
-		let prf = {'plugin' : 'base', 'func' : 'base#scp#open' }
-		call base#log(msg,prf)
-	
-		if filereadable(a:temp_file)
-			let out = readfile(a:temp_file)
-			if filereadable(local_file)
-				let vc = []
-				call add(vc, 'setlocal statusline=' . base#scp#stl() )
-				call extend(vc, exec )
-
-				let r = { 
-						\	'files'   : [ local_file ],
-						\	'exec'    : vc,
-						\	'Fc'      : Fc,
-						\	'Fc_args' : Fc_args,
-						\	'au'      : au,
-						\	}
-
-				try
-        	call base#fileopen(r)
-				catch 
-					let msg = [ '(base#fileopen call) exception: ' . v:exception ]
-					let prf = {
-							\ 'plugin'   : 'base',
-							\	'func'     : 'base#scp#open',
-							\	'loglevel' : 'warn'
-							\	}
-					call base#log(msg,prf)
-				endtry
-
-				let b:scp_data = scp_data
-			endif
-			"call base#buf#open_split({ 'lines' : out })
-		endif
+		call base#scp#open_Fn(self,a:temp_file)
 	endfunction
 	
 	call asc#run({ 
