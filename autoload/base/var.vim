@@ -1,6 +1,8 @@
 
-function! base#var#update (varname)
+function! base#var#update (varname,...)
 	let varname = a:varname
+
+	let opts_update = get(a:000,0,{})
 
   let datfiles = base#datafiles()
   let datlist  = base#datlist()
@@ -17,6 +19,15 @@ function! base#var#update (varname)
 
 		let fileids = sort(keys(files))
 		call base#varset('exefileids',fileids)
+
+"""var_update_buf_vars
+	elseif varname == 'buf_vars'
+
+		""" list of buffer variables for this buffer
+		let bbv = base#buf#vars()
+		let buf_vars = base#varget('buf_vars',{})
+		call extend(buf_vars,{ b:bufnr : bbv })
+		call base#varset('buf_vars', buf_vars )
 
 	elseif varname == 'datlist'
 		let datlist = base#sqlite#datlist()

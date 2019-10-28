@@ -233,11 +233,7 @@ function! base#buf#onload ()
 		setlocal iskeyword+=$
 	endif
 
-	""" list of buffer variables for this buffer
-	let bbv = base#buf#varlist()
-	let buf_vars = base#varget('buf_vars',{})
-	call extend(buf_vars,{ b:bufnr : bbv })
-	call base#varset('buf_vars', buf_vars )
+	call base#var#update('buf_vars')
 
 endfunction
 
@@ -374,19 +370,25 @@ function! base#buf#start ()
 endfunction
 
 fun! base#buf#varlist()
+	let vars = base#buf#vars()
+	let varlist = sort(keys(vars))
+	return varlist
+endfun
+
+fun! base#buf#vars()
   redir => bv
   silent let b:
   redir END 
 
 	let bv_lines = split(bv,"\n")
-	let vars = []
+	let vars = {}
 	for line in bv_lines
-		let v = matchstr(line, '^b:\zs\(\w\+\)\ze\s\+' )
-		if strlen(v)
-			call add(vars, v)
+		let var = matchstr(line, '^b:\zs\(\w\+\)\ze\s\+' )
+		if strlen(var)
+			let val = eval('b:' . var)
+			call extend(vars,{ var : val })
 		endif
 	endfor
-	let vars = sort(vars)
 
 	return vars
 endfun
