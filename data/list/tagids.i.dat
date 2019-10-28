@@ -27,6 +27,7 @@ projs_this
 plg
 plg_ap
 plg_asc
+plg_grep
 plg_burdev
 plg_simsim
 plg_vim-addon-background-cmd

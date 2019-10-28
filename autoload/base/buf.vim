@@ -234,10 +234,10 @@ function! base#buf#onload ()
 	endif
 
 	""" list of buffer variables for this buffer
-	let bbv = base#buf#vars()
+	let bbv = base#buf#varlist()
 	let buf_vars = base#varget('buf_vars',{})
 	call extend(buf_vars,{ b:bufnr : bbv })
-	call base#varset('buf_vars',buf_vars)
+	call base#varset('buf_vars', buf_vars )
 
 	if exists("b:scp_data")
 		call base#scp#fetch({ 'scp_data' : b:scp_data })
@@ -363,13 +363,12 @@ function! base#buf#start ()
 		let b:pathids  = get(b:finfo,'pathids',[])
 	endif
 
-
 	let b:base_buf_started = 1
 
 	call base#buf#is_plg()
 endfunction
 
-fun! base#buf#vars()
+fun! base#buf#varlist()
   redir => bv
   silent let b:
   redir END 
