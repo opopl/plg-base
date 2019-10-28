@@ -1500,3 +1500,5 @@ snippet bfget
 	let bufs     = get(bref,'bufs',[])
 	let bufnums  = get(bref,'bufnums',[])
 	let buffiles = get(bref,'buffiles',[])
+snippet nbf
+	if ( !strlen(bufname('%')) || &buftype == 'nofile' ) | return | endif

@@ -207,9 +207,7 @@ endfunction
 function! base#buf#onload ()
 	call base#buf#start()
 
-	if !strlen(bufname('%'))
-		return
-	endif
+	if !base#buf#is_file() | return | endif
 
 	"StatusLine simple
 	"
@@ -343,14 +341,16 @@ function! base#buf#db_info ()
 	call base#buf#open_split({ 'lines' : info })
 endfunction
 
+function! base#buf#is_file ()
+	let isf = ( !strlen(bufname('%')) || &buftype == 'nofile') ? 0 : 1
+	return isf
+
+endfunction
 
 function! base#buf#start ()
+	if !base#buf#is_file() | return | endif
 
 	if exists("b:base_buf_started") | return | endif
-
-	if !strlen(bufname('%'))
-		return
-	endif
 
 	let b:file     = expand('%:p')
 	let b:basename = expand('%:p:t')
