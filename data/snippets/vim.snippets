@@ -167,7 +167,10 @@ snippet bl
 	let prf = { 'plugin' : '<++>', 'func' : '<++>' }
 	call base#log(msg, prf)
 snippet blw
-	let msg = []
+	let msg = [
+		\	'<++>',
+		\	'<++>',
+		\	]
 	let prf = {
 		\	'loglevel' : 'warn',
 		\	'plugin'   : '<++>',

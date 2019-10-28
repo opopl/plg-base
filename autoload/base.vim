@@ -741,56 +741,63 @@ endf
 
 
 
-" base#fileopen({ 'files' : [file], 'exec' : 'set ft=html' })
-" base#fileopen({ 
-" 	\	'files' : [ file ], 
-" 	\	'exec'  : [ 'set ft=html' ],
-" 	\	})
-" base#fileopen([ file1, file2])
+" Usage: 
+" 	base#fileopen({ 'files' : [file], 'exec' : 'set ft=html' })
+" 	base#fileopen({ 
+" 		\	'files' : [ file ], 
+" 		\	'exec'  : [ 'set ft=html' ],
+" 		\	})
+" 	base#fileopen([ file1, file2])
+"
+" 	base#fileopen({ 
+" 		\	'files'   : [ file ],
+" 		\	'Fc'      : Fc,
+" 		\	'Fc_args' : Fc_args,
+" 		\	})
 
  
 """base_fileopen
 fun! base#fileopen(ref)
- let ref = a:ref
+	 let ref = a:ref
+	
+	 let files = []
+	
+	 let action = 'edit'
+	 let action = base#varget('fileopen_action',action)
+	
+	 let opts={}
+	
+	 if base#type(ref) == 'String'
+	   let files = [ ref ] 
+	   
+	 elseif base#type(ref) == 'List'
+	   let files = ref  
+	   
+	 elseif base#type(ref) == 'Dictionary'
+	   let files   = get(ref,'files',[])
+	   let action  = get(ref,'action',action)
+	
+	   call extend(opts,ref)
+	   
+	 endif
 
- let files = []
-
- let action = 'edit'
- let action = base#varget('fileopen_action',action)
-
- let opts={}
-
- if base#type(ref) == 'String'
-   let files = [ ref ] 
-   
- elseif base#type(ref) == 'List'
-   let files = ref  
-   
- elseif base#type(ref) == 'Dictionary'
-   let files   = get(ref,'files',[])
-   let action  = get(ref,'action',action)
-
-   call extend(opts,ref)
-   
- endif
-
- let prf = { 
- 	\	'func'   : 'base#fileopen',
- 	\	'plugin' : 'base',
- 	\	}
- call base#log([
- 	\	'opening files => ' . base#dump(files),
- 	\	],prf)
-
- let anew_if_absent = get(opts,'anew_if_absent',0)
- let load_buf       = get(opts,'load_buf',0)
-
- for file in files
-	if ! filereadable(file)
-		if ! anew_if_absent
-			continue
+	 let prf = { 
+		 	\	'func'   : 'base#fileopen',
+		 	\	'plugin' : 'base',
+		 	\	}
+	 call base#log([
+		 	\	'opening files => ' . base#dump(files),
+		 	\	],prf)
+	
+	 let anew_if_absent = get(opts,'anew_if_absent',0)
+	 let load_buf       = get(opts,'load_buf',0)
+	
+	 for file in files
+		if ! filereadable(file)
+			if ! anew_if_absent
+				continue
+			endif
 		endif
-	endif
 
  " if base#buffers#file_is_loaded(file)
 		"let nr = bufnr(file)
@@ -815,9 +822,19 @@ fun! base#fileopen(ref)
 
   if type(Fc) == type(function('call'))
 		try
-    	call call(Fc, Fc_args )
+    	call call( Fc, Fc_args )
 		catch 
-			
+			let msg = [
+				\	'callback fail:', 
+				\	'  args        => ' . base#dump(Fc_args),
+				\	'  v:exception => ' . v:exception,
+				\	]
+			let prf = {
+				\	'loglevel' : 'warn',
+				\	'plugin'   : 'base',
+				\	'func'     : 'base#fileopen'
+				\	}
+			call base#log(msg,prf)
 		endtry
   endif
 
