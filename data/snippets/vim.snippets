@@ -162,3 +162,1328 @@ snippet fc
 snippet sf
 	let self      = a:self
 	let temp_file = a:temp_file
+snippet bl
+	let msg = []
+	let prf = {'plugin' : '<++>', 'func' : '<++>'}
+	call base#log(msg,prf)
+snippet blstart
+	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+	let msg = ['start']
+	let prf = {'plugin' : '<++>', 'func' : '<++>'}
+	call base#log(msg,prf)
+	let l:start=localtime()
+	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+snippet vimprocsys
+	vimproc#system({expr} [, {input} [, {timeout}]])
+snippet htwinit
+	call base#html#htw_init()
+snippet ppf
+	projs#proj#files()
+snippet base#file#reldir
+	call base#file#reldir (dir,root)
+snippet bfrd
+	call base#file#reldir (dir,root)
+snippet [
+	[
+			\		${1}
+			\	,	${2}
+			\	,''
+			\	]
+snippet {
+	{
+			\	${1},
+			\	${2},
+			\	}
+snippet perlvp
+	use Vim::Perl qw(:funcs :vars);
+snippet perldd
+	use Data::Dumper qw(Dumper);
+	
+	print Dumper(<++>) . "\n";
+snippet perldbi
+	let db = 'information_schema'
+	let db = input('db:',db)
+	
+	perl << eof
+		use DBI;
+		use Vim::Perl qw(:funcs :vars);
+
+		my $db  = VimVar('db');
+		my $dsn = "DBI:mysql:database=$db:host=localhost";
+		my $attr={
+			RaiseError        => 1,
+			PrintError        => 1,
+			mysql_enable_utf8 => 1,
+		};
+		my $dbh = DBI->connect($dsn,$user,$pwd,$attr) || $err->($DBI::errstr);
+	eof
+snippet add
+	call add(${1},${2})
+snippet loadas
+	let load_as      = base#html#libxml_load_as()
+	let load_as      = get(ref,'load_as',load_as)
+snippet bw
+	call base#warn({ 'text' : '<++>', 'prefix' : '<++>'})
+snippet prlmodpath
+	let ret=Prl_module_path(a:000)
+	
+	if ! len(ret)
+		call F_sub_warn('Failed to identify pair [module,path] from Prl_module_path')
+		RFUN SubNameEnd
+		return
+	endif
+	
+	let [module,path]=ret
+snippet ifsl
+	if strlen(${1})
+		${2}
+	endif
+snippet bbst
+	call base#buf#start()
+snippet bbos
+	call base#buf#open_split({ 'lines' : <++> })
+snippet bbi
+	base#buf#in(${1})
+snippet ifhw
+	if has('win32')
+		${1}
+	endif
+snippet ifg
+	if get(ref,${1},'')
+		${2}
+	endif
+snippet qw
+	base#qw('${1}')
+snippet bp
+	base#path(${1},${2})
+snippet fnm
+	fnamemodify(${1},${2})
+snippet map
+	call map(${1},${2})
+snippet bbs
+	call base#buf#open_split({ 'lines' : lines })
+snippet forln
+	let lnum=0
+	for l in lines
+		if lnum>0 | break | endif
+		let lnum+=1
+	endfor
+snippet basehtmlxpath
+	let <++> = base#html#xpath({
+			\	'xpath'     : '<++>',
+			\	'htmllines' : lines,
+			\	'htmltext'  : <++>,
+			\	})
+snippet basehtmlremovea
+	let <++> = base#html#remove_a({
+			\	'htmllines' : lines,
+			\	'htmltext'  : <++>,
+			\	})
+snippet blg
+	base#list#get(<+arr+>,<+inds+>)
+snippet plhtw
+	use HTML::Work;
+	
+	my $htw=HTML::Work->new(
+		html => $html,
+	);
+snippet ref
+	let ref=get(a:000,0,{})
+snippet bsqq
+	base#string#qq(${1})
+snippet perlusefsf
+	use File::Spec::Functions qw(catfile);
+snippet bfo
+	call base#fileopen({ 'files': [<+file+>] })
+snippet ifnoperl
+	if base#noperl() | return | endif
+snippet br
+	if ${1} | break | endif
+snippet reldir
+	let fnames = map(fnames,'base#file#reldir(v:val,dir)')
+snippet bf
+	let dir = base#qw#catpath('<++>','<++>')
+	let ff = base#find({ 
+		\	"dirs"    : [dir],
+		\	"dirids"  : [${2}],
+		\	"exts"    : [${3}],
+		\	"cwd"     : 1,
+		\	"relpath" : 1,
+		\	"subdirs" : 1,
+		\	"pat"     : '^a',
+		\	"fnamemodify" : '',
+		\	})
+	echo ff
+snippet fil
+	call filter(${1:arr},${2})
+snippet getline
+	getline(<+lnum+>,<+end+>)
+snippet get
+	get(${1},${2},${3})
+snippet bgrep
+	call base#grep({ "pat" : pat, "files" : files })
+snippet pv
+	projs#var(${1})
+snippet bp
+	base#path(${1})
+snippet ex
+	call extend(<++>,<++>)
+snippet bv
+	base#var(${1},${2})
+snippet fr
+	filereadable(${1})
+snippet iffr
+	if filereadable(${1})
+		${2}
+	endif
+snippet ifid
+	if isdirectory(${1})
+		${2}
+	endif
+snippet be
+	call base#echo({ 'text' : <++>, 'prefix' : '<++>'})
+snippet proj
+	let proj = projs#var('proj')
+snippet bfwu
+	base#file#win2unix(${1})
+snippet bfc
+	base#file#catfile([ ${1},${2} ])
+snippet bqc
+	base#qw#catfile([ ${1},${2} ])
+snippet pylib
+	pylib = vim.eval('projs#pylib()')
+	sys.path.append(pylib)
+	import plg.projs.db as db
+snippet bqp
+	base#qw#catpath(${1},${2})
+snippet al
+	call add(lines,<++>)
+snippet in
+	let <++> = input('<++>:','<++>','<++>')
+snippet lines
+	let lines=[]
+	
+	call add(lines," ")
+	call add(lines," ${1} ")
+	call add(lines," ")
+snippet append
+	call append(line('.'),lines)
+snippet funret
+	RFUN SubNameEnd 
+	return
+snippet aref
+	let ref = {}
+	if a:0 | let ref = a:1 | endif
+snippet au
+	autocmd BufWinEnter,BufRead file 
+snippet aug
+	augroup ${1}
+		au!
+		autocmd BufRead,BufNewFile
+	augroup end
+snippet brac
+	" _.vim {{{
+	"
+	"------------------------- begin: _.vim ------------------
+	"-------------------------------------------------------------
+	" function declarations {{{
+	fun! <++>_Setup(...)
+	endf
+	
+	" }}}
+	"-------------------------------------------------------------
+	" command declarations {{{
+	" }}}
+	"-------------------------------------------------------------
+	"------------------------- end: _.vim -------------------
+	"
+	" }}}
+	"----------------------------------------
+snippet calladd
+	call add(lines,'')
+snippet callappend
+	call append('.',lines)
+snippet bfl
+	let lines=base#file#lines(file)
+snippet setqflist
+	setqflist({list} [, {action}])				*setqflist()*
+	 	Create or replace or add to the quickfix list using the items
+		in {list}.  Each item in {list} is a dictionary.
+		Non-dictionary items in {list} are ignored.  Each dictionary
+		item can contain the following entries:
+
+		    bufnr	buffer number; must be the number of a valid
+				buffer
+		    filename	name of a file; only used when "bufnr" is not
+				present or it is invalid.
+		    lnum	line number in the file
+		    pattern	search pattern used to locate the error
+		    col		column number
+		    vcol	when non-zero: "col" is visual column
+				when zero: "col" is byte index
+		    nr		error number
+		    text	description of the error
+		    type	single-character error type, 'E', 'W', etc.
+
+snippet choosedialog
+	let opt=base#getfromchoosedialog({ 
+		\ 'list'        : <++>,
+		\ 'startopt'    : <++>,
+		\ 'header'      : "Available options are: ",
+		\ 'numcols'     : 1,
+		\ 'bottom'      : "Choose option by number: ",
+		\ })
+snippet ppo
+	perlmy#perlapp#opts()
+snippet cmm
+	command! ${1} call ${2}(<f-args>)
+snippet cmmcom
+	command! -nargs=* -complete=custom,F_CompleteFiles ${1} call ${2}(<f-args>)
+snippet com
+	command! -nargs=${1} ${2}
+snippet f
+	function! ${1} (${2})
+		${3}
+	endfunction
+snippet fcomplete
+	fun! ${1}_Complete${2}(...)
+		let comps=[]
+		
+		call add(comps,${3})
+		return join(comps,"\n")
+	  
+	endf
+snippet for
+	for ${1:needle} in ${2:haystack}
+		${3:" code}
+	endfor
+snippet fori
+	for [k,v] in items(${1})
+		${2}
+	endfor
+snippet forl
+	for line in lines
+		${1}
+	endfor
+snippet guard
+	if exists('${1:did_`Filename()`}') || &cp${2: || version < 700}
+		finish
+	endif
+	let $1 = 1${3}
+snippet header
+	" File: ${1:`expand('%:t')`}
+	" Author: ${2:`g:snips_author`}
+	" Description: ${3}
+	${4:" Last Modified: `strftime("%B %d, %Y")`}
+snippet if
+	if ${1:condition}
+		${2:" code}
+	endif
+snippet ifa
+	if a:0
+		${1}
+	else
+		${2}
+	endif
+snippet ifa1
+	if a:1 == 
+		${1}
+	elseif a:1 == 
+		${2}
+	endif
+
+snippet lstart
+	let l:start = localtime()
+snippet lel
+	let l:elapsed = localtime() - l:start
+snippet blend
+	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+	let l:elapsed = localtime() - l:start
+	let msg = ['end, elapsed = ' . l:elapsed]
+	let prf = {'plugin' : '<++>', 'func' : '<++>'}
+	call base#log(msg,prf)
+	"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+snippet bqcp
+	base#qw#catpath(${1},${2})
+snippet perlvv
+	VimVar(${1});
+snippet perlvm
+	VimMsg(${1});
+snippet perlvmd
+	VimMsg(Dumper(${1}));
+snippet join
+	join(${1},${2})
+snippet jn
+	join(lines,"\n")
+snippet split
+	split(${1},${2})
+snippet usevimperl
+	use Vim::Perl qw(:funcs :vars);
+snippet vimmsg
+	VimMsg(${1});
+snippet ifachoose
+	LFUN F_GetFromChooseDialog
+	
+	if a:0
+		let opt=a:1
+	else
+		let opt=F_GetFromChooseDialog({ 
+		\ 'list'        : g:VIMPERL_Funcs,
+		\ 'startopt'    : 'Vim_UpdatePieces',
+		\ 'header'      : "Available VIMPERL functions are: ",
+		\ 'numcols'     : 1,
+		\ 'bottom'      : "Choose VIMPERL function by number: ",
+		\ })
+	endif
+snippet ifd
+	if isdirectory(${1})
+		${2}
+	endif
+snippet pr
+	let root = projs#root()
+snippet ppn
+	projs#proj#name()
+snippet pp
+	projs#path([${1}])
+snippet ife
+	if ${1:condition}
+		${2:" code}
+	else
+		${3:" code}
+	endif
+snippet ifel
+	if ${1:condition}
+		${2:" code}
+	elseif == 
+		${4:" code}
+	else
+		${4:" code}
+	endif
+snippet iferr
+	if v:shell_error
+		echohl ErrorMsg
+		echo "${1}"
+		echohl None
+	endif
+snippet ifex
+	if exists("${1}")
+		${2}
+	else
+		${3}
+	endif
+snippet ifwin
+	if has('win32')
+	endif
+snippet eofpy
+	python << eof
+	import vim
+		${1}
+	eof
+snippet eofperl
+	perl << eof
+		${1}
+	eof
+snippet eofpy
+	python << eof
+		${1}
+	eof
+snippet ifin
+	if index(${1},${2}) >= 0
+		${3}
+	endif
+snippet vle
+	VimListExtend('list',[@list]);
+snippet vimev
+	VIM::Eval(${1});
+snippet vimdc
+	VIM::DoCommand(${1});
+snippet bps
+	call base#pathset({ 
+		\	${1} : ${2},	
+		\	})
+snippet iftype
+	if base#type(ref) == 'String'
+		${1}
+	elseif base#type(ref) == 'List'
+		${2}
+
+	elseif base#type(ref) == 'Number'
+
+	elseif base#type(ref) == 'Float'
+		
+	elseif base#type(ref) == 'Dictionary'
+		${3}
+		
+	endif
+snippet msg
+	VIM::Msg("${1}");
+snippet modpath
+	LFUN Prl_module_path
+	let ret=Prl_module_path(a:000)
+	
+	if ! len(ret)
+		call F_sub_warn('Failed to identify pair [module,path] from Prl_module_path')
+		RFUN SubNameEnd 
+		return
+	endif
+	
+	let [module,path]=ret
+snippet nmap
+	nmap <silent> ;;<++> <CR>
+snippet papforpfiles
+	for pfile in g:PAP_papfiles
+		${1}
+	endfor
+snippet peof
+	perl << EOF
+	
+	#!/usr/bin/env perl
+	
+	use strict;
+	use warnings;
+	use feature qw(switch);
+	 
+	use OP::VIMPERL qw( :vars :funcs );
+	  
+		${1}
+	EOF
+snippet perlacc
+	use parent qw( OP::Script Class::Accessor::Complex );
+	
+	###__ACCESSORS_SCALAR
+	our @scalar_accessors=qw(
+		textcolor
+	);
+	
+	###__ACCESSORS_HASH
+	our @hash_accessors=qw(
+		accessors
+	);
+	
+	###__ACCESSORS_ARRAY
+	our @array_accessors=qw();
+	
+	__PACKAGE__
+		->mk_scalar_accessors(@scalar_accessors)
+		->mk_array_accessors(@array_accessors)
+		->mk_hash_accessors(@hash_accessors);
+snippet perlal
+	_add_line("${1}");
+snippet perlbr
+	{
+		${1}
+	}
+snippet perlcatroot
+	catfile($self->texroot,${1});
+snippet perlcfor
+	for (my $${2:var} = 0; $$2 < ${1:count}; $$2${3:++}) {
+		${4:# body...}
+	}
+snippet perlcl
+	package ${1:ClassName};
+	use base qw(${2:ParentClass});
+	sub new {
+		my $class = shift;
+		$class = ref $class if ref $class;
+		my $self = bless {}, $class;
+		$self;
+	}
+	1;${3}
+snippet perlcp
+	File::Copy::copy(${1},${2});
+snippet perldo
+	&& do { ; };
+snippet perldoxlink
+	@link ${1} @endlink
+snippet perldoxtable
+	<table>
+		<tr> 
+			<td> ${1} </td>  
+			<td> ${2} </td>  
+		</tr>
+	</table>
+snippet perldoxtd
+	<td> ${1} </td>
+snippet perldoxtr
+	<tr> ${1} </tr>
+snippet perleditfile
+	my @lines = read_file $file;
+	
+	foreach (@lines) {
+	  chomp;
+	  next if /^\s*#/;
+	}
+	write_file($file,join("\n",@lines) . "\n");
+	#open(N,">${2}.n") || die $!;
+	#while(<F>){
+		#chomp;
+		#my $line=$_;
+		#$line =~ s/${3}/${4}/g;
+		#print N "$line\n";
+	#}
+	#move("${5}.n","${6}");
+	#close(F);
+	#close(N);
+snippet perlef
+	edit_file_lines {
+		${1}
+	} $file;
+snippet perlendl
+	. "\n";
+snippet perleof
+	print << "eof";
+	eof
+snippet perleoo
+	&eoos("${1}\n");
+snippet perlev
+	eval "$evs";
+	die $@ if $@;
+snippet perleval
+	eval {
+		${1:# do something risky...}
+	};
+	if ($@) {
+		VimMsg($@);
+		${2:# handle failure...}
+	}
+snippet perlfbb
+	$FindBin::Bin
+snippet perlfbs
+	$FindBin::Script
+snippet perlfor
+	foreach my $${1:x} (@${2:array}) {
+		${3:# body...}
+	}
+snippet perlfore
+	${1:expression} foreach @${2:array};${3}
+snippet perlfori
+	for(my $i=0 ; $i< ; $i++ ){
+	}
+snippet perlfork
+	foreach my $k(keys %${1}){
+		${1}
+	}
+snippet perlforl
+	foreach (@lines){
+		chomp;
+		next if /^\s*#/;
+			${1}
+	}
+snippet perlforn
+	for(${1:var}){
+		/^${2}$/ && do {
+			${3}
+			next;
+		};
+	}
+snippet perlgetopt
+	our(%opt,@optstr);
+	our($cmdline);
+	      
+	sub getopt {
+		
+		Getopt::Long::Configure(qw(bundling no_getopt_compat no_auto_abbrev no_ignore_case_always));
+		
+		@optstr=( "what=s","texfile=s" );
+		
+		unless( @ARGV ){ 
+			&dhelp();
+			exit 1;
+		}else{
+			$cmdline=join(' ',@ARGV);
+			GetOptions(\%opt,@optstr);
+		}
+snippet perlhe1
+	=head1 ${1}
+	=cut
+snippet perlhe2
+	=head2 ${1}
+	=cut
+snippet perlhe3
+	=head3 ${1}
+	=cut
+snippet perlif
+	if (${1}) {
+		${2:# body...}
+	}
+snippet perlife
+	if (${1}) {
+		${2:# body...}
+	}
+	else {
+		${3:# else...}
+	}
+snippet perlifee
+	if (${1}) {
+		${2:# body...}
+	}
+	elsif (${3}) {
+		${4:# elsif...}
+	}
+	else {
+		${5:# else...}
+	}
+snippet perlifgrep
+	if(grep { /^ $/ } ){
+	}
+snippet perlifref
+	if (ref $ref eq "ARRAY"){
+		${1}
+	}elsif(ref $ref eq "HASH"){
+		${2}
+	}
+snippet perlipcrun
+	my ( $success, $error_message, $full_buf, $stdout_buf, $stderr_buf ) =
+		IPC::Cmd::run( command => $cmd, verbose => 1 );
+snippet perlj
+	join("${1}",${2});
+snippet perljn
+	join("\n",${1});
+snippet perlmado
+	/${1}/ && do {
+		${2}
+		next;
+	};
+snippet perlmref
+	my $ref=shift // '';
+snippet perlmss
+	my $self=shift;
+snippet perlmv
+	File::Copy::move(${1},${2});
+snippet perlnif
+	next if ${1};
+snippet perlop
+	open(F,"<${1}") || die $!;
+	while(<F>){
+		chomp;
+		my $line=$_;
+	}
+	close(F);
+snippet perlopd
+	 open(FILE,"<${1}") || die $!;
+	 my @vars;
+	 while(<FILE>){
+	 	chomp;
+	 	s/^\s*//g;
+	 	s/\s*$//g;
+	 	next if (/^\s*#/ || /^\s*$/ );
+	 	my $line=$_;
+	 	my @F=split(' ',$line);
+	 	push(@vars,@F);
+	 }
+	 close(FILE);
+snippet perlopendir
+	opendir(D,"${1}") || die $!;
+	while(my $file=readdir(D)){
+		${2};
+	}
+	closedir(D);
+snippet perlopw
+	open(F,">${1}") || die $!;
+		${2}
+	close(F);
+snippet perlpackcore
+	# Core {{{
+	
+	# _begin() {{{
+	
+	=head3 _begin()
+	
+	=cut
+	
+	sub _begin() {
+	    my $self = shift;
+	
+	    $self->{package_name} = __PACKAGE__ unless defined $self->{package_name};
+	
+	    $self->accessors(
+	        array    => \@array_accessors,
+	        hash     => \@hash_accessors,
+	        'scalar' => \@scalar_accessors
+	    );
+	
+	}
+	
+	# }}}
+	# get_opt() {{{
+	
+	=head3 get_opt()
+	
+	=cut
+	
+	sub get_opt() {
+	    my $self = shift;
+	
+	    $self->OP::Script::get_opt();
+	
+	}
+	
+	# }}}
+	# init_vars() {{{
+	
+	=head3 init_vars()
+	
+	=cut
+	
+	sub init_vars() {
+	    my $self = shift;
+	
+	    $self->_begin();
+	
+	}
+	
+	# }}}
+	# main() {{{
+	
+	##TODO main
+	
+	sub main() {
+	    my $self = shift;
+	
+	    $self->get_opt();
+	
+	    $self->init_vars();
+	
+	    $self->run();
+	
+	}
+	
+	# }}}
+	# new() {{{
+	
+	sub new() {
+	    my $self = shift;
+	
+	    $self->OP::Script::new();
+	
+	}
+	
+	# }}}
+	# run() {{{
+	
+	##TODO run
+	
+	sub run() {
+	    my $self = shift;
+	
+	}
+	
+	# }}}
+	# set_these_cmdopts() {{{
+	
+	=head3 set_these_cmdopts()
+	
+	=cut
+	
+	sub set_these_cmdopts() {
+	    my $self = shift;
+	
+	    $self->OP::Script::set_these_cmdopts();
+	
+	    my $opts = [];
+	    my $desc = {};
+	
+	    push(
+	        @$opts,
+	        {
+	            name => "shcmds",
+	            desc => "Run command(s), then exit",
+	            type => "s"
+	        },
+	    );
+	
+	    $self->add_cmd_opts($opts);
+	
+	}
+	
+	# }}}
+	
+	# }}}
+snippet bs
+	let ok = base#sys({ 
+		\	"cmds"         : [${1}],
+		\	"split_output" : 1,
+		\	})
+	let out    = base#varget('sysout',[])
+	let outstr = base#varget('sysoutstr','')
+snippet bsys
+	call base#sys({ "cmds" : [${1}]})
+	call base#varecho('sysout')
+	call base#varecho('sysoutstr')
+snippet geta
+	get(a:000,${1},${2})
+snippet perlpackexport
+	use warnings;
+	use strict;
+	
+	use Exporter ();
+	use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
+	
+	$VERSION = '0.01';
+	@ISA     = qw(Exporter);
+	
+	@EXPORT      = qw();
+	
+	###export_vars_scalar
+	my @ex_vars_scalar=qw(
+	);
+	###export_vars_hash
+	my @ex_vars_hash=qw(
+	);
+	###export_vars_array
+	my @ex_vars_array=qw(
+	);
+	
+	%EXPORT_TAGS = (
+	###export_funcs
+	'funcs' => [qw( 
+	)],
+	'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
+	);
+	
+	our @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
+	
+	our @EXPORT  = qw( );
+	
+	our $VERSION = '0.01';
+snippet perlpacknew
+	package OP::ConvBib;
+	
+	use strict;
+	use warnings;
+	
+	sub new
+	{
+	    my ($class, %parameters) = @_;
+	    my $self = bless ({}, ref ($class) || $class);
+	    return $self;
+	}
+	
+	1;
+snippet perlparr
+	print "$_\n" for(@${1});
+snippet perlpfor
+	print "$_" . "\n" for($self-><++>);
+snippet perlpoditem
+	=item ${1}
+snippet perlpodover
+	=over 4
+	
+	=item ${1}
+	
+	=back
+snippet perlpr
+	print "${1}\n";
+snippet perlprd
+	print Dumper(${1});
+	exit 0;
+snippet perlprintarr
+	print "$_\n" for(@${1});
+snippet perlretu
+	return '' unless ${1};
+snippet perlrf
+	my @lines=read_file $file;
+snippet perlrmw
+	=~ s/^\s*(.*?)\s*$/\$1/g;
+snippet perlsay
+	$self->say("${1}");
+snippet perlscriptgetopt
+	sub get_opt {
+	    
+	    Getopt::Long::Configure(
+	        qw(bundling no_getopt_compat no_auto_abbrev no_ignore_case_always));
+	
+	    @OPTSTR = ( "list=s", "print=s", "target=s" );
+	
+	    if ( !@ARGV ) {
+	        dhelp();
+	        exit 1;
+	    }
+	    else {
+	        GetOptions( \%OPT, @OPTSTR );
+	    }
+	}
+snippet perlsl
+	$self->${1}
+snippet perlslurp
+	my $${1:var};
+	{ local $/ = undef; local *FILE; open FILE, "<${2:file}"; $$1 = <FILE>; close FILE }${3}
+snippet perlsp
+	split('${1}',${2});
+snippet perlsub
+	sub ${1} {
+		${2}
+	}
+snippet perlsubinitvars
+	sub init_vars {
+		${1}
+	}
+snippet perlsubmain
+	sub main {
+		my $self=shift;
+		${1}
+	}
+snippet perlsuub
+	# <++> () {{{
+	=head3 <++> () {{{
+	=cut
+	sub ${1:function_name}() {
+		my $self=shift;
+		${2:#body ...}
+	}
+	# }}}
+snippet perlsw
+	given(${1}){
+		when(${2}) {${3} }
+		default { }
+	}
+snippet perlsys
+	system("${1}");
+snippet perltexnicelocal
+	sub tex_nice_local() {
+	
+		# Base paper file
+		push(@$pfiles,"p.$bkey.tex");
+		push(@$pfiles,glob("p.$bkey.sec.*.i.tex"));
+	
+		foreach my $piece (@{$config->{include_tex_parts}}) {
+			push(@$pfiles,"p.$bkey.$piece.tex");
+		}
+	
+		#foreach my $file (@$pfiles) {
+			#$file=catfile($texroot,$file);
+		#}
+	
+		foreach my $file (@$pfiles) {
+			File::Slurp::edit_file_lines {
+				s///g;
+			} $file;
+		}
+	}
+snippet perltodo
+	##TODO ${1}
+snippet perlunless
+	unless (${1}) {
+		${2:# body...}
+	}
+snippet perlunlessref
+	unless(ref $ref){
+		${1}
+	}elsif(ref $ref eq "ARRAY"){
+		${2}
+	}elsif(ref $ref eq "HASH"){
+		${3}
+	}
+snippet perlunref
+	unless (ref $ref) {
+		${2:# body...}
+	}elsif(ref $ref eq "HASH"){
+		#while(my($k,$v)=each %{$ref}){
+			#foreach($k){
+				#/^$/ && do { 1; next; };
+			#}
+		#}
+		while(my($k,$v)=each %{$ref}){
+			$opts->{$k}=$ref->{$k};
+		}
+	}elsif(ref $ref eq "ARRAY"){
+		${2:# body...}
+	}	
+snippet perlusedatadumper
+	use Data::Dumper;
+snippet perlusedumper
+	use Data::Dumper;
+snippet perlusefeature
+	use feature qw(${1});
+snippet perlusefilebasename
+	use File::Basename;
+snippet perlusefilecopy
+	use File::Copy qw(copy move);
+snippet perlusefilepath
+	use File::Path qw(make_path remove_tree);
+snippet perlusefileslurp
+	use File::Slurp qw(
+	  append_file
+	  edit_file
+	  edit_file_lines
+	  read_file
+	  write_file
+	  prepend_file
+	);
+snippet perlusemy
+	use File::Spec::Functions qw(catfile rel2abs curdir catdir );
+	use File::Path qw(make_path remove_tree);
+	use File::Slurp qw(
+	  append_file
+	  edit_file
+	  edit_file_lines
+	  read_file
+	  write_file
+	  prepend_file
+	);
+snippet perlusefilespecfunctions
+	use File::Spec::Functions qw(catfile rel2abs curdir catdir );
+snippet perlusefindbin
+	use FindBin qw($Bin $Script);
+snippet perlusegetoptlong
+	use Getopt::Long;
+snippet perluseopbase
+	use OP::Base qw( :vars :funcs );
+snippet perluseopvimperl
+	use OP::VIMPERL qw( :vars :funcs );
+	OP::VIMPERL::init;
+snippet perlvc
+	VimCmd(qq{<++>});
+snippet perlvimev
+	VimEval("${1}");
+snippet perlvimmsg
+	VimMsg("${1}");
+snippet perlwa
+	wantarray ? @<++> : \@<++> ;
+snippet perlwe
+	while(my($k,$v)=each %{${1}}){
+		${2}
+	}
+snippet perlwf
+	write_file($file,join("\n",@lines) . "\n");
+snippet perlwh
+	while (${1}) {
+		${2:# body...}
+	}
+snippet perlxfor
+	${1:expression} for @${2:array};${3}
+snippet perlxif
+	${1:expression} if ${2:condition};${3}
+snippet perlxunless
+	${1:expression} unless ${2:condition};${3}
+snippet perlxwh
+	${1:expression} while ${2:condition};${3}
+snippet prd
+	VimMsg(Dumper(${1}));
+	return;
+snippet re
+snippet returnjoin
+	return join(${1},"\n")
+snippet rf
+	let lines=readfile(${1})
+snippet rw
+	redraw!
+	echohl MoreMsg
+	echo ${1}
+	echohl None
+snippet snippet #!
+	#!/usr/bin/env perl
+snippet sub
+	call substitute(${1},'${2}','${3}','g')
+snippet sys
+	call system("${1} ")
+snippet thisfile
+	let file=expand('%:p')
+snippet try
+	try
+	catch /^Vim\%((\a\+)\)\=:E684
+	finally
+	endtry
+snippet usedatadumper
+	use Data::Dumper;
+snippet usedumper
+	use Data::Dumper;
+snippet usefilebasename
+	use File::Basename;
+snippet usefilecopy
+	use File::Copy qw(copy move);
+snippet usefilepath
+	use File::Path qw(make_path remove_tree);
+snippet usefindbin
+	use FindBin qw($Bin $Script);
+snippet wf
+	call writefile(lines,${1})
+snippet bvv
+	base#value#var(${1:varname})
+snippet bwf
+	let r = {
+	      \   'lines'  : <+lines+>,
+	      \   'file'   : <+file+>,
+	      \   'prompt' : <+prompt+>,
+	      \   'mode'   : <+mode+>,
+	      \   }
+	call base#file#write_lines(r)	
+	" mode   - possible values: 
+	"					rewrite, append
+	"			default: 
+	"					rewrite
+	" prompt - default 0
+snippet bvg
+	base#varget('<++>',<++>)
+snippet bvs
+	call base#varset('<++>',<++>)
+snippet wh
+	while ${1:condition}
+		${2:" code}
+	endw
+snippet showconf
+	""""""""" LOADEDCONF
+	function! s:ShowConf ()
+			if exists("$LOADEDCONF")
+				echohl Title
+				echo $LOADEDCONF
+			else
+				echohl WarningMsg
+				echo '$LOADEDCONF variable not defined.' 
+			endif
+	
+			echohl None
+	endfunction
+	command! ShowConf call s:ShowConf()
+snippet refa
+		let refdef={ 
+				\	<++> : <++>
+				\	}
+		let ref  = refdef
+		let refa = get(a:000,0,{})
+		
+		call extend(ref,refa)
+snippet pymysqlite
+	let dbfile = base#dbfile()
+
+	let q = 'SELECT rowid,time,prf,msg FROM log'
+	let rq = {
+			\	'dbfile' : dbfile,
+			\	'q'      : q,
+			\	}
+	let [rows_h , cols] = pymy#sqlite#query(rq)
+snippet pymy#sqlite#query_fetchone
+	let dbfile = base#dbfile()
+	
+	let one = pymy#sqlite#query_fetchone({
+		\	'dbfile' : dbfile,
+		\	'p'      : p,
+		\	'q'      : q,
+		\	})
+snippet pymy#sqlite#query
+	let dbfile = base#dbfile()
+	
+	let [ rows_h, cols ] = pymy#sqlite#query({
+		\	'dbfile' : dbfile,
+		\	'p'      : p,
+		\	'q'      : q,
+		\	})
+snippet q
+	let dbfile = base#dbfile()
+	
+	let [ rows_h, cols ] = pymy#sqlite#query({
+		\	'dbfile' : dbfile,
+		\	'p'      : p,
+		\	'q'      : q,
+		\	})
+snippet pymy_dbfile
+	let dbfile  = pymy#sqlite#dbfile()
+	let dbfile  = get(ref,'dbfile',dbfile)
+	call pymy#sqlite#dbfile(dbfile)
+snippet dbfile
+	let dbfile  = pymy#sqlite#dbfile()
+	let dbfile  = get(ref,'dbfile',dbfile)
+	call pymy#sqlite#dbfile(dbfile)
+snippet pymy#sqlite#insert_hash_qp
+	let t = "<++>"
+	
+	let h = {
+		\	"<++>" : "<++>",
+		\	"<++>" : "<++>",
+		\	}
+	let ref = {
+		\ "i" : "insert or ignore",
+		\ "t" : t, 
+		\ "h" : h, 
+		\ }
+	
+	let [q, p ] = pymy#sqlite#insert_hash_qp(ref)
+	echo q
+	echo p
+snippet pymy#sqlite#extend_with_list
+	let ref = {
+		\ "insert" : "INSERT OR IGNORE",
+		\ "table"  : "plugins",
+		\ "field"  : 'plugin',
+		\ "list"   : plugins,
+		\ }
+	call pymy#sqlite#extend_with_list(ref)
+snippet pymy#sqlite#update_hash
+	let dbfile  = pymy#sqlite#dbfile()
+	let dbfile  = get(ref,'dbfile',dbfile)
+	
+	let t = "<++>"
+	let h = {
+		\	"<++>" : "<++>",
+		\	"<++>" : "<++>",
+		\	}
+	
+	let ref = {
+		\ "dbfile" : dbfile,
+		\ "i" : "insert or ignore",
+		\ "t" : t, 
+		\ "h" : h, 
+		\ }
+		
+	call pymy#sqlite#insert_hash(ref)
+snippet pymy#sqlite#insert_hash
+	let dbfile  = pymy#sqlite#dbfile()
+	let dbfile  = get(ref,'dbfile',dbfile)
+	
+	let t = "<++>"
+	let h = {
+		\	"<++>" : "<++>",
+		\	"<++>" : "<++>",
+		\	}
+	
+	let ref = {
+		\ "dbfile" : dbfile,
+		\ "i" : "insert or ignore",
+		\ "t" : t, 
+		\ "h" : h, 
+		\ }
+		
+	call pymy#sqlite#insert_hash(ref)
+snippet pymy#sqlite#query_as_list
+	let dbfile = base#dbfile()
+
+	let q = 'select <++> from <++>'
+	let p = []
+	
+	let list = pymy#sqlite#query_as_list({
+		\	'dbfile' : dbfile,
+		\	'p'      : p,
+		\	'q'      : q,
+		\	})
+snippet pymy#sqlite#query_screen
+	let dbfile = base#dbfile()
+	
+	let lines = pymy#sqlite#query_screen({
+		\	'dbfile' : dbfile,
+		\	'p'      : p,
+		\	'q'      : q,
+		\	})
+snippet lim
+	let limit = input('query limit (int):',10)
+	if limit
+		let q .= ' LIMIT ' . limit
+	endif
+snippet pyif
+	if <++>:
+		<++>
+	elif <++>:
+		<++>
+	else:
+		<++>
+snippet ti
+	pymy#sqlite#insert_hash
+snippet ifref
+	if get(ref,'<++>','<++>')
+		<++>
+	endif
+snippet bfget
+	let bref     = base#buffers#get()
+	
+	let bufs     = get(bref,'bufs',[])
+	let bufnums  = get(bref,'bufnums',[])
+	let buffiles = get(bref,'buffiles',[])

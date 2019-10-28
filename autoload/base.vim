@@ -814,7 +814,11 @@ fun! base#fileopen(ref)
   let Fc_args = get(opts,'Fc_args',[])
 
   if type(Fc) == type(function('call'))
-    call call(Fc,Fc_args)
+		try
+    	call call(Fc, Fc_args )
+		catch 
+			
+		endtry
   endif
 
   let exec = get(opts,'exec','')

@@ -138,12 +138,12 @@ function! base#scp#open_Fn (self,temp_file)
 		let code = self.return_code
 
 		let scp_data = self.scp_data
-		let exec     = get(self,'exec',[])
+		let exec     = get(self, 'exec', [])
 
     let au      = get(self,'au',{})
 
-    let Fc      = get(self,'Fc','')
-    let Fc_args = get(self,'Fc_args',[])
+    let Fc      = get(self, 'Fc', '')
+    let Fc_args = get(self, 'Fc_args', [])
 
 		let local_file    = scp_data.local_file
 		let scp_cmd_fetch = scp_data.scp_cmd_fetch
@@ -155,7 +155,7 @@ function! base#scp#open_Fn (self,temp_file)
 			\	"path_host: " . path_host,
 	 		\	]
 
-		let prf = {'plugin' : 'base', 'func' : 'base#scp#open' }
+		let prf = { 'plugin' : 'base', 'func' : 'base#scp#open' }
 		call base#log(msg,prf)
 	
 		if filereadable(temp_file)
@@ -264,7 +264,7 @@ function! base#scp#open (...)
 		\	}
 
 	function env.get(temp_file) dict
-		call base#scp#open_Fn(self,a:temp_file)
+		call base#scp#open_Fn( self, a:temp_file )
 	endfunction
 	
 	call asc#run({ 
