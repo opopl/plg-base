@@ -344,6 +344,10 @@ function! base#buf#start ()
 
 	if exists("b:base_buf_started") | return | endif
 
+	if !strlen(bufname('%'))
+		return
+	endif
+
 	let b:file     = expand('%:p')
 	let b:basename = expand('%:p:t')
 	let b:ext      = expand('%:p:e')
