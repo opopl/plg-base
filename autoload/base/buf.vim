@@ -207,6 +207,10 @@ endfunction
 function! base#buf#onload ()
 	call base#buf#start()
 
+	if !strlen(bufname('%'))
+		return
+	endif
+
 	"StatusLine simple
 	"
 	exe 'nnoremap <buffer><silent> ;sv :SnippetView '.&ft.'<CR>'
