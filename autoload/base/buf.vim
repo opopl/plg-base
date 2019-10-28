@@ -383,6 +383,11 @@ fun! base#buf#varlist()
 	return varlist
 endfun
 
+"Usage:
+"	call base#buf#vars_buf()
+"	call base#buf#vars_buf(buf_num)
+"	call base#buf#vars_buf(buf_num, var_name)
+
 fun! base#buf#vars_buf(...)
 	let buf_num = get(a:000,0,0)
 	let var_name = get(a:000,1,'')
