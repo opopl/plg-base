@@ -6,5 +6,6 @@ CREATE TABLE IF NOT EXISTS log (
 	loglevel TEXT,
 	func TEXT,
 	plugin TEXT,
-	prf TEXT
+	prf TEXT,
+	v_exception TEXT
 );
