@@ -185,17 +185,26 @@ eof
 endfunction
 
 
-function! base#act#rtp_helptags (...)
+function! base#act#rtp_helptags ()
 	call base#rtp#helptags()
 
 endfunction
 
 ""look opts_BaseAct.i.dat
-function! base#act#open_split_list (...)
+function! base#act#open_split_list ()
 	 
 	let listvar = input('List variable:','','custom,base#complete#varlist_list')
 	let list    = base#varget(listvar,[])
 
 	call base#list#open_split(list)
+
+endfunction
+
+function! base#act#dump_buf_vars ()
+	let buf_num = input('buffer number: ','')
+	let val = base#buf#vars_buf(buf_num)
+
+	let ds = base#dump_split(val)
+	call base#buf#open_split({ 'lines' : ds })
 
 endfunction
