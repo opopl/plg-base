@@ -140,10 +140,14 @@ function! base#scp#open_Fn (self,temp_file)
 		let scp_data = self.scp_data
 		let exec     = get(self, 'exec', [])
 
-    let au      = get(self,'au',{})
+    let au      = get(self, 'au', {})
 
     let Fc      = get(self, 'Fc', '')
     let Fc_args = get(self, 'Fc_args', [])
+
+		""" callback for loading the file 
+		"""		to be called before loading the file
+    let Fc_file = get(self, 'Fc_file', '')
 
 		let local_file    = scp_data.local_file
 		let scp_cmd_fetch = scp_data.scp_cmd_fetch
@@ -172,6 +176,10 @@ function! base#scp#open_Fn (self,temp_file)
 						\	'Fc_args' : Fc_args,
 						\	'au'      : au,
 						\	}
+
+				if type(Fc_file) == type(function('call'))
+					call call(Fc_file,local_file)
+				endif
 
 				try
         	call base#fileopen(r)
@@ -210,9 +218,15 @@ function! base#scp#open (...)
   """   copy of the remote file
 	let au = get(ref,'au',{})
 
-  """ Funcref to be executed
+  """ Funcref to be executed, after loading the file
+	"""		into buffer, to be passed into base#fileopen
 	let Fc      = get(ref,'Fc','')
 	let Fc_args = get(ref,'Fc_args',[])
+
+  """ Funcref to be executed on the file,
+	"""		BEFORE loading the file into buffer,
+	"""		thus before base#fileopen call
+	let Fc_file      = get(ref,'Fc_file','')
   
 			"\	'scp' : '^\zsscp://\(\w\+\)@\ze\([\S\+^:]\):\(\d\+\)/\(.*\)',
 
@@ -264,6 +278,7 @@ function! base#scp#open (...)
     \	'au'       : au,
     \	'Fc'       : Fc,
     \	'Fc_args'  : Fc_args,
+    \	'Fc_file'  : Fc_file,
 		\	}
 
 	function env.get(temp_file) dict
