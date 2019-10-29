@@ -3,4 +3,5 @@ create_table
 clear
 warnings
 debug
+func
 v_exception

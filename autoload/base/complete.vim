@@ -185,6 +185,19 @@ function! base#complete#SSH (...)
   return base#complete#vars([ 'cmds_SSH' ])
 endfunction
 
+function! base#complete#log_func (...)
+	let comps = []
+
+	let funcs = pymy#sqlite#query_as_list({
+		\	'dbfile' : base#dbfile(),
+		\	'p'      : [],
+		\	'q'      : 'select func from log',
+		\	})
+	call extend(comps,funcs)
+
+	return join(comps, "\n")
+endfunction
+
 
 function! base#complete#info (...)
   return base#complete#vars([ 'info_topics' ])

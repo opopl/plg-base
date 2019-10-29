@@ -414,6 +414,10 @@ function! base#file#ff_unix2dos( ... )
 	let file = get(a:000,0,'')
 	let cmd = 'unix2dos ' . shellescape(file)
 
+	let msg = [ 'file => ' . file ]
+	let prf = { 'plugin' : 'base', 'func' : 'base#file#ff_unix2dos' }
+	call base#log(msg, prf)
+
 	let ok = base#sys({ 
 		\	"cmds"         : [cmd],
 		\	"split_output" : 0,
@@ -423,6 +427,10 @@ endf
 function! base#file#ff_dos2unix( ... )
 	let file = get(a:000,0,'')
 	let cmd = 'dos2unix ' . shellescape(file)
+
+	let msg = [ 'file => ' . file ]
+	let prf = { 'plugin' : 'base', 'func' : 'base#file#ff_dos2unix' }
+	call base#log(msg, prf)
 
 	let ok = base#sys({ 
 		\	"cmds"         : [cmd],
