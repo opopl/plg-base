@@ -13,3 +13,24 @@ endfunction
 function! base#bufact_common#tabs_to_spaces ()
   setlocal et | retab
 endfunction
+
+function! base#bufact_common#dos2unix ()
+	let file = bufname('%')
+	let cmd = 'dos2unix ' . shellescape(file)
+
+	let ok = base#sys({ 
+		\	"cmds"         : [cmd],
+		\	"split_output" : 0,
+		\	})
+
+endfunction
+
+function! base#bufact_common#unix2dos ()
+	let file = bufname('%')
+	let cmd = 'unix2dos ' . shellescape(file)
+
+	let ok = base#sys({ 
+		\	"cmds"         : [cmd],
+		\	"split_output" : 0,
+		\	})
+endfunction

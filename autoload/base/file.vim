@@ -410,6 +410,26 @@ function! base#file#std( filename,... )
 endf
 
 
+function! base#file#ff_unix2dos( ... )
+	let file = get(a:000,0,'')
+	let cmd = 'unix2dos ' . shellescape(file)
+
+	let ok = base#sys({ 
+		\	"cmds"         : [cmd],
+		\	"split_output" : 0,
+		\	})
+endf
+
+function! base#file#ff_dos2unix( ... )
+	let file = get(a:000,0,'')
+	let cmd = 'dos2unix ' . shellescape(file)
+
+	let ok = base#sys({ 
+		\	"cmds"         : [cmd],
+		\	"split_output" : 0,
+		\	})
+endf
+
 function! base#file#unix2win( filename )
 	let fname = a:filename
 
