@@ -409,7 +409,6 @@ function! base#file#std( filename,... )
 
 endf
 
-
 function! base#file#ff_unix2dos( ... )
 	let file = get(a:000,0,'')
 	let cmd = 'unix2dos ' . shellescape(file)

@@ -71,7 +71,8 @@ function! base#scp#fetch_Fn (self,temp_file)
 endfunction
 
 function! base#scp#fetch (...)
-	let ref = get(a:000,0,{})
+	let ref      = get(a:000,0,{})
+
 	let scp_data = get(ref,'scp_data',{})
 
 	let scp_cmd_fetch = get(scp_data, 'scp_cmd_fetch' ,'' )
