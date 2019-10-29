@@ -191,7 +191,7 @@ function! base#complete#log_func (...)
 	let funcs = pymy#sqlite#query_as_list({
 		\	'dbfile' : base#dbfile(),
 		\	'p'      : [],
-		\	'q'      : 'select func from log',
+		\	'q'      : 'SELECT func FROM log',
 		\	})
 	call extend(comps,funcs)
 

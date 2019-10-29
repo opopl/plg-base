@@ -178,8 +178,11 @@ function! base#scp#open_Fn (self,temp_file)
 						\	}
 
 				if type(Fc_file) == type(function('call'))
+						let msg = ['aa']
+						let prf = { 'plugin' : 'base', 'func' : 'aaa' }
+						call base#log(msg, prf)
 					try
-						call call(Fc_file, local_file)
+						call call(Fc_file, [ local_file ])
 					catch
 					endtry
 				endif
