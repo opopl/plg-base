@@ -178,7 +178,10 @@ function! base#scp#open_Fn (self,temp_file)
 						\	}
 
 				if type(Fc_file) == type(function('call'))
-					call call(Fc_file,local_file)
+					try
+						call call(Fc_file, local_file)
+					catch
+					endtry
 				endif
 
 				try
@@ -188,7 +191,8 @@ function! base#scp#open_Fn (self,temp_file)
 					let prf = {
 							\ 'plugin'   : 'base',
 							\	'func'     : 'base#scp#open',
-							\	'loglevel' : 'warn'
+							\	'loglevel' : 'warn',
+							\	'v_exception' : v:exception,
 							\	}
 					call base#log(msg,prf)
 				endtry
@@ -226,7 +230,7 @@ function! base#scp#open (...)
   """ Funcref to be executed on the file,
 	"""		BEFORE loading the file into buffer,
 	"""		thus before base#fileopen call
-	let Fc_file      = get(ref,'Fc_file','')
+	let Fc_file = get(ref,'Fc_file','')
   
 			"\	'scp' : '^\zsscp://\(\w\+\)@\ze\([\S\+^:]\):\(\d\+\)/\(.*\)',
 
