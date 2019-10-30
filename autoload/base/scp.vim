@@ -166,7 +166,14 @@ function! base#scp#send (...)
 
 endfunction
 
-function! base#scp#open_Fn (self,temp_file)
+"	Purpose
+"		is called inside async callback, after async
+"		call invoked via asc#run
+"
+"	Usage
+"		call base#scp#open_Fn (self,temp_file)
+
+function! base#scp#open_Fn (self, temp_file)
 		let self      = a:self
 		let temp_file = a:temp_file
 
@@ -175,10 +182,10 @@ function! base#scp#open_Fn (self,temp_file)
 		let scp_data = self.scp_data
 		let exec     = get(self, 'exec', [])
 
-    let au      = get(self, 'au', {})
-
-    let Fc      = get(self, 'Fc', '')
-    let Fc_args = get(self, 'Fc_args', [])
+		let au      = get(self, 'au', {})
+		
+		let Fc      = get(self, 'Fc', '')
+		let Fc_args = get(self, 'Fc_args', [])
 
 		""" callback for loading the file 
 		"""		to be called before loading the file
@@ -202,51 +209,53 @@ function! base#scp#open_Fn (self,temp_file)
 			call base#varset('base_scp_last_output',out)
 		endif
 
-		if filereadable(local_file)
-			let vc = []
-			call add(vc, 'setlocal statusline=' . base#scp#stl() )
-			call extend(vc, exec )
-
-			let r = { 
-					\	'files'   : [ local_file ],
-					\	'exec'    : vc,
-					\	'Fc'      : Fc,
-					\	'Fc_args' : Fc_args,
-					\	'au'      : au,
-					\	}
-
-			if type(Fc_file) == type(function('call'))
-					let msg = ['Fc_file call on local_file']
-					let prf = { 'plugin' : 'base', 'func' : 'base#scp#open_Fn' }
-					call base#log(msg, prf)
-				try
-					call call(Fc_file, [ local_file ])
-				catch
-					let msg = ['Fc_file call errors']
-					let prf = { 
-						\	'plugin'      : 'base', 
-						\	'func'        : 'base#scp#open_Fn',
-						\	'v_exception' : v:exception,
-						\	}
-					call base#log(msg, prf)
-				endtry
-			endif
-
-			try
-      	call base#fileopen(r)
-			catch 
-				let msg = [ '(base#fileopen call) exception: ' . v:exception ]
-				let prf = {
-						\ 'plugin'   : 'base',
-						\	'func'     : 'base#scp#open',
-						\	'loglevel' : 'warn',
-						\	'v_exception' : v:exception,
-						\	}
-				call base#log(msg,prf)
-			endtry
-
-			let b:scp_data = scp_data
+		if !filereadable(local_file)
+			return
 		endif
+
+		let vc = []
+		call add(vc, 'setlocal statusline=' . base#scp#stl() )
+		call extend(vc, exec )
+
+		let r = { 
+				\	'files'   : [ local_file ],
+				\	'exec'    : vc,
+				\	'Fc'      : Fc,
+				\	'Fc_args' : Fc_args,
+				\	'au'      : au,
+				\	}
+
+		if type(Fc_file) == type(function('call'))
+				let msg = ['Fc_file call on local_file']
+				let prf = { 'plugin' : 'base', 'func' : 'base#scp#open_Fn' }
+				call base#log(msg, prf)
+			try
+				call call(Fc_file, [ local_file ])
+			catch
+				let msg = ['Fc_file call errors']
+				let prf = { 
+					\	'plugin'      : 'base', 
+					\	'func'        : 'base#scp#open_Fn',
+					\	'v_exception' : v:exception,
+					\	}
+				call base#log(msg, prf)
+			endtry
+		endif
+
+		try
+    	call base#fileopen(r)
+		catch 
+			let msg = [ '(base#fileopen call) exception: ' . v:exception ]
+			let prf = {
+					\ 'plugin'   : 'base',
+					\	'func'     : 'base#scp#open',
+					\	'loglevel' : 'warn',
+					\	'v_exception' : v:exception,
+					\	}
+			call base#log(msg,prf)
+		endtry
+
+		let b:scp_data = scp_data
 
 endfunction
 

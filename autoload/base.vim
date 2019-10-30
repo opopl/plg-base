@@ -509,6 +509,21 @@ function! base#dbfile (...)
 	return dbfile
 endfunction
 
+"	Purpose:
+"		base plugin logging function
+"
+"	Usage:
+"
+"		let msg = [ ... ]
+"		let prf = {
+"				\	'func'     : 'base#scp#open',
+"				\	'plugin'   : 'base',
+"				\	'loglevel' : 'warn',
+"				\	'v_exception' : v:exception,
+"				\	}
+
+"	call base#log (msg,prf)
+
 function! base#log (msg,...)
 	let msg = a:msg
 
