@@ -137,13 +137,28 @@ function! base#scp#send_Fn (self,temp_file)
 		echohl None
 endfunction
 
+
+"call base#scp#send ({ 'scp_data' : scp_data })
+"
+"call base#scp#send ({ 
+"		\	'scp_data' : scp_data ,
+"		\	'Fc_file'  : Fc_file ,
+"		\	})
+"
+"call base#scp#send ({ 
+"		\	'scp_data' : scp_data ,
+"		\	'file_cb'  : 'base#scp#cb_file',
+"		\	})
+
 function! base#scp#send (...)
 	let ref = get(a:000,0,{})
 
 	let scp_data = get(ref,'scp_data',{})
 
 	let scp_cmd_send = get(scp_data, 'scp_cmd_send' ,'' )
-	let basename     = get(scp_data, 'basename' ,'' )
+
+	let local_file   = get(scp_data,'local_file','')
+	let basename     = get(scp_data,'basename' ,'' )
 
 	let env = { 
 				\ 'basename' : basename 
@@ -151,9 +166,19 @@ function! base#scp#send (...)
 	""" do something with the file before sending it
 	let Fc_file = get(ref,'Fc_file','')
 
-	"if type(Fc_file) == type(function('call'))
-		"call call(Fc_file,)
-	"endif
+	let callbacks = []
+	call add(callbacks,Fc_file)
+
+	let file_cb_send = get(scp_data,'file_cb_send','')
+	if strlen(file_cb_send)
+		call add(callbacks, function(file_cb_send))
+	endif
+
+	for cb in callbacks
+		if type(cb) == type(function('call'))
+			call call(cb, [ scp_data ])
+		endif
+	endfor
 
 	function env.get(temp_file) dict
 		call base#scp#send_Fn(self, a:temp_file)
@@ -288,6 +313,10 @@ function! base#scp#open (...)
 	"""		BEFORE loading the file into buffer,
 	"""		thus before base#fileopen call
 	let Fc_file = get(ref,'Fc_file','')
+
+	""" to be saved to b:scp_data, what to do with the file
+	"""		when sending it - before the actual sending
+	let file_cb_send  = get(ref,'file_cb_send','')
   
 			"\	'scp' : '^\zsscp://\(\w\+\)@\ze\([\S\+^:]\):\(\d\+\)/\(.*\)',
 
@@ -325,6 +354,7 @@ function! base#scp#open (...)
 		\	'scp_cmd_fetch' : scp_cmd_fetch,
 		\	'scp_cmd_send'  : scp_cmd_send,
 		\	'user'          : user,
+		\	'file_cb_send'  : file_cb_send,
 		\	}
 
 	if filereadable(local_file)
