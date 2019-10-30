@@ -36,7 +36,11 @@ function! base#cmd_SCP#list_bufs ()
 
 endfunction
 
-function! base#cmd_SCP#buf_load ()
+function! base#cmd_SCP#buf_add_tags ()
+	let buf_nums = base#scp#bufn()
+	let buf_files = map(buf_nums,'bufname(v:val)')
+
+	let tfile = base#qw#catpath('tagdir scp.tags')
 	
 endfunction
 

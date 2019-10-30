@@ -160,9 +160,6 @@ function! base#scp#send (...)
 	let local_file   = get(scp_data,'local_file','')
 	let basename     = get(scp_data,'basename' ,'' )
 
-	let env = { 
-				\ 'basename' : basename 
-				\ }
 	""" do something with the file before sending it
 	let Fc_file = get(ref,'Fc_file','')
 
@@ -179,6 +176,10 @@ function! base#scp#send (...)
 			call call(Cb, [ scp_data ])
 		endif
 	endfor
+
+	let env = { 
+				\ 'basename' : basename 
+				\ }
 
 	function env.get(temp_file) dict
 		call base#scp#send_Fn(self, a:temp_file)
@@ -269,6 +270,8 @@ function! base#scp#open_Fn (self, temp_file)
 
 		try
     	call base#fileopen(r)
+			let b:scp_data = scp_data
+			call base#buf#vars_buf_set( bufnr('%'), 'scp_data', scp_data )
 		catch 
 			let msg = [ '(base#fileopen call) exception: ' . v:exception ]
 			let prf = {
@@ -280,9 +283,6 @@ function! base#scp#open_Fn (self, temp_file)
 			call base#log(msg,prf)
 		endtry
 
-		let b:scp_data = scp_data
-		"call base#var#update('buf_vars')
-		call base#buf#vars_buf_set( bufnr('%'), 'scp_data', scp_data )
 
 endfunction
 
