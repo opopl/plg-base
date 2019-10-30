@@ -199,45 +199,53 @@ function! base#scp#open_Fn (self,temp_file)
 	
 		if filereadable(temp_file)
 			let out = readfile(temp_file)
-			if filereadable(local_file)
-				let vc = []
-				call add(vc, 'setlocal statusline=' . base#scp#stl() )
-				call extend(vc, exec )
+			call base#varset('base_scp_last_output',out)
+		endif
 
-				let r = { 
-						\	'files'   : [ local_file ],
-						\	'exec'    : vc,
-						\	'Fc'      : Fc,
-						\	'Fc_args' : Fc_args,
-						\	'au'      : au,
-						\	}
+		if filereadable(local_file)
+			let vc = []
+			call add(vc, 'setlocal statusline=' . base#scp#stl() )
+			call extend(vc, exec )
 
-				if type(Fc_file) == type(function('call'))
-						let msg = ['aa']
-						let prf = { 'plugin' : 'base', 'func' : 'aaa' }
-						call base#log(msg, prf)
-					try
-						call call(Fc_file, [ local_file ])
-					catch
-					endtry
-				endif
+			let r = { 
+					\	'files'   : [ local_file ],
+					\	'exec'    : vc,
+					\	'Fc'      : Fc,
+					\	'Fc_args' : Fc_args,
+					\	'au'      : au,
+					\	}
 
+			if type(Fc_file) == type(function('call'))
+					let msg = ['Fc_file call on local_file']
+					let prf = { 'plugin' : 'base', 'func' : 'base#scp#open_Fn' }
+					call base#log(msg, prf)
 				try
-        	call base#fileopen(r)
-				catch 
-					let msg = [ '(base#fileopen call) exception: ' . v:exception ]
-					let prf = {
-							\ 'plugin'   : 'base',
-							\	'func'     : 'base#scp#open',
-							\	'loglevel' : 'warn',
-							\	'v_exception' : v:exception,
-							\	}
-					call base#log(msg,prf)
+					call call(Fc_file, [ local_file ])
+				catch
+					let msg = ['Fc_file call errors']
+					let prf = { 
+						\	'plugin'      : 'base', 
+						\	'func'        : 'base#scp#open_Fn',
+						\	'v_exception' : v:exception,
+						\	}
+					call base#log(msg, prf)
 				endtry
-
-				let b:scp_data = scp_data
 			endif
-			"call base#buf#open_split({ 'lines' : out })
+
+			try
+      	call base#fileopen(r)
+			catch 
+				let msg = [ '(base#fileopen call) exception: ' . v:exception ]
+				let prf = {
+						\ 'plugin'   : 'base',
+						\	'func'     : 'base#scp#open',
+						\	'loglevel' : 'warn',
+						\	'v_exception' : v:exception,
+						\	}
+				call base#log(msg,prf)
+			endtry
+
+			let b:scp_data = scp_data
 		endif
 
 endfunction
@@ -312,7 +320,7 @@ function! base#scp#open (...)
 		call delete(local_file)
 	endif
 
-	call base#varset('scp_data',scp_data)
+	call base#varset('scp_data', scp_data)
 
 	let env = {
 		\	'exec'     : exec,
