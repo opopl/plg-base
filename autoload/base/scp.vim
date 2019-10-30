@@ -174,9 +174,9 @@ function! base#scp#send (...)
 		call add(callbacks, function(file_cb_send))
 	endif
 
-	for cb in callbacks
-		if type(cb) == type(function('call'))
-			call call(cb, [ scp_data ])
+	for Cb in callbacks
+		if type(Cb) == type(function('call'))
+			call call(Cb, [ scp_data ])
 		endif
 	endfor
 
