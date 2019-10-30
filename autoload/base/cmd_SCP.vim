@@ -6,24 +6,25 @@ function! base#cmd_SCP#list_bufs ()
 
 	let data = [] 
 
-	let cols = base#qw('buf_num rel_path bur_data scp_data')
+	let cols_s = 'buf_num basename host port'
+	let cols_s = input('columns:',cols_s)
+	let cols = base#qw(cols_s)
 
 	for buf_num in buf_nums
 		let scp_data = base#buf#vars_buf(buf_num, 'scp_data', {})
+		let ok_data =  len(scp_data) ? 1 : 0
 
-		let rel_path = get(scp_data, 'rel_path' , '')
+		let row = []
+		let row_h = {
+				\	'buf_num'  : buf_num,
+				\	}
+		call extend(row_h, scp_data)
 
-		let ok = {
-			\	'scp_data' : len(scp_data) ? 1 : 0,
-			\	}	
+		for col in cols
+			call add(row,get(row_h,col,''))
+		endfor
 
-		if strlen(rel_path)
-			let row = [ buf_num, rel_path ]
-
-			call add(row,get(ok,'scp_data',''))
-
-			call add(data, row)
-		endif
+		call add(data, row)
 	endfor
 
 	let lines = pymy#data#tabulate({
