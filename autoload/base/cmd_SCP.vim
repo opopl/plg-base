@@ -39,3 +39,13 @@ endfunction
 function! base#cmd_SCP#buf_load ()
 	
 endfunction
+
+function! base#cmd_SCP#dump_scp_data ()
+	if !exists("b:scp_data")
+		return
+	endif
+
+	let tabbed =  base#dump#dict_tabbed(b:scp_data)
+	call base#buf#open_split({ 'lines' : tabbed })
+	
+endfunction
