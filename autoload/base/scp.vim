@@ -36,6 +36,28 @@ function! base#scp#data_basename()
 	return base#scp#data("basename")
 endfunction
 
+function! base#scp#bufn()
+	let b = base#buffers#get()
+
+	let buf_nums = get(b, 'bufnums', [])
+
+	let bv = base#varget('buf_vars', {})
+
+	let bufn = []
+
+	for buf_num in buf_nums
+		let bbv = get(bv, buf_num, {})
+
+		let bv_list  = sort(keys(bbv))
+
+		if base#inlist('scp_data', bv_list)
+			call add(bufn, buf_num)
+		endif
+	endfor
+
+	return bufn
+endfunction
+
 function! base#scp#stl()
 	let stl = 'SCP\ #%n\ %1*\ '
 	let stl .= '%{base#scp#data_basename()}\ %4*\ %l%0*'
@@ -91,15 +113,17 @@ function! base#scp#fetch (...)
 endfunction
 
 function! base#scp#send_Fn (self,temp_file)
-	let self = a:self
-	let temp_file = a:temp_file
+		let self = a:self
+		let temp_file = a:temp_file
 
 		let code = self.return_code
 
 		let basename = self.basename
 
 		let msg = [ 'scp send file: ' . basename ]
-		let prf = { 'plugin' : 'base', 'func' : 'base#scp#send' }
+		let prf = { 
+			\	'plugin' : 'base', 
+			\	'func' : 'base#scp#send' }
 		call base#log(msg,prf)
 
 		redraw!
@@ -115,14 +139,24 @@ endfunction
 
 function! base#scp#send (...)
 	let ref = get(a:000,0,{})
+
 	let scp_data = get(ref,'scp_data',{})
 
 	let scp_cmd_send = get(scp_data, 'scp_cmd_send' ,'' )
-	let basename = get(scp_data, 'basename' ,'' )
+	let basename     = get(scp_data, 'basename' ,'' )
 
-	let env = { 'basename' : basename }
+	let env = { 
+				\ 'basename' : basename 
+				\ }
+	""" do something with the file before sending it
+	let Fc_file = get(ref,'Fc_file','')
+
+	"if type(Fc_file) == type(function('call'))
+		"call call(Fc_file,)
+	"endif
+
 	function env.get(temp_file) dict
-		call base#scp#send_Fn(self,a:temp_file)
+		call base#scp#send_Fn(self, a:temp_file)
 	endfunction
 	
 	call asc#run({ 

@@ -1504,3 +1504,7 @@ snippet nbf
 	if ( !strlen(bufname('%')) || &buftype == 'nofile' ) | return | endif
 snippet bfcp
 	call base#file#copy(<++>,<++>)
+snippet iftypefc
+	if type(Fc) == type(function('call'))
+		<++>
+	endif
