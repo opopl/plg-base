@@ -408,6 +408,23 @@ fun! base#buf#vars_buf(...)
 
 endfun
 
+"call base#buf#vars_buf_set ( buf_num, var_name, var_value )
+
+fun! base#buf#vars_buf_set(...)
+	let buf_num  = get(a:000,0,0)
+	let var_name = get(a:000,1,'')
+	let var_value = get(a:000,2,'')
+
+	let bv = base#varget('buf_vars',{})
+	let bbv = get(bv,buf_num,{})
+
+	call extend(bbv,{ var_name : var_value })
+
+	call extend(bv,{ buf_num : bbv })
+	call base#varset('buf_vars', bv)
+
+endfun
+
 fun! base#buf#vars()
   redir => bv
   silent let b:

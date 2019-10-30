@@ -256,6 +256,8 @@ function! base#scp#open_Fn (self, temp_file)
 		endtry
 
 		let b:scp_data = scp_data
+		"call base#var#update('buf_vars')
+		call base#buf#vars_buf_set( bufnr('%'), 'scp_data', scp_data )
 
 endfunction
 
