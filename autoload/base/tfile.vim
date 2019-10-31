@@ -3,16 +3,32 @@ function! base#tfile#process (...)
 	let ref = get(a:000,0,{})
 
 	let tfile = get(ref,'tfile','')
+	let tfiles = []
 
-	if has('win32')
+	if !strlen(tfile)
+		let tfiles = tagfiles()
+	else
+		call add(tfiles,tfile)
+	endif
+
+		if has('win32')
 perl << eof
-	use File::Slurp qw(read_file);
+	use Vim::Perl qw(VimVar);
+	use File::Slurp qw(read_file write_file);
 
-	my $tfile = VimVar('tfile');
-	my @lines = read_file($tfile);
-	for my $line (@lines){
+	my $tfiles = VimVar('tfiles');
+
+	for my $tfile (@$tfiles){
+		my @lines = read_file($tfile);
+		my @new;
+		for (@lines){
+			chomp;
+			my ($tag, $file, $address ) = ( /^(.*)\t+(.*)\t+(.*)$/g );
+
+			print $file . "\n";
+		}
 	}
 eof
-	endif
+		endif
 	
 endfunction

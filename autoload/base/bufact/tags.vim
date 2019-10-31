@@ -40,3 +40,8 @@ eof
 	call base#buf#open_split({ 'lines' : tags })
 endfunction
 
+function! base#bufact#tags#process ()
+	call base#buf#start()
+
+	call base#tfile#process({ 'tfile' : b:file })
+endfunction
