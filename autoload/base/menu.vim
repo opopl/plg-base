@@ -107,6 +107,29 @@ function! base#menu#add(...)
 
     MenuAdd latex
 
+"""menuopt_ssh
+ elseif menuopt == 'ssh'
+		let ssh_cmds = base#varget('cmds_SSH',[])
+		for cmd in ssh_cmds
+			call base#menu#additem({
+				\   'item'  : '&SSH.&' . cmd,
+				\   'tab'   : cmd,
+				\   'cmd'   : 'SSH ' . cmd,
+				\   })
+		
+		endfor
+
+"""menuopt_scp
+ elseif menuopt == 'scp'
+		let scp_cmds = base#varget('cmds_SCP',[])
+		for cmd in scp_cmds
+			call base#menu#additem({
+				\   'item'  : '&SCP.&' . cmd,
+				\   'tab'   : cmd,
+				\   'cmd'   : 'SCP ' . cmd,
+				\   })
+		endfor
+
 """menuopt_makefiles
  elseif menuopt == 'makefiles'
 
@@ -342,7 +365,7 @@ function! base#menu#additem (ref)
  let cmd  = 'anoremenu '
  let cmds = []
 
- let ref={
+ let ref = {
 			 	\	'icon'    : '',
 			 	\	'item'    : '',
 			 	\	'cmd'     : '',
