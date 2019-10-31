@@ -150,6 +150,12 @@ function! base#buf#open_split (ref)
 		enew
     setlocal buftype=nofile
     setlocal nobuflisted
+
+		nnoremap <buffer><silent> q :quit<CR>
+
+		let str = escape('[q - quit]',' ')
+		exe 'setlocal statusline+='.str
+
     "setlocal nomodifiable
 		"
 		for cmd in cmds_pre

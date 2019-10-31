@@ -10,18 +10,21 @@ function! base#ssh#run_Fn (self,temp_file)
 
 		let cmd_remote = self.cmd_remote
 	
+		let out = []
 		if filereadable(temp_file)
 			let out = readfile(temp_file)
+		endif
 
-			try
-				call call(Fc,[ code, out ])
-			catch
-				echo v:exception
-			endtry
+		try
+			call call(Fc,[ code, out ])
+		catch
+			echo v:exception
+		endtry
 
+		if len(out)
 			call base#qf_list#set({ 'arr' : out })
 			call base#varset('ssh_run_out',out)
-
+	
 			let str = escape('[SSH][q - quit]',' ')
 			call base#buf#open_split({ 
 				\	'lines'    : out ,
@@ -34,6 +37,18 @@ function! base#ssh#run_Fn (self,temp_file)
 	
 endf
 
+"	Usage
+"		let r = {
+"				\	'cmds_user' : cmds_user,
+"				\	'start_dir' : start_dir,
+"				\	'cmd_core'  : cmd_core,
+"				\	}
+"		call base#ssh#run (r)
+"	Call tree
+"		Calls
+"			asc#run
+"			base#ssh#run_Fn
+
 function! base#ssh#run (...)
 	let ref = get(a:000,0,{})
 
@@ -42,7 +57,7 @@ function! base#ssh#run (...)
 	let cmd_core   = get(ref, 'cmd_core', '')
 
 	let s:dict = {}
-	function s:dict.init(code, out) dict
+	function s:dict.init(...) dict
 	endfunction 
 
 	let Fc   = get(ref, 'Fc', s:dict.init )
@@ -57,6 +72,9 @@ function! base#ssh#run (...)
 	
 	let env = { 
 		\	'cmd_remote' : cmd_remote,
+		\	'cmds_user'  : cmds_user,
+		\	'start_dir'  : start_dir,
+		\	'cmd_core'   : cmd_core,
 		\	'Fc'         : Fc,
  		\		}
 
