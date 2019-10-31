@@ -37,13 +37,13 @@ function! base#menu#remove(...)
 
 endfunction
 
-"Purpose: 
+"	Purpose
 "		add menu 
-"Usage: 
-"	call base#menu#add(menuopt)
-"	call base#menu#add(menuopt,{})
-"	call base#menu#add(menuopt,{ 'action' : 'add' })
-"	call base#menu#add(menuopt,{ 'action' : 'reset' })
+"	Usage
+"		call base#menu#add(menuopt)
+"		call base#menu#add(menuopt,{})
+"		call base#menu#add(menuopt,{ 'action' : 'add' })
+"		call base#menu#add(menuopt,{ 'action' : 'reset' })
 
 function! base#menu#add(...)
 
@@ -274,6 +274,8 @@ function! base#menu#add(...)
 
    for buf in bufs
 		 let path = get(buf,'fullname','')
+		 let path_unix = base#file#win2unix(path)
+
 		 let num  = get(buf,'num',0)
 
 		 let path = base#trim(path)
@@ -293,7 +295,7 @@ function! base#menu#add(...)
 		 let list = []
 		 call extend(list, [ '('.num.')' ])
 		 call extend(list, [ basename_escape ])
-		 call extend(list, [ escape(dirname_escape,'\\') ])
+		 call extend(list, [ base#file#win2unix(dirname_escape) ])
 		
 		 let str = base#text#pack_perl ('A10 A50 A*', list )
 		 let str = escape(str,' ')
@@ -302,7 +304,7 @@ function! base#menu#add(...)
      if len(mn)
         let menu={
            \   'item'  : join([num,mn],' '),
-           \   'cmd'   : 'buffer ' . path,
+           \   'cmd'   : 'buffer ' . path_unix,
            \   'tab'   : tab,
            \   }
 

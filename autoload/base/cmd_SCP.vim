@@ -41,11 +41,18 @@ function! base#cmd_SCP#buf_add_tags ()
 	let buf_files = map(buf_nums,'bufname(v:val)')
 
 	let tfile = base#qw#catpath('tagdir scp.tags')
+
+	call base#buf#open_split({ 'lines' : buf_files })
 	
 endfunction
 
 function! base#cmd_SCP#dump_scp_data ()
 	if !exists("b:scp_data")
+		let m = 'No b:scp_data variable!'
+		redraw!
+		echohl WarningMsg
+		echo m
+		echohl None
 		return
 	endif
 
