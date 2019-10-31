@@ -43,6 +43,19 @@ function! base#menu#remove(...)
 
 endfunction
 
+function! base#menu#pref (...)
+	let pref = get(a:000,0,'')
+	if !exists("s:pref")
+		let s:pref = ''
+	endif
+
+	if strlen(pref)
+		let s:pref = pref
+	endif
+
+	return s:pref
+endfunction
+
 function! base#menu#sep (...)
 	let ref=get(a:000,0,{})
 
@@ -294,10 +307,16 @@ function! base#menu#add(...)
 """menuopt_buffers
  elseif menuopt == 'buffers'
 
-	 let items = []
-	 call add(items,base#menu#sep({ 'pref' : 'buffers' }))
+	let items = []
 
-	 let cmd = 'aunmenu BUFFERS'
+	call base#menu#pref('buffers')
+	call add(items,{
+		\   'item'  : '&BUFFERS.&reload',
+		\   'cmd'   : 'MenuAdd buffers',
+		\   })
+	call add(items,base#menu#sep())
+
+	let cmd = 'aunmenu BUFFERS'
      try
         silent exe cmd
      catch
