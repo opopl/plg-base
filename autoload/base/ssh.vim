@@ -1,5 +1,39 @@
 
 
+function! base#ssh#run_Fn (self,temp_file)
+		let self      = a:self
+		let temp_file = a:temp_file
+
+		let code = self.return_code
+
+		let Fc = self.Fc
+
+		let cmd_remote = self.cmd_remote
+	
+		if filereadable(temp_file)
+			let out = readfile(temp_file)
+
+			try
+				call call(Fc,[ code, out ])
+			catch
+				echo v:exception
+			endtry
+
+			call base#qf_list#set({ 'arr' : out })
+			call base#varset('ssh_run_out',out)
+
+			let str = escape('[SSH][q - quit]',' ')
+			call base#buf#open_split({ 
+				\	'lines'    : out ,
+				\	'cmds_pre' : [ 
+						\	'setlocal statusline=\ ' . str . '\ ' . escape(cmd_remote,' '),
+						\	'nnoremap <buffer><silent> q :quit<CR>',
+						\	] 
+				\	})
+		endif
+	
+endf
+
 function! base#ssh#run (...)
 	let ref = get(a:000,0,{})
 
@@ -27,31 +61,7 @@ function! base#ssh#run (...)
  		\		}
 
 	function env.get(temp_file) dict
-		let code = self.return_code
-
-		let Fc = self.Fc
-
-		let cmd_remote = self.cmd_remote
-	
-		if filereadable(a:temp_file)
-			let out = readfile(a:temp_file)
-
-			try
-				call call(Fc,[ code, out ])
-			catch
-				echo v:exception
-			endtry
-
-			call base#qf_list#set({ 'arr' : out })
-			call base#varset('ssh_run_out',out)
-
-			call base#buf#open_split({ 
-				\	'lines'    : out ,
-				\	'cmds_pre' : [ 
-						\	'setlocal statusline=' . escape(cmd_remote,' ')
-						\	] 
-				\	})
-		endif
+		call base#ssh#run_Fn(self,a:temp_file)
 	endfunction
 	
 	call asc#run({ 

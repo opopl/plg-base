@@ -1510,3 +1510,11 @@ snippet iftypefc
 	endif
 snippet base#buf#vars_buf_set
 	call base#buf#vars_buf_set( <+buf_num+>, <+var_name+>, <+var_value+> )
+snippet fcasc
+	function! <++> (self,temp_file)
+		let self      = a:self
+		let temp_file = a:temp_file
+		
+		<++>
+	
+	endf
