@@ -71,6 +71,10 @@ function! base#menu#sep (...)
 		let s:sep_count += 1
 	endif
 
+	if !strlen(pref)
+		let pref = base#menu#pref()
+	endif
+
 	let pref_a = map(base#qw(pref),'"&" . toupper(v:val) . "."')
 
 	let pref_m = join(pref_a,"")
@@ -307,15 +311,6 @@ function! base#menu#add(...)
 """menuopt_buffers
  elseif menuopt == 'buffers'
 
-	let items = []
-
-	call base#menu#pref('buffers')
-	call add(items,{
-		\   'item'  : '&BUFFERS.&reload',
-		\   'cmd'   : 'MenuAdd buffers',
-		\   })
-	call add(items,base#menu#sep())
-
 	let cmd = 'aunmenu BUFFERS'
      try
         silent exe cmd
@@ -333,6 +328,16 @@ function! base#menu#add(...)
 				call base#log(msg,prf)
 				
      endtry
+
+	let items = []
+
+	call add(items,base#menu#sep())
+	call base#menu#pref('buffers')
+	call add(items,{
+		\   'item'  : '&BUFFERS.reload',
+		\   'cmd'   : 'MenuAdd buffers',
+		\   })
+	call add(items,base#menu#sep())
 
 	 let bref     = base#buffers#get()
 	 
