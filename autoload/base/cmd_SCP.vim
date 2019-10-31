@@ -36,14 +36,26 @@ function! base#cmd_SCP#list_bufs ()
 
 endfunction
 
+"	Usage
+"		call base#cmd_SCP#buf_add_tags ()
+"	Call tree
+"		Calls
+"			base#scp#bufn
+"			base#ctags#run
+"			base#tags#add
+
 function! base#cmd_SCP#buf_add_tags ()
 	let buf_nums = base#scp#bufn()
 	let buf_files = map(buf_nums,'bufname(v:val)')
 
 	let tfile = base#qw#catpath('tagdir scp.tags')
 
-	call base#buf#open_split({ 'lines' : buf_files })
-	
+	call base#ctags#run({ 
+		\	'files' : buf_files, 
+		\	'tfile' : tfile 
+		\	})
+	call base#tags#add(tfile)
+
 endfunction
 
 function! base#cmd_SCP#dump_scp_data ()

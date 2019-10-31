@@ -1511,7 +1511,7 @@ snippet iftypefc
 snippet base#buf#vars_buf_set
 	call base#buf#vars_buf_set( <+buf_num+>, <+var_name+>, <+var_value+> )
 snippet fcasc
-	function! <++> (self,temp_file)
+	function! <++> (self, temp_file)
 		let self      = a:self
 		let temp_file = a:temp_file
 		
@@ -1524,3 +1524,14 @@ snippet ifrt
 	endif
 snippet rt
 	return <++>
+snippet bcr
+	base#ctags#run
+snippet base#ctags#run
+	call base#ctags#run({ 
+		\	'files' : files, 
+		\	'tfile' : tfile 
+		\	})
+snippet base#tags#add
+	call base#tags#add(tfile)
+snippet base#tags#set
+	call base#tags#set(tfile)

@@ -14,12 +14,17 @@ function! base#ctags#run (...)
 	let ref = get(a:000,0,{})
 
 	let tfile = get(ref,'tfile','')
-	let tfile_win = base#file#unix2win(tfile)
+
+	let tfile_se = shellescape(tfile) 
+	if has('win32')
+		let tfile_win = base#file#unix2win(tfile)
+		let tfile_se = shellescape(tfile_win) 
+	endif
 
 	let files    = get(ref,'files',[])
 	let files_se = map(copy(files),'shellescape(v:val)')
 
-	let cmd_a = [ 'ctags -R -o', shellescape(tfile_win) ]
+	let cmd_a = [ 'ctags -R -o', tfile_se ]
 	call extend(cmd_a, files_se )
 
 	let cmd = join(cmd_a, " ")
