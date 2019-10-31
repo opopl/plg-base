@@ -46,8 +46,17 @@ endfunction
 function! base#menu#sep (...)
 	let ref=get(a:000,0,{})
 
+	if !exists("s:sep_count")
+		let s:sep_count = 1
+	endif
+
 	let id   = get(ref,'id','')
 	let pref = get(ref,'pref','')
+
+	if !strlen(id)
+		let id = s:sep_count
+		let s:sep_count += 1
+	endif
 
 	let pref_a = map(base#qw(pref),'"&" . toupper(v:val) . "."')
 
@@ -285,6 +294,9 @@ function! base#menu#add(...)
 """menuopt_buffers
  elseif menuopt == 'buffers'
 
+	 let items = []
+	 call add(items,base#menu#sep({ 'pref' : 'buffers' }))
+
 	 let cmd = 'aunmenu BUFFERS'
      try
         silent exe cmd
@@ -352,7 +364,6 @@ function! base#menu#add(...)
 
    endfor
 
-	 let items = []
    for mn in sort(keys(bufmenus))
      let menu = bufmenus[mn]
 		 call add(items,menu)
