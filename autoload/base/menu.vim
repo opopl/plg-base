@@ -122,12 +122,18 @@ function! base#menu#add(...)
 """menuopt_scp
  elseif menuopt == 'scp'
 		let scp_cmds = base#varget('cmds_SCP',[])
+
+		let items = []
 		for cmd in scp_cmds
-			call base#menu#additem({
+			call extend(items,{
 				\   'item'  : '&SCP.&' . cmd,
 				\   'tab'   : cmd,
 				\   'cmd'   : 'SCP ' . cmd,
 				\   })
+		endfor
+
+		for item in items
+			call base#menu#additem(item)
 		endfor
 
 """menuopt_makefiles
