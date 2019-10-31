@@ -250,6 +250,7 @@ function! base#buf#onread ()
 
 	if exists("b:scp_data")
 		call base#scp#fetch({ 'scp_data' : b:scp_data })
+		call base#scp#tags_set()
 	endif
 
 endfunction
