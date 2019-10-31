@@ -38,9 +38,30 @@ function! base#menu#remove(...)
 		try 
 			exe 'aunmenu &' . uc 
 		catch
- 		endtry
+		 endtry
  endif
 
+endfunction
+
+function! base#menu#sep (...)
+	let ref=get(a:000,0,{})
+
+	let id   = get(ref,'id','')
+	let pref = get(ref,'pref','')
+
+	let pref_a = map(base#qw(pref),'"&" . toupper(v:val) . "."')
+
+	let pref_m = join(pref_a,"")
+
+	let name =  printf('%s-Sep-',pref_m)
+	if len(id)
+		let name = printf('%s-Sep%s-',pref_m,id)
+	endif
+ 	let sep = {
+					 \	'item'	: name,
+					 \	'cmd' 	: ' ',
+					 \	}
+ 	return sep
 endfunction
 
 "	Purpose
@@ -264,10 +285,22 @@ function! base#menu#add(...)
 """menuopt_buffers
  elseif menuopt == 'buffers'
 
+	 let cmd = 'aunmenu BUFFERS'
      try
-        silent exe 'aunmenu BUFFERS'
+        silent exe cmd
      catch
 				echo v:exception
+				let msg = [
+					\	'error: ' . cmd ,
+					\	]
+				let prf = {
+					\	'loglevel' : 'warn',
+					\	'plugin'   : 'base',
+					\	'func'     : 'base#menu#add',
+					\	'v_exception'     : v:exception
+					\	}
+				call base#log(msg,prf)
+				
      endtry
 
 	 let bref     = base#buffers#get()
@@ -319,10 +352,15 @@ function! base#menu#add(...)
 
    endfor
 
+	 let items = []
    for mn in sort(keys(bufmenus))
      let menu = bufmenus[mn]
-     call base#menu#additem(menu)
+		 call add(items,menu)
    endfor
+
+	 for item in items
+     call base#menu#additem(item)
+	 endfor
 
 """menuopt_menus
  elseif menuopt == 'menus'

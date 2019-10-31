@@ -62,7 +62,7 @@ endfunction
 
 function! base#scp#tags_set()
 	let tfile = base#scp#tfile()
-	call base#tags#add(tfile)
+	call base#tags#set(tfile)
 endfunction
 
 function! base#scp#bufn()

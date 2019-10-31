@@ -172,9 +172,10 @@ snippet blw
 		\	'<++>',
 		\	]
 	let prf = {
-		\	'loglevel' : 'warn',
-		\	'plugin'   : '<++>',
-		\	'func'     : '<++>'
+		\	'loglevel'    : 'warn',
+		\	'v_exception' : v:exception,
+		\	'plugin'      : '<++>',
+		\	'func'        : '<++>'
 		\	}
 	call base#log(msg,prf)
 snippet blstart
