@@ -44,7 +44,7 @@ endfunction
 "			base#ctags#run
 "			base#tags#add
 
-function! base#cmd_SCP#buf_add_tags ()
+function! base#cmd_SCP#buf_set_tags ()
 	let buf_nums = base#scp#bufn()
 	let buf_files = map(buf_nums,'bufname(v:val)')
 

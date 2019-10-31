@@ -29,13 +29,9 @@ function! base#ctags#run (...)
 
 	let cmd = join(cmd_a, " ")
 
-	let env = {}
+	let env = { 'cmd_ctags' : cmd }
 	function env.get(temp_file) dict
-		let code = self.return_code
-	
-		if filereadable(a:temp_file)
-			let out = readfile(a:temp_file)
-		endif
+		call base#ctags#run_Fn(self,a:temp_file)
 	endfunction
 	
 	call asc#run({ 
@@ -43,4 +39,24 @@ function! base#ctags#run (...)
 		\	'Fn'  : asc#tab_restore(env) 
 		\	})
 	
+endfunction
+
+function! base#ctags#run_Fn (self,temp_file)
+		let self      = a:self
+		let temp_file = a:temp_file
+		
+		let code = self.return_code
+
+		let info = []
+		call add(info,'CTAGS RETURN CODE:')
+		call add(info,' ' . code)
+	
+		if filereadable(a:temp_file)
+			let out = readfile(a:temp_file)
+			if len(out)
+				call base#buf#open_split({ 'lines' : out })
+			endif
+		endif
+
+		"call base#buf#open_split({ 'lines' : info })
 endfunction

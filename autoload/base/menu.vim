@@ -33,6 +33,12 @@ function! base#menu#remove(...)
 			exe 'aunmenu &SQLITE'
 		catch
  		endtry
+	else
+		let uc = toupper(menuopt)
+		try 
+			exe 'aunmenu &' . uc 
+		catch
+ 		endtry
  endif
 
 endfunction
@@ -125,7 +131,7 @@ function! base#menu#add(...)
 
 		let items = []
 		for cmd in scp_cmds
-			call extend(items,{
+			call add(items,{
 				\   'item'  : '&SCP.&' . cmd,
 				\   'tab'   : cmd,
 				\   'cmd'   : 'SCP ' . cmd,
