@@ -55,6 +55,8 @@ function! base#scp#tags_make()
 		\	'tfile' : tfile 
 		\	})
 
+	call base#tfile#process({ 'tfile' : tfile })
+
 	call base#scp#tags_set()
 endfunction
 
