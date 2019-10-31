@@ -18,15 +18,26 @@ perl << eof
 
 	my $tfiles = VimVar('tfiles');
 
+	my $pat = qr/^\s*([^!\t]+)\t+([^\t]+)\t+(.*)/;
+
 	for my $tfile (@$tfiles){
 		my @lines = read_file($tfile);
 		my @new;
 		for (@lines){
 			chomp;
-			my ($tag, $file, $address ) = ( /^(.*)\t+(.*)\t+(.*)$/g );
+			#next if /^\s*!/;
 
-			print $file . "\n";
+			my ($tag, $file, $rest ) = ( /$pat/g );
+
+			if ($file =~ /^[\\\/]/) {
+				$file =~ s/^/c\:/g;
+
+				s/$pat/$tag\t$file\t$rest/g;
+			}
+
+			push @new, $_;
 		}
+		write_file($tfile, join("\n",@new) . "\n");
 	}
 eof
 		endif
