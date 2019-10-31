@@ -326,7 +326,11 @@ function! base#menu#add(...)
 	let items = []
 	let tags  = taglist("^")
 
-	call add(items,base#menu#sep())
+	call add(items, base#menu#sep() )
+	for tag in tags
+		let file = get(tag,'file','')
+		let name = get(tag,'name','')
+	endfor
 
 """menuopt_bufact
  elseif menuopt == 'bufact'

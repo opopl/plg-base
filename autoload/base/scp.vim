@@ -50,12 +50,18 @@ function! base#scp#tags_make()
 
 	let tfile = base#scp#tfile()
 
+	let s:obj={}
+	function! s:obj.fnc(tfile) dict
+		call base#tfile#process({ 'tfile' : a:tfile })
+	endfunction
+	
+	let Cb = s:obj.fnc
+
 	call base#ctags#run({ 
 		\	'files' : buf_files, 
-		\	'tfile' : tfile 
+		\	'tfile' : tfile,
+		\	'Cb'    : Cb,
 		\	})
-
-	call base#tfile#process({ 'tfile' : tfile })
 
 	call base#scp#tags_set()
 endfunction

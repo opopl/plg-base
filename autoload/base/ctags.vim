@@ -14,6 +14,7 @@ function! base#ctags#run (...)
 	let ref = get(a:000,0,{})
 
 	let tfile = get(ref,'tfile','')
+	let Cb    = get(ref,'Cb','')
 
 	let tfile_se = shellescape(tfile) 
 	if has('win32')
@@ -37,10 +38,32 @@ function! base#ctags#run (...)
 	let env = { 
 		\	'cmd_ctags' : cmd ,
 		\	'tfile'     : tfile,
+		\	'Cb'        : Cb,
 		\	}
 
 	function env.get(temp_file) dict
 		call base#ctags#run_Fn(self,a:temp_file)
+
+		let Cb    = get(self,'Cb','')
+		let tfile = get(self,'tfile','')
+
+		if type(Cb) == type( function('call') ) || strlen(Cb)
+			try
+				call call(Cb,[ tfile ])
+			catch 
+				let msg = [
+					\	'tfile callback fail',
+					\	]
+				let prf = {
+					\	'loglevel'    : 'warn',
+					\	'v_exception' : v:exception,
+					\	'plugin'      : 'base',
+					\	'func'        : 'base#ctags#run_Fn'
+					\	}
+				call base#log(msg,prf)
+			endtry
+		endif
+
 	endfunction
 	
 	call asc#run({ 
