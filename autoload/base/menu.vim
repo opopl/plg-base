@@ -43,6 +43,15 @@ function! base#menu#remove(...)
 
 endfunction
 
+function! base#menu#clear (...)
+	let pref = base#menu#pref()
+
+	try
+		exe 'aunmenu &' . toupper(pref)
+	catch 
+	endtry
+endfunction
+
 function! base#menu#pref (...)
 	let pref = get(a:000,0,'')
 	if !exists("s:pref")
@@ -308,6 +317,45 @@ function! base#menu#add(...)
 
    call base#menus#add(menus_add)
 
+"""menuopt_tags
+ elseif menuopt == 'tags'
+
+	call base#menu#pref('tags')
+	call base#menu#clear()
+
+	let items = []
+	let tags  = taglist("^")
+
+	call add(items,base#menu#sep())
+
+"""menuopt_bufact
+ elseif menuopt == 'bufact'
+		let items = []
+		let comps = exists('b:comps_BufAct') ? b:comps_BufAct : []
+
+		call base#menu#pref('bufact')
+		call base#menu#clear()
+
+		call add(items,base#menu#sep())
+		 call add(items,{
+			\   'item'  : '&BUFACT.reload' ,
+			\   'cmd'   : 'MenuAdd bufact',
+			\   }
+			\	)
+		call add(items,base#menu#sep())
+
+	 for cmd in comps
+		 call add(items,{
+			\   'item'  : '&BUFACT.' . cmd,
+			\   'cmd'   : 'BufAct ' .  cmd,
+			\   }
+			\	)
+	 endfor
+
+	 for item in items
+     call base#menu#additem(item)
+	 endfor
+
 """menuopt_buffers
  elseif menuopt == 'buffers'
 
@@ -331,11 +379,17 @@ function! base#menu#add(...)
 
 	let items = []
 
-	call add(items,base#menu#sep())
 	call base#menu#pref('buffers')
+
+	call add(items,base#menu#sep())
 	call add(items,{
 		\   'item'  : '&BUFFERS.reload',
 		\   'cmd'   : 'MenuAdd buffers',
+		\   })
+	call add(items,base#menu#sep())
+	call add(items,{
+		\   'item'  : '&BUFFERS.BufAct',
+		\   'cmd'   : 'MenuAdd bufact',
 		\   })
 	call add(items,base#menu#sep())
 
@@ -400,16 +454,36 @@ function! base#menu#add(...)
 """menuopt_menus
  elseif menuopt == 'menus'
 
+	 call base#menu#pref('menus')
+	 call base#menu#clear()
+
+	 let items = []
+	 call add(items,base#menu#sep())
+	 call add(items, {
+            \ 'item' : '&MENUS.&reload',
+            \ 'cmd'  : 'MenuAdd menus',
+            \ } )
+	 call add(items,base#menu#sep())
+	 call add(items, {
+            \ 'item' : '&MENUS.&BaseDatView\ menus',
+            \ 'cmd'  : 'BaseDatView menus',
+            \ } )
+	 call add(items,base#menu#sep())
+
    for mn in base#varget('menus',[])
-      call base#menu#additem({
+      call add(items,{
             \ 'item' : '&MENUS.&ADD.&' . mn,
             \ 'cmd'  : 'MenuAdd ' . mn,
             \ })
-      call base#menu#additem({
+      call add(items,{
             \ 'item' : '&MENUS.&RESET.&' . mn,
             \ 'cmd'  : 'MenuReset ' . mn,
             \ })
    endfor
+
+	 for item in items
+      call base#menu#additem(item)
+	 endfor
 
 """menuopt_latex
  elseif menuopt == 'latex'
