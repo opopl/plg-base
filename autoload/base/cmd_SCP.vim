@@ -40,22 +40,17 @@ endfunction
 "		call base#cmd_SCP#buf_add_tags ()
 "	Call tree
 "		Calls
-"			base#scp#bufn
-"			base#ctags#run
-"			base#tags#add
+"			base#scp#tags_make
+"				base#scp#bufn
+"				base#ctags#run
+"				base#tags#add
 
-function! base#cmd_SCP#buf_set_tags ()
-	let buf_nums = base#scp#bufn()
-	let buf_files = map(buf_nums,'bufname(v:val)')
+function! base#cmd_SCP#tags_make ()
+	call base#scp#tags_make()
+endfunction
 
-	let tfile = base#qw#catpath('tagdir scp.tags')
-
-	call base#ctags#run({ 
-		\	'files' : buf_files, 
-		\	'tfile' : tfile 
-		\	})
-	call base#tags#add(tfile)
-
+function! base#cmd_SCP#tags_set ()
+	call base#scp#tags_set()
 endfunction
 
 function! base#cmd_SCP#dump_scp_data ()

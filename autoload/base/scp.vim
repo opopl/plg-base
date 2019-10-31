@@ -36,6 +36,33 @@ function! base#scp#data_basename()
 	return base#scp#data("basename")
 endfunction
 
+function! base#scp#tfile()
+	let tfile = base#qw#catpath('tagdir scp.tags')
+	return tfile
+endfunction
+
+"	Called by
+"		base#cmd_SCP#tags_make
+
+function! base#scp#tags_make()
+	let buf_nums  = base#scp#bufn()
+	let buf_files = map(buf_nums,'bufname(v:val)')
+
+	let tfile = base#scp#tfile()
+
+	call base#ctags#run({ 
+		\	'files' : buf_files, 
+		\	'tfile' : tfile 
+		\	})
+
+	call base#scp#tags_set()
+endfunction
+
+function! base#scp#tags_set()
+	let tfile = base#scp#tfile()
+	call base#tags#add(tfile)
+endfunction
+
 function! base#scp#bufn()
 	let b = base#buffers#get()
 

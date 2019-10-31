@@ -22,14 +22,23 @@ function! base#ctags#run (...)
 	endif
 
 	let files    = get(ref,'files',[])
-	let files_se = map(copy(files),'shellescape(v:val)')
+
+	if has('win32')
+		let files_se = map(copy(files),'base#file#win2unix(shellescape(v:val))')
+	else
+		let files_se = map(copy(files),'shellescape(v:val)')
+	endif
 
 	let cmd_a = [ 'ctags -R -o', tfile_se ]
 	call extend(cmd_a, files_se )
 
 	let cmd = join(cmd_a, " ")
 
-	let env = { 'cmd_ctags' : cmd }
+	let env = { 
+		\	'cmd_ctags' : cmd ,
+		\	'tfile'     : tfile,
+		\	}
+
 	function env.get(temp_file) dict
 		call base#ctags#run_Fn(self,a:temp_file)
 	endfunction
@@ -46,6 +55,7 @@ function! base#ctags#run_Fn (self,temp_file)
 		let temp_file = a:temp_file
 		
 		let code = self.return_code
+		let tfile = get(self,'tfile','')
 
 		let info = []
 		call add(info,'CTAGS RETURN CODE:')

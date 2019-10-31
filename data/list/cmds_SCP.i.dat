@@ -1,3 +1,4 @@
 list_bufs
 dump_scp_data
-buf_set_tags
+tags_make
+tags_set
