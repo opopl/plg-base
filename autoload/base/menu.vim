@@ -367,7 +367,6 @@ function! base#menu#add(...)
      try
         silent exe cmd
      catch
-				echo v:exception
 				let msg = [
 					\	'error: ' . cmd ,
 					\	]

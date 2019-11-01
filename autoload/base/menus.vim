@@ -10,6 +10,11 @@ function! base#menus#init ()
 
      let allmenus={}
 
+		 let m = base#qw('scp ssh buffers bufact menus')
+		 for mn in m
+		 		call base#menu#add(m)
+		 endfor
+
      for i in base#listnewinc(1,10,1)
         let allmenus[ 'ToolBar.sep' . i ]=  {
              \ 'item'    : '-sep' . i .'-',  
