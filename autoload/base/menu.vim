@@ -46,7 +46,7 @@ endfunction
 function! base#menu#clear (...)
 	let pref = get(a:000,0,'')
 
-	let pref = len(pref) ? base#menu#pref(pref) : pref
+	let pref = strlen(pref) ? base#menu#pref(pref) : pref
 
 	try
 		exe 'aunmenu &' . toupper(pref)
@@ -56,6 +56,7 @@ endfunction
 
 function! base#menu#pref (...)
 	let pref = get(a:000,0,'')
+
 	if !exists("s:pref")
 		let s:pref = ''
 	endif
