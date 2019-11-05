@@ -8,15 +8,14 @@ endfunction
 
 function! base#menus#init ()
 
-
 		 let menus = base#qw('scp ssh buffers bufact menus')
-		 for mn in menus
+		 for m in menus
 		 		call base#menu#add(m)
 		 endfor
 
      let allmenus = {}
 
-     for i in base#listnewinc(1,10,1)
+     for i in base#listnewinc(1, 10, 1)
         let allmenus[ 'ToolBar.sep' . i ]=  {
              \ 'item'    : '-sep' . i .'-',  
              \ 'fullcmd' : 'an ToolBar.-sep' . i . '- <Nop>',  
