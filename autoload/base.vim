@@ -238,7 +238,7 @@ endfun
 
 """base_runvimfunc
 fun! base#runvimfunc(fun,...)
-  let fun=a:fun
+  let fun = a:fun
 
   if a:0
     let args="'" . join(a:000,"','") . "'" 
