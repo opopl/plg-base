@@ -44,7 +44,9 @@ function! base#menu#remove(...)
 endfunction
 
 function! base#menu#clear (...)
-	let pref = base#menu#pref()
+	let pref = get(a:000,0,'')
+
+	let pref = len(pref) ? base#menu#pref(pref) : pref
 
 	try
 		exe 'aunmenu &' . toupper(pref)
@@ -162,6 +164,8 @@ function! base#menu#add(...)
      call base#menu#add(opt)
    endfor
  endif
+
+	call base#menu#clear(menuopt)
 
 """menuopt_projs
  if menuopt == 'projs'
@@ -332,13 +336,31 @@ function! base#menu#add(...)
 		let name = get(tag,'name','')
 	endfor
 
+"""menuopt_base
+" For 'base' plugin
+ elseif menuopt == 'base'
+		let items = []
+
+		call add(items, base#menu#sep() )
+		
+		for topic in base#varget('info_topics',[])
+			 call add(items,{
+					\   'item'  : '&BASE.&' . topic,
+					\   'cmd'   : 'INFO ' . topic,
+					\   }
+					\	)
+		endfor
+
+		call add(items, base#menu#sep() )
+
+	 for item in items
+     call base#menu#additem(item)
+	 endfor
+
 """menuopt_bufact
  elseif menuopt == 'bufact'
 		let items = []
 		let comps = exists('b:comps_BufAct') ? b:comps_BufAct : []
-
-		call base#menu#pref('bufact')
-		call base#menu#clear()
 
 		call add(items,base#menu#sep())
 		 call add(items,{

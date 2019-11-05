@@ -2,6 +2,7 @@
 #
 _vim_
 buffers
+base
 bufact
 dat
 latex
