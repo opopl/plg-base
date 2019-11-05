@@ -46,7 +46,15 @@ endfunction
 function! base#menu#clear (...)
 	let pref = get(a:000,0,'')
 
-	let pref = strlen(pref) ? base#menu#pref(pref) : pref
+	if !strlen(pref)
+		let pref = base#menu#pref()
+	else
+		call base#menu#pref(pref)
+	endif
+
+	if !strlen(pref)
+		return
+	endif
 
 	try
 		exe 'aunmenu &' . toupper(pref)
@@ -166,8 +174,9 @@ function! base#menu#add(...)
    endfor
  endif
 
-	call base#menu#clear(menuopt)
+	"call base#menu#clear(menuopt)
 
+	echo menuopt
 """menuopt_projs
  if menuopt == 'projs'
 		call projs#menus#set()
