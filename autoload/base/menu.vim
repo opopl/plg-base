@@ -176,7 +176,6 @@ function! base#menu#add(...)
 
 	"call base#menu#clear(menuopt)
 
-	echo menuopt
 """menuopt_projs
  if menuopt == 'projs'
 		call projs#menus#set()
