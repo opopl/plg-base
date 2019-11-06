@@ -817,13 +817,14 @@ fun! base#fileopen(ref)
 			endif
 		endif
 
- " if base#buffers#file_is_loaded(file)
-		"let nr = bufnr(file)
-		"if load_buf
-			"exe 'buffer ' . nr
-		"endif
-		"continue
-	"endif
+		if base#buffers#file_is_loaded(file)
+			let nr = bufnr(file)
+			if load_buf
+				exe 'buffer ' . nr
+			else
+				continue
+			endif
+		endif
 
   exe action . ' ' . file
 
@@ -3635,13 +3636,24 @@ function! base#mkdir (dir)
 
 endf
 
+"
+"Usage
+"	call base#viewdat (dat)
+"Call tree
+"	Calls
+"		base#datafiles
+"			base#sqlite#datfiles
+"				base#init#sqlite
+"				pymy#sqlite#query
+"				base#dbfile
+"		base#fileopen
 
 function! base#viewdat (...)
             
   if a:0
-    let dat=a:1
+    let dat = a:1
   else
-    let dat=base#getfromchoosedialog({ 
+    let dat = base#getfromchoosedialog({ 
         \ 'list'        : base#datlist(),
         \ 'startopt'    : '',
         \ 'header'      : "Available DAT files are: ",

@@ -6,7 +6,6 @@ use utf8;
 
 package main;
 
-my $d = D->new(%o);
+use base qw(Plg::Base::Dialog::List);
 
-$d->run;
-
+__PACKAGE__->new->run;

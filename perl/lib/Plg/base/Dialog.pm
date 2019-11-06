@@ -9,7 +9,17 @@ use Tk;
 
 use FindBin qw( $Bin $Script );
 use File::Basename qw(basename);
+use File::Slurp qw(
+  append_file
+  edit_file
+  edit_file_lines
+  read_file
+  write_file
+  prepend_file
+);
 
+use Getopt::Long qw(GetOptions);
+use JSON::XS;
 
 sub new
 {
@@ -30,6 +40,8 @@ sub init {
 	my $h = { 
 		root_dir    => $Bin,
 		script_name => $script_name,
+		opt_str     => [ ],
+		opt         => {},
 	};
 		
 	my @k = keys %$h;
@@ -39,14 +51,81 @@ sub init {
 	return $self;
 }
 
+      
+sub get_opt {
+	my ($self) = @_;
+	
+	Getopt::Long::Configure(qw(bundling no_getopt_compat no_auto_abbrev no_ignore_case_always));
+	
+	unless( @ARGV ){ 
+		$self->dhelp;
+		exit 0;
+	}else{
+		$self->{cmdline} = join(' ',@ARGV);
+		GetOptions($self->{opt},@{ $self->{opt_str} || [] });
+	}
+
+	return $self;	
+}
+
+sub dhelp {
+	my ($self) = @_;
+
+	my $s = qq{
+
+	USAGE
+		$Script OPTIONS
+	OPTIONS
+
+	EXAMPLES
+		$Script ...
+
+	};
+
+	print $s . "\n";
+
+	return $self;	
+}
+
 sub run {
 	my $self = shift;
 
-	my $data = catfile( $self->{root_dir}, $self->{script_name} . '.data' );
+	$self
+		->read_data
+		->tk_run
+		;
+
+	return $self;
+}
+
+sub tk_run {
+	my $self = shift;
+
+	my $mw = MainWindow->new;
+	$mw->Button(
+		-text    => 'Quit',
+		-command => sub { exit },
+	)->pack;
+	MainLoop;
+
+	return $self;
+}
+
+sub read_data {
+	my $self = shift;
+
+	my $data_file = catfile( $self->{root_dir}, $self->{script_name} . '.data' );
+
+	if (! -e $data_file) {
+		return $self;
+	}
+	my $data_json = read_file($data_file);
+
+	my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
+	$self->{data} = $coder->decode($data_json);
 
 	return $self;
 }
 
 1;
  
-
