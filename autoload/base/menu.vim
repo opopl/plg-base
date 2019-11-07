@@ -333,6 +333,8 @@ function! base#menu#add(...)
 """menuopt_tags
  elseif menuopt == 'tags'
 
+	call base#menu#pref('tags')
+	call base#menu#clear()
 
 	let items = []
 	let tags  = taglist("^")
