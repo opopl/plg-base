@@ -174,7 +174,7 @@ function! base#menu#add(...)
    endfor
  endif
 
-	"call base#menu#clear(menuopt)
+	call base#menu#clear(menuopt)
 
 """menuopt_projs
  if menuopt == 'projs'
@@ -333,8 +333,6 @@ function! base#menu#add(...)
 """menuopt_tags
  elseif menuopt == 'tags'
 
-	call base#menu#pref('tags')
-	call base#menu#clear()
 
 	let items = []
 	let tags  = taglist("^")
@@ -372,8 +370,8 @@ function! base#menu#add(...)
 		let comps = exists('b:comps_BufAct') ? b:comps_BufAct : []
 
 		call add(items,base#menu#sep())
-		 call add(items,{
-			\   'item'  : '&BUFACT.reload' ,
+		call add(items,{
+			\   'item'  : '&BUFACT.&reload\ this\ menu' ,
 			\   'cmd'   : 'MenuAdd bufact',
 			\   }
 			\	)
