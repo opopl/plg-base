@@ -2,9 +2,9 @@
 function! base#menu#remove(...)
 
 	if a:0
-    let menuopt=a:1
+    let menuopt = a:1
  else
-    let menuopt=base#getfromchoosedialog({ 
+    let menuopt = base#getfromchoosedialog({ 
         \ 'list'        : base#varget('menus',[]),
         \ 'startopt'    : 'projs',
         \ 'header'      : "Available menu options are: ",
@@ -167,7 +167,7 @@ function! base#menu#add(...)
 	endif
 
 """_menuopt
- let menusbefore= [ 'menus', 'omni', 'buffers' ]
+ let menusbefore = [ 'menus', 'omni', 'buffers' ]
  if ! base#inlist(menuopt,menusbefore)
    for opt in menusbefore
      call base#menu#add(opt)
