@@ -10,7 +10,7 @@
 "			\	})
 "
 function! base#script#run ( ... )
-	let ref = get(a:000,0,{})
+	let ref = get(a:000, 0, {})
 
 	let script = get(ref, 'script', '')
 	let args   = get(ref, 'args', [])
@@ -38,7 +38,5 @@ function! base#script#run ( ... )
 		\	'Fn'  : asc#tab_restore(env) 
 		\	})
 
-
-	
 endfunction
 

@@ -62,7 +62,7 @@ sub get_opt {
 		exit 0;
 	}else{
 		$self->{cmdline} = join(' ',@ARGV);
-		GetOptions($self->{opt},@{ $self->{opt_str} || [] });
+		GetOptions( $self->{opt}, @{ $self->{opt_str} || [] } );
 	}
 
 	return $self;	
@@ -78,8 +78,7 @@ sub dhelp {
 	OPTIONS
 
 	EXAMPLES
-		$Script ...
-
+		$Script --run
 	};
 
 	print $s . "\n";
@@ -91,6 +90,7 @@ sub run {
 	my $self = shift;
 
 	$self
+		->get_opt
 		->read_data
 		->tk_run
 		;
@@ -106,6 +106,10 @@ sub tk_run {
 		-text    => 'Quit',
 		-command => sub { exit },
 	)->pack;
+
+	my $c = $self->{tk_proc};
+	$c->($mw) if $c;
+
 	MainLoop;
 
 	return $self;
