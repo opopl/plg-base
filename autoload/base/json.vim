@@ -1,4 +1,9 @@
 
+"Purpose
+"		json encode vim variables
+"Usage
+"		let json = base#json#encode (data)
+
 function! base#json#encode (...)
 	if !has('perl') | return | endif
 
@@ -16,7 +21,6 @@ perl << eof
 
 	my $var = VimVar('var');
 
-	VIM::Msg(Dumper($var));
 	my $js  = JSON::XS->new->ascii->pretty->allow_nonref;
 
 	my $json = $js->encode($var);

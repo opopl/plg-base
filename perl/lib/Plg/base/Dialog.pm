@@ -40,9 +40,12 @@ sub init {
 	my $h = { 
 		root_dir    => $Bin,
 		script_name => $script_name,
-		opt_str     => [ ],
+		opt_str     => [ 
+			'run|r',
+		],
 		opt         => {},
 	};
+	
 		
 	my @k = keys %$h;
 

@@ -283,9 +283,12 @@ function! base#file#write_lines(...)
 	let ref = get(a:000,0,{})
 
 	let lines  = get(ref,'lines',[])
+	let text   = get(ref,'text','')
 	let file   = get(ref,'file','')
 	let prompt = get(ref,'prompt',0)
 	let mode   = get(ref,'mode','rewrite')
+
+	call extend(lines, split(text,"\n") )
 
 	if prompt
 		let yn = input('(base#file#write_lines) Write to file? (1/0):',0)

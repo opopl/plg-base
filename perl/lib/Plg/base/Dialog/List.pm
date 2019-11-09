@@ -17,15 +17,13 @@ sub init {
 
 	$self->SUPER::init();
 
-	my $h = { 
-	};
+	my $h = { };
 		
 	my @k = keys %$h;
 
 	for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
 
 	return $self;
-}
 }
 
 1;
