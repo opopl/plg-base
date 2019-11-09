@@ -10,6 +10,7 @@
 "			\	'data'   : { ... },
 "			\	})
 "
+
 function! base#script#run ( ... )
 	let ref = get(a:000, 0, {})
 
@@ -33,7 +34,7 @@ function! base#script#run ( ... )
 	      \   }
 	call base#file#write_lines(r)	
 
-	let cmd = bat_file
+	let cmd = join([ bat_file, args ], ' ')
 	
 	let env = { 
 		\	'script' : script,

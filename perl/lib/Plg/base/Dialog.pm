@@ -5,6 +5,7 @@ use strict;
 use warnings;
 
 use File::Spec::Functions qw(catfile);
+
 use Tk;
 
 use FindBin qw( $Bin $Script );
@@ -17,6 +18,7 @@ use File::Slurp qw(
   write_file
   prepend_file
 );
+use Data::Dumper qw(Dumper);
 
 use Getopt::Long qw(GetOptions);
 use JSON::XS;
@@ -105,28 +107,31 @@ sub tk_run {
 	my $self = shift;
 
 	my $mw = MainWindow->new;
-	$mw->Button(
-		-text    => 'Quit',
-		-command => sub { exit },
-	)->pack;
-
-	my $c = $self->{tk_proc};
-	$c->($mw) if $c;
+	
+	$self->tk_proc($mw, @_) if $self->can('tk_proc');
 
 	MainLoop;
 
 	return $self;
 }
 
-sub read_data {
+sub _data_file {
 	my $self = shift;
 
-	my $data_file = catfile( $self->{root_dir}, $self->{script_name} . '.data' );
+	my $data_file = catfile( $self->{root_dir}, $self->{script_name} . '_data.json' );
+	return $data_file;
+}
+
+sub read_data {
+	my $self = shift;
+	
+	my $data_file = $self->_data_file;
 
 	if (! -e $data_file) {
 		return $self;
 	}
 	my $data_json = read_file($data_file);
+	$data_json =~ s/\\"/"/g;
 
 	my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
 	$self->{data} = $coder->decode($data_json);
@@ -135,4 +140,3 @@ sub read_data {
 }
 
 1;
- 
