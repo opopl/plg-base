@@ -1967,14 +1967,15 @@ fun! base#sys(...)
 
  let cmds=[]
 
- let opts={
-    \   'custom_error_message': 0   ,
-    \   'show_output'  : 0          ,
-    \   'prompt'       : 1          ,
-    \   'skip_errors'  : 0          ,
-    \   'split_output' : 0         ,
-    \   'write_to_bat' : ''        ,
-    \   'use_vimproc'  : 0        ,
+ let opts = {
+    \   'custom_error_message' : 0  ,
+    \   'show_output'          : 0  ,
+    \   'prompt'               : 1  ,
+    \   'skip_errors'          : 0  ,
+    \   'split_output'         : 0  ,
+    \   'write_to_bat'         : '' ,
+    \   'use_vimproc'          : 0  ,
+    \   'start_dir'            : 0  ,
     \   }
 
  if a:0 
@@ -2019,6 +2020,13 @@ fun! base#sys(...)
  endif
 
  let use_vimproc = get(opts,'use_vimproc',0)
+
+ let start_dir = get(opts, 'start_dir', '' )
+ let old_dir = ''
+ if start_dir && isdirectory(start_dir)
+	 let old_dir = getcwd()
+	 call base#cd(start_dir)
+ endif
 
  for cmd in cmds 
 		if use_vimproc
@@ -2087,6 +2095,10 @@ fun! base#sys(...)
     setlocal nobuflisted
     setlocal nomodifiable
 
+ endif
+
+ if strlen(old_dir)
+	 call base#cd(old_dir)
  endif
 
  return ok
