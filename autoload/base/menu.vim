@@ -522,14 +522,16 @@ function! base#menu#add(...)
 """menuopt_latex
  elseif menuopt == 'latex'
 
+	 let items = []
+	 
       for entry in base#varget('tex_insert_entries',[]) 
-        	call base#menu#additem({
+        	call add(items, {
             \ 'item' : '&TEX.&INSERT.&' . entry,
             \ 'cmd'  : 'TEXINSERT ' . entry,
             \ })
       endfor
 
-      let texinputs=base#find({
+      let texinputs = base#find({
             \ 'qw_dirids'    : 'texinputs',
             \ 'qw_exts'      : 'tex',
             \ 'fnamemodify'  : ':p:t',
@@ -540,16 +542,20 @@ function! base#menu#add(...)
         let fname = substitute(id,'\.','\\.','g')
         let file  = base#catpath('texinputs',fname)
 
-        call base#menu#additem({
+        call add(items, {
               \ 'item' : '&TEX.&TEXINPUTS.&' . fname,
               \ 'cmd'  : 'call base#fileopen(' . "'" . file . "'" . ')',
               \ })
       endfor
 
-      call base#menu#additem({
+      call add(items, {
             \ 'item' : '&TEX.&RUN.&pdfTeX' ,
             \ 'cmd'  : 'PlainTexRun',
             \ })
+
+			for item in items
+				call base#menu#additem(item)
+			endfor
 
  endif
  
