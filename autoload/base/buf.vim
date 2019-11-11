@@ -21,6 +21,24 @@ function! base#buf#tabs_nice(...)
 	endtry
 endf
 
+function! base#buf#delete(...)
+	let ref = get(a:000,0,{})
+
+	let start = get(ref,'start',0)
+	let end   = get(ref,'end',getline('$'))
+
+	let nums  = get(ref,'nums',[])
+
+	if has_key(ref,'start') && has_key(ref,'end')
+		let i = start
+		while i < end + 1
+			dd
+			let i+=1
+		endw
+
+	endif
+endf
+
 function! base#buf#act(...)
 	let start = get(a:000,0,0)
 	let end   = get(a:000,1,getline('$'))
