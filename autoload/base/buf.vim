@@ -31,6 +31,7 @@ function! base#buf#cut(...)
 
 	if has_key(ref,'start') && has_key(ref,'end')
 		exe printf('%s,%s delete',start,end)
+	endif
 endf
 
 function! base#buf#act(...)
