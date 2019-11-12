@@ -812,7 +812,7 @@ fun! base#fileopen(ref)
 	 let action = 'edit'
 	 let action = base#varget('fileopen_action',action)
 	
-	 let opts={}
+	 let opts = {}
 	
 	 if base#type(ref) == 'String'
 	   let files = [ ref ] 
@@ -828,9 +828,11 @@ fun! base#fileopen(ref)
 	   
 	 endif
 
+	 let vim_code = join( map(copy(files),'"call base#fileopen(" . v:val . ")"' ),"\n" )
 	 let prf = { 
-		 	\	'func'   : 'base#fileopen',
-		 	\	'plugin' : 'base',
+		 	\	'func'     : 'base#fileopen',
+		 	\	'plugin'   : 'base',
+		 	\	'vim_code' : vim_code,
 		 	\	}
 	 call base#log([
 		 	\	'opening files => ' . base#dump(files),

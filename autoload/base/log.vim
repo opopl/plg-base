@@ -65,6 +65,26 @@ function! base#log#func ()
 
 endfunction
 
+function! base#log#vim_code ()
+	let dbfile = base#dbfile()
+
+	let q = 'SELECT prf,plugin,vim_code FROM log ' 
+	let q .= ' WHERE length(vim_code) > 0'
+
+	let p = []
+	let q = input('log view query: ',q)
+
+	let rq = {
+			\	'dbfile' : dbfile,
+			\	'q'      : q,
+			\	'p'      : p,
+			\	}
+
+	call extend(lines, pymy#sqlite#query_screen(rq) )
+	call base#buf#open_split({ 'lines' : lines })
+
+endfunction
+
 function! base#log#v_exception ()
 	let dbfile = base#dbfile()
 
