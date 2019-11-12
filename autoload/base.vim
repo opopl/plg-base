@@ -563,7 +563,6 @@ function! base#log (msg,...)
 		call add(log,ref)
 		call base#varset('base_log',log)
 
-		let p = [ time,loglevel,elapsed,msg,prf,fnc,plugin,v_exception ]
 		let fields = {
 				\	'elapsed'     : elapsed,
 				\	'fnc'         : fnc,
@@ -579,50 +578,35 @@ function! base#log (msg,...)
 		let field_list = keys(fields)
 		let fields_str = join(field_list, ',')
 
+		let bind = []
+		for f in field_list 
+			if has_key(fields, f)
+				call add(bind, get(fields,f,''))
+			endif
+		endfor
+
 		let quotes = join( map(base#listnewinc(1,len(field_list),1), '"?"' ), ',' )
 
-		let q = 'INSERT OR IGNORE INTO log (%s) VALUES(%s)'
-		let q = printf(q, fields_str, quotes)
+		let query = 'INSERT OR IGNORE INTO log (%s) VALUES(%s)'
+		let query = printf(query, fields_str, quotes)
+
+		let lib = base#qw#catpath('plg base python lib')
+		call pymy#py#add_lib(lib)
 
 python << eof
 
-import vim
+import vim, sys
 import sqlite3
+import plg.base as base
 
 #------------------------------------------------------------
-def table_exists (ref):
-	table  = ref.get('table')
-	cur    = ref.get('cur')
-	dbfile = ref.get('dbfile')
-	tables = []
-	q='''
-		SELECT 
-			name 
-		FROM 
-			sqlite_master
-		WHERE 
-			type IN ('table','view') AND name NOT LIKE 'sqlite_%'
-		UNION ALL
-		SELECT 
-			name 
-		FROM 
-			sqlite_temp_master
-		WHERE 
-			type IN ('table','view')
-		ORDER BY 1
-	'''
-	if cur:
-		cur.execute(q)
-		rows = cur.fetchall()
-		tables = map(lambda x: x[0], rows)
-		if table in tables:
-			return 1
-	return 0
+
 #------------------------------------------------------------
 	
 base_dbfile = vim.eval('base#dbfile()')
-q = vim.eval('q')
-p = vim.eval('p')
+
+query = vim.eval('query')
+bind  = vim.eval('bind')
 
 base_conn = sqlite3.connect(base_dbfile)
 base_cur = base_conn.cursor()
@@ -644,11 +628,10 @@ if not table_exists({ 'table' : 'log', 'cur' : base_cur }):
 	base_cur.execute(q)
 #*******************************
 
-base_cur.execute(q,p)
+base_cur.execute(query,bind)
 
 base_conn.commit()
 base_conn.close()
-
 
 eof
 		
