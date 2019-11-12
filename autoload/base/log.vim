@@ -68,7 +68,7 @@ endfunction
 function! base#log#vim_code ()
 	let dbfile = base#dbfile()
 
-	let q = 'SELECT prf,plugin,vim_code FROM log ' 
+	let q = 'SELECT prf,plugin,func,vim_code FROM log ' 
 	let q .= ' WHERE length(vim_code) > 0'
 
 	let p = []
@@ -80,6 +80,7 @@ function! base#log#vim_code ()
 			\	'p'      : p,
 			\	}
 
+	let lines = []
 	call extend(lines, pymy#sqlite#query_screen(rq) )
 	call base#buf#open_split({ 'lines' : lines })
 
