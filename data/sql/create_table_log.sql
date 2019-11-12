@@ -7,5 +7,6 @@ CREATE TABLE IF NOT EXISTS log (
 	func TEXT,
 	plugin TEXT,
 	prf TEXT,
-	v_exception TEXT
+	v_exception TEXT,
+	vim_code TEXT
 );
