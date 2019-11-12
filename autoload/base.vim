@@ -537,6 +537,8 @@ function! base#log (msg,...)
 	let plugin   = get(ref,'plugin','')
 	let loglevel = get(ref,'loglevel','')
 
+	let vim_code = get(ref,'vim_code','')
+
 	let v_exception = get(ref,'v_exception','')
 
 	let do_echo = get(ref,'echo',0)
@@ -561,8 +563,27 @@ function! base#log (msg,...)
 		call add(log,ref)
 		call base#varset('base_log',log)
 
-		let p = [time,loglevel,elapsed,msg,prf,fnc,plugin,v_exception]
-		let q = 'INSERT OR IGNORE INTO log (time,loglevel,elapsed,msg,prf,func,plugin,v_exception) VALUES(?,?,?,?,?,?,?,?)'
+		let p = [ time,loglevel,elapsed,msg,prf,fnc,plugin,v_exception ]
+		let fields = {
+				\	'elapsed'     : elapsed,
+				\	'fnc'         : fnc,
+				\	'loglevel'    : loglevel,
+				\	'msg'         : msg,
+				\	'plugin'      : plugin,
+				\	'prf'         : prf,
+				\	'time'        : time,
+				\	'v_exception' : v_exception,
+				\	'vim_code'    : vim_code,
+				\	}
+
+		let field_list = keys(fields)
+		let fields_str = join(field_list, ',')
+
+		let quotes = join( map(base#listnewinc(1,len(field_list),1), '"?"' ), ',' )
+
+		let q = 'INSERT OR IGNORE INTO log (%s) VALUES(%s)'
+		let q = printf(q, fields_str, quotes)
+
 python << eof
 
 import vim
