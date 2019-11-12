@@ -856,55 +856,55 @@ fun! base#fileopen(ref)
 			endif
 		endif
 
-  exe action . ' ' . file
+	  exe action . ' ' . file
+	
+	  let au      = get(opts,'au',{})
+	  for [ aucmd, auexec ] in items(au)
+	    
+	    let f = base#file#win2unix(fnamemodify(':p',file))
+	    exe join(['aucmd', aucmd, f, auexec ],' ')
+	    
+	  endfor
 
-  let au      = get(opts,'au',{})
-  for [ aucmd, auexec ] in items(au)
-    
-    let f = base#file#win2unix(fnamemodify(':p',file))
-    exe join(['aucmd', aucmd, f, auexec ],' ')
-    
-  endfor
+	  let Fc      = get(opts,'Fc','')
+	  let Fc_args = get(opts,'Fc_args',[])
 
-  let Fc      = get(opts,'Fc','')
-  let Fc_args = get(opts,'Fc_args',[])
+	  if type(Fc) == type(function('call'))
+			try
+	    	call call( Fc, Fc_args )
+			catch 
+				let msg = [
+					\	'callback fail:', 
+					\	'  args        => ' . base#dump(Fc_args),
+					\	]
+				let prf = {
+					\	'loglevel'    : 'warn',
+					\	'v_exception' : v:exception,
+					\	'plugin'      : 'base',
+					\	'func'        : 'base#fileopen'
+					\	}
+				call base#log(msg,prf)
+			endtry
+	  endif
 
-  if type(Fc) == type(function('call'))
-		try
-    	call call( Fc, Fc_args )
-		catch 
-			let msg = [
-				\	'callback fail:', 
-				\	'  args        => ' . base#dump(Fc_args),
-				\	]
-			let prf = {
-				\	'loglevel'    : 'warn',
-				\	'v_exception' : v:exception,
-				\	'plugin'      : 'base',
-				\	'func'        : 'base#fileopen'
-				\	}
-			call base#log(msg,prf)
-		endtry
-  endif
-
-  let exec = get(opts,'exec','')
-
-  if len(exec)
-    if type(exec) == type([])
-      for e in exec
-        exe e
-      endfor
-    elseif type(exec) == type('')
-      exe exec
-    endif
-  endif
+	  let exec = get(opts,'exec','')
+	
+	  if len(exec)
+	    if type(exec) == type([])
+	      for e in exec
+	        exe e
+	      endfor
+	    elseif type(exec) == type('')
+	      exe exec
+	    endif
+	  endif
  endfor
  
 endfun
  
 
 """base_inlist
-fun! base#inlist(element,list)
+fun! base#inlist(element, list)
  let r=( index(a:list,a:element) >= 0 ) ? 1 : 0
 
  return r 
