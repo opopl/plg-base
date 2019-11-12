@@ -597,7 +597,6 @@ python << eof
 
 import vim, sys
 import sqlite3
-import plg.base as base
 
 def table_exists (ref):
        table  = ref.get('table')
@@ -828,7 +827,7 @@ fun! base#fileopen(ref)
 	   
 	 endif
 
-	 let vim_code = join( map(copy(files),'"call base#fileopen(" . v:val . ")"' ),"\n" )
+	 let vim_code = join( map(copy(files),'"call base#fileopen(\"" . escape(v:val,"\\") . "\")"' ),"\n" )
 	 let prf = { 
 		 	\	'func'     : 'base#fileopen',
 		 	\	'plugin'   : 'base',
