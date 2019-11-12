@@ -110,7 +110,7 @@ fun! base#buffers#fill_db(...)
 					\ "h"      : buf,
 					\ }
 					
-			let [rowid] = pymy#sqlite#insert_hash(ref)
+			let [ rowid ] = pymy#sqlite#insert_hash(ref)
 	endfor
 
 endfun
@@ -119,7 +119,7 @@ fun! base#buffers#file_is_loaded(file)
 	let file     = a:file
 
 	let bref     = base#buffers#get()
-	let buffiles = get(bref,'buffiles',[])
+	let buffiles = get(bref, 'buffiles', [])
 
 	return base#inlist(file, buffiles)
 

@@ -17,9 +17,24 @@ function! base#vimlines#action (action,start,end,...)
 		endw
 		call writefile(lines,tmp)
 
-		redir => l:v 
-		silent exe 'so ' . tmp
-		redir END
+		let l:v = ''
+
+		try
+			redir => l:v 
+			silent exe 'so ' . tmp
+			redir END
+		catch 
+			let msg = [
+				\	'action => execute',
+				\	]
+			let prf = {
+				\	'loglevel'    : 'warn',
+				\	'v_exception' : v:exception,
+				\	'plugin'      : 'base',
+				\	'func'        : 'base#vimlines#action'
+				\	}
+			call base#log(msg,prf)
+		endtry
 	
 		let l = split(l:v,"\n")
 		if len(l)
