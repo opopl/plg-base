@@ -115,12 +115,27 @@ from xml.etree.ElementTree import (
 
 xml_files = vim.eval('xml_files')
 
+vars = {}
+
 for xml_file in xml_files:
 	with open(xml_file, 'rt') as f:
 		tree = ElementTree.parse(f)
-		for node in tree.iter():
-			print(node.tag)
-			print(node.text)
+		for var_node in tree.findall('.//var'):
+			v_name      = var_node.attrib.get('name')
+			v_type      = var_node.attrib.get('type')
+			v_entry_tag = var_node.attrib.get('entry_tag')
+			if v_type == 'dict':
+				var = {}
+				for entry in tree.findall('.//' + v_entry_tag ):
+					key   = entry.attrib.get('key')
+					value = entry.attrib.get('value')
+					if value is None:
+						value = entry.text
+					value_split = map(lambda x: x.strip(), value.split("\n") )
+					print(value_split)
+					print(value.split("\n"))
+					var.update({ key : value })
+				print(var)
 	
 eof
 endfunction
