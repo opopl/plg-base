@@ -45,22 +45,22 @@ function! base#plg#runtime (...)
 endf	
 
 function! base#plg#datpaths (...)
-		let ref=get(a:000,0,{})
+		let ref = get(a:000,0,{})
 
-		let plg = get(ref,'plg','')
+		let plg  = get(ref,'plg','')
 		let type = get(ref,'type','list')
 
 		let dbfile = base#dbfile()
 
-		let q = 'select keyfull, datfile from datfiles where plugin = ? and type = ?'
+		let q = 'SELECT keyfull, datfile FROM datfiles WHERE plugin = ? AND type = ?'
 		let p = [ plg, type ]
 
-		let [rows_h,cols] = pymy#sqlite#query({
+		let [ rows_h, cols ] = pymy#sqlite#query({
 			\	'dbfile' : dbfile,
 			\	'p'      : p,
 			\	'q'      : q,
 			\	})
-		let datpaths={}
+		let datpaths = {}
 		for rh in rows_h
 			let k = get(rh,'keyfull','')
 			let v = get(rh,'datfile','')
@@ -76,14 +76,67 @@ endfunction
 
 function! base#plg#loadvars (...)
 
+	if ! a:0 | return | endif
+
+	let plg = get(a:000,0,'')
+	let ref = get(a:000,1,{})
+
+	call base#plg#loadvars_dat(plg, ref )
+	call base#plg#loadvars_xml(plg, ref )
+endfunction
+
+function! base#plg#loadvars_xml (...)
+	if ! a:0 | return | endif
+
+	let plg = get(a:000,0,'')
+	let ref = get(a:000,1,{})
+
+	let prf = { 'func' : 'base#plg#loadvars_xml', 'plugin' : 'base' }
+	call base#log([
+		\	'plg => ' . plg,
+		\	],prf )
+
+	let dir = base#qw#catpath(printf('plg %s data xml',plg))
+
+	let xml_files = base#find({ 
+		\	"dirs"        : [dir],
+		\	"exts"        : 'xml',
+		\	"relpath"     : 1,
+		\	"subdirs"     : 1,
+		\	"fnamemodify" : ':p',
+		\	})
+
+python3 << eof
+import vim
+from xml.etree import ElementTree
+from xml.etree.ElementTree import (
+	tostring
+)
+
+xml_files = vim.eval('xml_files')
+
+for xml_file in xml_files:
+	with open(xml_file, 'rt') as f:
+		tree = ElementTree.parse(f)
+		for node in tree.iter():
+			print(node.tag)
+			print(node.text)
+	
+eof
+endfunction
+
+function! base#plg#loadvars_dat (...)
+
 	if a:0
 		let plg = get(a:000,0,'')
 		let ref = get(a:000,1,{})
+	else
+		return
 	endif
 
 	let dbfile = base#dbfile()
 
-	let prf = { 'func' : 'base#plg#loadvars', 'plugin' : 'base' }
+	let prf = { 'func' : 'base#plg#loadvars_dat', 'plugin' : 'base' }
 	call base#log([
 		\	'plg => ' . plg,
 		\	],prf )
