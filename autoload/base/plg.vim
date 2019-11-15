@@ -114,6 +114,7 @@ from xml.etree.ElementTree import (
 )
 
 xml_files = vim.eval('xml_files')
+plg       = vim.eval('plg')
 
 vars = {}
 
@@ -122,6 +123,8 @@ for xml_file in xml_files:
 		tree = ElementTree.parse(f)
 		for var_node in tree.findall('.//var'):
 			v_name      = var_node.attrib.get('name')
+			if v_name != 'base': 
+				v_name = plg + '_' + v_name
 			v_type      = var_node.attrib.get('type')
 			v_entry_tag = var_node.attrib.get('entry_tag')
 			if v_type == 'dict':
@@ -132,12 +135,15 @@ for xml_file in xml_files:
 					if value is None:
 						value = entry.text
 					value_split = map(lambda x: x.strip(), value.split("\n") )
-					print(value_split)
-					print(value.split("\n"))
+					value = "\n".join(list(value_split))
 					var.update({ key : value })
-				print(var)
-	
+			if var is not None: 
+				vars.update({ v_name : var })
 eof
+	let vars = py3eval('vars')
+	for [k,v] in items(vars)
+		call base#varset(k,v)
+	endfor
 endfunction
 
 function! base#plg#loadvars_dat (...)
