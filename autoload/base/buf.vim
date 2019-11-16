@@ -233,6 +233,8 @@ function! base#buf#onload ()
 	exe 'nnoremap <buffer><silent> ;sv :SnippetView '.&ft.'<CR>'
 	exe 'nnoremap <buffer><silent> ;fo :PJact file_open<CR>'
 
+	let b:comps_BufAct = base#comps#bufact()
+
 	if b:ext == 'tags'
 		setf tags
 
