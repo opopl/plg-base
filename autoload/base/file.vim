@@ -426,6 +426,29 @@ function! base#file#ff_unix2dos( ... )
 		\	})
 endf
 
+function! base#file#tabs_to_spaces(file_path,...)
+	let file_path = a:file_path
+	let ts        = get(a:000,0,2)
+
+python3 << eof
+import vim
+import in_place
+
+file_path = vim.eval('file_path')
+ts        = int(vim.eval('ts'))
+
+with in_place.InPlace(file_path) as f:
+	for line in f:
+		line = line.replace("\t", ' ' * ts)
+		f.write(line)
+
+eof
+
+		let msg = [ 'file => ' . file_path ]
+		let prf = { 'plugin' : 'base', 'func' : 'base#file#tabs_to_spaces' }
+		call base#log(msg, prf)
+endf
+
 function! base#file#ff_dos2unix( ... )
 	let file = get(a:000,0,'')
 	let cmd = 'dos2unix ' . shellescape(file)

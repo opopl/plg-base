@@ -1,0 +1,329 @@
+     
+     vim:ft=help:foldmethod=indent:fenc=utf8:tw=78:
+     saved on: Tue Nov  5 12:46:24 2019
+     
+     
+     ********************************
+     >>>title: MySQL Views
+     ********************************
+     
+     ----------------------------------------------------------------------
+     Start of Outline
+     ----------------------------------------------------------------------
+     _1 MySQL Views                                    |h_1|
+     __1.1 Introduction to MySQL Views                 |h_1_1|
+     __1.2 Advantages of MySQL Views                   |h_1_2|
+     ___1.2.1 1) Simplify complex query                |h_1_2_1|
+     ___1.2.2 2) Make the business logic cons          |h_1_2_2|
+     ___1.2.3 3) Add extra security layers             |h_1_2_3|
+     ___1.2.4 4) Enable backward compatibilit          |h_1_2_4|
+     __1.3 Managing views in MySQL                     |h_1_3|
+     ____1.3.4.1 MySQL Quick Start                     |h_1_3_4_1|
+     ____1.3.4.2 MySQL Views                           |h_1_3_4_2|
+     ____1.3.4.3 MySQL Programming Interfaces          |h_1_3_4_3|
+     ____1.3.4.4 Others                                |h_1_3_4_4|
+     ____1.3.4.5 Recent MySQL Tutorials                |h_1_3_4_5|
+     ____1.3.4.6 About MySQL Tutorial Website          |h_1_3_4_6|
+     ____1.3.4.7 Site Links                            |h_1_3_4_7|
+     ----------------------------------------------------------------------
+     End of Outline
+     ----------------------------------------------------------------------
+   MySQL Tutorial
+
+     * Home
+     * Start Here
+     * Basic
+     * Advanced
+          * MySQL Stored Procedures
+          * MySQL Views
+          * MySQL Triggers
+          * MySQL Events
+          * MySQL Indexes
+          * MySQL Administration
+          * MySQL Full-Text Search
+     * Functions
+          * Aggregate Functions
+          * Control Flow Functions
+          * Comparison Functions
+          * Date & Time Functions
+          * String Functions
+          * Math Functions
+          * Window Functions
+     * Interfaces
+          * MySQL PHP
+          * MySQL Node.js
+          * MySQL JDBC
+          * MySQL Python
+          * MySQL Perl
+     * Tips
+     * TryIt
+   Home / MySQL Views
+
+1 MySQL Views
+
+   *h_1*
+
+   Summary: in this tutorial, you will learn about MySQL views and how to
+   manipulate views effectively.
+
+1.1 Introduction to MySQL Views
+
+   *h_1_1*
+
+   Let’s see the following tables customers and payments from the sample
+   database.
+
+   This query returns data from both tables customers and payments using the
+   inner join:
+
+   1 SELECT                               
+   2     customerName,                    
+   3     checkNumber,                     
+   4     paymentDate,                     
+   5     amount                           
+   6 FROM                                 
+   7     customers                        
+   8 INNER JOIN                           
+   9     payments  USING                  
+     (customerNumber);                    
+
+   Here is the output:
+
+   Next time, if you want to get the same information including customer
+   name, check number, payment date, and amount, you need to issue the same
+   query again.
+
+   One way to do this is to save the query in a file, either .txt or .sql
+   file so that later you can open and execute it from MySQL Workbench or any
+   other MySQL client tools.
+
+   A better way to do this is to save the query in the database server and
+   assign a name to it. This named query is called a database view, or
+   simply, view.
+
+   By definition, a view is a named query stored in the database catalog.
+
+   To create a new view you use the CREATE VIEW statement. This statement
+   creates a view customerPayments based on the above query above:
+
+   1  CREATE  VIEW  customerPayments       
+   2  AS                                   
+   3  SELECT                               
+   4      customerName,                    
+   5      checkNumber,                     
+   6      paymentDate,                     
+   7      amount                           
+   8  FROM                                 
+   9      customers                        
+   10 INNER JOIN                           
+   11     payments  USING                  
+      (customerNumber);                    
+
+   Once you execute the CREATE VIEW statement, MySQL creates the view and
+   stores it in the database.
+
+   Now, you can reference the view as a table in SQL statements. For example,
+   you can query data from the customerPayments view using the SELECT
+   statement:
+
+   1 SELECT  *  FROM                 
+     customerPayments;               
+
+   As you can see, the syntax is much simpler.
+
+   Note that a view does not physically store the data. When you issue the
+   SELECT statement against the view, MySQL executes the underlying query
+   specified in the view’s definition and returns the result set. For this
+   reason, sometimes, a view is referred to as a virtual table.
+
+   MySQL allows you to create a view based on a SELECT statement that
+   retrieves data from one or more tables. This picture illustrates a view
+   based on columns of multiple tables:
+
+   MySQL View MySQL View
+
+   In addition, MySQL even allows you to create a view that does not refer to
+   any table. But you will rarely find this kind of view in practice.
+
+   For example, you can create a view called daysofweek that return 7 days of
+   a week by executing the following query:
+
+   1  CREATE  VIEW  daysofweek  (day) 
+   2  AS                              
+   3      SELECT  'Mon'               
+   4      UNION                       
+   5      SELECT  'Tue'               
+   6      UNION                       
+   7      SELECT  'Web'               
+   8      UNION                       
+   9      SELECT  'Thu'               
+   10     UNION                       
+   11     SELECT  'Fri'               
+   12     UNION                       
+   13     SELECT  'Sat'               
+   14     UNION                       
+          SELECT  'Sun';              
+
+   And you can query data from the daysofweek view as follows:
+
+   1 SELECT  *  FROM           
+     daysofweek;               
+
+   This picture shows the output:
+
+1.2 Advantages of MySQL Views
+
+   *h_1_2*
+
+   MySQL views bring the following advantages.
+
+1.2.1 1) Simplify complex query
+
+   *h_1_2_1*
+
+   Views help simplify complex queries. If you have any frequently used
+   complex query, you can create a view based on it so that you can reference
+   to the view by using a simple SELECT statement instead of typing the query
+   all over again.
+
+1.2.2 2) Make the business logic consistent
+
+   *h_1_2_2*
+
+   Suppose you have to repeatedly write the same formula in every query. Or
+   you have a query that has complex business logic. To make this logic
+   consistent across queries, you can use a view to store the calculation and
+   hide the complexity.
+
+1.2.3 3) Add extra security layers
+
+   *h_1_2_3*
+
+   A table may expose a lot of data including sensitive data such as personal
+   and banking information.
+
+   By using views and privileges, you can limit which data users can access
+   by exposing only the necessary data to them.
+
+   For example, the table employees may contain SSN and address information,
+   which should be accessible by the HR department only.
+
+   To expose general information such as first name, last name, and gender to
+   the General Administration (GA) department, you can create a view based on
+   these columns and grant the users of the GA department to the view, not
+   the entire table employees .
+
+1.2.4 4) Enable backward compatibility
+
+   *h_1_2_4*
+
+   In legacy systems, views can enable backward compatibility.
+
+   Suppose, you want to normalize a big table into many smaller ones. And you
+   don’t want to impact the current applications that reference the table.
+
+   In this case, you can create a view whose name is the same as the table
+   based on the new tables so that all applications can reference the view as
+   if it were a table.
+
+   Note that a view and table cannot have the same name so you need to drop
+   the table first before creating a view whose name is the same as the
+   deleted table.
+
+1.3 Managing views in MySQL
+
+   *h_1_3*
+
+     * Create views – show you how to use the CREATE VIEW statement to create
+       a new view in the database.
+     * Understand view processing algorithms – learn how MySQL process a
+       view.
+     * Create updatable views – learn how to create updatable views.
+     * Create views with a WITH CHECK OPTION – ensure the consistency of
+       views using the WITH CHECK OPTION clause.
+     * LOCAL & CASCADED and WITH CHECK OPTION – specify the scope of the
+       check with LOCAL and CASCADED options.
+     * Drop views – guide you on how to remove one or more existing views.
+     * Show views – provide ways to find views in a database.
+     * Rename views – change the name of a view to another.
+     * * * Previous Tutorial: MySQL Triggers
+   Next Tutorial: MySQL Index
+   _____________________ [ Search ]
+
+1.3.4.1 MySQL Quick Start
+
+   *h_1_3_4_1*
+
+     * What Is MySQL?
+     * Install MySQL Database Server
+     * Connect to MySQL Server
+     * Download MySQL Sample Database
+     * Load Sample Database
+
+1.3.4.2 MySQL Views
+
+   *h_1_3_4_2*
+
+     * MySQL CREATE VIEW
+     * MySQL View Processing Algorithms
+     * MySQL Updatable Views
+     * MySQL Rename View
+     * MySQL Show View
+     * MySQL DROP VIEW
+     * MySQL View WITH CHECK OPTION
+     * MySQL View LOCAL & CASCADED
+
+1.3.4.3 MySQL Programming Interfaces
+
+   *h_1_3_4_3*
+
+     * PHP MySQL Tutorial
+     * Node.js MySQL Tutorial
+     * Python MySQL Tutorial
+     * Perl MySQL Tutorial
+     * MySQL JDBC Tutorial
+
+1.3.4.4 Others
+
+   *h_1_3_4_4*
+
+     * MySQL Cheat Sheet
+     * MySQL Resources
+     * MySQL Books
+
+1.3.4.5 Recent MySQL Tutorials
+
+   *h_1_3_4_5*
+
+     * MySQL Stored Object Access Control
+     * Install MySQL on Ubuntu
+     * Install MySQL CentOS
+     * Getting Started with MySQL
+     * Connect to MySQL Server
+     * How To Lock User Accounts in MySQL
+     * How To Unlock User Accounts in MySQL Server
+     * Restart MySQL Server
+     * Start MySQL Server
+     * Stop MySQL Server
+
+1.3.4.6 About MySQL Tutorial Website
+
+   *h_1_3_4_6*
+
+   MySQLTutorial.org is a website dedicated to MySQL database. We regularly
+   publish useful MySQL tutorials to help web developers and database
+   administrators learn MySQL faster and more effectively.
+
+   All MySQL tutorials are practical and easy-to-follow, with SQL script and
+   screenshots available. More About Us
+
+1.3.4.7 Site Links
+
+   *h_1_3_4_7*
+
+     * About Us
+     * Contact Us
+     * Request a Tutorial
+     * Privacy Policy
+   Copyright © 2019 by www.mysqltutorial.org. All Rights Reserved.
+   ⤒
