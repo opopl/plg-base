@@ -21,6 +21,48 @@ function! base#list#minus (a,b)
 	return res
 endf	
 
+function! base#list#to_xml (...)
+	let ref = get(a:000,0,{})
+
+	let list = get(ref,'list',[])
+	let tag  = get(ref,'tag','item')
+
+python3 << eof
+import vim
+import xml.etree.ElementTree as et
+
+list = vim.eval('list')
+tag  = vim.eval('tag')
+
+from xml.etree import ElementTree
+from xml.dom import minidom
+
+from xml.etree.ElementTree import (
+    Element, SubElement, Comment, tostring,
+)
+
+def prettify(elem):
+    """Return a pretty-printed XML string for the Element.
+    """
+    rough_string = ElementTree.tostring(elem, 'utf-8')
+    reparsed = minidom.parseString(rough_string)
+    return reparsed.toprettyxml(indent="  ")
+
+list.sort()
+
+top = Element('list')
+for item in list:
+	n_item = SubElement(top, tag )
+	n_item.set('name', item)
+	n_item.text = ' '
+
+res = prettify(top)
+
+eof
+	let res = py3eval('res')
+	return res
+endf	
+
 function! base#list#unshift (list,element)
 	let nlist=[]
 	call add(nlist,a:element)
