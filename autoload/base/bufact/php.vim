@@ -61,7 +61,37 @@ function! base#bufact#php#exec_async ()
 	setlocal makeprg=php\ %
 	setlocal errorformat=%m\ in\ %f\ on\ line\ %l	
 
-	AsyncMake
+	let msg_a = [
+		\	"port: ",	
+		\	]
+	let msg = join(msg_a,"\n")
+	let port = base#input_we(msg,5000,{ })
+
+	let r = {
+			\	'port' : port,
+			\	'file' : b:file,
+			\	}
+	let blines = idephp#php#bat_lines_run_as_server(r)
+
+	let ftmp = base#qw#catpath('tmp_bat bufact_php_exec_async.bat')
+	call writefile(blines,ftmp)
+
+	let execmd = shellescape(ftmp)
+
+	let env = { 'port' : port }
+	function env.get(temp_file) dict
+		let code = self.return_code
+		let port = self.port
+	
+		if filereadable(a:temp_file)
+			let out = readfile(a:temp_file)
+		endif
+	endfunction
+	
+	call asc#run({ 
+		\	'cmd' : execmd, 
+		\	'Fn'  : asc#tab_restore(env) 
+		\	})
 endfunction
 
 function! base#bufact#php#echo_tag ()
