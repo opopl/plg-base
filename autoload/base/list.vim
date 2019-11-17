@@ -24,15 +24,25 @@ endf
 function! base#list#to_xml (...)
 	let ref = get(a:000,0,{})
 
-	let list = get(ref,'list',[])
-	let tag  = get(ref,'tag','item')
+	let list     = get(ref,'list',[])
+	let item_tag = get(ref,'item_tag','item')
+	let top_tag  = get(ref,'top_tag','top')
+
+	let var_type  = get(ref,'var_type','dict')
+	let var_name  = get(ref,'var_name','')
+	let var_attr  = get(ref,'var_attr',{})
 
 python3 << eof
 import vim
 import xml.etree.ElementTree as et
 
-list = vim.eval('list')
-tag  = vim.eval('tag')
+list     = vim.eval('list')
+item_tag = vim.eval('item_tag')
+top_tag  = vim.eval('top_tag')
+
+var_type  = vim.eval('var_type')
+var_name  = vim.eval('var_name')
+var_attr  = vim.eval('var_attr')
 
 from xml.etree import ElementTree
 from xml.dom import minidom
@@ -50,13 +60,25 @@ def prettify(elem):
 
 list.sort()
 
-top = Element('list')
+n_top = Element(top_tag)
+n_var = SubElement(n_top,'var')
+
+if var_type:
+	n_var.set('type', var_type)
+
+if var_name:
+	n_var.set('name', var_name)
+
+if var_attr:
+	for k,v in var_attr.items():
+		n_var.set(k, v)
+
 for item in list:
-	n_item = SubElement(top, tag )
-	n_item.set('name', item)
+	n_item = SubElement(n_var, item_tag )
+	n_item.set('key', item)
 	n_item.text = ' '
 
-res = prettify(top)
+res = prettify(n_top)
 
 eof
 	let res = py3eval('res')
