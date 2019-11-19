@@ -232,6 +232,7 @@ function! base#buf#onload ()
 	"
 	exe 'nnoremap <buffer><silent> ;sv :SnippetView '.&ft.'<CR>'
 	exe 'nnoremap <buffer><silent> ;fo :PJact file_open<CR>'
+	exe 'nnoremap <buffer><silent> ;ts :BufAct tabs_to_spaces<CR>'
 
 	let b:comps_BufAct = base#comps#bufact()
 
