@@ -130,3 +130,8 @@ perl << eof
 eof
 
 endf
+
+function! base#bufact#tex#nicer ()
+	call tex#act#buf_nice()
+	call tex#act#better_tex()
+endf
