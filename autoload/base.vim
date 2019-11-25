@@ -3510,18 +3510,31 @@ function! base#varlist ()
     return varlist
 endfunction
 
-function! base#where (file)
+"Usage:
+"	base#where('perl')
+"	base#where('perl',0)
+"	base#where('perl',0,'perl.exe')
+
+function! base#where (file,...)
 	if base#noperl() | return | endif
 
-	let paths=[]
+	let paths = []
 perl << eof
 	use File::Which qw(where);
-	my $file=VimVar('a:file');
+	use Vim::Perl qw( VimVar VimListExtend );
 
-	my @paths=where($file);
+	my $file = VimVar('a:file');
+
+	my @paths = where($file);
 	VimListExtend('paths',[@paths]);
 eof
-	return paths
+	if !a:0
+		return paths
+	else
+		let idx = get(a:000,0,'')
+		let default = get(a:000,1,'')
+		return get(paths,idx,default)
+	endif
 
 endfunction
 
