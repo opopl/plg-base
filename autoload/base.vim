@@ -388,26 +388,26 @@ function! base#cdfile(...)
 endf
 
 function! base#htmlwork (...)
-	let cmd  = get(a:000,0,'')
-	let cmds = base#varget('htmlwork',[])
+  let cmd  = get(a:000,0,'')
+  let cmds = base#varget('htmlwork',[])
 
-	if base#inlist(cmd,cmds)
-		let sub = 'call base#htmlwork#'.cmd.'()'
-		exe sub
-	endif
+  if base#inlist(cmd,cmds)
+    let sub = 'call base#htmlwork#'.cmd.'()'
+    exe sub
+  endif
 
-	
+  
 endfunction
 
 function! base#CD(pathid, ... )
     let ref = {}
 
-		let pathid = a:pathid
+    let pathid = a:pathid
 
     if a:0 | let ref = a:1 | endif
 
     let dir = base#path(pathid)
-		call base#varset('pathid',pathid)
+    call base#varset('pathid',pathid)
     if isdirectory(dir)
         call base#cd(dir,ref)
     else
@@ -420,22 +420,22 @@ function! base#cd(dir,...)
     let ref = {}
     if a:0 | let ref = a:1 | endif
 
-		let dir = a:dir
-		let dir = base#file#win2unix(dir)
+    let dir = a:dir
+    let dir = base#file#win2unix(dir)
 
     let ech = get(ref,'echo',1)
 
     if ech
-				try 
-					if isdirectory(dir)
-	        	silent exe 'cd ' . dir
-		        echohl MoreMsg
-		        echo 'Changed to: ' . dir
-		        echohl None
-					endif
-				endtry
+        try 
+          if isdirectory(dir)
+            silent exe 'cd ' . dir
+            echohl MoreMsg
+            echo 'Changed to: ' . dir
+            echohl None
+          endif
+        endtry
 
-				let cwd = getcwd()
+        let cwd = getcwd()
 
     endif
 endf
@@ -455,143 +455,143 @@ function! base#islist(var)
 endf
 
 function! base#dbnames ()
-	let dbfile = base#dbfile()
-	
-	let q = 'SELECT dbname FROM dbfiles WHERE dbdriver = ?'
-	let p = ['sqlite']
-	let dbnames = pymy#sqlite#query_as_list({
-		\	'dbfile' : dbfile,
-		\	'p'      : p,
-		\	'q'      : q,
-		\	})
-	return dbnames
+  let dbfile = base#dbfile()
+  
+  let q = 'SELECT dbname FROM dbfiles WHERE dbdriver = ?'
+  let p = ['sqlite']
+  let dbnames = pymy#sqlite#query_as_list({
+    \ 'dbfile' : dbfile,
+    \ 'p'      : p,
+    \ 'q'      : q,
+    \ })
+  return dbnames
 
 endf
 
 function! base#htw_dbfile()
-		let dbdir = $HOME . '/db'
-		let dbfile = dbdir . '/html_work.sqlite'
-		call base#varset('htw_dbfile',dbfile)
-		return dbfile
+    let dbdir = $HOME . '/db'
+    let dbfile = dbdir . '/html_work.sqlite'
+    call base#varset('htw_dbfile',dbfile)
+    return dbfile
 endf
 
 function! base#dbfile_tmp (...)
-		let dbfile = base#dbdir() . '/tmp_vim_base.db'
-		return dbfile
+    let dbfile = base#dbdir() . '/tmp_vim_base.db'
+    return dbfile
 endf
 
 function! base#dbdir (...)
-		let dbdir = $HOME . '/db'
-		call base#mkdir(dbdir)
-		return dbdir
+    let dbdir = $HOME . '/db'
+    call base#mkdir(dbdir)
+    return dbdir
 endf
 
 function! base#dbfile (...)
-	let dbname = get(a:000,0,'')
+  let dbname = get(a:000,0,'')
 
-	if !strlen(dbname)
-		let dbdir = base#dbdir()
-	
-		let dbfile = dbdir . '/vim_plg_base.db'
-	else
-		let q = 'SELECT dbfile FROM dbfiles WHERE dbname = ?'
-		let p = [dbname]
-		let r = pymy#sqlite#query_as_list({
-			\	'dbfile' : base#dbfile(),
-			\	'p'      : p,
-			\	'q'      : q,
-			\	})
-		let dbfile = get(r,0,'')
-	endif
+  if !strlen(dbname)
+    let dbdir = base#dbdir()
+  
+    let dbfile = dbdir . '/vim_plg_base.db'
+  else
+    let q = 'SELECT dbfile FROM dbfiles WHERE dbname = ?'
+    let p = [dbname]
+    let r = pymy#sqlite#query_as_list({
+      \ 'dbfile' : base#dbfile(),
+      \ 'p'      : p,
+      \ 'q'      : q,
+      \ })
+    let dbfile = get(r,0,'')
+  endif
 
-	let dbfile = base#file#win2unix(dbfile)
+  let dbfile = base#file#win2unix(dbfile)
 
-	return dbfile
+  return dbfile
 endfunction
 
-"	Purpose:
-"		base plugin logging function
+" Purpose:
+"   base plugin logging function
 "
-"	Usage:
+" Usage:
 "
-"		let msg = [ ... ]
-"		let prf = {
-"				\	'func'     : 'base#scp#open',
-"				\	'plugin'   : 'base',
-"				\	'loglevel' : 'warn',
-"				\	'v_exception' : v:exception,
-"				\	}
+"   let msg = [ ... ]
+"   let prf = {
+"       \ 'func'     : 'base#scp#open',
+"       \ 'plugin'   : 'base',
+"       \ 'loglevel' : 'warn',
+"       \ 'v_exception' : v:exception,
+"       \ }
 
-"	call base#log (msg,prf)
+" call base#log (msg,prf)
 
 function! base#log (msg,...)
-	let msg = a:msg
+  let msg = a:msg
 
-	let ref = get(a:000,0,{})
-	let log = base#varget('base_log',[])
+  let ref = get(a:000,0,{})
+  let log = base#varget('base_log',[])
 
-	let prf = base#varget('base_log_prf','')
-	let prf = get(ref,'prf',prf)
+  let prf = base#varget('base_log_prf','')
+  let prf = get(ref,'prf',prf)
 
-	let func     = get(ref,'func','')
-	let plugin   = get(ref,'plugin','')
-	let loglevel = get(ref,'loglevel','')
+  let func     = get(ref,'func','')
+  let plugin   = get(ref,'plugin','')
+  let loglevel = get(ref,'loglevel','')
 
-	let vim_code = get(ref,'vim_code','')
+  let vim_code = get(ref,'vim_code','')
 
-	let v_exception = get(ref,'v_exception','')
+  let v_exception = get(ref,'v_exception','')
 
-	let do_echo = get(ref,'echo',0)
+  let do_echo = get(ref,'echo',0)
 
-	if base#type(a:msg) == 'String'
-		let time = strftime("%Y %b %d %X")
+  if base#type(a:msg) == 'String'
+    let time = strftime("%Y %b %d %X")
 
-		if !exists('g:time_start')
-			let g:time_start = localtime()
-		endif
-			
-		let elapsed = localtime() - g:time_start
+    if !exists('g:time_start')
+      let g:time_start = localtime()
+    endif
+      
+    let elapsed = localtime() - g:time_start
 
-		let msg_prf   = prf.' '.a:msg
-		let msg_full  = '<<' . time . '>>' .' '.msg_prf
+    let msg_prf   = prf.' '.a:msg
+    let msg_full  = '<<' . time . '>>' .' '.msg_prf
 
-		call extend(ref,{ 
-			\ 'msg'  : msg_full,
-			\ 'time' : time,
-			\ 'func' : func,
-			\	})
-		call add(log,ref)
-		call base#varset('base_log',log)
+    call extend(ref,{ 
+      \ 'msg'  : msg_full,
+      \ 'time' : time,
+      \ 'func' : func,
+      \ })
+    call add(log,ref)
+    call base#varset('base_log',log)
 
-		let fields = {
-				\	'elapsed'     : elapsed,
-				\	'func'        : func,
-				\	'loglevel'    : loglevel,
-				\	'msg'         : msg,
-				\	'plugin'      : plugin,
-				\	'prf'         : prf,
-				\	'time'        : time,
-				\	'v_exception' : v_exception,
-				\	'vim_code'    : vim_code,
-				\	}
+    let fields = {
+        \ 'elapsed'     : elapsed,
+        \ 'func'        : func,
+        \ 'loglevel'    : loglevel,
+        \ 'msg'         : msg,
+        \ 'plugin'      : plugin,
+        \ 'prf'         : prf,
+        \ 'time'        : time,
+        \ 'v_exception' : v_exception,
+        \ 'vim_code'    : vim_code,
+        \ }
 
-		let field_list = keys(fields)
-		let fields_str = join(field_list, ',')
+    let field_list = keys(fields)
+    let fields_str = join(field_list, ',')
 
-		let bind = []
-		for f in field_list 
-			if has_key(fields, f)
-				call add(bind, get(fields,f,''))
-			endif
-		endfor
+    let bind = []
+    for f in field_list 
+      if has_key(fields, f)
+        call add(bind, get(fields,f,''))
+      endif
+    endfor
 
-		let quotes = join( map(base#listnewinc(1,len(field_list),1), '"?"' ), ',' )
+    let quotes = join( map(base#listnewinc(1,len(field_list),1), '"?"' ), ',' )
 
-		let query = 'INSERT OR IGNORE INTO log (%s) VALUES(%s)'
-		let query = printf(query, fields_str, quotes)
+    let query = 'INSERT OR IGNORE INTO log (%s) VALUES(%s)'
+    let query = printf(query, fields_str, quotes)
 
-		let lib = base#qw#catpath('plg base python lib')
-		call pymy#py#add_lib(lib)
+    let lib = base#qw#catpath('plg base python lib')
+    call pymy#py#add_lib(lib)
 
 python << eof
 
@@ -637,19 +637,19 @@ base_cur = base_conn.cursor()
 
 #*******************************
 if not table_exists({ 'table' : 'log', 'cur' : base_cur }):
-	q = '''
-				CREATE TABLE IF NOT EXISTS log (
-					msg TEXT,
-					time INTEGER,
-					elapsed INTEGER,
-					loglevel TEXT,
-					func TEXT,
-					plugin TEXT,
-					prf TEXT,
-					v_exception TEXT
-				);
-	'''
-	base_cur.execute(q)
+  q = '''
+        CREATE TABLE IF NOT EXISTS log (
+          msg TEXT,
+          time INTEGER,
+          elapsed INTEGER,
+          loglevel TEXT,
+          func TEXT,
+          plugin TEXT,
+          prf TEXT,
+          v_exception TEXT
+        );
+  '''
+  base_cur.execute(q)
 #*******************************
 
 base_cur.execute(query,bind)
@@ -658,94 +658,94 @@ base_conn.commit()
 base_conn.close()
 
 eof
-		
-		if do_echo
-			echo msg_prf
-		endif
+    
+    if do_echo
+      echo msg_prf
+    endif
 
-		return 1
-	elseif base#type(a:msg) == 'List'
-		let msgs = a:msg
+    return 1
+  elseif base#type(a:msg) == 'List'
+    let msgs = a:msg
 
-		try
-			for msg in msgs
-				call base#log(msg,ref)
-			endfor
-		catch /E731/ 
-			echo msgs
-		endtry
-		return 1
-		
-	endif
+    try
+      for msg in msgs
+        call base#log(msg,ref)
+      endfor
+    catch /E731/ 
+      echo msgs
+    endtry
+    return 1
+    
+  endif
 
-	return 1
-	
+  return 1
+  
 endfunction
 
 function! base#noperl()
-	if !has('perl') | call base#log( 'NO PERL INSTALLED' ) | return 1 | endif
+  if !has('perl') | call base#log( 'NO PERL INSTALLED' ) | return 1 | endif
 
-	return 0
+  return 0
 
 endfunction
 
 "" DIR - list directory contents 
 
 function! base#DIR(...)
-		let refdef={
-			\	'exts'         : [],
-			\	'ask_for_exts' : 1,
-			\	}
+    let refdef={
+      \ 'exts'         : [],
+      \ 'ask_for_exts' : 1,
+      \ }
 
-		let opt   = get(a:000,0,'')
-		let refin = get(a:000,1,{})
+    let opt   = get(a:000,0,'')
+    let refin = get(a:000,1,{})
 
-		let ref={}
-		call extend(ref,refdef)
-		call extend(ref,refin)
+    let ref={}
+    call extend(ref,refdef)
+    call extend(ref,refin)
 
-		let spc = base#qw(' _buf_dirname_ _cwd_ ')
+    let spc = base#qw(' _buf_dirname_ _cwd_ ')
 
-		if opt == ''
-			let opt = '_cwd_'
-		endif
+    if opt == ''
+      let opt = '_cwd_'
+    endif
 
-		if base#inlist(opt,spc)
-			if opt == '_buf_dirname_'
-				let dir = b:dirname
+    if base#inlist(opt,spc)
+      if opt == '_buf_dirname_'
+        let dir = b:dirname
 
-			elseif opt == '_cwd_'
-				let dir = getcwd()
-				"call extend(ref,{'ask_for_exts' : 0})
+      elseif opt == '_cwd_'
+        let dir = getcwd()
+        "call extend(ref,{'ask_for_exts' : 0})
 
-			endif
-		elseif base#inlist(opt,base#pathlist())
-			let dirid = opt
-    	let dir   = base#path(dirid)
-		endif
+      endif
+    elseif base#inlist(opt,base#pathlist())
+      let dirid = opt
+      let dir   = base#path(dirid)
+    endif
 
-		let exts=get(ref,'exts',[])
-		if get(ref,'ask_for_exts')
-			let exts_s = input('Extensions (separated by space):','')
-			let exts   = base#qw(exts_s)
-		endif
+    let exts=get(ref,'exts',[])
+    if get(ref,'ask_for_exts')
+      let exts_s = input('Extensions (separated by space):','')
+      let exts   = base#qw(exts_s)
+    endif
 
-		let rlp = input('Relative path (1-relative 0-full)? 1/0: ',0)
+    let rlp = input('Relative path (1-relative 0-full)? 1/0: ',0)
 
-		let pat = ''
-		let ff  = base#find({ 
-			\	"dirs"    : [dir],
-			\	"exts"    : exts,
-			\	"cwd"     : 1,
-			\	"subdirs" : 1,
-			\	"pat"     : pat,
-			\	"fnamemodify" : '',
-			\	})
-		if rlp
-			let ff = map(ff,'base#file#reldir(v:val,dir)')
-		endif
+    let pat = ''
+    let ff  = base#find({ 
+      \ "dirs"    : [dir],
+      \ "exts"    : exts,
+      \ "cwd"     : 1,
+      \ "subdirs" : 1,
+      \ "pat"     : pat,
+      \ "fnamemodify" : '',
+      \ })
+    if rlp
+      let ff = map(ff,'base#file#reldir(v:val,dir)')
+    endif
 
-		call base#buf#open_split({ 'lines' : ff })
+    call base#buf#open_split({ 'lines' : ff })
 
 endfunction
 
@@ -757,7 +757,7 @@ fun! base#catpath(key,...)
  
  if !exists("s:paths")
     "call base#initpaths()
-		let s:paths={}
+    let s:paths={}
  endif
 
  let pc = []
@@ -788,116 +788,116 @@ endf
 
 
 " Usage: 
-" 	base#fileopen({ 'files' : [file], 'exec' : 'set ft=html' })
-" 	base#fileopen({ 
-" 		\	'files' : [ file ], 
-" 		\	'exec'  : [ 'set ft=html' ],
-" 		\	})
-" 	base#fileopen([ file1, file2])
+"   base#fileopen({ 'files' : [file], 'exec' : 'set ft=html' })
+"   base#fileopen({ 
+"     \ 'files' : [ file ], 
+"     \ 'exec'  : [ 'set ft=html' ],
+"     \ })
+"   base#fileopen([ file1, file2])
 "
-" 	base#fileopen({ 
-" 		\	'files'   : [ file ],
-" 		\	'Fc'      : Fc,
-" 		\	'Fc_args' : Fc_args,
-" 		\	})
+"   base#fileopen({ 
+"     \ 'files'   : [ file ],
+"     \ 'Fc'      : Fc,
+"     \ 'Fc_args' : Fc_args,
+"     \ })
 
  
 """base_fileopen
 fun! base#fileopen(ref)
-	 let ref = a:ref
-	
-	 let files = []
-	
-	 let action = 'edit'
-	 let action = base#varget('fileopen_action',action)
-	
-	 let opts = {}
-	
-	 if base#type(ref) == 'String'
-	   let files = [ ref ] 
-	   
-	 elseif base#type(ref) == 'List'
-	   let files = ref  
-	   
-	 elseif base#type(ref) == 'Dictionary'
-	   let files   = get(ref,'files',[])
-	   let action  = get(ref,'action',action)
-	
-	   call extend(opts,ref)
-	   
-	 endif
+   let ref = a:ref
+  
+   let files = []
+  
+   let action = 'edit'
+   let action = base#varget('fileopen_action',action)
+  
+   let opts = {}
+  
+   if base#type(ref) == 'String'
+     let files = [ ref ] 
+     
+   elseif base#type(ref) == 'List'
+     let files = ref  
+     
+   elseif base#type(ref) == 'Dictionary'
+     let files   = get(ref,'files',[])
+     let action  = get(ref,'action',action)
+  
+     call extend(opts,ref)
+     
+   endif
 
-	 let vim_code = join( map(copy(files),'"call base#fileopen(\"" . escape(v:val,"\\") . "\")"' ),"\n" )
-	 let prf = { 
-		 	\	'func'     : 'base#fileopen',
-		 	\	'plugin'   : 'base',
-		 	\	'vim_code' : vim_code,
-		 	\	}
-	 call base#log([
-		 	\	'opening files => ' . base#dump(files),
-		 	\	],prf)
-	
-	 let anew_if_absent = get(opts,'anew_if_absent',0)
-	 let load_buf       = get(opts,'load_buf',0)
-	
-	 for file in files
-		if ! filereadable(file)
-			if ! anew_if_absent
-				continue
-			endif
-		endif
+   let vim_code = join( map(copy(files),'"call base#fileopen(\"" . escape(v:val,"\\") . "\")"' ),"\n" )
+   let prf = { 
+      \ 'func'     : 'base#fileopen',
+      \ 'plugin'   : 'base',
+      \ 'vim_code' : vim_code,
+      \ }
+   call base#log([
+      \ 'opening files => ' . base#dump(files),
+      \ ],prf)
+  
+   let anew_if_absent = get(opts,'anew_if_absent',0)
+   let load_buf       = get(opts,'load_buf',0)
+  
+   for file in files
+    if ! filereadable(file)
+      if ! anew_if_absent
+        continue
+      endif
+    endif
 
-		if base#buffers#file_is_loaded(file)
-			let nr = bufnr(file)
-			if load_buf
-				exe 'buffer ' . nr
-			else
-				continue
-			endif
-		endif
+    if base#buffers#file_is_loaded(file)
+      let nr = bufnr(file)
+      if load_buf
+        exe 'buffer ' . nr
+      else
+        continue
+      endif
+    endif
 
-	  exe action . ' ' . file
-	
-	  let au      = get(opts,'au',{})
-	  for [ aucmd, auexec ] in items(au)
-	    
-	    let f = base#file#win2unix(fnamemodify(':p',file))
-	    exe join(['aucmd', aucmd, f, auexec ],' ')
-	    
-	  endfor
+    exe action . ' ' . file
+  
+    let au      = get(opts,'au',{})
+    for [ aucmd, auexec ] in items(au)
+      
+      let f = base#file#win2unix(fnamemodify(':p',file))
+      exe join(['aucmd', aucmd, f, auexec ],' ')
+      
+    endfor
 
-	  let Fc      = get(opts,'Fc','')
-	  let Fc_args = get(opts,'Fc_args',[])
+    let Fc      = get(opts,'Fc','')
+    let Fc_args = get(opts,'Fc_args',[])
 
-	  if type(Fc) == type(function('call'))
-			try
-	    	call call( Fc, Fc_args )
-			catch 
-				let msg = [
-					\	'callback fail:', 
-					\	'  args        => ' . base#dump(Fc_args),
-					\	]
-				let prf = {
-					\	'loglevel'    : 'warn',
-					\	'v_exception' : v:exception,
-					\	'plugin'      : 'base',
-					\	'func'        : 'base#fileopen'
-					\	}
-				call base#log(msg,prf)
-			endtry
-	  endif
+    if type(Fc) == type(function('call'))
+      try
+        call call( Fc, Fc_args )
+      catch 
+        let msg = [
+          \ 'callback fail:', 
+          \ '  args        => ' . base#dump(Fc_args),
+          \ ]
+        let prf = {
+          \ 'loglevel'    : 'warn',
+          \ 'v_exception' : v:exception,
+          \ 'plugin'      : 'base',
+          \ 'func'        : 'base#fileopen'
+          \ }
+        call base#log(msg,prf)
+      endtry
+    endif
 
-	  let exec = get(opts,'exec','')
-	
-	  if len(exec)
-	    if type(exec) == type([])
-	      for e in exec
-	        exe e
-	      endfor
-	    elseif type(exec) == type('')
-	      exe exec
-	    endif
-	  endif
+    let exec = get(opts,'exec','')
+  
+    if len(exec)
+      if type(exec) == type([])
+        for e in exec
+          exe e
+        endfor
+      elseif type(exec) == type('')
+        exe exec
+      endif
+    endif
  endfor
  
 endfun
@@ -912,10 +912,10 @@ fun! base#inlist(element, list)
 endfun
 
 fun! base#eval(expr)
-	let expr = a:expr
+  let expr = a:expr
 
-	let val = exists(expr) ? eval(expr) : ''
-	return val
+  let val = exists(expr) ? eval(expr) : ''
+  return val
 
 endfun
 
@@ -1131,8 +1131,8 @@ fun! base#readdatfile(ref,...)
  endif
 
  if base#type(ref) == 'String'
-		let datid = ref
-		let file = base#datafile(datid)
+    let datid = ref
+    let file = base#datafile(datid)
 
  elseif base#type(ref) == 'Dictionary'
    call extend(opts,ref)
@@ -1149,11 +1149,11 @@ fun! base#readdatfile(ref,...)
     let res = base#readarr(file,opts)
 
  elseif opts.type == 'ListLines'
-		call extend(opts,{ 'splitlines' : 0 })
+    call extend(opts,{ 'splitlines' : 0 })
     let res=base#readarr(file,opts)
 
  else
- 		let res=[]
+    let res=[]
 
  endif
 
@@ -1359,7 +1359,7 @@ fun! base#input(msg,default,...)
   endif
 
   if do_redraw
-		 redraw!
+     redraw!
   endif
 
   let complete = get(ref,'complete','')
@@ -1381,27 +1381,27 @@ fun! base#input_we(msg,default,...)
   let complete  = get(ref, 'complete' , '')
   let hist_name = get(ref, 'hist_name' , '')
 
-	let hist = []
+  let hist = []
   if strlen(hist_name)
-		 let hist = base#varget(hist_name,[])
-		 let complete = 'custom,base#complete#this'
-		 call base#varset('this',hist)
-	endif
+     let hist = base#varget(hist_name,[])
+     let complete = 'custom,base#complete#this'
+     call base#varset('this',hist)
+  endif
 
-	let v = ''
+  let v = ''
   if strlen(complete)
-		while !strlen(v)
-    	let v = input(msg,default,complete)
-		endw
+    while !strlen(v)
+      let v = input(msg,default,complete)
+    endw
 
-  	if strlen(hist_name)
-			call add(hist, v)
-		 	call base#varset(hist_name,hist)
-		endif
+    if strlen(hist_name)
+      call add(hist, v)
+      call base#varset(hist_name,hist)
+    endif
   else
-		while !strlen(v)
-    	let v = input(msg,default)
-		endw
+    while !strlen(v)
+      let v = input(msg,default)
+    endw
   endif
 
   return v
@@ -1753,14 +1753,14 @@ fun! base#fnamemodifysplitglob(...)
  endif
 
  if len(files)
-  	call map(files,"fnamemodify(v:val,'" . modifiers . "')")
+    call map(files,"fnamemodify(v:val,'" . modifiers . "')")
  endif
 
  return files
 
 endf
 
-"		[ 'vim', 'dat' ]=> '*.vim' '*.dat'
+"   [ 'vim', 'dat' ]=> '*.vim' '*.dat'
 "call base#mapsub(base#qw('vim dat'),'^','*.','g') 
 
 fun! base#mapsub(array,pat,subpat,subopts)
@@ -1775,21 +1775,21 @@ endf
 "let a = base#mapsub_join(base#qw('vim dat'),'^','*.','g',' ') 
 
 fun! base#mapsub_join(array,pat,subpat,subopts,delim)
-	return join(base#mapsub(a:array,a:pat,a:subpat,a:subopts),a:delim)
+  return join(base#mapsub(a:array,a:pat,a:subpat,a:subopts),a:delim)
 
 endf
 
 function! base#varremove(...)
-	let var = get(a:000,0,'')
+  let var = get(a:000,0,'')
 
   if ! exists("s:basevars")
     let s:basevars={}
-		return
+    return
   endif
 
-	if has_key(s:basevars,var)
-		call remove(s:basevars,var)
-	endif
+  if has_key(s:basevars,var)
+    call remove(s:basevars,var)
+  endif
  
 endfunction
 
@@ -1968,17 +1968,17 @@ fun! base#getfileinfo(...)
 endfun
 
 fun! base#sys_split_output(...)
-	let cmd = join(a:000,' ')
-	let hist = base#varget('hist_basesys',[])
+  let cmd = join(a:000,' ')
+  let hist = base#varget('hist_basesys',[])
 
-	call base#sys({ 
-		\	"cmds"         : [cmd],
-		\	"split_output" : 1,
-		\	})
-	call add(hist,cmd)
-	call base#uniq(hist)
+  call base#sys({ 
+    \ "cmds"         : [cmd],
+    \ "split_output" : 1,
+    \ })
+  call add(hist,cmd)
+  call base#uniq(hist)
 
-	call base#varset('hist_basesys',hist)
+  call base#varset('hist_basesys',hist)
 
 endfun
 
@@ -2054,16 +2054,16 @@ fun! base#sys(...)
  let start_dir = get(opts, 'start_dir', '' )
  let old_dir = ''
  if start_dir && isdirectory(start_dir)
-	 let old_dir = getcwd()
-	 call base#cd(start_dir)
+   let old_dir = getcwd()
+   call base#cd(start_dir)
  endif
 
  for cmd in cmds 
-		if use_vimproc
-    	let outstr = vimproc#system(cmd)
-		else
-    	let outstr = system(cmd)
-		endif
+    if use_vimproc
+      let outstr = vimproc#system(cmd)
+    else
+      let outstr = system(cmd)
+    endif
 
     let out    = split(outstr,"\n")
 
@@ -2128,7 +2128,7 @@ fun! base#sys(...)
  endif
 
  if strlen(old_dir)
-	 call base#cd(old_dir)
+   call base#cd(old_dir)
  endif
 
  return ok
@@ -2137,52 +2137,52 @@ endfun
 
 
 function! base#pathset_db (ref,...)
-		let ref = a:ref
-		
-		let dbfile = base#dbfile()
-		
-		for [ pathid, path ] in items(ref) 
-		
-			call pymy#sqlite#insert_hash({
-				\	'dbfile' : dbfile,
-				\	't'      : 'paths',
-				\	'h'      : {
-						\	'pathid' : pathid,
-						\	'path'   : path,
-						\	'pcname' : base#pcname(),
-						\	},
-				\	'i'      : 'INSERT OR REPLACE',
-				\	})
-		endfor
+    let ref = a:ref
+    
+    let dbfile = base#dbfile()
+    
+    for [ pathid, path ] in items(ref) 
+    
+      call pymy#sqlite#insert_hash({
+        \ 'dbfile' : dbfile,
+        \ 't'      : 'paths',
+        \ 'h'      : {
+            \ 'pathid' : pathid,
+            \ 'path'   : path,
+            \ 'pcname' : base#pcname(),
+            \ },
+        \ 'i'      : 'INSERT OR REPLACE',
+        \ })
+    endfor
 
-		return
+    return
 endf
 
 function! base#pathset (ref,...)
-	let ref = a:ref
+  let ref = a:ref
 
   if ! exists("s:paths") | let s:paths={} | endif
-	let opts = get(a:000,0,{})
+  let opts = get(a:000,0,{})
 
 
-	if exists('g:skip_pathset') 
-		return
-	endif
+  if exists('g:skip_pathset') 
+    return
+  endif
 
-	let anew = get(opts,'anew',0)
-	let prf = {'func' : 'base#pathset','plugin' : 'base'}
+  let anew = get(opts,'anew',0)
+  let prf = {'func' : 'base#pathset','plugin' : 'base'}
 
-	if anew
-		call base#log(['anew=1'],prf)
-		let s:paths = {}
-	endif
+  if anew
+    call base#log(['anew=1'],prf)
+    let s:paths = {}
+  endif
 
     for [ pathid, path ] in items(ref) 
         let e = { pathid : path }
-				call base#log([
-					\'pathid ='.pathid,
-					\'path   ='.path,
-					\	],prf)
+        call base#log([
+          \'pathid ='.pathid,
+          \'path   ='.path,
+          \ ],prf)
         call extend(s:paths,e)
     endfor
 
@@ -2201,54 +2201,54 @@ endfun
 function! base#append (...)
   let opt = get(a:000,0,'')
 
-	" BaseDatView opts_BaseAppend
-	if strlen(opt)
-	  let sub = 'base#append#'.opt
-	  exe 'call '. sub .'()'
-	else
-		let opts = base#varget( 'opts_BaseAppend', [])
-		let info = []
-		call add(info,'Available options for BaseAppend: ')
-		call add(info, base#map#add_tabs(opts,1) )
-		
-		call base#buf#open_split({ 'lines' : info })
-	endif
+  " BaseDatView opts_BaseAppend
+  if strlen(opt)
+    let sub = 'base#append#'.opt
+    exe 'call '. sub .'()'
+  else
+    let opts = base#varget( 'opts_BaseAppend', [])
+    let info = []
+    call add(info,'Available options for BaseAppend: ')
+    call add(info, base#map#add_tabs(opts,1) )
+    
+    call base#buf#open_split({ 'lines' : info })
+  endif
 
 endfunction
 
 function! base#pathlist (...)
-		let pat = get(a:000,0,'')
+    let pat = get(a:000,0,'')
 
-		if ! exists("s:paths")
-			let s:paths={}
-		endif
-		
-		let pathlist = sort(keys(s:paths))
+    if ! exists("s:paths")
+      let s:paths={}
+    endif
+    
+    let pathlist = sort(keys(s:paths))
 
-		let dbfile = base#dbfile()
-		
-		let q = 'SELECT pathid FROM paths'
+    let dbfile = base#dbfile()
+    
+    let q = 'SELECT pathid FROM paths'
 
-		if strlen(pat)
-			let q .= ' WHERE pathid LIKE "%' . pat . '%"'
-		endif
+    if strlen(pat)
+      let q .= ' WHERE pathid LIKE "%' . pat . '%"'
+    endif
 
-		let p = []
-		let pathlist = pymy#sqlite#query_as_list({
-			\	'dbfile' : dbfile,
-			\	'p'      : p,
-			\	'q'      : q,
-			\	})
+    let p = []
+    let pathlist = pymy#sqlite#query_as_list({
+      \ 'dbfile' : dbfile,
+      \ 'p'      : p,
+      \ 'q'      : q,
+      \ })
 
-		call base#varset('pathlist',pathlist)
+    call base#varset('pathlist',pathlist)
 
     return pathlist
     
 endfunction
 
 function! base#paths_from_db ()
-	let dbfile = base#dbfile()
-	let paths = {}
+  let dbfile = base#dbfile()
+  let paths = {}
 python << eof
 import vim,sqlite3,re
 
@@ -2267,44 +2267,44 @@ base_cur.execute(q,p)
 rows = base_cur.fetchall()
 
 for row in rows:
-	pathid = row[0]
-	path   = row[1]
-	paths[pathid] = path
-	k = '"' + pathid + '"'
-	v = '"' + re.escape(path) + '"'
-	cmd = "call extend(paths," + "{" + k + ':' + v + "})"
-	vim.command(cmd)
+  pathid = row[0]
+  path   = row[1]
+  paths[pathid] = path
+  k = '"' + pathid + '"'
+  v = '"' + re.escape(path) + '"'
+  cmd = "call extend(paths," + "{" + k + ':' + v + "})"
+  vim.command(cmd)
 
 base_conn.commit()
 base_conn.close()
-	
+  
 eof
 
-	if !exists('s:paths')
-		let s:paths = {}
-	endif
-	call extend(s:paths,paths)
+  if !exists('s:paths')
+    let s:paths = {}
+  endif
+  call extend(s:paths,paths)
 
-	if !exists('g:skip_pathset')
-		let g:skip_pathset = 1
-	endif
+  if !exists('g:skip_pathset')
+    let g:skip_pathset = 1
+  endif
 
-	return paths
+  return paths
 
 endfunction
 
 function! base#paths_update (...)
-	let ref = get(a:000,0,{})
-	if !exists('s:paths') | let s:paths = {} | endif
+  let ref = get(a:000,0,{})
+  if !exists('s:paths') | let s:paths = {} | endif
 
-	call extend(s:paths,ref)
-	call base#pathset_db(ref)
+  call extend(s:paths,ref)
+  call base#pathset_db(ref)
 
 endfunction
 
 function! base#paths_to_db ()
-	let dbfile = base#dbfile()
-	if !exists('s:paths') | let s:paths = {} | endif
+  let dbfile = base#dbfile()
+  if !exists('s:paths') | let s:paths = {} | endif
 
 python << eof
 import vim,sqlite3
@@ -2318,32 +2318,32 @@ base_conn = sqlite3.connect(base_dbfile)
 base_cur = base_conn.cursor()
 
 for pathid in paths.keys():
-	path = paths.get(pathid)
-	q ='''INSERT OR IGNORE INTO paths (pathid,path,pcname) VALUES (?,?,?)'''
-	p = [ pathid, path, pcname ]
-	base_cur.execute(q,p)
+  path = paths.get(pathid)
+  q ='''INSERT OR IGNORE INTO paths (pathid,path,pcname) VALUES (?,?,?)'''
+  p = [ pathid, path, pcname ]
+  base_cur.execute(q,p)
 
 base_conn.commit()
 base_conn.close()
-	
+  
 eof
 
 endfunction
 
 function! base#pathid_cwd ()
-	let path = getcwd()
+  let path = getcwd()
 
-	let dbfile = base#dbfile()
-	let q      = 'SELECT pathid FROM paths WHERE lower(path) = ? '
-	let p      = [ tolower(path) ]
+  let dbfile = base#dbfile()
+  let q      = 'SELECT pathid FROM paths WHERE lower(path) = ? '
+  let p      = [ tolower(path) ]
 
-	let pathid = pymy#sqlite#query_fetchone({
-		\	'dbfile' : dbfile,
-		\	'p'      : p,
-		\	'q'      : q,
-		\	})
+  let pathid = pymy#sqlite#query_fetchone({
+    \ 'dbfile' : dbfile,
+    \ 'p'      : p,
+    \ 'q'      : q,
+    \ })
 
-	return pathid
+  return pathid
 
 endfunction
 
@@ -2375,7 +2375,7 @@ function! base#path (pathid)
         let path = s:paths[a:pathid]
     else
         let path = ''
-				let txt  = "pathid undefined: " . a:pathid 
+        let txt  = "pathid undefined: " . a:pathid 
 
 
         call base#warn({ 
@@ -2389,18 +2389,18 @@ function! base#path (pathid)
 endfunction
 
 function! base#paths_nice ()
-	if !exists("s:paths") | return | endif
+  if !exists("s:paths") | return | endif
 
   for k in keys(s:paths)
      let s:paths[k]=substitute(s:paths[k],'\/\s*$','','g')
   endfor
-	
+  
 endfunction
 
 function! base#paths()
-	if !exists("s:paths") | return {} | endif
+  if !exists("s:paths") | return {} | endif
 
-	return s:paths
+  return s:paths
 
 endfunction
 
@@ -2410,44 +2410,44 @@ endfunction
 "  base#warn({ "text" : "aaa", "prefix" : ">>> " })
 "
 function! base#warn (ref)
-		let ref    = a:ref
+    let ref    = a:ref
 
-		let text   = get(ref,'text','')
+    let text   = get(ref,'text','')
 
-		let prefix = base#echoprefix()
-		let prefix = get(ref,'prefix',prefix)
-		let hl     = get(ref,'hl','WarningMsg')
-		let rdw     = get(ref,'rdw',0)
+    let prefix = base#echoprefix()
+    let prefix = get(ref,'prefix',prefix)
+    let hl     = get(ref,'hl','WarningMsg')
+    let rdw     = get(ref,'rdw',0)
 
-		if type(text) == type('')
-			let text = prefix . text
-		elseif type(text) == type([])
-		endif
+    if type(text) == type('')
+      let text = prefix . text
+    elseif type(text) == type([])
+    endif
 
-		if rdw
-			redraw!
-			exe 'echohl ' . hl
-			echo text
-			echohl None
-		endif
+    if rdw
+      redraw!
+      exe 'echohl ' . hl
+      echo text
+      echohl None
+    endif
 
-		let prf = {}
-		call extend(prf,ref)
-		call extend(prf,{ 'loglevel' : 'warn' })
+    let prf = {}
+    call extend(prf,ref)
+    call extend(prf,{ 'loglevel' : 'warn' })
 
-		call base#log(text,prf)
+    call base#log(text,prf)
     
 endfunction
 
 function! base#time_start ()
-	if !exists('g:time_start')
-		let	g:time_start = localtime()
-	endif
+  if !exists('g:time_start')
+    let g:time_start = localtime()
+  endif
 
-	let time = g:time_start
-	let time_s = strftime("%Y %b %d %X",time)
+  let time = g:time_start
+  let time_s = strftime("%Y %b %d %X",time)
 
-	return time_s
+  return time_s
 
 endfunction
 
@@ -2472,157 +2472,157 @@ function! base#info (...)
    endfor
  else
 
-	 if topic == ''
-					 "
+   if topic == ''
+           "
 """info_dbext
-	 elseif topic == 'dbext'
-			call base#info#dbext()
+   elseif topic == 'dbext'
+      call base#info#dbext()
 
-	 elseif topic == 'htmlwork'
+   elseif topic == 'htmlwork'
 
 """info__sql
-	 elseif topic == '_sql'
-			 let lines=[]
+   elseif topic == '_sql'
+       let lines=[]
 
-			 call add(lines,'Current sql file:')
+       call add(lines,'Current sql file:')
 
-			 call base#buf#open_split({ 'lines' : lines })
-			 return
+       call base#buf#open_split({ 'lines' : lines })
+       return
 
 
 """info_dict
-	 elseif topic == 'dictionaries'
-			 let lines=[]
-			 call add(lines,'--------------------')
-			 call add(lines,'Dictionaries INFO')
-			 call add(lines,'--------------------')
-			 call add(lines,'&dictionary:')
-			 call extend(lines,base#mapsub(split(&dictionary,','),'^','\t','g'))
+   elseif topic == 'dictionaries'
+       let lines=[]
+       call add(lines,'--------------------')
+       call add(lines,'Dictionaries INFO')
+       call add(lines,'--------------------')
+       call add(lines,'&dictionary:')
+       call extend(lines,base#mapsub(split(&dictionary,','),'^','\t','g'))
 
-			 let vars = base#qw('b:dics b:dicfiles b:dicts')
-			 for var in vars
-				 if exists(var)
-				 		call add(lines,var . ' = ')
-						exe 'let dump = base#dump#yaml('.var.')'
-						call extend(lines,dump)
-				 endif
-			 endfor
+       let vars = base#qw('b:dics b:dicfiles b:dicts')
+       for var in vars
+         if exists(var)
+            call add(lines,var . ' = ')
+            exe 'let dump = base#dump#yaml('.var.')'
+            call extend(lines,dump)
+         endif
+       endfor
 
-			 call base#buf#open_split({ 'lines' : lines })
-			 return
+       call base#buf#open_split({ 'lines' : lines })
+       return
 
 """info_datfiles
-	 elseif topic == 'datfiles'
-			 let lines=[]
-			 let dbfile = base#dbfile()
+   elseif topic == 'datfiles'
+       let lines=[]
+       let dbfile = base#dbfile()
 
-			 let type = input('dattype:','','custom,base#complete#dattypes')
-			 
-			 let q = 'select keyfull from datfiles where type = ?'
-			 let p = [type]
-			 
-			 let list = pymy#sqlite#query_as_list({
-			 	\	'dbfile' : dbfile,
-			 	\	'p'      : p,
-			 	\	'q'      : q,
-			 	\	})
-			 call base#buf#open_split({ 'lines' : list })
+       let type = input('dattype:','','custom,base#complete#dattypes')
+       
+       let q = 'select keyfull from datfiles where type = ?'
+       let p = [type]
+       
+       let list = pymy#sqlite#query_as_list({
+        \ 'dbfile' : dbfile,
+        \ 'p'      : p,
+        \ 'q'      : q,
+        \ })
+       call base#buf#open_split({ 'lines' : list })
 
-	 elseif topic == 'datfiles_dict'
+   elseif topic == 'datfiles_dict'
 
 """info_file
-	 elseif topic == 'file'
-			call base#buf#start()
+   elseif topic == 'file'
+      call base#buf#start()
 
-			let info = []
+      let info = []
 
-			call add(info,'General Info:')
-			let info_g = [
-			\ [ '(cwd)  dir   :', getcwd() ],
-			\ [ '(cwd)  pathid:', base#pathid_cwd() ],
-			\ ]
+      call add(info,'General Info:')
+      let info_g = [
+      \ [ '(cwd)  dir   :', getcwd() ],
+      \ [ '(cwd)  pathid:', base#pathid_cwd() ],
+      \ ]
 
-			let lines = pymy#data#tabulate({ 
-				\	'data'    : info_g,
-				\	'headers' : [],
-				\	})
-			call extend(info,base#map#add_tabs(lines,1))
+      let lines = pymy#data#tabulate({ 
+        \ 'data'    : info_g,
+        \ 'headers' : [],
+        \ })
+      call extend(info,base#map#add_tabs(lines,1))
 
-			call extend(info,['FILE INFO:'])
-			
-			let info_a = [
-			\ [ 'Current file:', expand('%:p') ],
-			\ [ 'File directory (dirname):', expand('%:p:h') ],
-			\ [ 'Filetype:', &ft ],
-			\ [ 'Filesize:', base#file#size(b:file) ],
-			\ ]
+      call extend(info,['FILE INFO:'])
+      
+      let info_a = [
+      \ [ 'Current file:', expand('%:p') ],
+      \ [ 'File directory (dirname):', expand('%:p:h') ],
+      \ [ 'Filetype:', &ft ],
+      \ [ 'Filesize:', base#file#size(b:file) ],
+      \ ]
 
-			let lines = pymy#data#tabulate({ 
-				\	'data'    : info_a ,
-				\	'headers' : [],
-				\	})
-			call extend(info,base#map#add_tabs(lines,1))
+      let lines = pymy#data#tabulate({ 
+        \ 'data'    : info_a ,
+        \ 'headers' : [],
+        \ })
+      call extend(info,base#map#add_tabs(lines,1))
 
-			call add(info,'Other variables:')
-			let info_other = []
+      call add(info,'Other variables:')
+      let info_other = []
 
-			let var_names  = base#qw("b:basename b:dirname b:file b:ext b:bufnr")
+      let var_names  = base#qw("b:basename b:dirname b:file b:ext b:bufnr")
 
-			for var_name in var_names
-				let var_value = exists(var_name) ? eval(var_name) : ''
+      for var_name in var_names
+        let var_value = exists(var_name) ? eval(var_name) : ''
 
-				call add(info_other,[ var_name, var_value ])
-			endfor
+        call add(info_other,[ var_name, var_value ])
+      endfor
 
-			let lines = pymy#data#tabulate({ 
-				\	'data'    : info_other,
-				\	'headers' : [],
-				\	})
-			call extend(info,base#map#add_tabs(lines,1))
+      let lines = pymy#data#tabulate({ 
+        \ 'data'    : info_other,
+        \ 'headers' : [],
+        \ })
+      call extend(info,base#map#add_tabs(lines,1))
 
-			call add(info,'Directories which this file belongs to:')
-			let dirs_belong = base#buf#pathids_str()
-			call add(info,indent . dirs_belong)
+      call add(info,'Directories which this file belongs to:')
+      let dirs_belong = base#buf#pathids_str()
+      call add(info,indent . dirs_belong)
 
-			if exists("b:other")
-				call add(info,'OTHER INFO:')
-				let y = base#dump#yaml(b:other)
-				let y = base#map#add_tabs(y)
-				call extend(info,y)
-			endif
+      if exists("b:other")
+        call add(info,'OTHER INFO:')
+        let y = base#dump#yaml(b:other)
+        let y = base#map#add_tabs(y)
+        call extend(info,y)
+      endif
 
-			if exists("b:aucmds")
-				call add(info,'AUTOCOMMANDS:')
-				call add(info,"\t".'b:aucmds:')
-				let y = base#dump#yaml(b:aucmds)
-				let y = base#map#add_tabs(y,2)
-				call extend(info,y)
+      if exists("b:aucmds")
+        call add(info,'AUTOCOMMANDS:')
+        call add(info,"\t".'b:aucmds:')
+        let y = base#dump#yaml(b:aucmds)
+        let y = base#map#add_tabs(y,2)
+        call extend(info,y)
 
-				if exists("b:augroup")
-					call add(info,"\t".'b:augroup:')
-					let y = base#dump#yaml(b:augroup)
-					let y = base#map#add_tabs(y,2)
-					call extend(info,y)
-				endif
-			endif
+        if exists("b:augroup")
+          call add(info,"\t".'b:augroup:')
+          let y = base#dump#yaml(b:augroup)
+          let y = base#map#add_tabs(y,2)
+          call extend(info,y)
+        endif
+      endif
 
-			if exists("b:html_info")
-				call add(info,'HTML INFO:')
-				let y = base#dump#yaml(b:html_info)
-				let y = base#map#add_tabs(y)
-				call extend(info,y)
+      if exists("b:html_info")
+        call add(info,'HTML INFO:')
+        let y = base#dump#yaml(b:html_info)
+        let y = base#map#add_tabs(y)
+        call extend(info,y)
 
-			endif
+      endif
 
-			if exists("b:db_info")
-					
-				call add(info,'DB INFO:')
-				let y = base#dump#yaml(b:db_info)
-				let y = base#map#add_tabs(y)
-				call extend(info,y)
-			endif
+      if exists("b:db_info")
+          
+        call add(info,'DB INFO:')
+        let y = base#dump#yaml(b:db_info)
+        let y = base#map#add_tabs(y)
+        call extend(info,y)
+      endif
 
-			call base#buf#open_split({ 'lines' : info })
+      call base#buf#open_split({ 'lines' : info })
 
 """info_perlapp
    elseif topic == 'perlapp'
@@ -2633,24 +2633,24 @@ function! base#info (...)
    elseif topic == 'leaders'
        call base#echo({ 'text' : "Leader variables: " } )
 
-			 let lines=[]
+       let lines=[]
        call add(lines,'mapleader:        ' . base#vimvar#get('g:mapleader') )
        call add(lines,'maplocalleader:   ' . base#vimvar#get('g:maplocalleader') )
 
-			 for line in lines
-			 		call base#echo({ 'text' : line })
-			 endfor
+       for line in lines
+          call base#echo({ 'text' : line })
+       endfor
 
    elseif topic == 'snippets'
-			 let lines=[]
-			 call add(lines,'--------------------')
-			 call add(lines,'Snippets INFO')
-			 call add(lines,'--------------------')
-			 call add(lines,'g:snippets_dir:')
-			 call extend(lines,base#mapsub(split(g:snippets_dir,','),'^','\t','g'))
+       let lines=[]
+       call add(lines,'--------------------')
+       call add(lines,'Snippets INFO')
+       call add(lines,'--------------------')
+       call add(lines,'g:snippets_dir:')
+       call extend(lines,base#mapsub(split(g:snippets_dir,','),'^','\t','g'))
 
-			 call base#buf#open_split({ 'lines' : lines })
-			 return
+       call base#buf#open_split({ 'lines' : lines })
+       return
            
 """info_git
    elseif topic == 'git'
@@ -2660,20 +2660,20 @@ function! base#info (...)
 
 """info_grep
    elseif topic == 'grep'
-				let lines = []
+        let lines = []
 
-			 	call add(lines,'--------------------')
-				call add(lines,'GREP INFO')
-			 	call add(lines,'--------------------')
-				call add(lines,'&grepprg:')
-				call add(lines,'  '.&grepprg)
-				call add(lines,'&grepformat:')
-				call add(lines,'  '.&grepformat)
-				call add(lines,'base#grepopt():')
-				call add(lines,'  ' . base#grepopt() )
+        call add(lines,'--------------------')
+        call add(lines,'GREP INFO')
+        call add(lines,'--------------------')
+        call add(lines,'&grepprg:')
+        call add(lines,'  '.&grepprg)
+        call add(lines,'&grepformat:')
+        call add(lines,'  '.&grepformat)
+        call add(lines,'base#grepopt():')
+        call add(lines,'  ' . base#grepopt() )
 
-			 call base#buf#open_split({ 'lines' : lines })
-			 return
+       call base#buf#open_split({ 'lines' : lines })
+       return
 
 """info_java
    elseif topic == 'java'
@@ -2683,18 +2683,18 @@ function! base#info (...)
 
 """info_sqlite
    elseif topic == 'sqlite'
-			call base#sqlite#info()
+      call base#sqlite#info()
 
    elseif topic == 'sqlite_prompt'
-			call base#sqlite#info({ 'prompt' : 1 })
+      call base#sqlite#info({ 'prompt' : 1 })
 
    elseif topic == 'sqlite_sql'
-			call base#sqlite#info_sql()
+      call base#sqlite#info_sql()
 
 """info_bufs
    elseif topic == 'bufs'
 
-			 let info = []
+       let info = []
        call add(info," " )
        call add(info,"Buffer-related stuff: " )
        call add(info," " )
@@ -2711,7 +2711,7 @@ function! base#info (...)
 
        if ex_finfo
             call add(info," b:finfo  => " )
-						call add(info,  pymy#var#pp( b:finfo ) )
+            call add(info,  pymy#var#pp( b:finfo ) )
        endif
 
        call add(info," "   )
@@ -2719,18 +2719,18 @@ function! base#info (...)
        let pathids =  base#buf#pathids ()
        call add(info," pathids => " . join(pathids,' ')   )
 
-			 call base#buf#open_split({ 'lines' : info })
+       call base#buf#open_split({ 'lines' : info })
 
 """info_vars
    elseif topic == 'vars'
-			let regex = input('regex: ','')
-			let varlist = base#vim#varlist({ 'regex' : regex })
-			call base#buf#open_split({ 'lines' : varlist })
+      let regex = input('regex: ','')
+      let varlist = base#vim#varlist({ 'regex' : regex })
+      call base#buf#open_split({ 'lines' : varlist })
 
 """info_tagbar
    elseif topic == 'plg_tagbar'
-			 	let info = []
-				call add(info,'Tagbar Plugin Info:')
+        let info = []
+        call add(info,'Tagbar Plugin Info:')
 
         let vars = base#varget('tagbar_vars',[])
         for v in vars
@@ -2765,33 +2765,33 @@ function! base#info (...)
         let stl = g:F_StatusLine
     endif
 
-		let stl    = base#varget('stl','')
-		let stlopt = base#varget('stlopt','')
-		
-		let d = base#delim()
-		let info = []
-		call add(info,d)
-		call add(info,'Statusline Info')
-		call add(info,d)
-		call add(info,'BaseVarEcho stlopt:')
-		call add(info,"\t" . stlopt )
-		call add(info,'BaseVarEcho stl:')
-		call add(info,"\t" . stl )
-		call add(info,'&stl:')
-		call add(info,"\t" . &stl )
-		call add(info,' ')
-		
-		call base#buf#open_split({ 'lines' : info })
+    let stl    = base#varget('stl','')
+    let stlopt = base#varget('stlopt','')
+    
+    let d = base#delim()
+    let info = []
+    call add(info,d)
+    call add(info,'Statusline Info')
+    call add(info,d)
+    call add(info,'BaseVarEcho stlopt:')
+    call add(info,"\t" . stlopt )
+    call add(info,'BaseVarEcho stl:')
+    call add(info,"\t" . stl )
+    call add(info,'&stl:')
+    call add(info,"\t" . &stl )
+    call add(info,' ')
+    
+    call base#buf#open_split({ 'lines' : info })
 
 """info_paths
    elseif topic == 'paths'
-			 let paths = base#pathlist()
+       let paths = base#pathlist()
 
-			 let info = []
-			 call add(info,'PATHS: ')
-			 call add(info,base#map#add_tabs(sort(paths),1))
+       let info = []
+       call add(info,'PATHS: ')
+       call add(info,base#map#add_tabs(sort(paths),1))
 
-			 call base#buf#open_split({ 'lines' : info })
+       call base#buf#open_split({ 'lines' : info })
 
 """info_dirs
    elseif topic == 'dirs'
@@ -2804,21 +2804,21 @@ function! base#info (...)
      call base#echo({ 'text' : "ENVIRONMENT ", 'hl' : 'Title' } )
 
      let evlist = base#envvarlist()
-		 let evlist_t = base#map#add_tabs(evlist)
+     let evlist_t = base#map#add_tabs(evlist)
 
-		 let info_env = []
-		 call add(info_env,'To see the value of specific env. variable, use:')
-		 let envcmds=[
-		 		\	'BaseAct envvar_open_split',
-		 		\	'BaseAppend env_path',
-		 		\	'BaseAppend envvar',
-		 		\	]
-		 call extend(info_env,base#map#add_tabs(envcmds))
+     let info_env = []
+     call add(info_env,'To see the value of specific env. variable, use:')
+     let envcmds=[
+        \ 'BaseAct envvar_open_split',
+        \ 'BaseAppend env_path',
+        \ 'BaseAppend envvar',
+        \ ]
+     call extend(info_env,base#map#add_tabs(envcmds))
 
-		 call add(info_env,'List of Environment Variables:')
-		 call extend(info_env,evlist_t)
+     call add(info_env,'List of Environment Variables:')
+     call extend(info_env,evlist_t)
 
-		 call base#buf#open_split({ 'lines' : info_env })
+     call base#buf#open_split({ 'lines' : info_env })
 
 """info_encodings
    elseif topic == 'encodings'
@@ -2857,34 +2857,34 @@ function! base#info (...)
 
 """info_tags
    elseif topic == 'tags'
-			let tags = split(&tags,",")
-			
-			let tgs = base#tg#ids_comma()
-			let tgids = split(tgs,',')
+      let tags = split(&tags,",")
+      
+      let tgs = base#tg#ids_comma()
+      let tgids = split(tgs,',')
 
-			let info = []
+      let info = []
 
-			call add(info, "Tag ID: ")
-			for tgid in tgids 
-				call add(info," " . tgid)
-			endfor
-			
-			call add(info,'Tags: ')
-			call add(info," &tags => ")
+      call add(info, "Tag ID: ")
+      for tgid in tgids 
+        call add(info," " . tgid)
+      endfor
+      
+      call add(info,'Tags: ')
+      call add(info," &tags => ")
 
-			for t in tags
-				call add(info,"\t" . t )
-			endfor
+      for t in tags
+        call add(info,"\t" . t )
+      endfor
 
-			call base#buf#open_split({ 'lines' : info })
+      call base#buf#open_split({ 'lines' : info })
 
 """info_perl
    elseif topic == 'perl'
-			call perlmy#info()
+      call perlmy#info()
 
 """info_python
    elseif topic == 'python'
-			PYMY info
+      PYMY info
 
 """info_proj
    elseif topic == 'proj'
@@ -2920,53 +2920,53 @@ function! base#info (...)
    elseif topic == 'rtp'
       let rtp_a = split(&rtp,",")
 
-			let ii = []
-			call add(ii,'&rtp:')
-			call extend(ii,base#map#add_tabs(rtp_a,1))
+      let ii = []
+      call add(ii,'&rtp:')
+      call extend(ii,base#map#add_tabs(rtp_a,1))
 
-			call base#buf#open_split({ 'lines' : ii })
+      call base#buf#open_split({ 'lines' : ii })
 
 """info_plugins
    elseif topic == 'plugins'
-			let plugins = base#plugins()
+      let plugins = base#plugins()
 
-			let ii = []
-			call add(ii,'PLUGINS:')
-			call extend(ii,base#map#add_tabs(plugins,1))
-			call base#buf#open_split({ 'lines' : ii })
+      let ii = []
+      call add(ii,'PLUGINS:')
+      call extend(ii,base#map#add_tabs(plugins,1))
+      call base#buf#open_split({ 'lines' : ii })
 
 """info_make
    elseif topic == 'make'
-			
-			let info = []
-			call add(info,'MAKE:')
-			
-			let info_a = [
-			\ [ 'cwd', getcwd() ],
-			\ [ '&makeprg', &makeprg ],
-			\ [ '&efm', &efm ],
-			\ [ '&makeef:', &makeef ],
-			\ [ 'makeprg id', make#varget('makeprg','') ],
-			\ [ 'efm id', make#varget('efm','') ],
-			\ ]
+      
+      let info = []
+      call add(info,'MAKE:')
+      
+      let info_a = [
+      \ [ 'cwd', getcwd() ],
+      \ [ '&makeprg', &makeprg ],
+      \ [ '&efm', &efm ],
+      \ [ '&makeef:', &makeef ],
+      \ [ 'makeprg id', make#varget('makeprg','') ],
+      \ [ 'efm id', make#varget('efm','') ],
+      \ ]
 
-			for x in info_a
-				 call add(info,get(x,0,''))
-				 call add(info,indent . get(x,1,''))
-			endfor
+      for x in info_a
+         call add(info,get(x,0,''))
+         call add(info,indent . get(x,1,''))
+      endfor
 
-			call base#buf#open_split({ 'lines' : info })
+      call base#buf#open_split({ 'lines' : info })
 
 """info_opts
    elseif topic == 'opts'
 
-			 let ii = [] 
-			 let opts = base#varget('opts',{})
-			 let li = base#dump#dict_tabbed (opts)
+       let ii = [] 
+       let opts = base#varget('opts',{})
+       let li = base#dump#dict_tabbed (opts)
 
-			 call add(ii,'OPTIONS: ')
-			 call extend(ii,li)
-			 call base#buf#open_split({ 'lines' : li })
+       call add(ii,'OPTIONS: ')
+       call extend(ii,li)
+       call base#buf#open_split({ 'lines' : li })
 
 
    endif
@@ -3095,9 +3095,9 @@ fun! base#echovar(ref)
 endfun
 
 function! base#plgdir ()
-		let plgdir = $VIMRUNTIME . '/plg/base' 
-		call base#varset('plgdir',plgdir)
-		return plgdir
+    let plgdir = $VIMRUNTIME . '/plg/base' 
+    call base#varset('plgdir',plgdir)
+    return plgdir
 endf    
 
 "" let dd = base#datadir()
@@ -3113,9 +3113,9 @@ function! base#datadir (...)
 endf    
 
 function! base#delim (...)
-	 let d = '-'
-	 let num = 70
-	 return repeat(d,num)
+   let d = '-'
+   let num = 70
+   return repeat(d,num)
 endf    
 
 " go to base plugin root directory
@@ -3126,60 +3126,60 @@ function! base#plgcd ()
 endf    
 
 function! base#envvar_a (varname,...)
-	if has('win32')
-		let sep =';'
-	else
-		let sep =':'
-	endif
-	let sep = get(a:000,0,sep)
+  if has('win32')
+    let sep =';'
+  else
+    let sep =':'
+  endif
+  let sep = get(a:000,0,sep)
 
-	let var = base#envvar(a:varname)
-	let a = split(var,sep)
+  let var = base#envvar(a:varname)
+  let a = split(var,sep)
 
-	return a
+  return a
 
 endf    
 
 
 function! base#envvar_open_split (varname, ... )
-	let a = base#envvar_a(a:varname)
-	call base#buf#open_split({'lines' : a})
+  let a = base#envvar_a(a:varname)
+  call base#buf#open_split({'lines' : a})
 
 endf    
 
 function! base#envvar (varname, ... )
-		let default = get(a:000,0,'')
+    let default = get(a:000,0,'')
 
     let var  = '$' . a:varname
     let val  = default
 
-		if has('perl')
+    if has('perl')
 perl << eof
-	use Vim::Perl qw(VimLet VimEval);
+  use Vim::Perl qw(VimLet VimEval);
 
-	my $default = VimEval('default');
-	my $env = sub { my $vname = shift; $ENV{$vname} || $default; };
+  my $default = VimEval('default');
+  my $env = sub { my $vname = shift; $ENV{$vname} || $default; };
 
-	my $varname = VimEval('a:varname');
-	my $val     = $env->($varname);
+  my $varname = VimEval('a:varname');
+  my $val     = $env->($varname);
 
-	if($^O eq 'MSWin32'){
-		local $_ = $val;
-		while(/%(\w+)%/){
-			my $vname = $1;
-			my $vval  = $env->($vname);
-			s/%(\w+)%/$vval/g;
-		}
-		$val=$_;
-	}
+  if($^O eq 'MSWin32'){
+    local $_ = $val;
+    while(/%(\w+)%/){
+      my $vname = $1;
+      my $vval  = $env->($vname);
+      s/%(\w+)%/$vval/g;
+    }
+    $val=$_;
+  }
 
-	VimLet('val',$val);
+  VimLet('val',$val);
 eof
-		else
-	    if exists(var)
-	        exe 'let val = ' . var
-	    endif
-		endif
+    else
+      if exists(var)
+          exe 'let val = ' . var
+      endif
+    endif
 
     return val
 
@@ -3211,19 +3211,19 @@ function! base#varecho (varname,...)
 endfunction
 
 function! base#dump_split (...)
-	let val = get(a:000,0,'')
-	let dump = base#dump(val)
-	return split(dump,"\n")
+  let val = get(a:000,0,'')
+  let dump = base#dump(val)
+  return split(dump,"\n")
 endfunction
 
 function! base#dump (...)
     let val  = a:1
     let dump = ''
 
-		try
-			let dump = prettyprint#prettyprint(val)
-		catch
-		endtry
+    try
+      let dump = prettyprint#prettyprint(val)
+    catch
+    endtry
 
     return dump
 endfunction
@@ -3234,29 +3234,29 @@ function! base#varget_nz (varname,...)
     
     if exists("s:basevars[a:varname]")
       let l:val = copy( s:basevars[a:varname] )
-		endif
+    endif
 
-		"" var already exists and is non zero
-		if exists("l:val") 
-			if ( type(l:val) == type("") && strlen(l:val) )
-				return l:val
+    "" var already exists and is non zero
+    if exists("l:val") 
+      if ( type(l:val) == type("") && strlen(l:val) )
+        return l:val
 
-			elseif ( type(l:val) == type([]) && len(l:val) )
-				return l:val
+      elseif ( type(l:val) == type([]) && len(l:val) )
+        return l:val
 
-			elseif ( type(l:val) == type({}) && len(l:val) )
-				return l:val
+      elseif ( type(l:val) == type({}) && len(l:val) )
+        return l:val
 
-			endif
-		endif
+      endif
+    endif
 
-		let l:val = ''
-		if a:0
-			let default = a:1
-			unlet l:val | let l:val = default
-		endif
+    let l:val = ''
+    if a:0
+      let default = a:1
+      unlet l:val | let l:val = default
+    endif
 
-		return l:val
+    return l:val
     
 endfunction
 
@@ -3270,13 +3270,30 @@ function! base#varget (varname,...)
         let val = copy( s:basevars[a:varname] )
     else
         let val = ''
-    if a:0
-        unlet val | let val = a:1
-    endif
+        if a:0
+            unlet val | let val = a:1
+        endif
     endif
 
     return val
     
+endfunction
+
+function! base#varref (varname,...)
+    if ! exists("s:basevars")
+        let s:basevars={}
+    endif
+    
+    if exists("s:basevars[a:varname]")
+        let val = s:basevars[a:varname]
+    else
+        let val = ''
+        if a:0
+            unlet val | let val = a:1
+        endif
+    endif
+
+    return val
 endfunction
 
 
@@ -3300,7 +3317,7 @@ function! base#vars()
         let s:basevars={}
     endif
 
-		return s:basevars
+    return s:basevars
 
 endfunction
 
@@ -3321,7 +3338,7 @@ endfunction
 
 function! base#varsetfromdat (...)
     let varname = get(a:000,0,'')
-		let type    = get(a:000,1,'List')
+    let type    = get(a:000,1,'List')
 
     let datafile = base#datafile(varname)
 
@@ -3344,7 +3361,7 @@ function! base#varsetfromdat (...)
 endfunction
 
 function! base#datafile (id)
-		let id = a:id
+    let id = a:id
 
     let files = base#datafiles(a:id)
     let file  = get(files,0,'')
@@ -3352,46 +3369,46 @@ function! base#datafile (id)
 endfunction
 
 function! base#plugins (...)
-		let plugins = []
-		let dbfile = base#dbfile()
-		
-		let q = 'select plugin from plugins'
-		let p = []
-		
-		let plugins = pymy#sqlite#query_as_list({
-			\	'dbfile' : dbfile,
-			\	'p'      : p,
-			\	'q'      : q,
-			\	})
-		return plugins
+    let plugins = []
+    let dbfile = base#dbfile()
+    
+    let q = 'select plugin from plugins'
+    let p = []
+    
+    let plugins = pymy#sqlite#query_as_list({
+      \ 'dbfile' : dbfile,
+      \ 'p'      : p,
+      \ 'q'      : q,
+      \ })
+    return plugins
 
 endfunction
 
 function! base#plugins_all (...)
-		let dbfile = base#dbfile()
-		
-		let q = 'select plugin from plugins_all'
-		let p = []
-		
-		let plugins_all = pymy#sqlite#query_as_list({
-			\	'dbfile' : dbfile,
-			\	'p'      : p,
-			\	'q'      : q,
-			\	})
-		return plugins_all
+    let dbfile = base#dbfile()
+    
+    let q = 'select plugin from plugins_all'
+    let p = []
+    
+    let plugins_all = pymy#sqlite#query_as_list({
+      \ 'dbfile' : dbfile,
+      \ 'p'      : p,
+      \ 'q'      : q,
+      \ })
+    return plugins_all
 
 endfunction
 
 function! base#datafiles (...)
-		let id  = get(a:000,0,'')
-		let ref = get(a:000,1,{})
+    let id  = get(a:000,0,'')
+    let ref = get(a:000,1,{})
 
-		return base#sqlite#datfiles(id,ref)
+    return base#sqlite#datfiles(id,ref)
 
     "let datadir = base#datadir()
     "let file    = a:id . ".i.dat"
 
-		"let pat   = '^'.file.'$'
+    "let pat   = '^'.file.'$'
     "let files = base#find({
         "\ "dirs"    : [ datadir ],
         "\ "subdirs" : 1,
@@ -3403,49 +3420,49 @@ function! base#datafiles (...)
 endfunction
 
 function! base#datlist (...)
-	let ref = get(a:000,0,{})
+  let ref = get(a:000,0,{})
 
-	let dfiles = base#datafiles('',ref)
-	let list = sort(keys(dfiles))
-	return list
+  let dfiles = base#datafiles('',ref)
+  let list = sort(keys(dfiles))
+  return list
 endfunction
 
 function! base#initvarsfromdat ()
-		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-		let msg = ['start']
-		let prf = { 'func' : 'base#initvarsfromdat', 'plugin' : 'base'}
-		call base#log(msg,prf)
-		let l:start=localtime()
-		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    let msg = ['start']
+    let prf = { 'func' : 'base#initvarsfromdat', 'plugin' : 'base'}
+    call base#log(msg,prf)
+    let l:start=localtime()
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     let dattypes = base#qw("list listlines dict")
-		let mp = { 
-			\	"list"      : "List",
-			\	"dict"      : "Dictionary",
-			\	"listlines" : "ListLines",
-			\	}
-		for type in dattypes
+    let mp = { 
+      \ "list"      : "List",
+      \ "dict"      : "Dictionary",
+      \ "listlines" : "ListLines",
+      \ }
+    for type in dattypes
         let tp = get(mp,type,'')
-				let dlist = base#datlist({'type' : type })
-				for v in dlist
-        	call base#varsetfromdat(v,tp)
-				endfor
-		endfor
-		
-		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-		let l:elapsed = localtime() - l:start
-		let msg = ['end, elapsed = ' . l:elapsed]
-		let prf = {'plugin' : 'base', 'func' : 'base#initvarsfromdat'}
-		call base#log(msg,prf)
-		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        let dlist = base#datlist({'type' : type })
+        for v in dlist
+          call base#varsetfromdat(v,tp)
+        endfor
+    endfor
+    
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    let l:elapsed = localtime() - l:start
+    let msg = ['end, elapsed = ' . l:elapsed]
+    let prf = {'plugin' : 'base', 'func' : 'base#initvarsfromdat'}
+    call base#log(msg,prf)
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 endfunction
 
 function! base#initvarsfromdat_vim ()
-		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-		let msg = ['start']
-		let prf = { 'func' : 'base#initvarsfromdat_vim', 'plugin' : 'base'}
-		call base#log(msg,prf)
-		let l:start=localtime()
-		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    let msg = ['start']
+    let prf = { 'func' : 'base#initvarsfromdat_vim', 'plugin' : 'base'}
+    call base#log(msg,prf)
+    let l:start=localtime()
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
     let refdef = {}
     let ref    = refdef
@@ -3460,10 +3477,10 @@ function! base#initvarsfromdat_vim ()
     let dir = get(ref,'dir',dir)
 
     let mp = { 
-			\	"list"      : "List",
-			\	"dict"      : "Dictionary",
-			\	"listlines" : "ListLines",
-			\	}
+      \ "list"      : "List",
+      \ "dict"      : "Dictionary",
+      \ "listlines" : "ListLines",
+      \ }
     for type in base#qw("list listlines dict")
         let dir = base#file#catfile([ base#datadir(), type ])
         let vars= base#find({ 
@@ -3471,7 +3488,7 @@ function! base#initvarsfromdat_vim ()
             \   "exts"    : [ "i.dat" ],
             \   "subdirs" : 1,
             \   "rmext"   : 1, })
-				let vars = map(vars,'base#file#reldir(v:val,dir)')
+        let vars = map(vars,'base#file#reldir(v:val,dir)')
 
         let tp = mp[type]
         for v in vars
@@ -3494,12 +3511,12 @@ function! base#initvarsfromdat_vim ()
     call base#varset('datlist',datlist)
     call base#varset('datfiles',datfiles)
 
-		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-		let l:elapsed = localtime() - l:start
-		let msg = ['end, elapsed = ' . l:elapsed]
-		let prf = {'plugin' : 'base', 'func' : 'base#initvarsfromdat_vim'}
-		call base#log(msg,prf)
-		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    let l:elapsed = localtime() - l:start
+    let msg = ['end, elapsed = ' . l:elapsed]
+    let prf = {'plugin' : 'base', 'func' : 'base#initvarsfromdat_vim'}
+    call base#log(msg,prf)
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     
 endfunction
 
@@ -3511,115 +3528,115 @@ function! base#varlist ()
 endfunction
 
 "Usage:
-"	base#where('perl')
-"	base#where('perl',0)
-"	base#where('perl',0,'perl.exe')
+" base#where('perl')
+" base#where('perl',0)
+" base#where('perl',0,'perl.exe')
 
 function! base#where (file,...)
-	if base#noperl() | return | endif
+  if base#noperl() | return | endif
 
-	let paths = []
+  let paths = []
 perl << eof
-	use File::Which qw(where);
-	use Vim::Perl qw( VimVar VimListExtend );
+  use File::Which qw(where);
+  use Vim::Perl qw( VimVar VimListExtend );
 
-	my $file = VimVar('a:file');
+  my $file = VimVar('a:file');
 
-	my @paths = where($file);
-	VimListExtend('paths',[@paths]);
+  my @paths = where($file);
+  VimListExtend('paths',[@paths]);
 eof
-	if !a:0
-		return paths
-	else
-		let idx = get(a:000,0,'')
-		let default = get(a:000,1,'')
-		return get(paths,idx,default)
-	endif
+  if !a:0
+    return paths
+  else
+    let idx = get(a:000,0,'')
+    let default = get(a:000,1,'')
+    return get(paths,idx,default)
+  endif
 
 endfunction
 
 function! base#act (...)
   let act = get(a:000,0,'')
 
-	if ! strlen(act) 
-		let comps_n = base#complete#BaseAct()
-		let comps   = split(comps_n,"\n")
+  if ! strlen(act) 
+    let comps_n = base#complete#BaseAct()
+    let comps   = split(comps_n,"\n")
 
-		let act = base#getfromchoosedialog({ 
-						\ 'list'        : comps,
-						\ 'startopt'    : get(comps,0,''),
-						\ 'header'      : "Available BaseAct commands are: ",
-						\ 'numcols'     : 2,
-						\ 'bottom'      : "Choose BaseAct command by number: ",
-						\ })
-	endif
+    let act = base#getfromchoosedialog({ 
+            \ 'list'        : comps,
+            \ 'startopt'    : get(comps,0,''),
+            \ 'header'      : "Available BaseAct commands are: ",
+            \ 'numcols'     : 2,
+            \ 'bottom'      : "Choose BaseAct command by number: ",
+            \ })
+  endif
 
-	if act =~ '^sqlite_'
-		let cmd = substitute(act,'^sqlite_\(.*\)$','\1','g')
-  	let sub = 'base#sqlite#' . cmd
+  if act =~ '^sqlite_'
+    let cmd = substitute(act,'^sqlite_\(.*\)$','\1','g')
+    let sub = 'base#sqlite#' . cmd
 
-	elseif act =~ '^svn_'
-		let cmd = substitute(act,'^svn_\(.*\)$','\1','g')
-  	let sub = 'base#svn#' . cmd
+  elseif act =~ '^svn_'
+    let cmd = substitute(act,'^svn_\(.*\)$','\1','g')
+    let sub = 'base#svn#' . cmd
 
-	else
-  	let sub = 'base#act#' . act
-	endif
+  else
+    let sub = 'base#act#' . act
+  endif
 
   exe 'call ' . sub . '()'
 
 endf    
 
 function! base#pcname()
-	let pc  = (has('win32')) ? base#envvar('COMPUTERNAME') : get(split(system('hostname'),"\n"),0)
-	return pc
+  let pc  = (has('win32')) ? base#envvar('COMPUTERNAME') : get(split(system('hostname'),"\n"),0)
+  return pc
 endf    
 
 function! base#username()
-	let pc  = (has('win32')) ? base#envvar('USER') : base#envvar('USER')
-	return pc
+  let pc  = (has('win32')) ? base#envvar('USER') : base#envvar('USER')
+  return pc
 endf    
 
 function! base#home()
-	let pc  = (has('win32')) ? base#envvar('USERPROFILE') : base#envvar('HOME')
-	return pc
+  let pc  = (has('win32')) ? base#envvar('USERPROFILE') : base#envvar('HOME')
+  return pc
 endf  
 
 
 function! base#init (...)
 
-	let dat_inor = base#file#catfile([  base#plgdir() , 'data', 'list', 'init_order.i.dat' ])
-	let opts = base#readarr(dat_inor) 
-	call base#varset('init_order',opts)
+  let dat_inor = base#file#catfile([  base#plgdir() , 'data', 'list', 'init_order.i.dat' ])
+  let opts = base#readarr(dat_inor) 
+  call base#varset('init_order',opts)
 
-	let dat_all = base#file#catfile([  base#plgdir() , 'data', 'list', 'all_init_cmds.i.dat' ])
-	let opts_all = base#readarr(dat_all) 
-	call base#varset('all_init_cmds',opts_all)
+  let dat_all = base#file#catfile([  base#plgdir() , 'data', 'list', 'all_init_cmds.i.dat' ])
+  let opts_all = base#readarr(dat_all) 
+  call base#varset('all_init_cmds',opts_all)
 
-	let prf = { 'func' : 'base#init', 'plugin' : 'base'}
+  let prf = { 'func' : 'base#init', 'plugin' : 'base'}
  
   if a:0
     let ref = get(a:000,0,'')
 
-		if type(ref)==type('')
-				let opt = ref
-				let msg = 'init opt = ' .  opt
-				call base#log(msg,prf)
+    if type(ref)==type('')
+        let opt = ref
+        let msg = 'init opt = ' .  opt
+        call base#log(msg,prf)
 
-		elseif type(ref)==type([])
-				let opts = ref
-				for opt in opts
-					call base#init(opt)
-				endfor
-				return
-		endif
+    elseif type(ref)==type([])
+        let opts = ref
+        for opt in opts
+          call base#init(opt)
+        endfor
+        return
+    endif
 
-		if	!base#inlist(opt,opts_all)
-			echohl WarningMsg
-			echo 'wrong opt for base#init(): ' . opt
-			echohl None
-			return
-		endif
+    if  !base#inlist(opt,opts_all)
+      echohl WarningMsg
+      echo 'wrong opt for base#init(): ' . opt
+      echohl None
+      return
+    endif
 
     if opt == 'cmds'
         call base#init#cmds()
@@ -3661,7 +3678,7 @@ function! base#init (...)
         call base#omni#init()
 
     elseif opt == 'rtp'
-  		call base#rtp#update()
+      call base#rtp#update()
     endif
     return
   endif
@@ -3683,8 +3700,8 @@ function! base#mkdir (dir)
   try
     call mkdir(a:dir,'p')
     call base#log([
-				\ 'base#mkdir created directory:',
-				\ 'base#mkdir '. a:dir])
+        \ 'base#mkdir created directory:',
+        \ 'base#mkdir '. a:dir])
   catch
     call base#warn({ "text" : "Failure to create dir: " . a:dir})
   endtry
@@ -3693,15 +3710,15 @@ endf
 
 "
 "Usage
-"	call base#viewdat (dat)
+" call base#viewdat (dat)
 "Call tree
-"	Calls
-"		base#datafiles
-"			base#sqlite#datfiles
-"				base#init#sqlite
-"				pymy#sqlite#query
-"				base#dbfile
-"		base#fileopen
+" Calls
+"   base#datafiles
+"     base#sqlite#datfiles
+"       base#init#sqlite
+"       pymy#sqlite#query
+"       base#dbfile
+"   base#fileopen
 
 function! base#viewdat (...)
             
@@ -3734,19 +3751,19 @@ function! base#listnewinc(start,end,inc)
  let counter=a:start
 
  if a:inc > 0
-	 while counter < a:end+1
-	   call add(a,counter)
-	
-	   let counter+=a:inc
-	   let i+=1
-	 endw
+   while counter < a:end+1
+     call add(a,counter)
+  
+     let counter+=a:inc
+     let i+=1
+   endw
  else
-	 while counter > a:end-1
-	   call add(a,counter)
-	
-	   let counter+=a:inc
-	   let i+=1
-	 endw
+   while counter > a:end-1
+     call add(a,counter)
+  
+     let counter+=a:inc
+     let i+=1
+   endw
  endif
 
  return a
@@ -3780,13 +3797,13 @@ function! base#grep (...)
     let ref = {}
     if a:0 | let ref = a:1 | endif
 
-		let opt = base#grepopt()
+    let opt = base#grepopt()
 
     let pat   = get(ref,'pat','')
     let files = get(ref,'files',[])
     let opt   = get(ref,'opt',opt)
 
-		let grepprg = get(ref,'grepprg','')
+    let grepprg = get(ref,'grepprg','')
 
     let rootdir = get(ref,'rootdir','')
 
@@ -3795,17 +3812,17 @@ function! base#grep (...)
     endif
 
     let cd_to_dir = get(ref,'cd_to_dir','')
-		if strlen(cd_to_dir) 
-			if !isdirectory(cd_to_dir)
-				call base#mkdir(cd_to_dir)
-			endif
+    if strlen(cd_to_dir) 
+      if !isdirectory(cd_to_dir)
+        call base#mkdir(cd_to_dir)
+      endif
 
-			call base#cd(cd_to_dir)
-		endif
+      call base#cd(cd_to_dir)
+    endif
 
     call map(files,'base#file#win2unix(v:val)')
 
-		let cmds = []
+    let cmds = []
 
     if opt == 'plg_findstr'
 
@@ -3824,46 +3841,46 @@ function! base#grep (...)
         call add(cmds, 'vimgrep /'.pat.'/ '. join(files,' ') )
 
     elseif opt == 'grep'
-				let patq = "'".pat."'"
-				let a    = []
+        let patq = "'".pat."'"
+        let a    = []
 
-				"if strlen(grepprg)
-					"call add(cmds,'let &grepprg='."'".escape(grepprg,' ')."'")
-				"endif
+        "if strlen(grepprg)
+          "call add(cmds,'let &grepprg='."'".escape(grepprg,' ')."'")
+        "endif
 
-				let q ="'"
+        let q ="'"
 
-				call add(cmds, 'call setqflist([])' )
-				for f in files
-					let a=[]
-					call extend(a,['silent grepadd!',patq])
-					call extend(a,[f])
-	   			let cmd = join(a,' ')
-					call add(cmds, cmd )
-				endfor
+        call add(cmds, 'call setqflist([])' )
+        for f in files
+          let a=[]
+          call extend(a,['silent grepadd!',patq])
+          call extend(a,[f])
+          let cmd = join(a,' ')
+          call add(cmds, cmd )
+        endfor
 
     endif
 
-		for cmd in cmds
-			let cmde = strpart(cmd,0,50)
-			exe cmd
-		endfor
+    for cmd in cmds
+      let cmde = strpart(cmd,0,50)
+      exe cmd
+    endfor
 
-		let matches = len(getqflist())
+    let matches = len(getqflist())
 
-		redraw!
-		if matches
-			echohl MoreMsg
-			echo 'base#grep() has found ' . matches . ' matches'
-			echohl None
-			copen
-		else
-			echohl DiffText
-			echo 'base#grep() has found no matches '
-			echohl None
-		endif
+    redraw!
+    if matches
+      echohl MoreMsg
+      echo 'base#grep() has found ' . matches . ' matches'
+      echohl None
+      copen
+    else
+      echohl DiffText
+      echo 'base#grep() has found no matches '
+      echohl None
+    endif
 
-		return 1
+    return 1
     
 endfunction
 
@@ -3882,7 +3899,7 @@ function! base#grepopt (...)
 
     if a:0 | let opt = a:1 | endif
 
-		let opt = 'grep'
+    let opt = 'grep'
     call base#varset('grepopt',opt)
 
     "return base#varget('grepopt','')

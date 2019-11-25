@@ -62,3 +62,13 @@ function! base#cmd#SCP (...)
 	let sub = 'base#cmd_SCP#' . cmd
 	exe 'call ' . sub . '()'
 endfunction
+
+function! base#cmd#WHERE (...)
+	let opt = get(a:000,0,'')
+
+	let hist = base#varget('hist_WHERE',[])
+
+	let files = base#where(opt)
+	call base#buf#open_split({ 'lines' : files })
+
+endfunction

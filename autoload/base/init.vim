@@ -182,6 +182,10 @@ fun! base#init#cmds()
 	command! -nargs=* -complete=custom,base#complete#SSH      SSH
 		\	call base#cmd#SSH(<f-args>) 
 
+"""WHERE
+	command! -nargs=* -complete=custom,base#complete#WHERE      WHERE
+		\	call base#cmd#WHERE(<f-args>) 
+
 """SCP
 	command! -nargs=* -complete=custom,base#complete#SCP      SCP
 		\	call base#cmd#SCP(<f-args>) 

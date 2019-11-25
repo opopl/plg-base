@@ -185,6 +185,10 @@ function! base#complete#SSH (...)
   return base#complete#vars([ 'cmds_SSH' ])
 endfunction
 
+function! base#complete#WHERE (...)
+  return base#complete#vars([ 'hist_WHERE' ])
+endfunction
+
 function! base#complete#log_func (...)
 	let comps = []
 
