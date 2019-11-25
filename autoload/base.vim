@@ -3289,8 +3289,10 @@ function! base#varref (varname,...)
     else
         let val = ''
         if a:0
-            unlet val | let val = a:1
+            unlet val 
+            let val = a:1
         endif
+        call extend(s:basevars,{ a:varname : val })
     endif
 
     return val
