@@ -20,7 +20,13 @@ snippet base#listnewinc
 snippet bfw
 	base#file#write_lines
 snippet base#file#write_lines
-	call base#file#write_lines(<++>)
+	" let r = {
+	"      \   'lines'  : <+lines+>,
+	"      \   'file'   : <+file+>,
+	"      \   'prompt' : <+prompt+>,
+	"      \   'mode'   : <+mode+>,
+	"      \ }
+	call base#file#write_lines(r)
 snippet prf
 	let prf = { 'plugin' : '<++>', 'func' : '<++>', 'prf' : '<++>' }
 snippet base#file#write_lines
@@ -1549,3 +1555,5 @@ snippet esc
 	escape(<++>,<++>)
 snippet pvg
 	projs#varget(<++>, <++>)
+snippet bcd
+	call base#cd(<++>)

@@ -66,11 +66,14 @@ endfunction
 function! base#cmd#WHERE (...)
 	let l:opt = get(a:000,0,'')
 
-	let hist = base#varref('hist_WHERE',[])
+	let hist = base#varref('WHERE_hist',[])
 	call add(hist,l:opt)
 	let hist = base#uniq(hist)
 
 	let files = base#where(opt)
 	call base#buf#open_split({ 'lines' : files })
+
+	let data = base#varref('WHERE_data',{})
+	call extend(data,{ opt : files })
 
 endfunction
