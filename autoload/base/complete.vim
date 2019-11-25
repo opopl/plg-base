@@ -186,7 +186,7 @@ function! base#complete#SSH (...)
 endfunction
 
 function! base#complete#WHERE (...)
-  return base#complete#vars([ 'hist_WHERE' ])
+  return base#complete#vars([ 'WHERE_hist' ])
 endfunction
 
 function! base#complete#log_func (...)
