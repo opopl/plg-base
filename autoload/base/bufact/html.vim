@@ -131,7 +131,7 @@ function! base#bufact#html#headings ()
       \ 'lines' : lines 
       \ })
 
-  "call base#buf#open_split({ 'lines' : h })
+  call base#buf#open_split({ 'lines' : h })
 
 endfunction
 
