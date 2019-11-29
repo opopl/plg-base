@@ -1,12 +1,20 @@
 """BufAct_lynx_dump_split
 function! base#bufact#vim#insert_snip ()
-	call base#buf#insert_snip()
+  call base#buf#insert_snip()
 endfunction
 
 function! base#bufact#vim#stat ()
-	call base#buf#stat()
+  call base#buf#stat()
 endfunction
 
 function! base#bufact#vim#tabs_nice ()
-	call base#buf#tabs_nice()
+  call base#buf#tabs_nice()
+endfunction
+
+function! base#bufact#vim#source_script ()
+  so %
+  redraw!
+  echohl MoreMsg
+  echo "OK: source this file"
+  echohl None
 endfunction
