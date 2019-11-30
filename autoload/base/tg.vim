@@ -298,7 +298,8 @@ function! base#tg#update_tygs (...)
 endf
 
 function! base#tg#update_Fc (self,temp_file)
-  let self = a:self
+  let self      = a:self
+  let temp_file = a:temp_file
 
   let code = self.return_code
 
@@ -333,6 +334,7 @@ function! base#tg#update_Fc (self,temp_file)
        \ "add"  : get(opts, 'add', 0) }
 
    let ok = base#tg#ok(okref)
+   return ok
 endf
 
 
@@ -361,6 +363,10 @@ function! base#tg#update (...)
   " commands to be run when tags have been generated
   let cmds_done    = get(opts,'cmds_done',[])
   let Fc_done      = base#fun#new({ 'cmds' : cmds_done })
+
+  " commands on failure
+  let cmds_fail    = get(opts,'cmds_fail',[])
+  let Fc_fail      = base#fun#new({ 'cmds' : cmds_fail })
 
   let refsys = {}
 
@@ -850,6 +856,12 @@ function! base#tg#update (...)
       \ 'start' : l:start,
       \ 'opts'  : opts,
       \ }
+    if type(Fc_done) == type(function('call'))
+      call extend(env,{ 'Fc_done' : Fc_done })
+    endif
+    if type(Fc_fail) == type(function('call'))
+      call extend(env,{ 'Fc_fail' : Fc_fail })
+    endif
 
     function env.get(temp_file) dict
       call base#tg#update_Fc(self,a:temp_file)
