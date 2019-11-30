@@ -3284,9 +3284,7 @@ function! base#varref (varname,...)
         let s:basevars={}
     endif
     
-    if exists("s:basevars[a:varname]")
-        let val = s:basevars[a:varname]
-    else
+    if ! exists("s:basevars[a:varname]")
         let val = ''
         if a:0
             unlet val 
@@ -3294,6 +3292,8 @@ function! base#varref (varname,...)
         endif
         call extend(s:basevars,{ a:varname : val })
     endif
+
+    let val = s:basevars[a:varname]
 
     return val
 endfunction
