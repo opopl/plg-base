@@ -1,51 +1,51 @@
 
 function! base#var#update (varname,...)
-	let varname = a:varname
+  let varname = a:varname
 
-	let opts_update = get(a:000,0,{})
+  let opts_update = get(a:000,0,{})
 
   let datfiles = base#datafiles()
   let datlist  = base#datlist()
 
-	let types = {
-			\	'dict'      : 'Dictionary',
-			\	'list'      : 'List',
-			\	'listlines' : 'ListLines',
-			\	}
+  let types = {
+      \ 'dict'      : 'Dictionary',
+      \ 'list'      : 'List',
+      \ 'listlines' : 'ListLines',
+      \ }
 
 """var_update_fileids
-	if varname == 'fileids'
-		let files = base#exefile#files()
+  if varname == 'fileids'
+    let files = base#exefile#files()
 
-		let fileids = sort(keys(files))
-		call base#varset('exefileids',fileids)
+    let fileids = sort(keys(files))
+    call base#varset('exefileids',fileids)
 
 """var_update_buf_vars
-	elseif varname == 'buf_vars'
+  elseif varname == 'buf_vars'
 
-		""" list of buffer variables for this buffer
-		let bbv = base#buf#vars()
-		let buf_vars = base#varget('buf_vars',{})
-		call extend(buf_vars,{ b:bufnr : bbv })
-		call base#varset('buf_vars', buf_vars )
+    """ list of buffer variables for this buffer
+    let bbv = base#buf#vars()
+    let buf_vars = base#varget('buf_vars',{})
+    call extend(buf_vars,{ b:bufnr : bbv })
+    call base#varset('buf_vars', buf_vars )
 
-	elseif varname == 'datlist'
-		let datlist = base#sqlite#datlist()
-		call base#varset('datlist',datlist)
+  elseif varname == 'datlist'
+    let datlist = base#sqlite#datlist()
+    call base#varset('datlist',datlist)
 
-	elseif varname == 'datfiles'
-		let datfiles = base#sqlite#datfiles()
-		call base#varset('datfiles',datfiles)
+  elseif varname == 'datfiles'
+    let datfiles = base#sqlite#datfiles()
+    call base#varset('datfiles',datfiles)
 
 """var_update_plugins_all
-	elseif varname == 'plugins_all'
-		let var = base#find({ 
-			\	"dirids"    : ['plg'],
-			\	"relpath"   : 1,
-			\	"subdirs"   : 0,
-			\	"dirs_only" : 1,
-			\	"pat_exclude" : '^.git',
-			\	})
+  elseif varname == 'plugins_all'
+    let var = base#find({ 
+      \ "dirids"    : ['plg'],
+      \ "relpath"   : 1,
+      \ "subdirs"   : 0,
+      \ "dirs_only" : 1,
+      \ "pat_exclude" : '^.git',
+      \ })
     call base#varset(varname,var)
 
   elseif base#inlist(varname,datlist)
@@ -53,7 +53,7 @@ function! base#var#update (varname,...)
     let dfu     = base#file#win2unix(datfile)
 
     let typedir = fnamemodify(dfu,':p:h:t')
-		let type    = get(types,typedir,'')
+    let type    = get(types,typedir,'')
 
     let data = base#readdatfile({ 
         \   "file" : datfile ,
@@ -61,68 +61,68 @@ function! base#var#update (varname,...)
         \   })
 
     call base#varset(varname,data)
-	else
-		return
-	endif
+  else
+    return
+  endif
 
-	let prf = { 'func' : 'base#var#update', 'plugin' : 'base' }
-	call base#log([
-		\	'updated: ' . varname,
-		\	],prf)
-	return
+  let prf = { 'func' : 'base#var#update', 'plugin' : 'base' }
+  call base#log([
+    \ 'updated: ' . varname,
+    \ ],prf)
+  return
 
 endfunction
 
 function! base#var#dump(varname)
-		let val       = base#varget(a:varname)
+    let val       = base#varget(a:varname)
     let dump      = base#dump(val)
-		return dump
+    return dump
 endfunction
 
 function! base#var#dump_lines(varname)
-		let dump = base#var#dump(a:varname)
-		return split(dump, "\n" )
+    let dump = base#var#dump(a:varname)
+    return split(dump, "\n" )
 endfunction
 
 function! base#var#dump_split (varname)
-		let dump = base#var#dump(a:varname)
-		
-		let dumplines = split(dump,"\n")
-		let sz   = len(dumplines)
-		let last = sz-1
+    let dump = base#var#dump(a:varname)
+    
+    let dumplines = split(dump,"\n")
+    let sz   = len(dumplines)
+    let last = sz-1
 
-		let a = []
-		call add(a,'if exists("w") | unlet w | endif')
-		call add(a,' ')
-		call add(a,'let w=' . base#list#get(dumplines,0))
+    let a = []
+    call add(a,'if exists("w") | unlet w | endif')
+    call add(a,' ')
+    call add(a,'let w=' . base#list#get(dumplines,0))
 
-		if last > 0
-			let b = base#list#get(dumplines,'1:'.last)
-			call extend(a,map(b,"'\t\\ ' . v:val"))
-		endif
+    if last > 0
+      let b = base#list#get(dumplines,'1:'.last)
+      call extend(a,map(b,"'\t\\ ' . v:val"))
+    endif
 
-		call base#buf#open_split({ 'lines' : a })
-	
+    call base#buf#open_split({ 'lines' : a })
+  
 endfunction
 
 function! base#var#to_xml (...)
-	let var_name  = get(a:000,0,'')
+  let var_name  = get(a:000,0,'')
 
-	let vars = base#vars()
+  let vars = base#vars()
 
-	let var_list = []
-	if !strlen(var_name)
-		let var_list = base#varlist()
-	else
-		call add(var_list,var_name)
-	endif
+  let var_list = []
+  if !strlen(var_name)
+    let var_list = base#varlist()
+  else
+    call add(var_list,var_name)
+  endif
 
-	"echo vars
+  "echo vars
 
-	" return value
-	let xml = ''
+  " return value
+  let xml = ''
 
-	if has('python3')
+  if has('python3')
 python3 << eof
 
 import vim
@@ -139,9 +139,9 @@ vars_p = {}
 #print(var_list)
 
 for var_name in var_list:
-	vars_p.update({ var_name : vars.get(var_name) })
+  vars_p.update({ var_name : vars.get(var_name) })
 
-	#print(vars_p)
+  #print(vars_p)
 
 def data2xml(d, name='data'):
     r = et.Element(name)
@@ -167,26 +167,26 @@ def buildxml(r, d):
     return r
 
 vars_xml = data2xml(vars_p, name='vars')
-	
+  
 eof
-		let decl = '<?xml version="1.0" encoding="UTF-8"?>'
-		let xml = py3eval('vars_xml')
-		let xml = decl."\n".xml
-	endif
+    let decl = '<?xml version="1.0" encoding="UTF-8"?>'
+    let xml = py3eval('vars_xml')
+    let xml = decl."\n".xml
+  endif
 
-	return xml
+  return xml
 endfunction
 
 function! base#var#dump_xml (...)
-	let var_name  = get(a:000,0,'')
+  let var_name  = get(a:000,0,'')
 
-	let xml = base#var#to_xml(var_name)
+  let xml = base#var#to_xml(var_name)
 
-	if strlen(xml)
-		call base#buf#open_split({ 
-			\ 'text'     : xml,
-			\ 'cmds_pre' : ['set ft=xml'],
-			\	})
-	endif
+  if strlen(xml)
+    call base#buf#open_split({ 
+      \ 'text'     : xml,
+      \ 'cmds_pre' : ['set ft=xml'],
+      \ })
+  endif
 
 endfunction
