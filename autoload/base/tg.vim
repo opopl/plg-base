@@ -311,6 +311,9 @@ function! base#tg#update_Fc (self,temp_file)
   let l:el  = l:end - self.start
   let l:els = ' ' . l:el . ' secs'
 
+  let Fc_done  = get(self, 'Fc_done', '')
+  let Fc_fail  = get(self, 'Fc_fail', '')
+
   redraw!
   let ok = 0
   if code == 0
@@ -325,6 +328,10 @@ function! base#tg#update_Fc (self,temp_file)
      let m = 'FAIL: TgUpdate ' . tgid  . l:els
      call base#warn({ 'text' : m, 'prefix' : '' })
 
+     if type(Fc_fail) == type(function('call'))
+       call call(Fc_fail,[])
+     endif
+
    endif
 
    let okref = { 
@@ -334,6 +341,10 @@ function! base#tg#update_Fc (self,temp_file)
        \ "add"  : get(opts, 'add', 0) }
 
    let ok = base#tg#ok(okref)
+   if type(Fc_done) == type(function('call'))
+     call call(Fc_done,[])
+   endif
+   
    return ok
 endf
 
@@ -360,13 +371,19 @@ function! base#tg#update (...)
   " use asynccommand plugin commands
   let async = get(opts,'async',1)
 
-  " commands to be run when tags have been generated
+  " commands to be run on success ( when tags have been generated )
   let cmds_done    = get(opts,'cmds_done',[])
+
+  " function to be run on success
   let Fc_done      = base#fun#new({ 'cmds' : cmds_done })
+  let Fc_done      = get(opts,'Fc_done',Fc_done)
 
   " commands on failure
   let cmds_fail    = get(opts,'cmds_fail',[])
+
+  " callback on failure
   let Fc_fail      = base#fun#new({ 'cmds' : cmds_fail })
+  let Fc_fail      = get(opts,'Fc_fail',Fc_fail)
 
   let refsys = {}
 
