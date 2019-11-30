@@ -356,7 +356,11 @@ function! base#tg#update (...)
   let f_filelist = ''
 
   " use asynccommand plugin commands
-  let async=0
+  let async = get(opts,'async',1)
+
+  " commands to be run when tags have been generated
+  let cmds_done    = get(opts,'cmds_done',[])
+  let Fc_done      = base#fun#new({ 'cmds' : cmds_done })
 
   let refsys = {}
 
@@ -837,7 +841,6 @@ function! base#tg#update (...)
 
   let l:start = localtime()
 
-  let async = get(opts,'async',1)
   if async && ( exists(':AsyncCommand') == 2 )
     let ok = 1
 
