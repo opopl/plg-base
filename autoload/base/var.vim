@@ -2,6 +2,12 @@
 function! base#var#update (varname,...)
   let varname = a:varname
 
+	let msg = ['var => ' . a:varname ]
+	let prf = { 
+		\	'plugin' : 'base',
+		\	'func'   : 'base#var#update' }
+	call base#log(msg, prf)
+
   let opts_update = get(a:000,0,{})
 
   let datfiles = base#datafiles()

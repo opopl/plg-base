@@ -18,9 +18,9 @@ function! base#tg#set (...)
     endif
   endif
 
-  let tfile=escape(tfile,' \')
+  let tfile = escape(tfile,' \')
   exe 'setlocal tags=' . tfile
-  let b:tgids=[tgid]
+  let b:tgids = [ tgid ]
   
 endfunction
 
@@ -33,7 +33,7 @@ function! base#tg#add (...)
   let tfile = base#tg#tfile(tgid)
   let tfile = get(ref, 'tfile', tfile)
 
-  let tfile=escape(tfile,' \')
+  let tfile = escape(tfile,' \')
   exe 'setlocal tags+=' . tfile
   let tgs = base#tg#ids() 
   call add(tgs,tgid)
@@ -365,6 +365,13 @@ function! base#tg#update (...)
     endfor
     return
   endif
+
+	let msg = printf('tgid => %s, opts => %s', tgid, base#dump(opts) )
+	let msgs = [ msg ]
+	let prf = { 
+		\	'plugin' : 'base', 
+		\	'func'   : 'base#tg#update' }
+	call base#log(msgs, prf)
 
   let f_filelist = ''
 
