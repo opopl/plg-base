@@ -177,6 +177,10 @@ function! base#complete#FIND (...)
   return base#complete#vars([ 'cmds_FIND' ])
 endfunction
 
+function! base#complete#TEST (...)
+  return base#complete#vars([ 'items_TEST' ])
+endfunction
+
 function! base#complete#SCP (...)
   return base#complete#vars([ 'cmds_SCP' ])
 endfunction

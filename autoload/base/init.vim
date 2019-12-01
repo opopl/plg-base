@@ -178,6 +178,10 @@ fun! base#init#cmds()
 	command! -nargs=* -complete=custom,base#complete#FIND  FIND 
 		\	call base#cmd#FIND(<f-args>) 
 
+"""TEST
+	command! -nargs=* -complete=custom,base#complete#TEST  TEST 
+		\	call base#cmd#TEST(<f-args>) 
+
 """SSH
 	command! -nargs=* -complete=custom,base#complete#SSH      SSH
 		\	call base#cmd#SSH(<f-args>) 

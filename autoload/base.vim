@@ -2135,6 +2135,12 @@ fun! base#sys(...)
 
 endfun
 
+"call tree:
+"  called by:
+"    base#paths_update
+"      base#path#add
+"        BasePathAdd
+"  calls:
 
 function! base#pathset_db (ref,...)
     let ref = a:ref

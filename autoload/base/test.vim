@@ -11,7 +11,9 @@ function! base#test#type_ok (varname,var,type,...)
 	let msgs = []
 
 	call add(msgs,oks . ' variable: ' . varname . ' ' . ' should be of type: ' . type)
-	call base#log(msgs,{ 'prf' : 'base#test#type_ok', 'echo' : 1 })
+	call base#log(msgs,{ 
+		\	'prf'  : 'base#test#type_ok', 
+		\	'echo' : 1 })
 
 	return ok
 	
