@@ -193,7 +193,6 @@ endf
 
 function! base#file#stat(file,...)
   let file = a:file
-  let st = {}
 python << eof
 
 import vim
@@ -208,19 +207,14 @@ st = {
   'size'  : stat.st_size ,
 }
 
-for k in st.keys():
-  v = st.get(k)
-  cmd = "call extend(st,{ " + "'" + k +"'" + ' : ' + "'" + str(v) +"'" + "})"
-  vim.command(cmd)
-  
 eof
+  let st = pyeval('st')
   return st
 
 endf
 
 function! base#file#mtime(file,...)
   let file = a:file
-  let mtime = 0
 python << eof
 import vim
 import os
@@ -228,12 +222,10 @@ import datetime
 
 file = vim.eval('file')
 stat = os.stat(file)
-mtime = stat.mtime 
+mtime = stat.st_mtime 
 
-vim.command('let mtime=' + str(mtime) )
-  
 eof
-  return mtime 
+  return pyeval('str(mtime)')
 
 endf
 
