@@ -383,6 +383,15 @@ function! base#menu#add(...)
 					\   }
 					\	)
 		endfor
+		call add(items, base#menu#sep() )
+		for dat in base#datlist()
+			let H = toupper(dat[0])
+			call add(items,{
+					\   'item'  : printf('&BASE.&BaseDatView.&%s.&%s', H, dat),
+					\   'cmd'   : 'BaseDatView ' . dat,
+					\   }
+					\	)
+		endfor
 
 		call add(items, base#menu#sep() )
 
