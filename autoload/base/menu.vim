@@ -384,11 +384,12 @@ function! base#menu#add(...)
           \ )
     endfor
     call add(items, base#menu#sep() )
-    let AZ = base#list#new('a','z')
+    let AZ = base#list#new('A','Z')
     for dat in base#datlist()
       let H = toupper(dat[0])
+      let HH = toupper(dat[0:1])
       call add(items,{
-          \   'item'  : printf('&BASE.&BaseDatView.&%s.&%s', H, dat),
+          \   'item'  : printf('&BASE.&BaseDatView.&%s.&%s.&%s', H, HH, dat),
           \   'cmd'   : 'BaseDatView ' . dat,
           \   }
           \ )
