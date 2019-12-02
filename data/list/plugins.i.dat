@@ -17,7 +17,6 @@ findstr
 snipmate_2009
 #snipmate
 tagbar
-tagbar_phpctags
 html5_vim
 emmet
 surround
@@ -120,3 +119,5 @@ pymy
 dicti
 #burdev
 twig
+tagbar_phpctags
+phpctags
