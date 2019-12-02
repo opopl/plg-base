@@ -27,7 +27,22 @@ function! base#bufact#php#tggen_phpctags ()
     return
   endif
 
-  let cmd = printf('phpctags %s',b:file_se) 
+  let tfile_se = 
+  let cmd = printf('phpctags %s -f %s',b:file_se,tfile_se) 
+  
+  let env = {}
+  function env.get(temp_file) dict
+    let code = self.return_code
+  
+    if filereadable(a:temp_file)
+      let out = readfile(a:temp_file)
+    endif
+  endfunction
+  
+  call asc#run({ 
+    \  'cmd' : cmd, 
+    \  'Fn'  : asc#tab_restore(env) 
+    \  })
 
 endfunction
 

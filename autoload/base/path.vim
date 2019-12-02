@@ -37,6 +37,8 @@ function! base#path#update (...)
   if iid == 1 
     let pathid_new = base#input_we('new pathid: ', '', { 'complete' : 'custom,base#complete#CD' })
 
+	  call base#path#delete(pathid)
+
 	  call base#paths_update({
 	    \ pathid_new : path
 	    \ })

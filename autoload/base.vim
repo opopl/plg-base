@@ -2146,12 +2146,14 @@ function! base#pathset_db (ref,...)
     let ref = a:ref
     
     let dbfile = base#dbfile()
+		let pcname = base#pcname()
     
     for [ pathid, path ] in items(ref) 
 
       let [rwh,cols] = pymy#sqlite#query_first({
         \ 'dbfile' : dbfile,
-        \ 't'      : 'SELECT path FROM paths',
+        \ 'q'      : 'SELECT path FROM paths WHERE pathid = ? AND pcname = ?',
+        \ 'p'      : [ pathid, pcname ],
         \ })
     
       call pymy#sqlite#insert_hash({
@@ -2160,7 +2162,7 @@ function! base#pathset_db (ref,...)
         \ 'h'      : {
             \ 'pathid' : pathid,
             \ 'path'   : path,
-            \ 'pcname' : base#pcname(),
+            \ 'pcname' : pcname,
             \ },
         \ 'i'      : 'INSERT OR REPLACE',
         \ })
