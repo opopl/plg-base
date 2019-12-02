@@ -253,6 +253,7 @@ function! base#buf#onload ()
           \  ';sv'  : 'SnippetView ' . &ft    ,
           \  ';ts'  : 'BufAct tabs_to_spaces' ,
           \  ';tu'  : 'TgUpdate'              ,
+          \  ';tv'  : 'TgView _tagfiles_'     ,
           \ }
         \ }
 
@@ -430,7 +431,7 @@ function! base#buf#start ()
   let b:dirname  = expand('%:p:h')
   let b:bufnr    = bufnr('%')
 
-	let b:file_se  = shellescape(b:file)
+  let b:file_se  = shellescape(b:file)
 
   let msg = [ 'b:basename = ' . b:basename, 'b:bufnr = ' . b:bufnr ]
   let prf = { 'plugin' : 'base', 'func' : 'base#buf#start' }

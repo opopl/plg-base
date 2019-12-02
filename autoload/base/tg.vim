@@ -64,15 +64,15 @@ function! base#tg#go (...)
   for cmd in before
     try
       exe cmd
-		catch 
-			echo v:exception
+    catch 
+      echo v:exception
     endtry
   endfor
 
   try
     silent exe 'tag '. tg
-	catch 
-		echo v:exception
+  catch 
+    echo v:exception
   endtry
 
   for cmd in after
