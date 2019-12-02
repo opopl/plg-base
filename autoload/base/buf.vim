@@ -216,18 +216,18 @@ function! base#buf#pathids ()
   return ids
 endfunction
 
-function! base#buf#map_add (...)
-	let ref = get(a:000,0,{})
+function! base#buf#map_add (mp, ... )
+  let ref = get(a:000,0,{})
+  let mp  = a:mp
 
-	let map = get(ref,'map','')
-	let cmd = get(ref,'cmd','')
+  let map  = get(ref,'map','nnoremap')
 
-  exe printf('nnoremap <buffer><silent> %s :%s<CR>',map,cmd)
+  for [ k, v ] in items(mp)
+    exe printf('%s <buffer><silent> %s :%s<CR>', map, k, v)
+  endfor
 
-	if !exists("b:maps")
-		let b:maps = {}
-	endif
-	call extend(b:maps,{ map : cmd })
+  if !exists("b:maps") | let b:maps = {} | endif
+  call extend(b:maps,mp)
 endfunction
 
 " Usage
@@ -244,14 +244,14 @@ function! base#buf#onload ()
 
   "StatusLine simple
   "
-	let b:maps = {
-				\	 ';sv'  : 'SnippetView '.&ft      ,
-				\	 ';fo'  : 'PJact file_open'       ,
-				\	 ';ts'  : 'BufAct tabs_to_spaces' ,
-				\	 ';l'   : 'ls!'                   ,
-				\	 ';ma'  : 'MM tgadd_all'          ,
-				\	 ';tu'  : 'TgUpdate'              ,
-				\	}
+  let b:maps = {
+        \  ';sv'  : 'SnippetView ' . &ft    ,
+        \  ';fo'  : 'PJact file_open'       ,
+        \  ';ts'  : 'BufAct tabs_to_spaces' ,
+        \  ';l'   : 'ls!'                   ,
+        \  ';ma'  : 'MM tgadd_all'          ,
+        \  ';tu'  : 'TgUpdate'              ,
+        \ }
 
   let b:comps_BufAct = base#comps#bufact()
 
@@ -262,7 +262,7 @@ function! base#buf#onload ()
     setf nsis
 
   elseif &ft == 'vim'
-		call extend(b:maps,{ ';ss' : 'BufAct source_script' })
+    call extend(b:maps,{ ';ss' : 'BufAct source_script' })
     if b:basename == 'html.vim'
       TgAdd perl_html
     endif
@@ -277,9 +277,7 @@ function! base#buf#onload ()
     setlocal iskeyword+=$
   endif
 
-	for mp in b:maps
-		call base#buf#map_add(mp)
-	endfor
+  call base#buf#map_add(b:maps)
 
   call base#var#update('buf_vars')
 
