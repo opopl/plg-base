@@ -384,6 +384,7 @@ function! base#menu#add(...)
           \ )
     endfor
     call add(items, base#menu#sep() )
+    let AZ = base#list#new('a','z')
     for dat in base#datlist()
       let H = toupper(dat[0])
       call add(items,{

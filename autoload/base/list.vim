@@ -139,18 +139,30 @@ function! base#list#new (...)
   if is_num
     let list = base#listnewinc(start,end,inc)
   elseif is_str
-python3 << eof
-import vim
+perl << eof
+  use Vim::Perl qw(VimVar VimLet);
 
-start = vim.eval('start')
-end   = vim.eval('end')
-list  = []
+  my $start = VimVar('start');
+  my $end   = VimVar('end');
+  my @list = ( $start .. $end );
 
-for i in range( ord(start), ord(end) + 1 ):
-  list.append(chr(i))
-  
+  VimLet('list',[@list]);
 eof
-    let list = py3eval('list')
+
+"---------------------------------
+"python3 << eof
+"import vim
+
+"start = vim.eval('start')
+"end   = vim.eval('end')
+"list  = []
+
+"for i in range( ord(start), ord(end) + 1 ):
+  "list.append(chr(i))
+  
+"eof
+    "let list = py3eval('list')
+"---------------------------------
     
   endif
     return list
