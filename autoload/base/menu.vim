@@ -361,6 +361,30 @@ function! base#menu#add(...)
 		endfor
 
 		call add(items, base#menu#sep() )
+		for cmd in  base#varget('base_init_cmds',[])
+			 call add(items,{
+					\   'item'  : '&BASE.&BaseInit.&' . cmd,
+					\   'cmd'   : 'BaseInit ' . cmd,
+					\   }
+					\	)
+		endfor
+
+		call add(items, base#menu#sep() )
+	  call add(items,{
+					\   'item'  : '&BASE.&BaseLog.&BaseLog',
+					\   'cmd'   : 'BaseLog',
+					\   }
+					\	)
+		call add(items, base#menu#sep() )
+		for cmd in sort(base#varget('baselog_cmds',[]))
+			 call add(items,{
+					\   'item'  : '&BASE.&BaseLog.&' . cmd,
+					\   'cmd'   : 'BaseLog ' . cmd,
+					\   }
+					\	)
+		endfor
+
+		call add(items, base#menu#sep() )
 
 	 for item in items
      call base#menu#additem(item)

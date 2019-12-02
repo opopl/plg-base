@@ -3390,7 +3390,7 @@ endfunction
 function! base#plugins_all (...)
     let dbfile = base#dbfile()
     
-    let q = 'select plugin from plugins_all'
+    let q = 'SELECT plugin FROM plugins_all'
     let p = []
     
     let plugins_all = pymy#sqlite#query_as_list({
