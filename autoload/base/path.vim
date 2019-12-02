@@ -24,9 +24,10 @@ function! base#path#update (...)
   let path = base#path(pathid)
 
   let msg_a = [
+    \ "", 
     \ "BasePathUpdate - change path/pathid data", 
     \ "", 
-    \ "Which data? (1 - pathid, 2 - path): ", 
+    \ "Which part to update? (1 - pathid, 2 - path): ", 
     \ ]
 
   let msg = join(msg_a,"\n")
@@ -36,11 +37,19 @@ function! base#path#update (...)
   if iid == 1 
     let pathid_new = base#input_we('new pathid: ', '', { 'complete' : 'custom,base#complete#CD' })
 
+	  call base#paths_update({
+	    \ pathid_new : path
+	    \ })
+
   "" change path
   elseif iid == 2 
     let path_new = base#input_we('new path: ', '', { })
 
+	  call base#paths_update({
+	    \ pathid : path_new
+	    \ })
   endif
+
 
 endfunction
 

@@ -2148,6 +2148,11 @@ function! base#pathset_db (ref,...)
     let dbfile = base#dbfile()
     
     for [ pathid, path ] in items(ref) 
+
+      let [rwh,cols] = pymy#sqlite#query_first({
+        \ 'dbfile' : dbfile,
+        \ 't'      : 'SELECT path FROM paths',
+        \ })
     
       call pymy#sqlite#insert_hash({
         \ 'dbfile' : dbfile,
