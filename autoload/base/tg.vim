@@ -179,7 +179,7 @@ function! base#tg#update_w_files (...)
   endif
 
   let home = base#path('home')
-  let f   = base#file#catfile([home,'tmp_bat','list_tgupdate_' . tgid . '.txt'])
+  let f = base#qw#catpath(printf('tmp_bat list_tgupdate_%s.txt',tgid))
   let f_u = base#file#win2unix(f)
 
   call base#file#write_lines({ 
@@ -226,7 +226,7 @@ function! base#tg#update_w_bat (...)
     call add(batlines,' ')
 
     let home = base#path('home')
-    let batfile = base#file#catfile([home,'tmp_bat','tgupdate_' . tgid . '.bat'])
+    let batfile = base#qw#catpath( printf('tmp_bat tgupdate_%s.bat',tgid) )
     call base#file#write_lines({ 
       \ 'lines' : batlines, 
       \ 'file'  : batfile, 
@@ -366,12 +366,12 @@ function! base#tg#update (...)
     return
   endif
 
-	let msg = printf('tgid => %s, opts => %s', tgid, base#dump(opts) )
-	let msgs = [ msg ]
-	let prf = { 
-		\	'plugin' : 'base', 
-		\	'func'   : 'base#tg#update' }
-	call base#log(msgs, prf)
+  let msg = printf('tgid => %s, opts => %s', tgid, base#dump(opts) )
+  let msgs = [ msg ]
+  let prf = { 
+    \ 'plugin' : 'base', 
+    \ 'func'   : 'base#tg#update' }
+  call base#log(msgs, prf)
 
   let f_filelist = ''
 

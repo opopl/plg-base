@@ -15,6 +15,8 @@ function! base#bufact_common#help ()
 
   let data_h = []
   let maps = exists('b:maps') ? b:maps : {}
+
+  let maps = get(maps,'nnoremap',{})
   for k in sort(keys(maps))
     let v = get(maps,k,'')
     call add(data_h,{ 'keys' : k, 'command' : v })
@@ -25,7 +27,7 @@ function! base#bufact_common#help ()
     \ 'data_h'  : data_h,
     \ 'headers' : [ 'keys' , 'command' ],
     \ })
-  call extend(help,[ d, 'b:maps', d ])
+  call extend(help,[ d, 'b:maps.nnoremap', d ])
   call extend(help,lines)
   call base#buf#open_split({ 'lines' : help })
 
