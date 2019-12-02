@@ -2929,22 +2929,12 @@ function! base#info (...)
 
 """info_rtp
    elseif topic == 'rtp'
-      let rtp_a = split(&rtp,",")
-
-      let ii = []
-      call add(ii,'&rtp:')
-      call extend(ii,base#map#add_tabs(rtp_a,1))
-
-      call base#buf#open_split({ 'lines' : ii })
+		 call base#info#rtp()
 
 """info_plugins
    elseif topic == 'plugins'
-      let plugins = base#plugins()
+		 call base#info#plugins()
 
-      let ii = []
-      call add(ii,'PLUGINS:')
-      call extend(ii,base#map#add_tabs(plugins,1))
-      call base#buf#open_split({ 'lines' : ii })
 
 """info_make
    elseif topic == 'make'
@@ -3385,7 +3375,7 @@ function! base#plugins (...)
     let plugins = []
     let dbfile = base#dbfile()
     
-    let q = 'select plugin from plugins'
+    let q = 'SELECT plugin FROM plugins'
     let p = []
     
     let plugins = pymy#sqlite#query_as_list({
