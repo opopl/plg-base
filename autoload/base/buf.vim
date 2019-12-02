@@ -247,6 +247,7 @@ function! base#buf#onload ()
           \ {
           \  ';fo'  : 'PJact file_open'       ,
           \  ';h'   : 'BufAct help'           ,
+          \  '?'    : 'BufAct help'           ,
           \  ';l'   : 'ls!'                   ,
           \  ';ma'  : 'MM tgadd_all'          ,
           \  ';sv'  : 'SnippetView ' . &ft    ,
@@ -274,8 +275,18 @@ function! base#buf#onload ()
     "
   elseif &ft == 'make'
     call base#cdfile()
-    if has('win')
-      exe 'setlocal makeprg=dmake'
+    let b:make_data = {}
+    let opts_active = []
+
+    if has('win32')
+      let opts = base#qw('dmake gmake')
+      for opt in opts
+        if len(base#where(opt))
+          call add(opts_active,opt)
+          exe printf('setlocal makeprg=%s',opt)
+        endif
+      endfor
+      call extend(b:make_data,{ 'opts_active' : opts_active })
     endif
 
   elseif &ft == 'help'
