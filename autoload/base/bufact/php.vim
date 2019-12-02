@@ -39,11 +39,12 @@ function! base#bufact#php#tggen_phpctags()
   let cmd = printf('phpctags %s -f %s', b:file_se, tfile_se)
   
   let env = { 
-		\ 'tfile' : tfile 
+		\ 'tfile' : tfile ,
+		\ 'cmd'   : cmd ,
 		\	}
 
   function env.get(temp_file) dict
-    let code = self.return_code
+    let code  = self.return_code
 
     let tfile = self.tfile
 
@@ -51,21 +52,24 @@ function! base#bufact#php#tggen_phpctags()
 		let ok = ok && (code == 0)
 		let ok = ok && (filereadable(tfile))
 
+		let out = []
+		if filereadable(a:temp_file)
+			call extend(out, readfile(a:temp_file))
+		endif
 		if ok
 			redraw!
 			echohl MoreMsg
 			echo 'OK: tggen_phpctags'
 			echohl None
-		elseif
+		else
 			redraw!
 			echohl WarningMsg
 			echo 'FAIL: tggen_phpctags'
 			echohl None
+
+			call base#buf#open_split({ 'lines' : out })
 		endif
   
-    if filereadable(a:temp_file)
-      let out = readfile(a:temp_file)
-    endif
   endfunction
   
   call asc#run({ 
