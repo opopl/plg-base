@@ -294,6 +294,10 @@ function! base#buf#onload ()
     setlocal iskeyword+=<,>
     setlocal iskeyword+=/
     setlocal iskeyword+=$
+
+  elseif &ft == 'php'
+    setlocal iskeyword+=\
+
   endif
 
   for [map,mp] in items(b:maps)
