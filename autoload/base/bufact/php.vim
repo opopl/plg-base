@@ -18,7 +18,7 @@ function! base#bufact#php#server_run ()
 
 endfunction
 
-function! base#bufact#php#tggen_phpctags ()
+function! base#bufact#php#tggen_phpctags()
   if !len(base#where('phpctags'))
     redraw!
     echohl WarningMsg
@@ -27,12 +27,41 @@ function! base#bufact#php#tggen_phpctags ()
     return
   endif
 
-  let tfile_se = 
-  let cmd = printf('phpctags %s -f %s',b:file_se,tfile_se) 
+	let rel_dir =  base#file#reldir_str (b:dirname,$USERPROFILE,{ 'sep' : '_' })
+  let dir_tags = base#qw#catpath('tagdir php phpctags ' . rel_dir)
+	call base#mkdir(dir_tags)
+
+	let tfile_id = fnamemodify(b:basename,':r')
+	let tfile    = base#file#catfile([ dir_tags, tfile_id . '.tags'])
+
+	let tfile_se = shellescape(tfile)
+
+  let cmd = printf('phpctags %s -f %s', b:file_se, tfile_se)
   
-  let env = {}
+  let env = { 
+		\ 'tfile' : tfile 
+		\	}
+
   function env.get(temp_file) dict
     let code = self.return_code
+
+    let tfile = self.tfile
+
+		let ok = 1
+		let ok = ok && (code == 0)
+		let ok = ok && (filereadable(tfile))
+
+		if ok
+			redraw!
+			echohl MoreMsg
+			echo 'OK: tggen_phpctags'
+			echohl None
+		elseif
+			redraw!
+			echohl WarningMsg
+			echo 'FAIL: tggen_phpctags'
+			echohl None
+		endif
   
     if filereadable(a:temp_file)
       let out = readfile(a:temp_file)

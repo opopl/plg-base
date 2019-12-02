@@ -580,7 +580,7 @@ function! base#file#reldir (dir,root)
   let root = a:root
 
   let root = base#file#std(root)
-  let dir = base#file#std(dir)
+  let dir  = base#file#std(dir)
 
   let reldir = base#file#removeroot (dir,root)
 
@@ -589,6 +589,17 @@ function! base#file#reldir (dir,root)
   endif
   return reldir
 
+endfunction
+
+function! base#file#reldir_str (dir,root,...)
+	let ref = get(a:000,0,{})
+
+	let sep = get(ref,'sep',' ')
+
+	let str = base#file#reldir(a:dir, a:root)
+	let str = substitute(str,'\\',sep,'g')
+	let str = substitute(str,'//',sep,'g')
+	return str
 endfunction
 
 function! base#file#removeroot (dir,root)
