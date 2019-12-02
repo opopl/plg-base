@@ -245,11 +245,12 @@ function! base#buf#onload ()
   let b:maps = {
         \ 'nnoremap' :
           \ {
-          \  ';sv'  : 'SnippetView ' . &ft    ,
           \  ';fo'  : 'PJact file_open'       ,
-          \  ';ts'  : 'BufAct tabs_to_spaces' ,
+          \  ';h'   : 'BufAct help'           ,
           \  ';l'   : 'ls!'                   ,
           \  ';ma'  : 'MM tgadd_all'          ,
+          \  ';sv'  : 'SnippetView ' . &ft    ,
+          \  ';ts'  : 'BufAct tabs_to_spaces' ,
           \  ';tu'  : 'TgUpdate'              ,
           \ }
         \ }
