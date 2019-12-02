@@ -264,6 +264,10 @@ function! base#buf#onload ()
   elseif b:ext == 'nsh'
     setf nsis
 
+  elseif &ft == 'php'
+    setlocal iskeyword+=\
+    call extend(b:maps.nnoremap,{ ';gg' : 'BufAct tggen_phpctags' })
+
   elseif &ft == 'vim'
     call extend(b:maps.nnoremap,{ ';ss' : 'BufAct source_script' })
     if b:basename == 'html.vim'
@@ -295,8 +299,6 @@ function! base#buf#onload ()
     setlocal iskeyword+=/
     setlocal iskeyword+=$
 
-  elseif &ft == 'php'
-    setlocal iskeyword+=\
 
   endif
 

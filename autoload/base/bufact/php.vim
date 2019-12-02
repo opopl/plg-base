@@ -27,24 +27,24 @@ function! base#bufact#php#tggen_phpctags()
     return
   endif
 
-	let rel_dir =  base#file#reldir_str (b:dirname,$USERPROFILE,{ 'sep' : '_' })
+  let rel_dir =  base#file#reldir_str (b:dirname,$USERPROFILE,{ 'sep' : '_' })
   let dir_tags = base#qw#catpath('tagdir php phpctags ' . rel_dir)
-	call base#mkdir(dir_tags)
+  call base#mkdir(dir_tags)
 
-	let tfile_id = fnamemodify(b:basename, ':r' )
-	let tfile    = base#file#catfile([ dir_tags, tfile_id . '.tags'])
+  let tfile_id = fnamemodify(b:basename, ':r' )
+  let tfile    = base#file#catfile([ dir_tags, tfile_id . '.tags'])
 
-	let tfile_se = shellescape(tfile)
+  let tfile_se = shellescape(tfile)
 
   let cmd = printf('phpctags -f %s %s', tfile_se, b:file_se)
   
   let env = { 
-		\ 'tfile' : tfile ,
-		\ 'cmd'   : cmd ,
-		\	}
+    \ 'tfile' : tfile ,
+    \ 'cmd'   : cmd ,
+    \ }
 
   function env.get(temp_file) dict
-		call base#fc#tggen_phpctags(self, a:temp_file)
+    call base#fc#tggen_phpctags(self, a:temp_file)
   endfunction
   
   call asc#run({ 
