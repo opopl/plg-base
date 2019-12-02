@@ -49,7 +49,7 @@ function! base#tg#go (...)
 
   let tg=''
   if base#type(tgs) == 'String'
-    let tg=tgs
+    let tg = tgs
     
   elseif base#type(tgs) == 'List'
     for tg in tgs
@@ -58,17 +58,21 @@ function! base#tg#go (...)
     return
   endif
 
-  let after = get(ref,'after',[])
+  let after  = get(ref,'after',[])
   let before = get(ref,'before',[])
 
   for cmd in before
     try
       exe cmd
+		catch 
+			echo v:exception
     endtry
   endfor
 
   try
-      exe 'tag '. tg
+    silent exe 'tag '. tg
+	catch 
+		echo v:exception
   endtry
 
   for cmd in after
@@ -123,7 +127,7 @@ function! base#tg#tfile (...)
     let tfile    = base#file#catfile([ dirname, basename . '.tags' ])
 
   elseif tgid == 'ty_perl_inc'
-    let tfile    = base#qw#catpath('home','tygs perl_inc.tygs')
+    let tfile = base#qw#catpath('home','tygs perl_inc.tygs')
 
   elseif tgid == '_this_tagfile_'
     let tfile = expand('%:p')

@@ -20,11 +20,14 @@ function! base#fc#tggen_phpctags (self,temp_file)
 			call extend(out,[ 'Output: '])
 			call extend(out, base#map#add_tabs(readfile(a:temp_file),1))
 	endif
+
 	if ok
 			redraw!
 			echohl MoreMsg
 			echo 'OK: tggen_phpctags'
 			echohl None
+
+			exe 'setlocal tags='.escape(tfile,'\ ')
 	else
 			redraw!
 			echohl WarningMsg
