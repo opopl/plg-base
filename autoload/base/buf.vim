@@ -271,6 +271,12 @@ function! base#buf#onload ()
 
   elseif &ft == 'idat'
     "BufAct update_var 
+    "
+  elseif &ft == 'make'
+    call base#cdfile()
+    if has('win')
+      exe 'setlocal makeprg=dmake'
+    endif
 
   elseif &ft == 'help'
 
