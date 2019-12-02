@@ -31,12 +31,12 @@ function! base#bufact#php#tggen_phpctags()
   let dir_tags = base#qw#catpath('tagdir php phpctags ' . rel_dir)
 	call base#mkdir(dir_tags)
 
-	let tfile_id = fnamemodify(b:basename,':r')
+	let tfile_id = fnamemodify(b:basename, ':r' )
 	let tfile    = base#file#catfile([ dir_tags, tfile_id . '.tags'])
 
 	let tfile_se = shellescape(tfile)
 
-  let cmd = printf('phpctags %s -f %s', b:file_se, tfile_se)
+  let cmd = printf('phpctags -f %s %s', tfile_se, b:file_se)
   
   let env = { 
 		\ 'tfile' : tfile ,
@@ -44,32 +44,7 @@ function! base#bufact#php#tggen_phpctags()
 		\	}
 
   function env.get(temp_file) dict
-    let code  = self.return_code
-
-    let tfile = self.tfile
-
-		let ok = 1
-		let ok = ok && (code == 0)
-		let ok = ok && (filereadable(tfile))
-
-		let out = []
-		if filereadable(a:temp_file)
-			call extend(out, readfile(a:temp_file))
-		endif
-		if ok
-			redraw!
-			echohl MoreMsg
-			echo 'OK: tggen_phpctags'
-			echohl None
-		else
-			redraw!
-			echohl WarningMsg
-			echo 'FAIL: tggen_phpctags'
-			echohl None
-
-			call base#buf#open_split({ 'lines' : out })
-		endif
-  
+		call base#fc#tggen_phpctags(self, a:temp_file)
   endfunction
   
   call asc#run({ 
