@@ -2,36 +2,36 @@
 fun! base#init#cmds_plg ()
 
 """PlgAct
-	command! -nargs=* -complete=custom,base#complete#plg_with_all PlgAct
-		\	call base#plg#act(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#plg_with_all PlgAct
+    \ call base#plg#act(<f-args>) 
 
 """PlgView
-	command! -nargs=* -complete=custom,base#complete#plg PlgView 
-		\	call base#plg#view(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#plg PlgView 
+    \ call base#plg#view(<f-args>) 
 
 """PlgHelp
-	command! -nargs=* -complete=custom,base#complete#plg PlgHelp
-		\	call base#plg#help(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#plg PlgHelp
+    \ call base#plg#help(<f-args>) 
 
 """PlgGrep
-	command! -nargs=* -complete=custom,base#complete#plg_with_all PlgGrep
-		\	call base#plg#grep(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#plg_with_all PlgGrep
+    \ call base#plg#grep(<f-args>) 
 
 """PlgCD
-	command! -nargs=* -complete=custom,base#complete#plg PlgCD 
-		\	call base#plg#cd(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#plg PlgCD 
+    \ call base#plg#cd(<f-args>) 
 
 """PlgRuntime
-	command! -nargs=* -complete=custom,base#complete#plg PlgRuntime
-		\	call base#plg#runtime(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#plg PlgRuntime
+    \ call base#plg#runtime(<f-args>) 
 
 """PlgNew
-	command! -nargs=* -complete=custom,base#complete#plg PlgNew
-		\	call base#plg#new(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#plg PlgNew
+    \ call base#plg#new(<f-args>) 
 
 """PlgList
-	command! -nargs=* -complete=custom,base#complete#plg PlgList
-		\	call base#plg#echolist(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#plg PlgList
+    \ call base#plg#echolist(<f-args>) 
 
 endf
 
@@ -44,37 +44,37 @@ endf
 fun! base#init#paths(...)
     call base#echoprefix('(base#init#paths)')
 
-		let vrt = base#envvar('VIMRUNTIME')
-		let plg = base#file#catfile([  vrt, 'plg'  ])
-		
+    let vrt = base#envvar('VIMRUNTIME')
+    let plg = base#file#catfile([  vrt, 'plg'  ])
+    
     call base#pathset({  'plg' : plg })
-		
-		let dir = base#file#catfile([  vrt, 'plg', 'base'  ])
-		
-		call base#varset('plgdir',dir)
-		call base#datadir( base#file#catfile([ dir, 'data' ]) )
-		
+    
+    let dir = base#file#catfile([  vrt, 'plg', 'base'  ])
+    
+    call base#varset('plgdir',dir)
+    call base#datadir( base#file#catfile([ dir, 'data' ]) )
+    
     let ref = {}
     if a:0 | let ref = a:1 | endif
-		
+    
     let home     = base#envvar( (has('win32')) ? 'USERPROFILE' : 'HOME' )
     let hm       = base#envvar('hm',home)
-		
+    
     let pc       = base#envvar((has('win32')) ? 'USERPROFILE' : get(split(system('hostname'),"\n"),0) )
-		
-		let p = base#paths_from_db()
-		if len(p)
-			return
-		endif
-		
-		if has('win32')
-			let pf       = base#envvar('PROGRAMFILES')
-		
-			call base#pathset({ 
+    
+    let p = base#paths_from_db()
+    if len(p)
+      return
+    endif
+    
+    if has('win32')
+      let pf       = base#envvar('PROGRAMFILES')
+    
+      call base#pathset({ 
           \ 'pf'            : pf ,
-	        \ 'include_win_sdk'   : base#envvar('INCLUDE_WIN_SDK'),
-					\})
-		endif
+          \ 'include_win_sdk'   : base#envvar('INCLUDE_WIN_SDK'),
+          \})
+    endif
 
     let vrt      = base#envvar('VIMRUNTIME')
     let projsdir = base#envvar('PROJSDIR')
@@ -93,12 +93,12 @@ fun! base#init#paths(...)
         \ 'p'             : base#envvar('TexPapersRoot'),
         \ 'phd_p'         : base#envvar('TexPapersRoot'),
         \ 'tagdir'        : base#file#catfile([ hm,'tags' ]),
-				\ 'appdata'       : base#envvar('APPDATA'),
-				\ 'appdata_local' : base#envvar('LOCALAPPDATA'),
+        \ 'appdata'       : base#envvar('APPDATA'),
+        \ 'appdata_local' : base#envvar('LOCALAPPDATA'),
         \ })
 
     call base#pathset({ 
-				\ 'db' : base#qw#catpath('home','db'),
+        \ 'db' : base#qw#catpath('home','db'),
         \ })
 
     call base#pathset({ 
@@ -109,29 +109,29 @@ fun! base#init#paths(...)
     call base#pathset({ 
         \ 'saved_urls'  : base#qw#catpath('appdata_plg_base','saved_urls'),
         \ })
-		
-		let evbin = base#file#catfile([ 
-			\	base#path('appdata_local'), 'Apps', 'Evince-2.32.0.145', 'bin' ])
-			
+    
+    let evbin = base#file#catfile([ 
+      \ base#path('appdata_local'), 'Apps', 'Evince-2.32.0.145', 'bin' ])
+      
     if isdirectory(evbin)
       call base#pathset({  'evince_bin' : evbin })
     endif
-		
+    
     call base#pathset({ 
         \ 'progs'  : base#file#catfile([ base#path('hm'),'programs' ]),
         \ })
-		
-	let pc = base#pcname()
-	if pc == 'APOPLAVSKIYNB'
-		call base#initpaths#APOPLAVSKIYNB()
-	elseif pc == 'RESTPC'
-		call base#initpaths#RESTPC()
-	endif
-	
-	call base#pathset({ 
+    
+  let pc = base#pcname()
+  if pc == 'APOPLAVSKIYNB'
+    call base#initpaths#APOPLAVSKIYNB()
+  elseif pc == 'RESTPC'
+    call base#initpaths#RESTPC()
+  endif
+  
+  call base#pathset({ 
       \ "repos_git" : base#file#catfile([ base#path('hm'), 'repos', 'git'  ]),
-	  \ })
-		
+    \ })
+    
     call base#pathset({
         \   'pdfout'      : base#envvar('PDFOUT'),
         \   'htmlout'     : base#envvar('HTMLOUT'),
@@ -151,16 +151,16 @@ fun! base#init#paths(...)
         \   'projs_da'    : base#file#catfile([ hm, base#qw("repos git projs_da") ]),
         \   })
 
-	    call base#initpaths#progs()
-	    call base#initpaths#php()
-	    call base#initpaths#perl()
-	    call base#initpaths#docs()
-	    call base#initpaths#data()
+      call base#initpaths#progs()
+      call base#initpaths#php()
+      call base#initpaths#perl()
+      call base#initpaths#docs()
+      call base#initpaths#data()
 
         "\  'projs_da'    : base#file#catfile([ base#qw("Z: ap projs_da") ]),
 
     "" remove / from the end of the directory
-		call base#paths_nice()
+    call base#paths_nice()
 
     call base#pathlist()
 
@@ -169,270 +169,270 @@ endf
 
 
 fun! base#init#cmds()
-	call base#init#cmds_plg()
+  call base#init#cmds_plg()
 
 """XmlPretty
-	command! XmlPretty call base#xml#pretty()
+  command! XmlPretty call base#xml#pretty()
 
 """FIND
-	command! -nargs=* -complete=custom,base#complete#FIND  FIND 
-		\	call base#cmd#FIND(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#FIND  FIND 
+    \ call base#cmd#FIND(<f-args>) 
 
 """TEST
-	command! -nargs=* -complete=custom,base#complete#TEST  TEST 
-		\	call base#cmd#TEST(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#TEST  TEST 
+    \ call base#cmd#TEST(<f-args>) 
 
 """SSH
-	command! -nargs=* -complete=custom,base#complete#SSH      SSH
-		\	call base#cmd#SSH(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#SSH      SSH
+    \ call base#cmd#SSH(<f-args>) 
 
 """WHERE
-	command! -nargs=* -complete=custom,base#complete#WHERE      WHERE
-		\	call base#cmd#WHERE(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#WHERE      WHERE
+    \ call base#cmd#WHERE(<f-args>) 
 
 """SCP
-	command! -nargs=* -complete=custom,base#complete#SCP      SCP
-		\	call base#cmd#SCP(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#SCP      SCP
+    \ call base#cmd#SCP(<f-args>) 
 
 """CD
-	command! -nargs=* -complete=custom,base#complete#CD      CD
-		\	call base#CD(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#CD      CD
+    \ call base#CD(<f-args>) 
 
 """DIR
-	command! -nargs=* -complete=custom,base#complete#DIR     DIR
-		\	call base#DIR(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#DIR     DIR
+    \ call base#DIR(<f-args>) 
 
 """MkDir
-	command! -nargs=*  MkDir
-		\	call base#mkdir#prompt(<f-args>) 
+  command! -nargs=*  MkDir
+    \ call base#mkdir#prompt(<f-args>) 
 
 """BaseSYS
-	command! -nargs=* -complete=custom,base#complete#basesys BaseSYS
-		\	call base#sys_split_output(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#basesys BaseSYS
+    \ call base#sys_split_output(<f-args>) 
 
 """BaseLog
-	command! -nargs=* -complete=custom,base#complete#baselog BaseLog
-		\	call base#log#cmd(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#baselog BaseLog
+    \ call base#log#cmd(<f-args>) 
 
 """HTMLWORK
-	command! -nargs=* -complete=custom,base#complete#htmlwork HTMLWORK
-		\	call base#htmlwork(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#htmlwork HTMLWORK
+    \ call base#htmlwork(<f-args>) 
 
 """ImageAct
-	command! -nargs=*  -complete=custom,base#complete#imageact ImageAct 
-		\	call base#image#act(<f-args>)
+  command! -nargs=*  -complete=custom,base#complete#imageact ImageAct 
+    \ call base#image#act(<f-args>)
 
 
 """VH
-	command! -nargs=* -range -complete=custom,base#complete#VH  VH
-		\	call base#vh#act(<f-args>,<line1>,<line2>) 
+  command! -nargs=* -range -complete=custom,base#complete#VH  VH
+    \ call base#vh#act(<f-args>,<line1>,<line2>) 
 
 """ExeFileRun
-	command! -nargs=*  -complete=custom,base#complete#exefileids FileRun
-		\	call base#exefile#run_prompt(<f-args>)
+  command! -nargs=*  -complete=custom,base#complete#exefileids FileRun
+    \ call base#exefile#run_prompt(<f-args>)
 
 """ExeFileEcho
-	command! -nargs=* -complete=custom,base#complete#exefileids FileEcho
-		\	call base#exefile#echo(<f-args>)
+  command! -nargs=* -complete=custom,base#complete#exefileids FileEcho
+    \ call base#exefile#echo(<f-args>)
 
 """FileView
-	command! -nargs=* -complete=custom,base#complete#fileids
-	    \   FileView call base#f#view(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#fileids
+      \   FileView call base#f#view(<f-args>) 
 
 """BaseAct
-	command! -nargs=* -complete=custom,base#complete#BaseAct      BaseAct
-		\	call base#act(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#BaseAct      BaseAct
+    \ call base#act(<f-args>) 
 
 
 """BufAct
-	command! -nargs=* -range -complete=custom,base#complete#BufAct      BufAct
-		\	call base#buf#act(<line1>,<line2>,<f-args>) 
+  command! -nargs=* -range -complete=custom,base#complete#BufAct      BufAct
+    \ call base#buf#act(<line1>,<line2>,<f-args>) 
 
 """BaseVimFun
-	command! -nargs=* -complete=custom,base#complete#hist#BaseVimFun BaseVimFun
-		\	call base#vim#showfun(<f-args>)
+  command! -nargs=* -complete=custom,base#complete#hist#BaseVimFun BaseVimFun
+    \ call base#vim#showfun(<f-args>)
 
 """BaseVimCom
-	command! -nargs=* -complete=command BaseVimCom
-		\	call base#vim#showcom(<f-args>)
+  command! -nargs=* -complete=command BaseVimCom
+    \ call base#vim#showcom(<f-args>)
 
 """BaseAppend
-	command! -nargs=* -complete=custom,base#complete#BaseAppend BaseAppend
-		\	call base#append(<f-args>)
+  command! -nargs=* -complete=custom,base#complete#BaseAppend BaseAppend
+    \ call base#append(<f-args>)
 
 """BaseSplit
-	command! -nargs=* -complete=custom,base#complete#BaseSplit BaseSplit
-		\	call base#split(<f-args>)
+  command! -nargs=* -complete=custom,base#complete#BaseSplit BaseSplit
+    \ call base#split(<f-args>)
 
 """LCOM
-	command! -nargs=* -complete=custom,base#complete#vimcoms LCOM 
-		\	call base#loadvimcom(<f-args>)
-	
+  command! -nargs=* -complete=custom,base#complete#vimcoms LCOM 
+    \ call base#loadvimcom(<f-args>)
+  
 """VCOM
-	command! -nargs=* -complete=custom,base#complete#vimcoms VCOM 
-		\	call base#viewvimcom(<f-args>)
-	
+  command! -nargs=* -complete=custom,base#complete#vimcoms VCOM 
+    \ call base#viewvimcom(<f-args>)
+  
 """LFUN
-	command! -nargs=1 -complete=custom,base#complete#vimfuns LFUN 
-		\	call base#loadvimfunc(<f-args>)
-	
+  command! -nargs=1 -complete=custom,base#complete#vimfuns LFUN 
+    \ call base#loadvimfunc(<f-args>)
+  
 """RFUN
-	command! -nargs=1 -complete=custom,base#complete#vimfuns RFUN 
-		\	call base#runvimfunc(<f-args>)
-	
+  command! -nargs=1 -complete=custom,base#complete#vimfuns RFUN 
+    \ call base#runvimfunc(<f-args>)
+  
 """VFUN
-	command! -nargs=1 -complete=custom,base#complete#vimfuns VFUN 
-		\	call base#viewvimfunc(<f-args>)
+  command! -nargs=1 -complete=custom,base#complete#vimfuns VFUN 
+    \ call base#viewvimfunc(<f-args>)
 
 """PowerShell
-	command! -nargs=* -complete=custom,base#complete#powershell PowerShell
-		\	call base#powershell(<f-args>)
+  command! -nargs=* -complete=custom,base#complete#powershell PowerShell
+    \ call base#powershell(<f-args>)
 
 """EnvCmd
-	command! -nargs=* -complete=custom,base#complete#envcmd     EnvCmd
-		\	call base#envcmd(<f-args>)
+  command! -nargs=* -complete=custom,base#complete#envcmd     EnvCmd
+    \ call base#envcmd(<f-args>)
 
 """EnvEcho
-	command! -nargs=* -complete=custom,base#complete#envecho   EnvEcho
-		\	call base#env#echo(<f-args>)
+  command! -nargs=* -complete=custom,base#complete#envecho   EnvEcho
+    \ call base#env#echo(<f-args>)
 
 """GitCmd
-	command! -nargs=* -complete=custom,base#complete#gitcmds GitCmd 
-		\	call base#git(<f-args>)
+  command! -nargs=* -complete=custom,base#complete#gitcmds GitCmd 
+    \ call base#git(<f-args>)
 
 """GitSave
-	command! -nargs=* -complete=custom,base#complete#gitcmds GitSave
-		\	call base#git#save()
+  command! -nargs=* -complete=custom,base#complete#gitcmds GitSave
+    \ call base#git#save()
 
 
 """MenuReset
 command!-nargs=* -complete=custom,base#complete#menus
-	\	MenuReset call base#menu#add(<f-args>,{ 'action' : 'reset' })
+  \ MenuReset call base#menu#add(<f-args>,{ 'action' : 'reset' })
 
 
 """MenuAdd
 command! -nargs=* -complete=custom,base#complete#menus
-	\	MenuAdd call base#menu#add(<f-args>,{ 'action' : 'add' })
+  \ MenuAdd call base#menu#add(<f-args>,{ 'action' : 'add' })
 
 command! -nargs=* -complete=custom,base#complete#menus
-	\	MenuRemove call base#menu#remove(<f-args>)
+  \ MenuRemove call base#menu#remove(<f-args>)
 
 """GitUpdate
-	command! -nargs=1 -complete=custom,base#complete#gitupdate GitUpdate
-		\	call base#git#update(<f-args>)
+  command! -nargs=1 -complete=custom,base#complete#gitupdate GitUpdate
+    \ call base#git#update(<f-args>)
 
-	command! -nargs=1 -complete=custom,base#complete#sync Sync
-		\	call base#sync#run(<f-args>)
-	
+  command! -nargs=1 -complete=custom,base#complete#sync Sync
+    \ call base#sync#run(<f-args>)
+  
 """INFO
-	command! -nargs=* -complete=custom,base#complete#info    INFO
-		\	call base#info(<f-args>)
+  command! -nargs=* -complete=custom,base#complete#info    INFO
+    \ call base#info(<f-args>)
 
 """OMNIFUNC
-	command! -nargs=* -complete=custom,base#complete#omnioptions OMNIFUNC
-  		\ call base#omni#selectcompletion(<f-args>)
+  command! -nargs=* -complete=custom,base#complete#omnioptions OMNIFUNC
+      \ call base#omni#selectcompletion(<f-args>)
 
 """OMNIFUNCADD
 command! -nargs=* -complete=custom,base#complete#omnioptions
   \ OMNIFUNCADD call base#omni#selectcompletion(<f-args>,'add')
-	
+  
 """BaseVarUpdate
-	command! -nargs=* -complete=custom,base#complete#varlist BaseVarUpdate 
-		\	call base#var#update(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#varlist BaseVarUpdate 
+    \ call base#var#update(<f-args>) 
 
 """OptEcho
-	command! -nargs=* -complete=custom,base#complete#opts
-	    \   OptEcho call base#opt#echo(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#opts
+      \   OptEcho call base#opt#echo(<f-args>) 
 
 """OptSave
-	command! -nargs=* -complete=custom,base#complete#opts
-	    \   OptSave call base#opt#save(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#opts
+      \   OptSave call base#opt#save(<f-args>) 
 
 """OptRestore
-	command! -nargs=* -complete=custom,base#complete#opts
-	    \   OptRestore call base#opt#restore(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#opts
+      \   OptRestore call base#opt#restore(<f-args>) 
 
 """OptReset
-	command! -nargs=* -complete=custom,base#complete#opts
-	    \   OptReset call base#opt#reset(<f-args>) 
-	
+  command! -nargs=* -complete=custom,base#complete#opts
+      \   OptReset call base#opt#reset(<f-args>) 
+  
 """BaseVarEcho
-	command! -nargs=* -complete=custom,base#complete#varlist
-	    \   BaseVarEcho call base#varecho(<f-args>) 
-	"
+  command! -nargs=* -complete=custom,base#complete#varlist
+      \   BaseVarEcho call base#varecho(<f-args>) 
+  "
 """BaseVarXml
-	command! -nargs=* -complete=custom,base#complete#varlist
-	    \   BaseVarXml call base#var#dump_xml(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#varlist
+      \   BaseVarXml call base#var#dump_xml(<f-args>) 
 
 """BaseVarRemove
-	command! -nargs=* -complete=custom,base#complete#varlist
-	    \   BaseVarRemove call base#varremove(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#varlist
+      \   BaseVarRemove call base#varremove(<f-args>) 
 
 """BaseVarDump
-	command! -nargs=* -complete=custom,base#complete#varlist
-	    \   BaseVarDump call base#var#dump_split(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#varlist
+      \   BaseVarDump call base#var#dump_split(<f-args>) 
 
 """BasePathEcho
-	command! -nargs=* -complete=custom,base#complete#CD
-	    \   BasePathEcho call base#path#echo(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#CD
+      \   BasePathEcho call base#path#echo(<f-args>) 
 
 """BasePathUpdate
-	command! -nargs=* -complete=custom,base#complete#CD
-	    \   BasePathUpdate call base#path#update(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#CD
+      \   BasePathUpdate call base#path#update(<f-args>) 
 
 """BasePathAdd
-	command! -nargs=* -complete=custom,base#complete#CD
-	    \   BasePathAdd call base#path#add(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#CD
+      \   BasePathAdd call base#path#add(<f-args>) 
 
 """BasePathDelete
-	command! -nargs=* -complete=custom,base#complete#CD
-	    \   BasePathDelete call base#path#delete(<f-args>) 
-	
+  command! -nargs=* -complete=custom,base#complete#CD
+      \   BasePathDelete call base#path#delete(<f-args>) 
+  
 """BaseInit
-	command! -nargs=* -complete=custom,base#complete#init
-	    \   BaseInit call base#init(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#init
+      \   BaseInit call base#init(<f-args>) 
 
 """VimLinesExecute
-	command! -nargs=* -range VimLinesExecute
-	\	call base#vimlines#action('execute',<line1>,<line2>,<f-args>)
-	
+  command! -nargs=* -range VimLinesExecute
+  \ call base#vimlines#action('execute',<line1>,<line2>,<f-args>)
+  
 """BaseDatView
-	command! -nargs=* -complete=custom,base#complete#datlist
-	    \   BaseDatView call base#viewdat(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#datlist
+      \   BaseDatView call base#viewdat(<f-args>) 
 
 """IDAT
-	command! -nargs=* -complete=custom,base#complete#datlist
-	    \   IDAT call base#idat#act(<f-args>) 
-	
+  command! -nargs=* -complete=custom,base#complete#datlist
+      \   IDAT call base#idat#act(<f-args>) 
+  
 """StatusLine
-	command! -nargs=* -complete=custom,base#complete#statuslines
-	    \   StatusLine call base#stl#set(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#statuslines
+      \   StatusLine call base#stl#set(<f-args>) 
 
 """TgSet
-	command! -nargs=* -complete=custom,base#complete#tagids  TgSet
-	    \   call base#tg#set(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#tagids  TgSet
+      \   call base#tg#set(<f-args>) 
 
 """TgView
-	command! -nargs=* -complete=custom,base#complete#tagids  TgView
-	    \   call base#tg#view(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#tagids  TgView
+      \   call base#tg#view(<f-args>) 
 
 """TgUpdate
-	command! -nargs=* -complete=custom,base#complete#tagids  TgUpdate 
-		\	call base#tg#update(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#tagids  TgUpdate 
+    \ call base#tg#update(<f-args>) 
 
 """TgGo
-	command! -nargs=* -complete=tag_listfiles  TgGo
-		\	call base#tg#go(<f-args>) 
+  command! -nargs=* -complete=tag_listfiles  TgGo
+    \ call base#tg#go(<f-args>) 
 
 """TgAdd
-	command! -nargs=* -complete=custom,base#complete#tagids  TgAdd 
-		\	call base#tg#add(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#tagids  TgAdd 
+    \ call base#tg#add(<f-args>) 
 
 
 """BYFF
-	command! -nargs=*  -complete=custom,base#complete#BYFF BYFF
-		\	call base#buffers#cmd(<f-args>) 
-	 
+  command! -nargs=*  -complete=custom,base#complete#BYFF BYFF
+    \ call base#buffers#cmd(<f-args>) 
+   
 
 endfun
 
@@ -452,76 +452,76 @@ function! base#init#tagids ()
         \   })
 
     call base#varset('tagids',data)
-	
+  
 endfunction
 
 fun! base#init#sqlite(...)
-	let ref = get(a:000,0,{})
+  let ref = get(a:000,0,{})
 
-	let reload = get(ref,'reload',0)
+  let reload = get(ref,'reload',0)
 
-	let done = base#varget('done_base_init_sqlite',0)
-	if done && !reload
-		return 
-	endif
+  let done = base#varget('done_base_init_sqlite',0)
+  if done && !reload
+    return 
+  endif
 
-	let dbfile = base#dbfile()
+  let dbfile = base#dbfile()
 
-	let home = base#envvar('home')
+  let home = base#envvar('home')
   call base#pathset({  
-		\	'db' : base#file#catfile([ home, 'db' ]),
-		\	})
+    \ 'db' : base#file#catfile([ home, 'db' ]),
+    \ })
 
-	let dbfile = base#qw#catpath('db','vim_plg_base.db')
-	call base#varset('plg_base_dbfile',dbfile)
+  let dbfile = base#qw#catpath('db','vim_plg_base.db')
+  call base#varset('plg_base_dbfile',dbfile)
 
-	let prf={ 'func' : 'base#init#sqlite','plugin' : 'base' }
-	call base#log([
-			\	'db initialization',
-			\	],prf)
+  let prf={ 'func' : 'base#init#sqlite','plugin' : 'base' }
+  call base#log([
+      \ 'db initialization',
+      \ ],prf)
 
 perl << eof
-	use Vim::Perl qw(:funcs :vars);
-	use Vim::Plg::Base;
+  use Vim::Perl qw(:funcs :vars);
+  use Vim::Plg::Base;
 
-	my $dbfile = VimVar('dbfile');
+  my $dbfile = VimVar('dbfile');
 
-	my $prf = { prf => 'vim::plg::base' };
-	our $plgbase = Vim::Plg::Base->new(
-		def_PRINT => sub { VimMsg([@_],$prf)   },
-		def_WARN  => sub { VimWarn([@_],$prf)  },
-#		sub_on_connect => sub {
-#			my ($dbh) = @_; 
-#			$Vim::Perl::DBH=$dbh; 
-#		},
-		dbfile   => $dbfile,
-	)->init;
+  my $prf = { prf => 'vim::plg::base' };
+  our $plgbase = Vim::Plg::Base->new(
+    def_PRINT => sub { VimMsg([@_],$prf)   },
+    def_WARN  => sub { VimWarn([@_],$prf)  },
+#   sub_on_connect => sub {
+#     my ($dbh) = @_; 
+#     $Vim::Perl::DBH=$dbh; 
+#   },
+    dbfile   => $dbfile,
+  )->init;
 
 eof
 
-	call base#varset('done_base_init_sqlite',1)
+  call base#varset('done_base_init_sqlite',1)
 
 endfunction
 
 fun! base#init#au()
-	let plgdir = base#plgdir()
+  let plgdir = base#plgdir()
 
-	let datfiles = base#varget('datfiles',{})
+  let datfiles = base#varget('datfiles',{})
 
-	au BufNewFile,BufWritePost,BufRead,BufWinEnter *.i.dat setf idat
-	au BufRead,BufNewFile,BufWinEnter *.csv		set filetype=csv
-	au BufRead,BufNewFile,BufWinEnter *.tsv		set filetype=tsv
+  au BufNewFile,BufWritePost,BufRead,BufWinEnter *.i.dat setf idat
+  au BufRead,BufNewFile,BufWinEnter *.csv   set filetype=csv
+  au BufRead,BufNewFile,BufWinEnter *.tsv   set filetype=tsv
 
-	au BufWrite *.snippets MM snippets_reload_all
+  au BufWrite *.snippets MM snippets_reload_all
 
-	let plg  = base#path('plg')
-	let plgu = base#file#win2unix(plg)
+  let plg  = base#path('plg')
+  let plgu = base#file#win2unix(plg)
 
-	"au_base_html
-	exe 'au BufRead,BufNewFile,BufWinEnter '.plgu.'/base/autoload/base/html.vim call base#buf#onload() '	
-	au BufWritePost *.i.dat call base#buf#au_write_post()
+  "au_base_html
+  exe 'au BufRead,BufNewFile,BufWinEnter '.plgu.'/base/autoload/base/html.vim call base#buf#onload() '  
+  au BufWritePost *.i.dat call base#buf#au_write_post()
 
-	"au BufRead,BufWinEnter * call base#buf#onload()
+  "au BufRead,BufWinEnter * call base#buf#onload()
   au BufRead,BufWinEnter,BufNewFile * call base#buf#start() 
   au BufRead,BufWinEnter,BufNewFile * call base#buf#onload() 
 
@@ -532,16 +532,16 @@ endfun
 
 function! base#init#vars (...)
     call base#echoprefix('(base#initvars)')
-		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-		let msg = ['start']
-		let prf = {'plugin' : 'base', 'func' : 'base#init#vars'}
-		call base#log(msg,prf)
-		let l:start=localtime()
-		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    let msg = ['start']
+    let prf = {'plugin' : 'base', 'func' : 'base#init#vars'}
+    call base#log(msg,prf)
+    let l:start=localtime()
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
     call base#initvarsfromdat()
 
-  	call base#varset('opts_keys',sort( keys( base#varget('opts',{}) )  ) )
+    call base#varset('opts_keys',sort( keys( base#varget('opts',{}) )  ) )
 
     call base#varset('vim_funcs_user',
         \   base#fnamemodifysplitglob('funs','*.vim',':t:r'))
@@ -549,48 +549,48 @@ function! base#init#vars (...)
     call base#varset('vim_coms',
         \   base#fnamemodifysplitglob('coms','*.vim',':t:r'))
 
-		call base#varlist()
+    call base#varlist()
 
     if $COMPUTERNAME == 'OPPC'
         let v='C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe'
-    		call base#varset('pdfviewer',v)
-		elseif $COMPUTERNAME == 'APOPLAVSKIYNB'
+        call base#varset('pdfviewer',v)
+    elseif $COMPUTERNAME == 'APOPLAVSKIYNB'
         let v='C:\Users\apoplavskiy\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe'
-    		call base#varset('pdfviewer',v)
+        call base#varset('pdfviewer',v)
     endif
 
-		call base#echoprefixold()
+    call base#echoprefixold()
 
-		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-		let l:elapsed = localtime() - l:start
-		let msg = ['end, elapsed = ' . l:elapsed]
-		let prf = {'plugin' : 'base', 'func' : 'base#init#vars'}
-		call base#log(msg,prf)
-		"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    let l:elapsed = localtime() - l:start
+    let msg = ['end, elapsed = ' . l:elapsed]
+    let prf = {'plugin' : 'base', 'func' : 'base#init#vars'}
+    call base#log(msg,prf)
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 endf    
 
 fun! base#init#files(...)
     call base#echoprefix('(base#init#files)')
 
-		call base#init#sqlite()
+    call base#init#sqlite()
 
     let ref = {}
     if a:0 | let ref = a:1 | endif
 
-	if	has('win32')
-	    let evince =  base#file#catfile([ 
-	      \ base#path('home'),
-	      \ '\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe' 
-	      \ ])
-	else
-		let evince='/usr/bin/evince'
+  if  has('win32')
+      let evince =  base#file#catfile([ 
+        \ base#path('home'),
+        \ '\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe' 
+        \ ])
+  else
+    let evince='/usr/bin/evince'
     endif
 
     if filereadable(evince)
         call base#exefile#set({  'evince' : evince })
     endif
 
-	let pc = base#pcname()
+  let pc = base#pcname()
     if pc == 'APOPLAVSKIYNB'
 
       let cv  = base#file#catfile([ base#path('imagemagick'), 'convert.exe' ])
@@ -608,43 +608,43 @@ endf
 
 function! base#init#plugins (...)
 
-		call base#varsetfromdat('plugins','List')
-		let plugins = base#varget('plugins',[])
+    call base#varsetfromdat('plugins','List')
+    let plugins = base#varget('plugins',[])
 
-		let dbfile = base#dbfile()
-		call pymy#sqlite#dbfile(dbfile)
+    let dbfile = base#dbfile()
+    call pymy#sqlite#dbfile(dbfile)
 
-		call pymy#sqlite#query({
-			\	'q'      : 'DELETE FROM plugins',
-			\	})
+    call pymy#sqlite#query({
+      \ 'q'      : 'DELETE FROM plugins',
+      \ })
 
-		let ref = {
-					\ "insert" : "INSERT OR IGNORE",
-					\ "table"  : "plugins",
-					\ "field"  : 'plugin',
-					\ "list"   : plugins,
-					\ }
+    let ref = {
+          \ "insert" : "INSERT OR IGNORE",
+          \ "table"  : "plugins",
+          \ "field"  : 'plugin',
+          \ "list"   : plugins,
+          \ }
 
-		call pymy#sqlite#extend_with_list(ref)
+    call pymy#sqlite#extend_with_list(ref)
 
-		call base#init#plugins_all()
+    call base#init#plugins_all()
 
 endf  
 
 function! base#init#plugins_all (...)
-		call pymy#sqlite#query({
-			\	'q'      : 'delete from plugins_all',
-			\	})
-		
-		call base#var#update('plugins_all')
-		let plugins_all = base#varget('plugins_all',[])
+    call pymy#sqlite#query({
+      \ 'q'      : 'delete from plugins_all',
+      \ })
+    
+    call base#var#update('plugins_all')
+    let plugins_all = base#varget('plugins_all',[])
 
-		let ref = {
-					\ "insert" : "INSERT OR IGNORE",
-					\ "table"  : "plugins_all",
-					\ "field"  : 'plugin',
-					\ "list"   : plugins_all,
-					\ }
-		call pymy#sqlite#extend_with_list(ref)
+    let ref = {
+          \ "insert" : "INSERT OR IGNORE",
+          \ "table"  : "plugins_all",
+          \ "field"  : 'plugin',
+          \ "list"   : plugins_all,
+          \ }
+    call pymy#sqlite#extend_with_list(ref)
 
 endf

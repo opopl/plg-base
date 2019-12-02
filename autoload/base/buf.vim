@@ -39,17 +39,26 @@ function! base#buf#act(...)
   let end   = get(a:000,1,getline('$'))
   let act   = get(a:000,2,'')
 
-  if !strlen(act) 
-    if exists("b:comps_BufAct")
-      let comps = b:comps_BufAct
-      let act = base#getfromchoosedialog({ 
-        \ 'list'        : comps,
-        \ 'startopt'    : get(comps,0),
-        \ 'header'      : "Available actions for BufAct are: ",
-        \ 'numcols'     : 1,
-        \ 'bottom'      : "Choose BufAct action by number: ",
-        \ })
-    endif
+  if !exists("b:comps_BufAct")
+    return
+  endif
+
+  let acts = sort(b:comps_BufAct)
+
+  if ! strlen(act)
+    let desc = base#varget('desc_BufAct',{})
+    let info = []
+    for act in acts
+      call add(info,[ act, get(desc,act,'') ])
+    endfor
+    let lines = [ 'Possible BufAct actions: ' ]
+    call extend(lines, pymy#data#tabulate({
+      \ 'data'    : info,
+      \ 'headers' : [ 'act', 'description' ],
+      \ }))
+
+    call base#buf#open_split({ 'lines' : lines })
+    return
   endif
 
   if !strlen(&ft) 
@@ -60,29 +69,11 @@ function! base#buf#act(...)
   call base#varset('bufact_start',start)
   call base#varset('bufact_end',end)
 
-  let acts = exists('b:comps_BufAct') ? b:comps_BufAct : []
-
-  "if !base#inlist(act,acts)
-    "return
-  "endif
-
   let ft   = &ft
   if base#inlist(ft,base#qw('html xhtml'))
     let ft = 'html'
   endif
   let subs = []
- " if base#inlist(ft,base#qw('php html'))
-    "for ff in base#qw('html php')
-      "let acts_ff = acts
-      "call extend(acts_ff,base#varget('comps_BufAct_'.ff,[]))
-      "if base#inlist(act,acts_ff)
-        "let sub  = 'base#bufact#'.ff.'#'.act
-        "call add(subs,sub)
-      "endif
-    "endfor
-   "else
-  "endif
-  "
   let sub = ''
   if base#inlist(act, base#comps#bufact_common() )
     let sub  = 'base#bufact_common#'.act
@@ -228,13 +219,13 @@ function! base#buf#map_add (mp, ... )
 
   if !exists("b:maps") | let b:maps = {} | endif
 
-	if base#type(mp) == 'Dictionary'
-	  if exists('b:maps[map]')
-	  	call extend(b:maps[map], mp)
-	  else
-	    let b:maps[map] = mp
-	  endif
-	endif
+  if base#type(mp) == 'Dictionary'
+    if exists('b:maps[map]')
+      call extend(b:maps[map], mp)
+    else
+      let b:maps[map] = mp
+    endif
+  endif
 endfunction
 
 " Usage

@@ -352,9 +352,9 @@ function! base#menu#add(...)
 
 		call add(items, base#menu#sep() )
 		
-		for topic in base#varget('info_topics',[])
+		for topic in base#info#topics()
 			 call add(items,{
-					\   'item'  : '&BASE.&' . topic,
+					\   'item'  : '&BASE.&INFO.&' . topic,
 					\   'cmd'   : 'INFO ' . topic,
 					\   }
 					\	)

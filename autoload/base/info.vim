@@ -13,3 +13,9 @@ function! base#info#dbext ()
 	call base#buf#open_split({ 'lines' : lines })
 	
 endfunction
+
+function! base#info#topics ()
+	let topics = base#varget('info_topics',[])
+	let topics = sort(topics)
+	return topics
+endfunction
