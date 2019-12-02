@@ -5,3 +5,4 @@ echo_tag
 server_run
 tabs_nice
 quotes_enclose
+tggen_phpctags

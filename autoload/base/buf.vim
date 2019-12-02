@@ -428,6 +428,8 @@ function! base#buf#start ()
   let b:dirname  = expand('%:p:h')
   let b:bufnr    = bufnr('%')
 
+	let b:file_se  = shellescape(b:file)
+
   let msg = [ 'b:basename = ' . b:basename, 'b:bufnr = ' . b:bufnr ]
   let prf = { 'plugin' : 'base', 'func' : 'base#buf#start' }
   call base#log(msg,prf)
