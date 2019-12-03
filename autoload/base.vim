@@ -2870,26 +2870,7 @@ function! base#info (...)
 
 """info_tags
    elseif topic == 'tags'
-      let tags = split(&tags,",")
-      
-      let tgs = base#tg#ids_comma()
-      let tgids = split(tgs,',')
-
-      let info = []
-
-      call add(info, "Tag ID: ")
-      for tgid in tgids 
-        call add(info," " . tgid)
-      endfor
-      
-      call add(info,'Tags: ')
-      call add(info," &tags => ")
-
-      for t in tags
-        call add(info,"\t" . t )
-      endfor
-
-      call base#buf#open_split({ 'lines' : info })
+		 call base#info#tags()
 
 """info_perl
    elseif topic == 'perl'
