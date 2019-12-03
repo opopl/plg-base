@@ -7,16 +7,7 @@ function! base#bufact#php#set_ft_html ()
   
 endfunction
 
-function! base#bufact#php#server_run ()
-  call base#buf#start()
 
-  call base#cd(b:dirname)
-  let port = base#input_we('port: ',8000,{})
-
-  let cmd = 'AC php -S localhost:' . port . ' ' . shellescape(b:basename)
-  exe cmd
-
-endfunction
 
 function! base#bufact#php#tggen_phpctags()
   if !len(base#where('phpctags'))
@@ -90,12 +81,55 @@ function! base#bufact#php#syntax_check ()
   
 endfunction
 
-function! base#bufact#php#exec_async ()
+function! base#bufact#php#server_run ()
   call base#buf#start()
-  call base#html#htw_load_buf()
+
+  call base#cd(b:dirname)
+  let port = base#input_we('port: ',8000,{})
+
+  let cmd = 'AC php -S localhost:' . port . ' ' . shellescape(b:basename)
+  exe cmd
+
+endfunction
+
+function! base#bufact#php#async_exe_Fc (self, temp_file)
+	let self      = a:self
+	let temp_file = a:temp_file
+
+  let code = self.return_code
+  
+	let out = []
+  if filereadable(a:temp_file)
+    let out = readfile(a:temp_file)
+  endif
+	if len(out)
+		call base#buf#open_split({ 'lines' : out })
+	endif
+endfunction
+
+function! base#bufact#php#async_exe ()
+  call base#buf#start()
 
   setlocal makeprg=php\ %
   setlocal errorformat=%m\ in\ %f\ on\ line\ %l 
+
+	let execmd = printf('php %s', b:file_se)
+
+  let env = { }
+  function env.get(temp_file) dict
+		call base#bufact#php#async_exe_Fc (self, a:temp_file)
+  endfunction
+
+  call asc#run({ 
+    \ 'cmd' : execmd, 
+    \ 'Fn'  : asc#tab_restore(env) 
+    \ })
+endfunction
+
+function! base#bufact#php#async_server_run ()
+  call base#buf#start()
+  call base#html#htw_load_buf()
+
 
   let msg_a = [
     \ "port: ", 
@@ -109,7 +143,7 @@ function! base#bufact#php#exec_async ()
       \ }
   let blines = idephp#php#bat_lines_run_as_server(r)
 
-  let ftmp = base#qw#catpath('tmp_bat bufact_php_exec_async.bat')
+  let ftmp = base#qw#catpath('tmp_bat bufact_php_async_server_run.bat')
   call writefile(blines,ftmp)
 
   let execmd = shellescape(ftmp)

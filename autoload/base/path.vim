@@ -63,6 +63,8 @@ function! base#path#add (...)
   endw
 
   let use_pwd = input('Use current dir? (1/0): ',1)
+	let path = ''
+
   while 1
     if use_pwd
       let path = getcwd()
@@ -80,6 +82,13 @@ function! base#path#add (...)
   call base#paths_update({
     \ pathid : path
     \ })
+
+	if path == base#path(pathid)
+		redraw!
+		echohl MoreMsg
+		echo "SUCCESS: Pathid added: " . pathid
+		echohl None
+	endif
 
 endfunction
 

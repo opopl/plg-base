@@ -1,5 +1,6 @@
 set_ft_html
-exec_async
+async_exe
+async_server_run
 syntax_check
 echo_tag
 server_run
