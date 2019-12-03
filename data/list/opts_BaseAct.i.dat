@@ -34,3 +34,5 @@ thisfile_copy_to
 buf_filetype_view_snippets
 au_print
 dump_buf_vars
+copen
+cclose

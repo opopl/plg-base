@@ -155,8 +155,7 @@ function! base#buf#open_split (ref)
     setlocal buftype=nofile
     setlocal nobuflisted
 
-    nnoremap <buffer><silent> q :quit<CR>
-
+		call base#buf#map_add({ 'q' : 'quit' })
     let str = escape('[q - quit]',' ')
     exe 'setlocal statusline+='.str
 
@@ -208,8 +207,9 @@ function! base#buf#pathids ()
 endfunction
 
 function! base#buf#map_add (mp, ... )
-  let ref = get(a:000,0,{})
   let mp  = a:mp
+
+  let ref = get(a:000,0,{})
 
   let map = get(ref,'map','nnoremap')
 
@@ -242,7 +242,7 @@ function! base#buf#onload ()
 
   "StatusLine simple
   "
-  let b:maps = {
+  let maps = {
         \ 'nnoremap' :
           \ {
           \  ';fo'  : 'PJact file_open'       ,
@@ -254,6 +254,10 @@ function! base#buf#onload ()
           \  ';ts'  : 'BufAct tabs_to_spaces' ,
           \  ';tu'  : 'TgUpdate'              ,
           \  ';tv'  : 'TgView _tagfiles_'     ,
+          \  ';co'  : 'BaseAct copen'                 ,
+          \  '<F3>' : 'BaseAct copen'                 ,
+          \  ';cc'  : 'BaseAct cclose'                ,
+          \  '<F4>' : 'BaseAct cclose'                ,
           \ }
         \ }
 
@@ -270,7 +274,7 @@ function! base#buf#onload ()
     call extend(b:maps.nnoremap,{ ';gg' : 'BufAct tggen_phpctags' })
 
   elseif &ft == 'vim'
-    call extend(b:maps.nnoremap,{ ';ss' : 'BufAct source_script' })
+    call extend(maps.nnoremap,{ ';ss' : 'BufAct source_script' })
     if b:basename == 'html.vim'
       TgAdd perl_html
     endif
@@ -303,7 +307,7 @@ function! base#buf#onload ()
 
   endif
 
-  for [map,mp] in items(b:maps)
+  for [map,mp] in items(maps)
     call base#buf#map_add(mp,{ 'map' : map })
   endfor
 
