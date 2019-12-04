@@ -1826,14 +1826,20 @@ function! base#find(ref)
 
 endf
 
+function! base#rdw(text,...)
+  let hl = get(a:000,0,'MoreMsg')
+	call base#echoredraw(text,hl)
+endf
+
+function! base#rdwe(text,...)
+  let hl = get(a:000,0,'WarningMsg')
+	call base#echoredraw(text,hl)
+endf
+
  
 function! base#echoredraw(text,...)
 
-  let hl='MoreMsg'
-
-  if a:0
-    let hl=a:1
-  endif
+  let hl = get(a:000,0,'MoreMsg')
 
   redraw!
   exe 'echohl ' . hl
