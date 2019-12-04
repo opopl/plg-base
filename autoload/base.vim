@@ -1828,12 +1828,12 @@ endf
 
 function! base#rdw(text,...)
   let hl = get(a:000,0,'MoreMsg')
-	call base#echoredraw(text,hl)
+	call base#echoredraw(a:text,hl)
 endf
 
 function! base#rdwe(text,...)
   let hl = get(a:000,0,'WarningMsg')
-	call base#echoredraw(text,hl)
+	call base#echoredraw(a:text,hl)
 endf
 
  

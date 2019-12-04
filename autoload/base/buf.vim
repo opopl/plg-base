@@ -34,6 +34,15 @@ function! base#buf#cut(...)
   endif
 endf
 
+function! base#buf#lines_hi(...)
+	let ref = get(a:000,0,{})
+
+	let hl = get(ref,'hl','Search')
+	let id =  matchadd(hl, '\%' . line('.') . 'l')
+	let ids = base#varref('match_ids',[])
+	call add(ids,id)
+endf
+
 function! base#buf#act(...)
   let start = get(a:000,0,0)
   let end   = get(a:000,1,getline('$'))
@@ -269,8 +278,10 @@ function! base#buf#onload ()
           \  '<F9>'  : 'TgUpdate'              ,
           \  '<F11>' : 'MM tgadd_all'          ,
           \  '<F12>' : 'TgView _tagfiles_'     ,
+          \  '<leader>l'    : 'call base#buf#lines_hi()' ,
           \ }
         \ }
+
 
   let b:comps_BufAct = base#comps#bufact()
 
