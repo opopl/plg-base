@@ -46,6 +46,10 @@ function! base#bufact_common#tabs_to_spaces ()
   echohl None
 endfunction
 
+function! base#bufact_common#matches_delete ()
+	call clearmatches()
+endfunction
+
 function! base#bufact_common#dos2unix ()
   let file = bufname('%')
   let cmd = 'dos2unix ' . shellescape(file)

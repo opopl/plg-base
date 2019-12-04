@@ -38,9 +38,12 @@ function! base#buf#lines_hi(...)
 	let ref = get(a:000,0,{})
 
 	let hl = get(ref,'hl','Search')
-	let id =  matchadd(hl, '\%' . line('.') . 'l')
-	let ids = base#varref('match_ids',[])
-	call add(ids,id)
+	let lnum = line('.')
+	let id =  matchadd(hl, '\%' . lnum . 'l')
+	if ! exists('b:match_ids')
+		let b:match_ids = {}
+		call extend(b:match_ids,{ id : lnum })
+	endif
 endf
 
 function! base#buf#act(...)
