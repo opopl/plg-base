@@ -29,7 +29,11 @@ function! base#bufact_common#help ()
     \ })
   call extend(help,[ d, 'b:maps.nnoremap', d ])
   call extend(help,lines)
-  call base#buf#open_split({ 'lines' : help })
+
+  call base#buf#open_split({ 
+		\	'lines'    : help,
+		\	'cmds_pre' : ['resize 99'],
+		\	})
 
 endfunction
 

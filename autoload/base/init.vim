@@ -398,7 +398,7 @@ command! -nargs=* -complete=custom,base#complete#omnioptions
   
 """BaseDatView
   command! -nargs=* -complete=custom,base#complete#datlist
-      \   BaseDatView call base#viewdat(<f-args>) 
+      \   BaseDatView call base#dat#view(<f-args>) 
 
 """IDAT
   command! -nargs=* -complete=custom,base#complete#datlist

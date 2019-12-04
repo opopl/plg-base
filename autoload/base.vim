@@ -3694,36 +3694,6 @@ function! base#mkdir (dir)
 
 endf
 
-"
-"Usage
-" call base#viewdat (dat)
-"Call tree
-" Calls
-"   base#datafiles
-"     base#sqlite#datfiles
-"       base#init#sqlite
-"       pymy#sqlite#query
-"       base#dbfile
-"   base#fileopen
-
-function! base#viewdat (...)
-            
-  if a:0
-    let dat = a:1
-  else
-    let dat = base#getfromchoosedialog({ 
-        \ 'list'        : base#datlist(),
-        \ 'startopt'    : '',
-        \ 'header'      : "Available DAT files are: ",
-        \ 'numcols'     : 1,
-        \ 'bottom'      : "Choose DAT file by number: ",
-        \ })
-  endif
-
-  let datfile = base#datafiles(dat)
-
-  call base#fileopen(datfile)
-endf
  
 "
 "   base#listnewinc(start,end,inc)

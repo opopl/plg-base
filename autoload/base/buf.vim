@@ -139,6 +139,8 @@ function! base#buf#open_split (ref)
     let text   = get(ref,'text','')
     let action = get(ref,'action','split')
 
+    let stl_add   = get(ref,'stl_add',[])
+
     let cmds_pre = get(ref,'cmds_pre',[])
 
     if len(text)
@@ -155,9 +157,15 @@ function! base#buf#open_split (ref)
     setlocal buftype=nofile
     setlocal nobuflisted
 
-		call base#buf#map_add({ 'q' : 'quit' })
+    call base#buf#map_add({ 'q' : 'quit' })
     let str = escape('[q - quit]',' ')
-    exe 'setlocal statusline+='.str
+    exe printf('setlocal statusline=%s',str)
+
+    if len(stl_add)
+      for stl in stl_add
+        exe printf('setlocal statusline+=%s',escape(stl,' '))
+      endfor
+    endif
 
     "setlocal nomodifiable
     "
@@ -245,19 +253,22 @@ function! base#buf#onload ()
   let maps = {
         \ 'nnoremap' :
           \ {
-          \  ';fo'  : 'PJact file_open'       ,
-          \  ';h'   : 'BufAct help'           ,
-          \  '?'    : 'BufAct help'           ,
-          \  ';l'   : 'ls!'                   ,
-          \  ';ma'  : 'MM tgadd_all'          ,
-          \  ';sv'  : 'SnippetView ' . &ft    ,
-          \  ';ts'  : 'BufAct tabs_to_spaces' ,
-          \  ';tu'  : 'TgUpdate'              ,
-          \  ';tv'  : 'TgView _tagfiles_'     ,
-          \  ';co'  : 'BaseAct copen'                 ,
-          \  '<F3>' : 'BaseAct copen'                 ,
-          \  ';cc'  : 'BaseAct cclose'                ,
-          \  '<F4>' : 'BaseAct cclose'                ,
+          \  ';fo'   : 'PJact file_open'       ,
+          \  ';h'    : 'BufAct help'           ,
+          \  '?'     : 'BufAct help'           ,
+          \  ';l'    : 'ls!'                   ,
+          \  ';ma'   : 'MM tgadd_all'          ,
+          \  ';sv'   : 'SnippetView ' . &ft    ,
+          \  ';ts'   : 'BufAct tabs_to_spaces' ,
+          \  ';tu'   : 'TgUpdate'              ,
+          \  ';tv'   : 'TgView _tagfiles_'     ,
+          \  ';co'   : 'BaseAct copen'         ,
+          \  ';cc'   : 'BaseAct cclose'        ,
+          \  '<F3>'  : 'BaseAct copen'         ,
+          \  '<F4>'  : 'BaseAct cclose'        ,
+          \  '<F9>'  : 'TgUpdate'              ,
+          \  '<F11>' : 'MM tgadd_all'          ,
+          \  '<F12>' : 'TgView _tagfiles_'     ,
           \ }
         \ }
 
