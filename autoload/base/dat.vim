@@ -15,7 +15,7 @@ function! base#dat#view (...)
   let dat = get(a:000,0,'')
 
   if ! strlen(dat)
-		call base#dat#render_list ()
+    call base#dat#render_list ()
     return
   endif
 
@@ -26,12 +26,13 @@ function! base#dat#view (...)
     \ 'load_buf' : 1 ,
     \ }
   let res = base#fileopen(r)
+  echo res
 
   let buf_nums = get(res,'buf_nums',[])
 
   if len(buf_nums)
-	  let dat_bufs = base#varref('dat_bufs',{})
-	  call extend(dat_bufs,{ dat : buf_nums })
+    let dat_bufs = base#varref('dat_bufs',{})
+    call extend(dat_bufs,{ dat : buf_nums })
   endif
 endf
 
@@ -43,7 +44,7 @@ function! base#dat#render_list ()
   let info = []
   for dat in dats
     let buf_nums = base#dat#buf_nums(dat)
-    let buf_str = join(buf_nums, ' ')
+    let buf_str  = join(buf_nums, ' ')
     call add(info,[ dat, buf_str, get(desc,dat,'') ])
   endfor
   let lines = [ 'DAT files: ' ]
@@ -64,7 +65,7 @@ function! base#dat#render_list ()
       \ 'V[ %1* v - view, %2* a - append %0* ]',
       \ ],
     \ })
-	return
+  return
 endf
 
 function! base#dat#append (dat,lines)
@@ -87,7 +88,7 @@ endf
 function! base#dat#buf_nums (dat)
   let dat   = a:dat
 
-	let dat_bufs = base#varref('dat_bufs',{})
+  let dat_bufs = base#varref('dat_bufs',{})
   let buf_nums = get(dat_bufs,dat,[])
   return buf_nums
 endf

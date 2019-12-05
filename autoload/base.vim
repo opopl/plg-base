@@ -904,7 +904,7 @@ fun! base#fileopen(ref)
  endfor
 
  let res = {}
- call extend(res,{ 'bufnr' : buf_nums })
+ call extend(res,{ 'buf_nums' : buf_nums })
  return res
 endfun
  
