@@ -899,7 +899,10 @@ fun! base#fileopen(ref)
       endif
     endif
  endfor
- 
+
+ let res = {}
+ call extend(res,{ 'bufnr' : bufnr(file) })
+ return res
 endfun
  
 

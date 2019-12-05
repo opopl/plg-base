@@ -14,21 +14,27 @@ function! base#bufact_common#help ()
   let help = []
 
   let data_h = []
-  let maps = exists('b:maps') ? b:maps : {}
+  let b_maps = exists('b:maps') ? b:maps : {}
 
-  let maps = get(maps,'nnoremap',{})
-  for k in sort(keys(maps))
-    let v = get(maps,k,'')
-    call add(data_h,{ 'keys' : k, 'command' : v })
+  let map_types = keys(b_maps)
+
+  for map_type in map_types
+    let maps = get(b_maps,map_type,{})
+
+    for k in sort(keys(maps))
+      let v = get(maps,k,'')
+      call add(data_h,{ 'keys' : k, 'command' : v })
+    endfor
+  
+    let d     = repeat('=',50)
+    let lines = pymy#data#tabulate({
+      \ 'data_h'  : data_h,
+      \ 'headers' : [ 'keys' , 'command' ],
+      \ })
+    call extend(help,[ d, 'b:maps.' . map_type, d ])
+    call extend(help,lines)
+
   endfor
-
-  let d     = repeat('=',50)
-  let lines = pymy#data#tabulate({
-    \ 'data_h'  : data_h,
-    \ 'headers' : [ 'keys' , 'command' ],
-    \ })
-  call extend(help,[ d, 'b:maps.nnoremap', d ])
-  call extend(help,lines)
 
   call base#buf#open_split({ 
     \ 'lines'    : help,

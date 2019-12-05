@@ -1,5 +1,58 @@
  
 
+fun! base#buffers#get_Fc_with(self,with)
+  let self      = a:self
+
+  let this = deepcopy(self)
+
+  let with = a:with
+
+  let root          = get(with,'root','')
+  let file_full     = get(with,'file_full','')
+  let file_basename = get(with,'file_basename','')
+
+  let buffiles = []
+  let bufnums  = []
+  let bufs     = []
+
+  for b in self.bufs
+      let fullname = get(b,'fullname','')
+      
+      let ok = 1 
+
+      if strlen(root)
+        let ok = ok 
+          \ && strlen(fullname)
+          \ && filereadable(fullname)
+          \ && strlen(base#file#reldir(fullname,root))
+      endif
+
+      if strlen(file_basename)
+        let ok = ok 
+          \ && strlen(fullname)
+          \ && ( fnamemodify(fullname,':t') == file_basename )
+      endif
+
+      if strlen(file_full)
+        let ok = ok 
+          \ && strlen(fullname)
+          \ && ( fullname == file_full )
+      endif
+
+      if ok
+        call add(buffiles,fullname)
+        call add(bufs, b)
+        call add(bufnums, b.num)
+      endif
+    endfor
+
+    let this.bufs     = bufs
+    let this.bufnums  = bufnums
+    let this.buffiles = buffiles
+
+    return this
+
+endf
 
 fun! base#buffers#get(...)
   let ref = get(a:000,0,{})
@@ -87,38 +140,7 @@ fun! base#buffers#get(...)
       \ }
 
   function! bref.with (with) dict
-    let this = deepcopy(self)
-
-    let with = a:with
-    let root = get(with,'root','')
-
-    let buffiles = []
-    let bufnums  = []
-    let bufs     = []
-
-    for b in self.bufs
-      let fullname = get(b,'fullname','')
-      
-      let ok = 1 
-
-      if strlen(root)
-        let ok = ok 
-          \ && strlen(fullname)
-          \ && filereadable(fullname)
-          \ && strlen(base#file#reldir(fullname,root))
-      endif
-
-      if ok
-        call add(this.buffiles,fullname)
-        call add(bufs, b)
-        call add(bufnums, b.num)
-      endif
-    endfor
-
-    let this.bufs     = bufs
-    let this.bufnums  = bufnums
-    let this.buffiles = buffiles
-
+    let this = base#buffers#get_Fc_with(self,a:with)
     return this
   endfunction
  
