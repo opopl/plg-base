@@ -31,9 +31,12 @@ function! base#bufact_common#help ()
   call extend(help,lines)
 
   call base#buf#open_split({ 
-		\	'lines'    : help,
-		\	'cmds_pre' : ['resize 99'],
-		\	})
+    \ 'lines'    : help,
+    \ 'cmds_pre' : [
+      \ 'resize 99',
+      \ 'call matchadd("ModeMsg","<F.*>")',
+      \ ],
+    \ })
 
 endfunction
 
@@ -47,7 +50,7 @@ function! base#bufact_common#tabs_to_spaces ()
 endfunction
 
 function! base#bufact_common#matches_delete ()
-	call clearmatches()
+  call clearmatches()
 endfunction
 
 function! base#bufact_common#dos2unix ()

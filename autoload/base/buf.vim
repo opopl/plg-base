@@ -35,15 +35,15 @@ function! base#buf#cut(...)
 endf
 
 function! base#buf#lines_hi(...)
-	let ref = get(a:000,0,{})
+  let ref = get(a:000,0,{})
 
-	let hl = get(ref,'hl','Search')
-	let lnum = line('.')
-	let id =  matchadd(hl, '\%' . lnum . 'l')
-	if ! exists('b:match_ids')
-		let b:match_ids = {}
-		call extend(b:match_ids,{ id : lnum })
-	endif
+  let hl = get(ref,'hl','Search')
+  let lnum = line('.')
+  let id =  matchadd(hl, '\%' . lnum . 'l')
+  if ! exists('b:match_ids')
+    let b:match_ids = {}
+    call extend(b:match_ids,{ id : lnum })
+  endif
 endf
 
 function! base#buf#act(...)
