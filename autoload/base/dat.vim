@@ -40,12 +40,18 @@ function! base#dat#render_list ()
   let dats = base#datlist()
   let dats = sort(dats)
 
+  let cmds_pre = []
+
   let desc = base#varget('desc_dat',{})
   let info = []
   for dat in dats
     let buf_nums = base#dat#buf_nums(dat)
     let buf_str  = join(buf_nums, ' ')
     call add(info,[ dat, buf_str, get(desc,dat,'') ])
+
+    if len(buf_str)
+      call add(cmds_pre, "call matchadd('MoreMsg','\\s\\+".dat."\\s\\+')")
+    endif
   endfor
   let lines = [ 'DAT files: ' ]
   call extend(lines, pymy#data#tabulate({
@@ -53,14 +59,13 @@ function! base#dat#render_list ()
     \ 'headers' : base#qw('dat buf description'),
     \ }))
 
-  let cmds = []
-  call add(cmds,'resize 99')
-  call add(cmds,"vnoremap <buffer><silent> v :'<,'>call base#dat_vis#open()<CR>")
-  call add(cmds,"vnoremap <buffer><silent> a :'<,'>call base#dat_vis#append()<CR>")
+  call add(cmds_pre,'resize 99')
+  call add(cmds_pre,"vnoremap <buffer><silent> v :'<,'>call base#dat_vis#open()<CR>")
+  call add(cmds_pre,"vnoremap <buffer><silent> a :'<,'>call base#dat_vis#append()<CR>")
 
   call base#buf#open_split({ 
     \ 'lines'    : lines ,
-    \ 'cmds_pre' : cmds,
+    \ 'cmds_pre' : cmds_pre,
     \ 'stl_add'  : [
       \ 'V[ %1* v - view, %2* a - append %0* ]',
       \ ],
