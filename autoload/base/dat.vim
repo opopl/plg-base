@@ -14,33 +14,8 @@
 function! base#dat#view (...)
   let dat = get(a:000,0,'')
 
-  let dats = base#datlist()
-  let dats = sort(dats)
   if ! strlen(dat)
-    let desc = base#varget('desc_dat',{})
-    let info = []
-    for dat in dats
-      let buf_nums = base#dat#buf_nums(dat)
-      let buf_str = join(buf_nums, ' ')
-      call add(info,[ dat, buf_str, get(desc,dat,'') ])
-    endfor
-    let lines = [ 'DAT files: ' ]
-    call extend(lines, pymy#data#tabulate({
-      \ 'data'    : info,
-      \ 'headers' : base#qw('dat buf description'),
-      \ }))
-
-    let cmds = []
-    call add(cmds,'resize 99')
-    call add(cmds,"vnoremap <buffer><silent> v :'<,'>call base#dat_vis#open()<CR>")
-    call add(cmds,"vnoremap <buffer><silent> a :'<,'>call base#dat_vis#append()<CR>")
-    call base#buf#open_split({ 
-      \ 'lines'    : lines ,
-      \ 'cmds_pre' : cmds,
-      \ 'stl_add'  : [
-        \ 'V[ v - view, a - append ]',
-        \ ],
-      \ })
+		call base#dat#render_list ()
     return
   endif
 
@@ -58,6 +33,38 @@ function! base#dat#view (...)
 	  let dat_bufs = base#varref('dat_bufs',{})
 	  call extend(dat_bufs,{ dat : buf_nums })
   endif
+endf
+
+function! base#dat#render_list ()
+  let dats = base#datlist()
+  let dats = sort(dats)
+
+  let desc = base#varget('desc_dat',{})
+  let info = []
+  for dat in dats
+    let buf_nums = base#dat#buf_nums(dat)
+    let buf_str = join(buf_nums, ' ')
+    call add(info,[ dat, buf_str, get(desc,dat,'') ])
+  endfor
+  let lines = [ 'DAT files: ' ]
+  call extend(lines, pymy#data#tabulate({
+    \ 'data'    : info,
+    \ 'headers' : base#qw('dat buf description'),
+    \ }))
+
+  let cmds = []
+  call add(cmds,'resize 99')
+  call add(cmds,"vnoremap <buffer><silent> v :'<,'>call base#dat_vis#open()<CR>")
+  call add(cmds,"vnoremap <buffer><silent> a :'<,'>call base#dat_vis#append()<CR>")
+
+  call base#buf#open_split({ 
+    \ 'lines'    : lines ,
+    \ 'cmds_pre' : cmds,
+    \ 'stl_add'  : [
+      \ 'V[ %1* v - view, %2* a - append %0* ]',
+      \ ],
+    \ })
+	return
 endf
 
 function! base#dat#append (dat,lines)
