@@ -840,6 +840,7 @@ fun! base#fileopen(ref)
    let anew_if_absent = get(opts,'anew_if_absent',0)
    let load_buf       = get(opts,'load_buf',0)
   
+	 let buf_nums = []
    for file in files
     if ! filereadable(file)
       if ! anew_if_absent
@@ -898,10 +899,12 @@ fun! base#fileopen(ref)
         exe exec
       endif
     endif
+
+		call add(buf_nums, bufnr(file))
  endfor
 
  let res = {}
- call extend(res,{ 'bufnr' : bufnr(file) })
+ call extend(res,{ 'bufnr' : buf_nums })
  return res
 endfun
  

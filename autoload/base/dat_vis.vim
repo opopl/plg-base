@@ -25,7 +25,7 @@ function! base#dat_vis#append ()
   let msg_a = [
     \  " Line to append: ",  
     \  ]
-  let msg  = join(msg_a,"\n")
+  let msg   = join(msg_a,"\n")
   let aline = base#input_we(msg,'')
 
   for vline in vis_lines

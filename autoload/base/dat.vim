@@ -20,12 +20,14 @@ function! base#dat#view (...)
     let desc = base#varget('desc_dat',{})
     let info = []
     for dat in dats
-      call add(info,[ dat, get(desc,dat,'') ])
+      let buf_nums = base#dat#buf_nums(dat)
+      let buf_str = join(buf_nums, ' ')
+      call add(info,[ dat, buf_str, get(desc,dat,'') ])
     endfor
     let lines = [ 'DAT files: ' ]
     call extend(lines, pymy#data#tabulate({
       \ 'data'    : info,
-      \ 'headers' : [ 'dat', 'description' ],
+      \ 'headers' : base#qw('dat buf description'),
       \ }))
 
     let cmds = []
@@ -48,7 +50,14 @@ function! base#dat#view (...)
     \ 'files'    : datfiles,
     \ 'load_buf' : 1 ,
     \ }
-  call base#fileopen(r)
+  let res = base#fileopen(r)
+
+  let buf_nums = get(res,'buf_nums',[])
+
+  if len(buf_nums)
+	  let dat_bufs = base#varref('dat_bufs',{})
+	  call extend(dat_bufs,{ dat : buf_nums })
+  endif
 endf
 
 function! base#dat#append (dat,lines)
@@ -66,5 +75,13 @@ function! base#dat#append (dat,lines)
           \   }
     call base#file#write_lines(r) 
   endfor
+endf
+
+function! base#dat#buf_nums (dat)
+  let dat   = a:dat
+
+	let dat_bufs = base#varref('dat_bufs',{})
+  let buf_nums = get(dat_bufs,dat,[])
+  return buf_nums
 endf
 
