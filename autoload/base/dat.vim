@@ -28,23 +28,43 @@ function! base#dat#view (...)
       \ 'headers' : [ 'dat', 'description' ],
       \ }))
 
-		let cmds = []
-		call add(cmds,'resize 99')
-		call add(cmds,"vnoremap <buffer><silent> v :'<,'>call base#dat_vis#open()<CR>")
+    let cmds = []
+    call add(cmds,'resize 99')
+    call add(cmds,"vnoremap <buffer><silent> v :'<,'>call base#dat_vis#open()<CR>")
+    call add(cmds,"vnoremap <buffer><silent> a :'<,'>call base#dat_vis#append()<CR>")
     call base#buf#open_split({ 
-			\	'lines'    : lines ,
-			\	'cmds_pre' : cmds,
-			\	'stl_add'  : ['V[ v - open files ]'],
-			\	})
+      \ 'lines'    : lines ,
+      \ 'cmds_pre' : cmds,
+      \ 'stl_add'  : [
+        \ 'V[ v - view, a - append ]',
+        \ ],
+      \ })
     return
   endif
 
   let datfiles = base#datafiles(dat)
 
-	let r = { 
-		\	'files'    : datfiles,
-		\	'load_buf' : 1 ,
-		\	}
+  let r = { 
+    \ 'files'    : datfiles,
+    \ 'load_buf' : 1 ,
+    \ }
   call base#fileopen(r)
+endf
+
+function! base#dat#append (dat,lines)
+  let ref = get(a:000,0,{})
+
+  let dat   = a:dat
+  let lines = a:lines
+
+  let datfiles = base#datafiles(dat)
+  for df in datfiles
+    let r = {
+          \   'lines'  : lines,
+          \   'file'   : df,
+          \   'mode'   : 'append',
+          \   }
+    call base#file#write_lines(r) 
+  endfor
 endf
 

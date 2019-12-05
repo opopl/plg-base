@@ -1559,3 +1559,13 @@ snippet bcd
 	call base#cd(<++>)
 snippet lbw
 	len(base#where(<++>))
+snippet bvvs
+	let lines = base#vim#visual_selection()
+snippet ifl
+	if len(<++>)
+		<++>
+	endif
+snippet ifll
+	if len(lines)
+		<++>
+	endif
