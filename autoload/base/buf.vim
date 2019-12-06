@@ -354,10 +354,14 @@ function! base#buf#save_git ()
   function! s:obj.pull (self) dict
     call base#rdw('Done: git pull')
   endfunction
+
+  function! s:obj.cimu (self) dict
+    call base#rdw('Done: git cimu')
+  endfunction
   
   let r = {
       \  'cmds' : [
-        \ 'git cimu', 
+        \ [ 'git cimu',[],s:obj.cimu ],
         \ [ 'git pull',[],s:obj.pull ],
         \ [ 'git push',[],s:obj.push ],
       \ ],
