@@ -347,17 +347,19 @@ function! base#buf#save_git ()
   call base#cd(b:dirname)
 
   let s:obj = {}
-  function! s:obj.init (self) dict
-    call base#rdw('OK: Buffer Git saved')
+  function! s:obj.push (self) dict
+    call base#rdw('Done: Buffer Git save')
+  endfunction
+
+  function! s:obj.pull (self) dict
+    call base#rdw('Done: git pull')
   endfunction
   
-  let Fc = s:obj.init
-
   let r = {
       \  'cmds' : [
         \ 'git cimu', 
-        \ 'git pull', 
-        \ [ 'git push',[],Fc ]
+        \ [ 'git pull',[],s:obj.pull ],
+        \ [ 'git push',[],s:obj.push ],
       \ ],
       \  }
 
