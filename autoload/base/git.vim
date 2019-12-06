@@ -19,7 +19,7 @@ endfunction
 function! base#git#save ()
 
   let ref = { 
-		\ 'cmds' : [ 'save'], 
+		\ 'cmds' : [ 'save' ], 
 		\ 'gitopts' : { 
 			\ 'git_prompt' : 0
 		  \ }  
@@ -45,7 +45,7 @@ endfunction
 
 function! base#git#cmdopts (...)
 	let cmdopts = {
-		\ 'push'   : "origin master" ,
+		\ 'push'   : "" ,
 		\ 'commit' : '-a -m "u"'   ,
 		\ 'remote' : '-v'          ,
 		\ 'rm'     : '--cached'    ,

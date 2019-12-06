@@ -10,6 +10,3 @@ let b:base_current_syntax = "vim"
 syntax region IfZero start="^\s*if\s\+0\s*$" end=/^\s*endif\s*$/ keepend
 highlight link IfZero Comment
 
-if 0
-	sfsdfsdf
-endif
