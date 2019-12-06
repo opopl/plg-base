@@ -345,6 +345,7 @@ function! base#buf#save ()
   call base#buf#start()
 
   w
+  call base#rdw('OK: Buffer saved')
   "call base#cd(b:dirname)
 
 "  let cmd = 'git cimu'
