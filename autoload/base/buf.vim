@@ -357,7 +357,7 @@ function! base#buf#save_git ()
       \  'cmds' : [
         \ 'git cimu', 
         \ 'git pull', 
-        \ [ 'git push','',Fc ]
+        \ [ 'git push',[],Fc ]
       \ ],
       \  }
 
