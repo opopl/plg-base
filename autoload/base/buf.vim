@@ -347,7 +347,7 @@ function! base#buf#save_git ()
   call base#cd(b:dirname)
 
   let s:obj = {}
-  function! s:obj.init () dict
+  function! s:obj.init (self) dict
     call base#rdw('OK: Buffer Git saved')
   endfunction
   
