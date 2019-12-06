@@ -26,7 +26,6 @@ function! base#dat#view (...)
     \ 'load_buf' : 1 ,
     \ }
   let res = base#fileopen(r)
-  echo res
 
   let buf_nums = get(res,'buf_nums',[])
 

@@ -46,6 +46,7 @@ endfunction
 function! base#git#cmdopts (...)
 	let cmdopts = {
 		\ 'push'   : "" ,
+		\ 'pull'   : "" ,
 		\ 'commit' : '-a -m "u"'   ,
 		\ 'remote' : '-v'          ,
 		\ 'rm'     : '--cached'    ,

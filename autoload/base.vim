@@ -903,6 +903,8 @@ fun! base#fileopen(ref)
 		call add(buf_nums, bufnr(file))
  endfor
 
+ let buf_nums = base#uniq(buf_nums)
+
  let res = {}
  call extend(res,{ 'buf_nums' : buf_nums })
  return res

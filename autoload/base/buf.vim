@@ -281,6 +281,7 @@ function! base#buf#onload ()
           \  '<F9>'  : 'TgUpdate'              ,
           \  '<F11>' : 'MM tgadd_all'          ,
           \  '<F12>' : 'TgView _tagfiles_'     ,
+          \  '<C-S>' : 'call base#buf#save()'  ,
           \  '<leader>l'    : 'call base#buf#lines_hi()' ,
           \ }
         \ }
@@ -337,6 +338,30 @@ function! base#buf#onload ()
   endfor
 
   call base#var#update('buf_vars')
+
+endfunction
+
+function! base#buf#save ()
+  call base#buf#start()
+
+  w
+  "call base#cd(b:dirname)
+
+"  let cmd = 'git cimu'
+  
+  "let env = {}
+  "function env.get(temp_file) dict
+    "let code = self.return_code
+  
+    "if filereadable(a:temp_file)
+      "let out = readfile(a:temp_file)
+    "endif
+  "endfunction
+  
+  "call asc#run({ 
+    "\  'cmd' : execmd, 
+    "\  'Fn'  : asc#tab_restore(env) 
+    "\  })
 
 endfunction
 
