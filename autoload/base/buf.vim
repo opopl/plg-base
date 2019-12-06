@@ -281,11 +281,11 @@ function! base#buf#onload ()
           \  '<F9>'  : 'TgUpdate'              ,
           \  '<F11>' : 'MM tgadd_all'          ,
           \  '<F12>' : 'TgView _tagfiles_'     ,
-          \  '<C-S>' : 'call base#buf#save()'  ,
+          \  '<C-S>' : 'call base#buf#save()'      ,
+          \  '<C-G>' : 'call base#buf#save_git()'  ,
           \  '<leader>l'    : 'call base#buf#lines_hi()' ,
           \ }
         \ }
-
 
   let b:comps_BufAct = base#comps#bufact()
 
@@ -338,6 +338,29 @@ function! base#buf#onload ()
   endfor
 
   call base#var#update('buf_vars')
+
+endfunction
+
+function! base#buf#save_git ()
+  call base#buf#start()
+
+  call base#cd(b:dirname)
+
+  let s:obj = {}
+  function! s:obj.init () dict
+    call base#rdw('OK: Buffer Git saved')
+  endfunction
+  
+  let Fc = s:obj.init
+
+  let r = {
+      \  'cmds' : [
+        \ 'git cimu', 
+        \ 'git pull', 
+        \ [ 'git push','',Fc ]
+      \ ],
+      \  }
+  call asc#run_many(r)
 
 endfunction
 
