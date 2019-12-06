@@ -361,9 +361,9 @@ function! base#buf#save_git ()
   
   let r = {
       \  'cmds' : [
-        \ [ 'git cimu',[],s:obj.cimu ],
-        \ [ 'git pull',[],s:obj.pull ],
-        \ [ 'git push',[],s:obj.push ],
+        \ [ 'git cimu',[],[],s:obj.cimu,'' ],
+        \ [ 'git pull',[],[],s:obj.pull,'' ],
+        \ [ 'git push',[],[],s:obj.push,'' ],
       \ ],
       \  }
 
