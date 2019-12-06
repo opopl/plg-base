@@ -47,7 +47,7 @@ function! base#dat#render_list ()
   for dat in dats
     let buf_nums = base#dat#buf_nums(dat)
     let buf_str  = join(buf_nums, ' ')
-    call add(info,[ dat, buf_str, get(desc,dat,'') ])
+    call add(info,[ dat, buf_str, get(desc, dat, '') ])
 
     if len(buf_str)
       call add(cmds_pre, "call matchadd('MoreMsg','\\s\\+".dat."\\s\\+')")
