@@ -348,9 +348,10 @@ function! base#buf#git_status ()
   call base#cd(b:dirname)
 
   let s:obj = {}
-  function! s:obj.init (self) dict
-    let asc_out = base#varget('asc_out',[])
-    let out = get(asc_out,'out',)
+  function! s:obj.init (...) dict
+    let this      = get(a:000,0,{})
+    let data      = get(a:000,1,{})
+    let out       = get(data,'out',[])
     call base#buf#open_split({ 'lines' : out })
   endfunction
   
