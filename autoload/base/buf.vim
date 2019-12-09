@@ -281,6 +281,7 @@ function! base#buf#onload ()
           \  '<F9>'  : 'TgUpdate'              ,
           \  '<F11>' : 'MM tgadd_all'          ,
           \  '<F12>' : 'TgView _tagfiles_'     ,
+          \  '<S-S>' : 'call base#buf#git_status()'      ,
           \  '<C-S>' : 'call base#buf#save()'      ,
           \  '<C-G>' : 'call base#buf#save_git()'  ,
           \  '<leader>l'    : 'call base#buf#lines_hi()' ,
@@ -341,21 +342,46 @@ function! base#buf#onload ()
 
 endfunction
 
+function! base#buf#git_status ()
+  call base#buf#start()
+
+  call base#cd(b:dirname)
+
+  let s:obj = {}
+  function! s:obj.init (self) dict
+    let asc_out = base#varget('asc_out',[])
+    let out = get(asc_out,'out',)
+    call base#buf#open_split({ 'lines' : out })
+  endfunction
+  
+  let Fc = s:obj.init
+
+  let r = {
+      \  'cmds' : [
+        \ [ 'git st',[],[],Fc,'' ],
+      \ ],
+      \  }
+
+
+  call asc#run_many(r)
+
+endfunction
+
 function! base#buf#save_git ()
   call base#buf#start()
 
   call base#cd(b:dirname)
 
   let s:obj = {}
-  function! s:obj.push (self) dict
+  function! s:obj.push (...) dict
     call base#rdw('Done: Buffer Git save')
   endfunction
 
-  function! s:obj.pull (self) dict
+  function! s:obj.pull (...) dict
     call base#rdw('Done: git pull')
   endfunction
 
-  function! s:obj.cimu (self) dict
+  function! s:obj.cimu (...) dict
     call base#rdw('Done: git cimu')
   endfunction
   
