@@ -298,7 +298,7 @@ function! base#buf#onload ()
 
   elseif &ft == 'php'
     setlocal iskeyword+=\
-    call extend(b:maps.nnoremap,{ ';gg' : 'BufAct tggen_phpctags' })
+    call extend(maps.nnoremap,{ ';gg' : 'BufAct tggen_phpctags' })
 
   elseif &ft == 'vim'
     call extend(maps.nnoremap,{ ';ss' : 'BufAct source_script' })
@@ -334,7 +334,7 @@ function! base#buf#onload ()
 
   endif
 
-  for [map,mp] in items(maps)
+  for [ map,mp ] in items(maps)
     call base#buf#map_add(mp,{ 'map' : map })
   endfor
 

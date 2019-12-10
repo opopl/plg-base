@@ -1336,6 +1336,8 @@ snippet bwf
 	"			default: 
 	"					rewrite
 	" prompt - default 0
+snippet bvr
+	base#varref('<++>',<++>)
 snippet bvg
 	base#varget('<++>',<++>)
 snippet bvs
@@ -1577,3 +1579,17 @@ snippet rdw
 	call base#rdw(<+msg+>)
 snippet rdwe
 	call base#rdwe(<+msg+>)
+snippet desc
+	let desc = base#varget('pymy_desc_PYMY',{})
+	let info = []
+	for cmd in cmds
+		call add(info,[ cmd, get(desc,cmd,'') ])
+	endfor
+	let lines = [ 'Possible PYMY commands: ' ]
+	call extend(lines, pymy#data#tabulate({
+		\ 'data'    : info,
+		\ 'headers' : [ 'cmd', 'description' ],
+		\ }))
+	
+	call base#buf#open_split({ 'lines' : lines })
+	return
