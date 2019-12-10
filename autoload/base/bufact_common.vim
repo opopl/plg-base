@@ -10,13 +10,17 @@ function! base#bufact_common#_file_add_to_db ()
   
 endfunction
 
-function! base#bufact_common#help ()
+"""bufact_help
+function! base#bufact_common#help (...)
+  let ref  = get(a:000,0,{})
+
   let help = []
 
   let data_h = []
   let b_maps = exists('b:maps') ? b:maps : {}
 
   let map_types = keys(b_maps)
+  let map_types = get(ref,'map_types',map_types)
 
   for map_type in map_types
     let maps = get(b_maps,map_type,{})
