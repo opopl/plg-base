@@ -456,7 +456,7 @@ function! base#init#tagids ()
 endfunction
 
 fun! base#init#sqlite(...)
-  let ref = get(a:000,0,{})
+  let ref    = get(a:000,0,{})
 
   let reload = get(ref,'reload',0)
 
@@ -475,7 +475,10 @@ fun! base#init#sqlite(...)
   let dbfile = base#qw#catpath('db','vim_plg_base.db')
   call base#varset('plg_base_dbfile',dbfile)
 
-  let prf={ 'func' : 'base#init#sqlite','plugin' : 'base' }
+  let prf = { 
+    \ 'func'   : 'base#init#sqlite',
+    \ 'plugin' : 'base'
+    \ }
   call base#log([
       \ 'db initialization',
       \ ],prf)

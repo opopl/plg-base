@@ -1579,6 +1579,16 @@ snippet rdw
 	call base#rdw(<+msg+>)
 snippet rdwe
 	call base#rdwe(<+msg+>)
+snippet py2
+	python << eof
+	import vim
+		<++>
+	eof
+snippet py3
+	python3 << eof
+	import vim
+		<++>
+	eof
 snippet desc
 	let desc = base#varget('pymy_desc_PYMY',{})
 	let info = []

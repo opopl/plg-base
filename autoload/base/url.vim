@@ -1,7 +1,7 @@
 
 function! base#url#struct (url)
-	let url = a:url
-	let struct = {}
+  let url = a:url
+  let struct = {}
 python << eof
 
 import vim
@@ -23,9 +23,9 @@ scheme = o.scheme
 path   = o.path
 
 if ((host is '') and (scheme is '')):
-	scheme = 'http:'
-	url = scheme + "//" + url
-	o = urlparse(url)
+  scheme = 'http:'
+  url = scheme + "//" + url
+  o = urlparse(url)
 
 host = o.netloc
 host = re.sub(r':(\d+)$','',host)
@@ -47,28 +47,28 @@ cmds.append('call extend(struct,{ "basename" :' + '"' + basename +'"' + '})' )
 cmds.append('call extend(struct,{ "url" :' + '"' + url +'"' + '})' )
 
 for cmd in cmds:
-	vim.command(cmd)
+  vim.command(cmd)
 
 eof
-	return struct
+  return struct
 endfunction
 
 function! base#url#basename (url)
-	let url = a:url
-	let struct = base#url#struct(url)
-	let basename = get(struct,'basename','')
-	return basename
+  let url = a:url
+  let struct = base#url#struct(url)
+  let basename = get(struct,'basename','')
+  return basename
 endfunction
 
 function! base#url#normalize_htw (url)
-	call base#html#htw_init ()
-	let url = a:url
+  call base#html#htw_init ()
+  let url = a:url
 perl << eof
-	use Vim::Perl qw(VimVar);
-	my $url = VimVar('url');
-	
-	$url = $HTW->url_normalize($url);
-	return $url;
+  use Vim::Perl qw(VimVar);
+  my $url = VimVar('url');
+  
+  $url = $HTW->url_normalize($url);
+  return $url;
 eof
 
 endfunction
