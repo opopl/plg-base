@@ -65,7 +65,7 @@ function! base#sqlite#datfiles (...)
   let q = ''
   let p = []
   if strlen(kf)
-    let q = 'SELECT datfile FROM datfiles WHERE keyfull = ?'
+    let q = 'SELECT DISTINCT datfile FROM datfiles WHERE keyfull = ?'
     let p = [ kf ]
   else
     let q = 'SELECT keyfull, datfile FROM datfiles'
@@ -100,6 +100,8 @@ function! base#sqlite#datfiles (...)
     for rh in rows_h
         call add(datlist,get(rh,'datfile',''))
     endfor
+		let datlist = base#mapsub(datlist,'\\','/','g')
+		let datlist = base#uniq(datlist)
     return datlist
   else
     let datfiles = {}
