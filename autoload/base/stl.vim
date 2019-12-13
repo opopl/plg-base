@@ -182,6 +182,7 @@ function!  base#stl#setparts ()
 	let q="'"
 	let stlparts['idephp_pj_name']='%1*\ pj:\ %{base#varget('.q. 'idephp_pj_name' .q.','.q.q.')}\ %0*' 
 	let stlparts['idephp_pj_head']='%1*\ %{string('.q.'IDEPHP'.q.')}\ %0*' 
+	let stlparts['idephp_pj_reldir']='%1*\ %{idephp#pj#buf#reldir()}\ %0*' 
 
 	let stlparts['HTML']='%1*\ %{string('.q.'HTML'.q.')}\ %0*' 
 
@@ -319,11 +320,12 @@ function! base#stl#setorders ()
 		        \   ],
 				\   'idephp_pj'   :   
 						\		[ 
-		        \   'idephp_pj_head'  ,
-		        \   'idephp_pj_name'  ,
-		        \   'buffer_number'  ,
-		        \   'line_number'  ,
-		        \   'file_name'  ,
+		        \   'idephp_pj_head'   ,
+		        \   'idephp_pj_name'   ,
+		        \   'buffer_number'    ,
+		        \   'line_number'      ,
+		        \   'file_name'        ,
+		        \   'idephp_pj_reldir' ,
 		        \   ],
         \   'projs'   :   [ 
 		        \   'buffer_number'    ,
