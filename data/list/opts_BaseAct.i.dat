@@ -36,3 +36,5 @@ au_print
 dump_buf_vars
 copen
 cclose
+lopen
+lclose

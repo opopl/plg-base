@@ -1,5 +1,11 @@
 
 function! base#loclist#open ()
+  let llist = getloclist(0)
+
+  if !len(llist)
+    return 
+  endif
+
   lopen
 
   let mp = base#qf_list#maps()
