@@ -24,7 +24,7 @@ function! base#qf_list#maps ()
 endfunction
 
 function! base#qf_list#open ()
-  copen
+  botright copen
 
   let mp = base#qf_list#maps()
   call base#buf#map_add(mp)

@@ -6,7 +6,7 @@ function! base#loclist#open ()
     return 
   endif
 
-  lopen
+  botright lopen
 
   let mp = base#qf_list#maps()
   call base#buf#map_add(mp)
