@@ -840,7 +840,7 @@ fun! base#fileopen(ref)
    let anew_if_absent = get(opts,'anew_if_absent',0)
    let load_buf       = get(opts,'load_buf',0)
   
-	 let buf_nums = []
+   let buf_nums = []
    for file in files
     if ! filereadable(file)
       if ! anew_if_absent
@@ -900,7 +900,7 @@ fun! base#fileopen(ref)
       endif
     endif
 
-		call add(buf_nums, bufnr(file))
+    call add(buf_nums, bufnr(file))
  endfor
 
  let buf_nums = base#uniq(buf_nums)
@@ -1836,12 +1836,12 @@ endf
 
 function! base#rdw(text,...)
   let hl = get(a:000,0,'MoreMsg')
-	call base#echoredraw(a:text,hl)
+  call base#echoredraw(a:text,hl)
 endf
 
 function! base#rdwe(text,...)
   let hl = get(a:000,0,'WarningMsg')
-	call base#echoredraw(a:text,hl)
+  call base#echoredraw(a:text,hl)
 endf
 
  
@@ -2160,7 +2160,7 @@ function! base#pathset_db (ref,...)
     let ref = a:ref
     
     let dbfile = base#dbfile()
-		let pcname = base#pcname()
+    let pcname = base#pcname()
     
     for [ pathid, path ] in items(ref) 
 
@@ -2884,7 +2884,7 @@ function! base#info (...)
 
 """info_tags
    elseif topic == 'tags'
-		 call base#info#tags()
+     call base#info#tags()
 
 """info_perl
    elseif topic == 'perl'
@@ -2926,11 +2926,11 @@ function! base#info (...)
 
 """info_rtp
    elseif topic == 'rtp'
-		 call base#info#rtp()
+     call base#info#rtp()
 
 """info_plugins
    elseif topic == 'plugins'
-		 call base#info#plugins()
+     call base#info#plugins()
 
 
 """info_make
