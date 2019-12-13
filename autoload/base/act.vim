@@ -120,6 +120,14 @@ function! base#act#buffs_loclist (...)
 
 endfunction
 
+function! base#act#lopen ()
+  call base#loclist#open()
+endfunction
+
+function! base#act#lclose ()
+  call base#loclist#close()
+endfunction
+
 function! base#act#copen ()
   call base#qf_list#open()
 endfunction

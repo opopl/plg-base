@@ -14,15 +14,26 @@ function! base#qf_list#set (...)
   
 endfunction
 
-function! base#qf_list#open ()
-  copen
-
+function! base#qf_list#maps ()
   let mp = {
           \  'q'    : 'quit'                ,
           \  ';cc'  : 'cclose'              ,
           \  '<F4>' : 'cclose'              ,
           \ }
+  return mp
+endfunction
+
+function! base#qf_list#open ()
+  copen
+
+  let mp = base#qf_list#maps()
   call base#buf#map_add(mp)
+
+  call base#qf_list#statusline ()
+endfunction
+
+function! base#qf_list#statusline ()
+  let mp = base#qf_list#maps()
 
   let str = ''
 
@@ -35,6 +46,7 @@ function! base#qf_list#open ()
   let str = printf('[%s]',str)
   let str = escape(str,' ')
   exe 'setlocal statusline='.str
+
 endfunction
 
 function! base#qf_list#close ()
