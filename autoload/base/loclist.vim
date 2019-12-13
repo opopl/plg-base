@@ -22,3 +22,7 @@ function! base#loclist#open ()
   exe 'setlocal statusline='.str
   
 endfunction
+
+function! base#loclist#close ()
+  lclose
+endfunction
