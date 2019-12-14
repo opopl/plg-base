@@ -302,7 +302,9 @@ function! base#buf#onload ()
 
 endfunction
 
-function! base#buf#onload_process_ext ()
+function! base#buf#onload_process_ext (...)
+  let ref  = get(a:000,0,{})
+
   if b:ext == 'tags'
     setf tags
 
@@ -316,7 +318,7 @@ if 0
     base#buf#onload
 endif
 
-function! base#buf#onload_process_ft ()
+function! base#buf#onload_process_ft (...)
   let ref  = get(a:000,0,{})
 
   let maps = get(ref,'maps',{})
