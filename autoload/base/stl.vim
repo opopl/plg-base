@@ -18,14 +18,14 @@ function! base#stl#set (...)
 
     endif
 
-	let evs   = ''
-	let sline = ''
+  let evs   = ''
+  let sline = ''
 
-	if opt == 'ap'
-		call ap#stl()
+  if opt == 'ap'
+    call ap#stl()
     let sline  = &stl
 
-	elseif base#varexists('statuslines')
+  elseif base#varexists('statuslines')
     let sline  = base#varhash#get('statuslines',opt,'')
     let evs    = "setlocal statusline=" . sline
 
@@ -34,13 +34,13 @@ function! base#stl#set (...)
 
     if base#varhash#haskey('stlorders',opt)
         let stlorder=base#varhash#get('stlorders',opt)
-				call base#varset('statuslineorder',stlorder)
+        call base#varset('statuslineorder',stlorder)
     endif
-	endif
-	if strlen(evs) | silent exe evs | endif
+  endif
+  if strlen(evs) | silent exe evs | endif
 
-	call base#varset('stl',sline)
-	call base#varset('stlopt',opt)
+  call base#varset('stl',sline)
+  call base#varset('stlopt',opt)
 
 endfun
 
@@ -79,37 +79,37 @@ function!  base#stl#setparts ()
 
 """stl_neat_file_flags
     " read only, modified, modifiable flags in brackets
-	let stlparts['file_flags']='%([%R%M]%)' 
-	
-	" right-align everything past this point
-	let stlparts['right_align']= '%=' 
+  let stlparts['file_flags']='%([%R%M]%)' 
+  
+  " right-align everything past this point
+  let stlparts['right_align']= '%=' 
     
 """stl_neat_read_only
-	" readonly flag
-	let stlparts['read_only']="%{(&ro!=0?'(readonly)':'')}"
-	
-	" file type (eg. python, ruby, etc..)
-	let stlparts['file_type']= '%8*%{&filetype}%0*' 
-	
-	let stlparts['keymap']= '%8*%{&keymap}' 
-	
-	" file format (eg. unix, dos, etc..)
-	let stlparts['file_format']='%{&fileformat}'
+  " readonly flag
+  let stlparts['read_only']="%{(&ro!=0?'(readonly)':'')}"
+  
+  " file type (eg. python, ruby, etc..)
+  let stlparts['file_type']= '%8*%{&filetype}%0*' 
+  
+  let stlparts['keymap']= '%8*%{&keymap}' 
+  
+  " file format (eg. unix, dos, etc..)
+  let stlparts['file_format']='%{&fileformat}'
 
   " file encoding (eg. utf8, latin1, etc..)
-	let stlparts['file_encoding']= "%4*%{(&fenc!=''?&fenc:&enc)}%0*"
+  let stlparts['file_encoding']= "%4*%{(&fenc!=''?&fenc:&enc)}%0*"
 
-	let stlparts['encoding']= "%4*%{&enc}%0*"
-	let stlparts['base_buftype']= "%4*%{base#buf#type()}%0*"
+  let stlparts['encoding']= "%4*%{&enc}%0*"
+  let stlparts['base_buftype']= "%4*%{base#buf#type()}%0*"
 
-	let stlparts['gitdir'] = "%4*Dir[%{base#varget('stl_gitcmd_dirname')}]%0*"
-	let stlparts['gitcmd'] = "%3*%{base#varget('stl_gitcmd_cmd')}%0*"
+  let stlparts['gitdir'] = "%4*Dir[%{base#varget('stl_gitcmd_dirname')}]%0*"
+  let stlparts['gitcmd'] = "%3*%{base#varget('stl_gitcmd_cmd')}%0*"
 
   " buffer number
-	let stlparts['buffer_number']='#%n'
+  let stlparts['buffer_number']='#%n'
 
   "line number (pink) / total lines
-	let stlparts['line_number']='%4*\ %l%0*'
+  let stlparts['line_number']='%4*\ %l%0*'
 
   " column number (minimum width is 4)
   let stlparts['column_number'] = '%3*\ %-3.c%0*'
@@ -146,55 +146,55 @@ function!  base#stl#setparts ()
 
   let stlparts['makeprg']='%1*\ %{&makeprg}' 
 
-	let stlparts['column_number']='%3*\ %-3.c%0*'
-	
-	let stlparts['ignore_case']='%{F_IgnoreCase()}'
+  let stlparts['column_number']='%3*\ %-3.c%0*'
+  
+  let stlparts['ignore_case']='%{F_IgnoreCase()}'
 
-	let stlparts['color_red']='%3*'
-	let stlparts['color_blue']='%8*'
-	let stlparts['color_white']='%0*'
-	
-	" percentage done
-	let stlparts['percentage_done']='(%-3.p%%)'
-	
-	" modified / unmodified (purple)
-	let stlparts['is_modified']="%6*%{&modified?'modified':''}"
+  let stlparts['color_red']='%3*'
+  let stlparts['color_blue']='%8*'
+  let stlparts['color_white']='%0*'
+  
+  " percentage done
+  let stlparts['percentage_done']='(%-3.p%%)'
+  
+  " modified / unmodified (purple)
+  let stlparts['is_modified']="%6*%{&modified?'modified':''}"
 
-	let stlparts['plg_name'] = '%1*\ %{base#plg#name()}\ %0*' 
-	
-	let stlparts['vimfun']= '%1*\ %{g:vimfun}\ %0*' 
-	let stlparts['vimcom']= '%1*\ %{g:vimcom}\ %0*' 
-	let stlparts['vimproject']= '%1*\ %{g:vimproject}\ %0*' 
-	
-	let stlparts['stlname']= '%2*\ %{g:F_StatusLine}\ %0*' 
-	
-	let stlparts['tags']= '%{fnamemodify(&tags,' . "'" . ':~' . "'" . ')}' 
-	
-	let stlparts['makeprg']='%1*\ %{&makeprg}' 
+  let stlparts['plg_name'] = '%1*\ %{base#plg#name()}\ %0*' 
+  
+  let stlparts['vimfun']= '%1*\ %{g:vimfun}\ %0*' 
+  let stlparts['vimcom']= '%1*\ %{g:vimcom}\ %0*' 
+  let stlparts['vimproject']= '%1*\ %{g:vimproject}\ %0*' 
+  
+  let stlparts['stlname']= '%2*\ %{g:F_StatusLine}\ %0*' 
+  
+  let stlparts['tags']= '%{fnamemodify(&tags,' . "'" . ':~' . "'" . ')}' 
+  
+  let stlparts['makeprg']='%1*\ %{&makeprg}' 
 
-	let stlparts['java_buf_appname'] = '%1*\ %{my_java#buf#appname()}\ %0*' 
-	let stlparts['java_buf_package'] = '%1*\ %{my_java#buf#package()}\ %0*' 
-	
-	"call base#varupdate('PMOD_ModuleName')
+  let stlparts['java_buf_appname'] = '%1*\ %{my_java#buf#appname()}\ %0*' 
+  let stlparts['java_buf_package'] = '%1*\ %{my_java#buf#package()}\ %0*' 
+  
+  "call base#varupdate('PMOD_ModuleName')
   let stlparts['perl_module_name']   ='%5*\ %{perlmy#modname()}\ %0*' 
   let stlparts['path_relative_home'] ='%{expand(' . "'" . '%:~:t' . "'" . ')}'
 
-	let q="'"
-	let stlparts['idephp_pj_name']='%1*\ pj:\ %{base#varget('.q. 'idephp_pj_name' .q.','.q.q.')}\ %0*' 
-	let stlparts['idephp_pj_head']='%1*\ %{string('.q.'IDEPHP'.q.')}\ %0*' 
-	let stlparts['idephp_pj_reldir']='%1*\ %{idephp#pj#buf#reldir()}\ %0*' 
+  let q="'"
+  let stlparts['idephp_pj_name']='%1*\ pj:\ %{base#varget('.q. 'idephp_pj_name' .q.','.q.q.')}\ %0*' 
+  let stlparts['idephp_pj_head']='%1*\ %{string('.q.'IDEPHP'.q.')}\ %0*' 
+  let stlparts['idephp_pj_reldir']='%1*\ %{idephp#pj#buf#reldir()}\ %0*' 
 
-	let stlparts['HTML']='%1*\ %{string('.q.'HTML'.q.')}\ %0*' 
+  let stlparts['HTML']='%1*\ %{string('.q.'HTML'.q.')}\ %0*' 
 
-	call base#varset('stlparts',stlparts)
+  call base#varset('stlparts',stlparts)
 
 endfun
 
 function! base#stl#setorders ()
 
-	call base#log(['base#stl#setorders()'])
+  call base#log(['base#stl#setorders()'])
 
-	let stlorders={}
+  let stlorders={}
   for key in base#varhash#keys('statuslines')
     let stlorders[key]=[]
   endfor
@@ -217,142 +217,142 @@ function! base#stl#setorders ()
                 \   'file_encoding' ,
                 \       ],
         \   'perl_pm'   :   [ 
-		        \   'perl_module_name' ,
-		        \   'buffer_number'    ,
-		        \   'file_type'        ,
-		        \   'file_encoding'    ,
-		        \   'encoding'         ,
-		        \   'pathid_first'     ,
-		        \   'line_number'      ,
-		        \   'column_number'      ,
+            \   'perl_module_name' ,
+            \   'buffer_number'    ,
+            \   'file_type'        ,
+            \   'file_encoding'    ,
+            \   'encoding'         ,
+            \   'pathid_first'     ,
+            \   'line_number'      ,
+            \   'column_number'      ,
                 \           ],
         \   'javascript'   :   [ 
-		        \   'file_name'    ,
-		        \   'buffer_number'    ,
-		        \   'line_number'      ,
-		        \   'column_number'    ,
-		        \   'file_type'        ,
-		        \   'file_encoding'    ,
-		        \   'encoding'         ,
-		        \   'pathid_first'          ,
+            \   'file_name'    ,
+            \   'buffer_number'    ,
+            \   'line_number'      ,
+            \   'column_number'    ,
+            \   'file_type'        ,
+            \   'file_encoding'    ,
+            \   'encoding'         ,
+            \   'pathid_first'          ,
                 \           ],
         \   'perl_pl'   :   [ 
-		        \   'file_name',
-		        \   'file_dir',
+            \   'file_name',
+            \   'file_dir',
                 \       ],
         \   'simple'   :   [ 
-		        \   'user_name' ,
-		        \   'buffer_number' ,
-		        \   'line_number'   ,
-		        \   'column_number' ,
-		        \   'file_name'     ,
-		        \   'file_encoding' ,
-		        \   'encoding'      ,
+            \   'user_name' ,
+            \   'buffer_number' ,
+            \   'line_number'   ,
+            \   'column_number' ,
+            \   'file_name'     ,
+            \   'file_encoding' ,
+            \   'encoding'      ,
                 \       ],
         \   'java'   :   [ 
-		        \   'buffer_number' ,
-		        \   'line_number'   ,
-		        \   'file_name'     ,
-		        \   'file_encoding' ,
-		        \   'encoding'      ,
-		        \   'java_buf_appname'  ,
-		        \   'java_buf_package'  ,
+            \   'buffer_number' ,
+            \   'line_number'   ,
+            \   'file_name'     ,
+            \   'file_encoding' ,
+            \   'encoding'      ,
+            \   'java_buf_appname'  ,
+            \   'java_buf_package'  ,
                 \       ],
         \   'plg'   :   [ 
-		        \   'plg_name'      ,
-		        \   'line_number'   ,
-		        \   'buffer_number' ,
-		        \   'file_name'     ,
-		        \   'tgids'         ,
+            \   'plg_name'      ,
+            \   'line_number'   ,
+            \   'buffer_number' ,
+            \   'file_name'     ,
+            \   'tgids'         ,
         \       ],
         \   'php'   :   [ 
-		        \   'line_number'   ,
-		        \   'buffer_number' ,
-		        \   'file_name'     ,
-		        \   'tgids'         ,
+            \   'line_number'   ,
+            \   'buffer_number' ,
+            \   'file_name'     ,
+            \   'tgids'         ,
         \       ],
         \   'neat'   :   [ 
-		        \   'tgids'         ,
-		        \   'mode'          ,
-		        \   'session_name'  ,
-		        \   'file_name'     ,
-		        \   'file_flags'    ,
-		        \   'right_align'   ,
-		        \   'read_only'     ,
-		        \   'file_type'     ,
-		        \   'file_format'   ,
-		        \   'file_encoding' ,
-		        \   'buffer_number' ,
-		        \   'is_modified'   ,
-		        \   ],
+            \   'tgids'         ,
+            \   'mode'          ,
+            \   'session_name'  ,
+            \   'file_name'     ,
+            \   'file_flags'    ,
+            \   'right_align'   ,
+            \   'read_only'     ,
+            \   'file_type'     ,
+            \   'file_format'   ,
+            \   'file_encoding' ,
+            \   'buffer_number' ,
+            \   'is_modified'   ,
+            \   ],
         \   'vimfun'   :   [ 
-		        \   'vimfun',
-		        \   'tgids'          ,
-		        \   ],
+            \   'vimfun',
+            \   'tgids'          ,
+            \   ],
         \   'vimproject'   :   [ 
-		        \   'vimproject',
-		        \   ],
+            \   'vimproject',
+            \   ],
         \   'vim'   :   [ 
-		        \   'file_name',
-		        \   'file_dir',
-		        \   'tgids'          ,
-		        \   'line_number'    ,
-		        \   ],
+            \   'file_name',
+            \   'file_dir',
+            \   'tgids'          ,
+            \   'line_number'    ,
+            \   ],
         \   'gitcmd'   :   [ 
-		        \   'gitdir'          ,
-		        \   'gitcmd'          ,
-		        \   ],
+            \   'gitdir'          ,
+            \   'gitcmd'          ,
+            \   ],
         \   'dat'   :   [ 
-		        \   'file_name',
-		        \   'file_dir',
-		        \   ],
+            \   'file_name',
+            \   'file_dir',
+            \   ],
         \   'sh'   :   [ 
-		        \   'file_name',
-		        \   'file_dir',
-		        \   ],
+            \   'file_name',
+            \   'file_dir',
+            \   ],
         \   'bush'   :   [ 
-		        \   'bush_name',
-		        \   ],
+            \   'bush_name',
+            \   ],
         \   'vimcom'   :   
-						\		[ 
-		        \   'vimcom' ,
-		        \   'tgids'  ,
-		        \   ],
-				\   'idephp_pj'   :   
-						\		[ 
-		        \   'idephp_pj_head'   ,
-		        \   'idephp_pj_name'   ,
-		        \   'buffer_number'    ,
-		        \   'line_number'      ,
-		        \   'file_name'        ,
-		        \   'idephp_pj_reldir' ,
-		        \   ],
+            \   [ 
+            \   'vimcom' ,
+            \   'tgids'  ,
+            \   ],
+        \   'idephp_pj'   :   
+            \   [ 
+            \   'idephp_pj_head'   ,
+            \   'idephp_pj_name'   ,
+            \   'buffer_number'    ,
+            \   'line_number'      ,
+            \   'file_name'        ,
+            \   'idephp_pj_reldir' ,
+            \   ],
         \   'projs'   :   [ 
-		        \   'buffer_number'    ,
-		        \   'line_number'    ,
-		        \   'projs_rootbasename'    ,
-		        \   'projs_proj'    ,
-		        \   'projs_sec'     ,
-		        \   'fold_level'    ,
-		        \   'file_encoding' ,
-		        \   'encoding'      ,
-		        \   'keymap'        ,
-		        \   'tgids'         ,
-		        \   ],
+            \   'buffer_number'    ,
+            \   'line_number'    ,
+            \   'projs_rootbasename'    ,
+            \   'projs_proj'    ,
+            \   'projs_sec'     ,
+            \   'fold_level'    ,
+            \   'file_encoding' ,
+            \   'encoding'      ,
+            \   'keymap'        ,
+            \   'tgids'         ,
+            \   ],
         \   'tex'   :   [ 
-		        \   'file_name'     ,
-		        \   'file_dir'      ,
-		        \   'buffer_number' ,
-		        \   'line_number'   ,
-		        \   'file_encoding' ,
-		        \   'encoding'      ,
-		        \   'keymap'        ,
-		        \   'tgids'         ,
-		        \   ],
-        		\ })
+            \   'file_name'     ,
+            \   'file_dir'      ,
+            \   'buffer_number' ,
+            \   'line_number'   ,
+            \   'file_encoding' ,
+            \   'encoding'      ,
+            \   'keymap'        ,
+            \   'tgids'         ,
+            \   ],
+            \ })
 
-	call base#varset('stlorders',stlorders)
-	
+  call base#varset('stlorders',stlorders)
+  
 endfunction
 
 fun! base#stl#setlines(...)
@@ -362,22 +362,22 @@ fun! base#stl#setlines(...)
         \  'vim_COM' :   ''
                 \   . '\ %{expand(' . "'" . '%:~:t:r' . "'" . ')}' ,
     \   }
-	call base#varset('statuslines',statuslines)
+  call base#varset('statuslines',statuslines)
 
   call base#stl#setparts()
   call base#stl#setorders()
 
-	let stlorders = base#varget('stlorders',{})
-	let stlkeys   = base#varhash#keys('stlorders')
+  let stlorders = base#varget('stlorders',{})
+  let stlkeys   = base#varhash#keys('stlorders')
 
-	call base#varset('stlkeys',stlkeys)
+  call base#varset('stlkeys',stlkeys)
 
   for key in base#varget('stlkeys')
        let stl=''
 
        let idlist=[]
-			 "
-			 let sto=base#varhash#get('stlorders',key,[])
+       "
+       let sto=base#varhash#get('stlorders',key,[])
 
        call extend(idlist,sto)
 
@@ -390,7 +390,7 @@ fun! base#stl#setlines(...)
 
   let statuslines['perl_']=get(statuslines,'perl_pl','')
 
-	call base#varset('statuslines',statuslines)
+  call base#varset('statuslines',statuslines)
 
 endfun
 
