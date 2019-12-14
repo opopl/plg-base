@@ -290,13 +290,38 @@ function! base#buf#onload ()
 
   let b:comps_BufAct = base#comps#bufact()
 
+  let r = { 'maps' : maps }
+  call base#buf#onload_process_ft(r)
+  call base#buf#onload_process_ext(r)
+
+  for [ map, mp ] in items(maps)
+    call base#buf#map_add(mp,{ 'map' : map })
+  endfor
+
+  call base#var#update('buf_vars')
+
+endfunction
+
+function! base#buf#onload_process_ext ()
   if b:ext == 'tags'
     setf tags
 
   elseif b:ext == 'nsh'
     setf nsis
+  endif
+endfunction
 
-  elseif &ft == 'php'
+if 0
+  called by:
+    base#buf#onload
+endif
+
+function! base#buf#onload_process_ft ()
+  let ref  = get(a:000,0,{})
+
+  let maps = get(ref,'maps',{})
+
+  if &ft == 'php'
     setlocal iskeyword+=\
     call extend(maps.nnoremap,{ ';gg' : 'BufAct tggen_phpctags' })
 
@@ -330,16 +355,7 @@ function! base#buf#onload ()
     setlocal iskeyword+=<,>
     setlocal iskeyword+=/
     setlocal iskeyword+=$
-
-
   endif
-
-  for [ map,mp ] in items(maps)
-    call base#buf#map_add(mp,{ 'map' : map })
-  endfor
-
-  call base#var#update('buf_vars')
-
 endfunction
 
 function! base#buf#git_status ()
