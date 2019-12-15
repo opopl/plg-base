@@ -281,10 +281,11 @@ function! base#buf#onload ()
           \  '<F9>'  : 'TgUpdate'              ,
           \  '<F11>' : 'MM tgadd_all'          ,
           \  '<F12>' : 'TgView _tagfiles_'     ,
-          \  '<S-S>' : 'call base#buf#git_status()'      ,
-          \  '<C-S>' : 'call base#buf#save()'      ,
-          \  '<C-G>' : 'call base#buf#save_git()'  ,
-          \  '<leader>l'    : 'call base#buf#lines_hi()' ,
+          \  '<S-S>' : 'call base#buf#git_status()'   ,
+          \  '<C-S>' : 'call base#buf#save()'         ,
+          \  '<C-A>' : 'call base#buf#git_add()'      ,
+          \  '<C-G>' : 'call base#buf#save_git()'     ,
+          \  '<leader>l' : 'call base#buf#lines_hi()' ,
           \ }
         \ }
 
@@ -378,6 +379,33 @@ function! base#buf#git_status ()
   let r = {
       \  'cmds' : [
         \ [ 'git st',[],[],Fc,'' ],
+      \ ],
+      \  }
+
+
+  call asc#run_many(r)
+
+endfunction
+
+function! base#buf#git_add ()
+  call base#buf#start()
+
+  call base#cd(b:dirname)
+
+  let s:obj = {}
+  function! s:obj.init (...) dict
+    let this      = get(a:000,0,{})
+    let data      = get(a:000,1,{})
+    let out       = get(data,'out',[])
+    call base#rdw('OK: git add','DiffDelete')
+    "call base#buf#open_split({ 'lines' : out })
+  endfunction
+  
+  let Fc = s:obj.init
+
+  let r = {
+      \  'cmds' : [
+        \ [ printf('git add %s', shellescape(b:file)),[],[],Fc,'' ],
       \ ],
       \  }
 

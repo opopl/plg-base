@@ -12,9 +12,11 @@ function! base#bufact#vim#tabs_nice ()
 endfunction
 
 function! base#bufact#vim#source_script ()
-  so %
-  redraw!
-  echohl MoreMsg
-  echo "OK: source this file"
-  echohl None
+  try
+    silent so %
+    call base#rdw('OK: source this buffer')
+  catch 
+    call base#rdwe(v:exception)
+  finally
+  endtry
 endfunction
