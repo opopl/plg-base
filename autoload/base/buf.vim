@@ -142,16 +142,19 @@ function! base#buf#in(...)
 
 endfunction
 
-"base#buf#open_split({ 'lines' : lines })
+" Usage:
+"   call base#buf#open_split({ 
+"     \ 'lines' : lines 
+"     \ })
 
 function! base#buf#open_split (ref)
     let ref      = a:ref
 
-    let lines  = get(ref,'lines',[])
-    let text   = get(ref,'text','')
-    let action = get(ref,'action','split')
+    let lines    = get(ref,'lines',[])
+    let text     = get(ref,'text','')
+    let action   = get(ref,'action','split')
 
-    let stl_add   = get(ref,'stl_add',[])
+    let stl_add  = get(ref,'stl_add',[])
 
     let cmds_pre = get(ref,'cmds_pre',[])
 
@@ -408,7 +411,6 @@ function! base#buf#git_add ()
         \ [ printf('git add %s', shellescape(b:file)),[],[],Fc,'' ],
       \ ],
       \  }
-
 
   call asc#run_many(r)
 
