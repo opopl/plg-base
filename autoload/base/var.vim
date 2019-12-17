@@ -2,11 +2,11 @@
 function! base#var#update (varname,...)
   let varname = a:varname
 
-	let msg = [ 'var => ' . a:varname ]
-	let prf = { 
-		\	'plugin' : 'base',
-		\	'func'   : 'base#var#update' }
-	call base#log(msg, prf)
+  let msg = [ 'var => ' . a:varname ]
+  let prf = { 
+    \ 'plugin' : 'base',
+    \ 'func'   : 'base#var#update' }
+  call base#log(msg, prf)
 
   let opts_update = get(a:000,0,{})
 
@@ -194,5 +194,63 @@ function! base#var#dump_xml (...)
       \ 'cmds_pre' : ['set ft=xml'],
       \ })
   endif
+
+endfunction
+
+if 0
+  called by:
+    base#plg#loadvars_xml
+endif
+
+function! base#var#update_from_xml (...)
+  let ref = get(a:000,0,{})
+
+  let xml_files = get(ref,'xml_files',[])
+  let xml_file  = get(ref,'xml_file','')
+
+  if len(xml_files)
+    for xml_file in xml_files
+      call base#var#update_from_xml({ 'xml_file' : xml_file })
+    endfor
+  endif
+
+python3 << eof
+import vim
+from xml.etree import ElementTree
+from xml.etree.ElementTree import (
+  tostring
+)
+
+xml_file = vim.eval('xml_file')
+plg      = vim.eval('plg')
+
+vars = {}
+
+with open(xml_file, 'rt') as f:
+  tree = ElementTree.parse(f)
+  for var_node in tree.findall('.//var'):
+      v_name = var_node.attrib.get('name')
+      if v_name != 'base' : 
+        v_name = plg + '_' + v_name
+      v_type      = var_node.attrib.get('type')
+      v_entry_tag = var_node.attrib.get('entry_tag')
+      if v_type == 'dict' :
+        var = {}
+        for entry in tree.findall( './/' + v_entry_tag ):
+          key   = entry.attrib.get('key')
+          value = entry.attrib.get('value')
+          if value is None:
+            value = entry.text
+          if value is not None:
+            value_split = map(lambda x: x.strip(), value.split("\n") )
+            value       = "\n".join(value_split)
+            var.update({ key : value })
+        if len(var.keys()):
+          vars.update({ v_name : var })
+eof
+  let vars = py3eval('vars')
+  for [ k, v ] in items(vars)
+    call base#varset(k,v)
+  endfor
 
 endfunction

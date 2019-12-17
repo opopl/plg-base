@@ -117,46 +117,8 @@ function! base#plg#loadvars_xml (...)
     \ "fnamemodify" : ':p',
     \ })
 
-python3 << eof
-import vim
-from xml.etree import ElementTree
-from xml.etree.ElementTree import (
-  tostring
-)
+  call base#var#update_from_xml ({ 'xml_files' : xml_files })
 
-xml_files = vim.eval('xml_files')
-plg       = vim.eval('plg')
-
-vars = {}
-
-for xml_file in xml_files:
-  with open(xml_file, 'rt') as f:
-    tree = ElementTree.parse(f)
-    for var_node in tree.findall('.//var'):
-      v_name = var_node.attrib.get('name')
-      if v_name != 'base' : 
-        v_name = plg + '_' + v_name
-      v_type      = var_node.attrib.get('type')
-      v_entry_tag = var_node.attrib.get('entry_tag')
-      if v_type == 'dict' :
-        var = {}
-        for entry in tree.findall( './/' + v_entry_tag ):
-          key   = entry.attrib.get('key')
-          value = entry.attrib.get('value')
-          if value is None:
-            value = entry.text
-          if value is not None:
-            value_split = map(lambda x: x.strip(), value.split("\n") )
-            value       = "\n".join(value_split)
-            var.update({ key : value })
-        if len(var.keys()):
-          vars.update({ v_name : var })
-eof
-  let vars = py3eval('vars')
-  echo vars
-  for [ k, v ] in items(vars)
-    call base#varset(k,v)
-  endfor
 endfunction
 
 function! base#plg#loadvars_dat (...)
