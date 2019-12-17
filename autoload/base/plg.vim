@@ -133,7 +133,7 @@ for xml_file in xml_files:
       v_entry_tag = var_node.attrib.get('entry_tag')
       if v_type == 'dict':
         var = {}
-        for entry in tree.findall('.//' + v_entry_tag ):
+        for entry in tree.findall( './/' + v_entry_tag ):
           key   = entry.attrib.get('key')
           value = entry.attrib.get('value')
           if value is None:
