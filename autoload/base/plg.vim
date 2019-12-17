@@ -138,7 +138,6 @@ for xml_file in xml_files:
           value = entry.attrib.get('value')
           if value is None:
             value = entry.text
-          print(value)
           value_split = map(lambda x: x.strip(), value.split("\n") )
           value       = "\n".join(value_split)
           var.update({ key : value })
