@@ -2,7 +2,7 @@
 function! base#var#update (varname,...)
   let varname = a:varname
 
-	let msg = ['var => ' . a:varname ]
+	let msg = [ 'var => ' . a:varname ]
 	let prf = { 
 		\	'plugin' : 'base',
 		\	'func'   : 'base#var#update' }
@@ -46,10 +46,10 @@ function! base#var#update (varname,...)
 """var_update_plugins_all
   elseif varname == 'plugins_all'
     let var = base#find({ 
-      \ "dirids"    : ['plg'],
-      \ "relpath"   : 1,
-      \ "subdirs"   : 0,
-      \ "dirs_only" : 1,
+      \ "dirids"      : ['plg'],
+      \ "relpath"     : 1,
+      \ "subdirs"     : 0,
+      \ "dirs_only"   : 1,
       \ "pat_exclude" : '^.git',
       \ })
     call base#varset(varname,var)

@@ -269,6 +269,7 @@ function! base#buf#onload ()
 
   if !base#buf#is_file() | return | endif
 
+	"if &stl
   "StatusLine simple
   "
   let maps = {
@@ -524,7 +525,7 @@ endfunction
 function! base#buf#au_write_post ()
   call base#buf#start()
 
-  if base#inlist(b:filetype, base#qw('idat xml') )
+  if base#inlist( b:filetype, base#qw('idat xml') )
     BufAct update_var 
   endif
   

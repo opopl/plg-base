@@ -1,22 +1,23 @@
 
 function! base#stl#set (...)
+	let opt = get(a:000,0,'')
 
-    if a:0
-      let opt = a:1
-    else
-      let opt = 'neat'
+	if !strlen(opt)
+    let stlkeys = sort(base#varget('stlkeys',[]))
+		let desc = base#varget('desc_stl',{})
+		let info = []
+		for opt in stlkeys
+			call add(info,[ opt, get(desc,opt,'') ])
+		endfor
+		let lines = [ 'Possible StatusLine options: ' ]
 
-      let listcomps = base#varget('stlkeys',[])
-  
-      let liststr = join(listcomps,"\n")
-      let dialog  = "Available status line keys are: " . "\n"
-      let dialog .= base#createprompt(liststr, 1, "\n") . "\n"
-      let dialog .= "Choose status line key by number: " . "\n"
-
-      let opt = base#choosefromprompt(dialog,liststr,"\n",'neat')
-      echo "Selected: " . opt
-
-    endif
+		call extend(lines, pymy#data#tabulate({
+			\ 'data'    : info,
+			\ 'headers' : [ 'cmd', 'description' ],
+			\ }))
+		call base#buf#open_split({ 'lines' : lines })
+		return
+	endif
 
   let evs   = ''
   let sline = ''
