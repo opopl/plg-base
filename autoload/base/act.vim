@@ -193,7 +193,7 @@ perl << eof
   our $plgbase ||=  Vim::Base::Plg->new;
 
   VimCmd(qq{ let sub=input('Vim::Base::Plg method:','','custom,base#complete#perl_Vim_Plg_Base' ) });
-  my $sub=VimVar('sub');
+  my $sub = VimVar('sub');
 
   $plgbase->$sub();
 eof

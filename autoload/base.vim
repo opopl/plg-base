@@ -3559,16 +3559,22 @@ function! base#act (...)
   let act = get(a:000,0,'')
 
   if ! strlen(act) 
-    let comps_n = base#complete#BaseAct()
-    let comps   = split(comps_n,"\n")
+    let desc = base#varget('desc_BaseAct',{})
+    let acts = base#varget('opts_BaseAct',[])
+    let acts = sort(acts)
+    let info = []
+    for act in acts
+      call add(info,[ act, get(desc,act,'') ])
+    endfor
+    let lines = [ 'Possible BaseAct commands: ' ]
 
-    let act = base#getfromchoosedialog({ 
-            \ 'list'        : comps,
-            \ 'startopt'    : get(comps,0,''),
-            \ 'header'      : "Available BaseAct commands are: ",
-            \ 'numcols'     : 2,
-            \ 'bottom'      : "Choose BaseAct command by number: ",
-            \ })
+    call extend(lines, pymy#data#tabulate({
+      \ 'data'    : info,
+      \ 'headers' : [ 'act', 'description' ],
+      \ }))
+  
+    call base#buf#open_split({ 'lines' : lines })
+    return 
   endif
 
   if act =~ '^sqlite_'
