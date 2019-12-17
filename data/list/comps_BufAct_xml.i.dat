@@ -7,3 +7,4 @@ a_delete
 a_rename
 r_win2unix
 r_unix2win
+update_var
