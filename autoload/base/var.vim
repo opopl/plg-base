@@ -214,6 +214,9 @@ function! base#var#update_from_xml (...)
     endfor
   endif
 
+  if len(xml_files)
+	endif
+
 python3 << eof
 import vim
 from xml.etree import ElementTree
