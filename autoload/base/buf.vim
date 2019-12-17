@@ -144,7 +144,8 @@ endfunction
 
 " Usage:
 "   call base#buf#open_split({ 
-"     \ 'lines' : lines 
+"     \ 'lines' : lines,
+"     \ 'cmds_pre' : [],
 "     \ })
 
 function! base#buf#open_split (ref)
@@ -156,7 +157,8 @@ function! base#buf#open_split (ref)
 
     let stl_add  = get(ref,'stl_add',[])
 
-    let cmds_pre = get(ref,'cmds_pre',[])
+    let cmds_pre   = get(ref,'cmds_pre',[])
+    let cmds_after = get(ref,'cmds_after',[])
 
     if len(text)
       let textlines = split(text,"\n")
@@ -195,6 +197,10 @@ function! base#buf#open_split (ref)
         let lnum+=1
       endfor
     endif
+
+    for cmd in cmds_after
+      exe cmd
+    endfor
 
 endfunction
 
