@@ -127,7 +127,7 @@ for xml_file in xml_files:
     tree = ElementTree.parse(f)
     for var_node in tree.findall('.//var'):
       v_name = var_node.attrib.get('name')
-      if v_name != 'base': 
+      if v_name != 'base' : 
         v_name = plg + '_' + v_name
       v_type      = var_node.attrib.get('type')
       v_entry_tag = var_node.attrib.get('entry_tag')
@@ -138,8 +138,9 @@ for xml_file in xml_files:
           value = entry.attrib.get('value')
           if value is None:
             value = entry.text
+          print(value)
           value_split = map(lambda x: x.strip(), value.split("\n") )
-          value       = "\n".join( list(value_split) )
+          value       = "\n".join(value_split)
           var.update({ key : value })
       if var is not None:
         vars.update({ v_name : var })
