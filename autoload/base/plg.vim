@@ -117,7 +117,10 @@ function! base#plg#loadvars_xml (...)
     \ "fnamemodify" : ':p',
     \ })
 
-  call base#var#update_from_xml ({ 'xml_files' : xml_files })
+  call base#var#update_from_xml({ 
+    \ 'xml_files' : xml_files,
+    \ 'plg'       : plg,
+    \ })
 
 endfunction
 

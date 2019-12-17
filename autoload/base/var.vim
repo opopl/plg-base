@@ -205,6 +205,8 @@ endif
 function! base#var#update_from_xml (...)
   let ref = get(a:000,0,{})
 
+  let plg = get(ref,'plg','')
+
   let xml_files = get(ref,'xml_files',[])
   let xml_file  = get(ref,'xml_file','')
 
