@@ -91,7 +91,11 @@ function! base#plg#loadvars_xml (...)
 	let plg = get(a:000,0,'')
 	let ref = get(a:000,1,{})
 
-	let prf = { 'func' : 'base#plg#loadvars_xml', 'plugin' : 'base' }
+	let prf = { 
+		\	'func'   : 'base#plg#loadvars_xml',
+		\	'plugin' : 'base'
+		\	}
+
 	call base#log([
 		\	'plg => ' . plg,
 		\	],prf )
