@@ -232,7 +232,7 @@ function! base#act#data_xml_list_files ()
 
 	let cmds_pre = []
   call add(cmds_pre,'resize 99')
-  call add(cmds_pre,"vnoremap <buffer><silent> v :'<,'>call base#act_vis#open()<CR>")
+  call add(cmds_pre,"vnoremap <buffer><silent> v :'<,'>call base#vis_act#open_file()<CR>")
 
 	call base#buf#open_split({ 
 		\	'lines'      : files ,

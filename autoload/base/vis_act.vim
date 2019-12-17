@@ -1,5 +1,5 @@
 
-function! base#vis_act#open ()
+function! base#vis_act#open_file ()
   let lines = base#vim#visual_selection()
 
   if len(lines)

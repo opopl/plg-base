@@ -269,7 +269,7 @@ function! base#buf#onload ()
 
   if !base#buf#is_file() | return | endif
 
-  if !strlen(&stl) && !strlen(base#varget('stlopt',''))
+  if !strlen(&stl)
     StatusLine simple
   endif
 
