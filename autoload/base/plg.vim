@@ -139,7 +139,7 @@ for xml_file in xml_files:
           if value is None:
             value = entry.text
           value_split = map(lambda x: x.strip(), value.split("\n") )
-          value = "\n".join( list(value_split) )
+          value       = "\n".join( list(value_split) )
           var.update({ key : value })
       if var is not None:
         vars.update({ v_name : var })
