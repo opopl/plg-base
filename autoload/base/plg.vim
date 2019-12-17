@@ -126,7 +126,7 @@ for xml_file in xml_files:
 	with open(xml_file, 'rt') as f:
 		tree = ElementTree.parse(f)
 		for var_node in tree.findall('.//var'):
-			v_name      = var_node.attrib.get('name')
+			v_name = var_node.attrib.get('name')
 			if v_name != 'base': 
 				v_name = plg + '_' + v_name
 			v_type      = var_node.attrib.get('type')
@@ -145,7 +145,7 @@ for xml_file in xml_files:
 				vars.update({ v_name : var })
 eof
 	let vars = py3eval('vars')
-	for [k,v] in items(vars)
+	for [ k, v ] in items(vars)
 		call base#varset(k,v)
 	endfor
 endfunction
