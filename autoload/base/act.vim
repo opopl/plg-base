@@ -249,7 +249,7 @@ function! base#act#plg_loadvars ()
     \  "Plugin: ",  
     \  ]
   let msg = join(msg_a,"\n")
-  let plg = base#input_we(msg,'',{ 'complete' : 'custom,base#complete#plg' })
+  let plg = base#input_we(msg,'projs',{ 'complete' : 'custom,base#complete#plg' })
 
   call base#plg#loadvars(plg)
 endfunction

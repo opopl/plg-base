@@ -84,8 +84,13 @@ function! base#plg#loadvars (...)
   call base#plg#loadvars_dat(plg, ref )
   call base#plg#loadvars_xml(plg, ref )
 
-  call base#rdw(printf('OK: base#plg#loadvars (plugin = %s)',plg))
+  "call base#rdw(printf('OK: base#plg#loadvars (plugin = %s)',plg))
 endfunction
+
+if 0
+  used by:
+    base#plg#loadvars
+endif
 
 function! base#plg#loadvars_xml (...)
   if ! a:0 | return | endif
