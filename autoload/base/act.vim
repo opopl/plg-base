@@ -227,6 +227,17 @@ endfunction
 
 function! base#act#data_xml_list_files ()
 	let f = globpath(&rtp,'/data/xml/*.xml')
-	call base#buf#open_split({ 'lines' : split(f,"\n") })
+
+	let files = split(f,"\n")
+
+	let cmds_pre = []
+  call add(cmds_pre,'resize 99')
+  call add(cmds_pre,"vnoremap <buffer><silent> v :'<,'>call base#act_vis#open()<CR>")
+
+	call base#buf#open_split({ 
+		\	'lines'      : files ,
+		\	'cmds_pre'   : cmds_pre,
+		\	'stl_add'    : [ 'V[ v - view ]' ],
+		\	})
 	
 endfunction

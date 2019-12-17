@@ -38,6 +38,7 @@ function! base#stl#set (...)
         call base#varset('statuslineorder',stlorder)
     endif
   endif
+
   if strlen(evs) | silent exe evs | endif
 
   call base#varset('stl',sline)
