@@ -524,7 +524,7 @@ endfunction
 function! base#buf#au_write_post ()
   call base#buf#start()
 
-  if b:filetype == 'idat'
+  if base#inlist(b:filetype, base#qw('idat xml') )
     BufAct update_var 
   endif
   
