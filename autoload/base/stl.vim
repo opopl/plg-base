@@ -54,7 +54,7 @@ function!  base#stl#setparts ()
  "call F_SoPiece("NeatStatusLine.vim")
 
 """stl_neat
-  let stlparts={}
+  let stlparts = {}
 
     " mode (changes color)
   let stlparts['mode']= '%1*\ %{NeatStatusLine_Mode()}\ %0*' 
