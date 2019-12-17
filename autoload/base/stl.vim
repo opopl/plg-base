@@ -13,7 +13,7 @@ function! base#stl#set (...)
 
 		call extend(lines, pymy#data#tabulate({
 			\ 'data'    : info,
-			\ 'headers' : [ 'cmd', 'description' ],
+			\ 'headers' : [ 'option', 'description' ],
 			\ }))
 		call base#buf#open_split({ 'lines' : lines })
 		return

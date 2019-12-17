@@ -269,9 +269,10 @@ function! base#buf#onload ()
 
   if !base#buf#is_file() | return | endif
 
-	"if &stl
-  "StatusLine simple
-  "
+	if !strlen(&stl) && !strlen(base#varget('stlopt',''))
+  	StatusLine simple
+	endif
+
   let maps = {
         \ 'nnoremap' :
           \ {
