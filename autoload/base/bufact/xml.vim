@@ -111,8 +111,25 @@ function! base#bufact#xml#update_var ()
 
   if exists("b:plg")
     let plg_dir = base#path('plg')
-    let reldir  = base#file#reldir(b:dirname,plg_dir)
-    echo reldir
+    let reldir  = base#file#reldir(b:dirname, plg_dir)
+    let reldir  = base#file#win2unix(reldir)
+
+python << eof
+import vim,re
+
+reldir = vim.eval('reldir')
+b_plg  = vim.eval('b:plg')
+
+m = re.match(r'^(\w+)/(.*)$',reldir)
+plg = ''
+inner = ''
+if m:
+  plg   = m.group(1)
+  inner = m.group(2)
+ 
+print(plg)
+print(inner)
+eof
   endif
 
 endf
