@@ -1,23 +1,23 @@
 
 function! base#stl#set (...)
-	let opt = get(a:000,0,'')
+  let opt = get(a:000,0,'')
 
-	if !strlen(opt)
+  if !strlen(opt)
     let stlkeys = sort(base#varget('stlkeys',[]))
-		let desc = base#varget('desc_stl',{})
-		let info = []
-		for opt in stlkeys
-			call add(info,[ opt, get(desc,opt,'') ])
-		endfor
-		let lines = [ 'Possible StatusLine options: ' ]
+    let desc = base#varget('desc_stl',{})
+    let info = []
+    for opt in stlkeys
+      call add(info,[ opt, get(desc,opt,'') ])
+    endfor
+    let lines = [ 'Possible StatusLine options: ' ]
 
-		call extend(lines, pymy#data#tabulate({
-			\ 'data'    : info,
-			\ 'headers' : [ 'option', 'description' ],
-			\ }))
-		call base#buf#open_split({ 'lines' : lines })
-		return
-	endif
+    call extend(lines, pymy#data#tabulate({
+      \ 'data'    : info,
+      \ 'headers' : [ 'option', 'description' ],
+      \ }))
+    call base#buf#open_split({ 'lines' : lines })
+    return
+  endif
 
   let evs   = ''
   let sline = ''
@@ -34,7 +34,7 @@ function! base#stl#set (...)
     call base#varset('statuslineorder',[])
 
     if base#varhash#haskey('stlorders',opt)
-        let stlorder=base#varhash#get('stlorders',opt)
+        let stlorder = base#varhash#get('stlorders',opt)
         call base#varset('statuslineorder',stlorder)
     endif
   endif
