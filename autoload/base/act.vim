@@ -224,3 +224,9 @@ function! base#act#dump_buf_vars ()
   call base#buf#open_split({ 'lines' : ds })
 
 endfunction
+
+function! base#act#data_xml_list_files ()
+	let f = globpath(&rtp,'/data/xml/*.xml')
+	call base#buf#open_split({ 'lines' : split(f,"\n") })
+	
+endfunction
