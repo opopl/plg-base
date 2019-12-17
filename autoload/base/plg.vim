@@ -131,7 +131,7 @@ for xml_file in xml_files:
         v_name = plg + '_' + v_name
       v_type      = var_node.attrib.get('type')
       v_entry_tag = var_node.attrib.get('entry_tag')
-      if v_type == 'dict':
+      if v_type == 'dict' :
         var = {}
         for entry in tree.findall( './/' + v_entry_tag ):
           key   = entry.attrib.get('key')
