@@ -114,6 +114,7 @@ function! base#bufact#xml#update_var ()
     let reldir  = base#file#reldir(b:dirname, plg_dir)
     let reldir  = base#file#win2unix(reldir)
 
+"------------------------------------
 python << eof
 import vim,re
 
@@ -127,6 +128,16 @@ if m:
   plg   = m.group(1)
   inner = m.group(2)
 eof
+"------------------------------------
+    let plg   = py3eval('plg')
+    let inner = py3eval('inner')
+
+    if ( plg == b:plg ) && ( inner == 'data/xml' )
+      call base#var#update_from_xml({ 
+        \ 'xml_file' : b:file,
+        \ 'plg'      : b:plg,
+        \ })
+    endif
   endif
 
 endf
