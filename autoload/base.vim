@@ -3548,9 +3548,9 @@ eof
   if !a:0
     return paths
   else
-    let idx = get(a:000,0,'')
+    let idx     = get(a:000,0,'')
     let default = get(a:000,1,'')
-    return get(paths,idx,default)
+    return get(paths, idx, default)
   endif
 
 endfunction
