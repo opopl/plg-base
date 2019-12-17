@@ -226,18 +226,30 @@ function! base#act#dump_buf_vars ()
 endfunction
 
 function! base#act#data_xml_list_files ()
-	let f = globpath(&rtp,'/data/xml/*.xml')
+  let f = globpath(&rtp,'/data/xml/*.xml')
 
-	let files = split(f,"\n")
+  let files = split(f,"\n")
 
-	let cmds_pre = []
+  let cmds_pre = []
   call add(cmds_pre,'resize 99')
   call add(cmds_pre,"vnoremap <buffer><silent> v :'<,'>call base#vis_act#open_file()<CR>")
 
-	call base#buf#open_split({ 
-		\	'lines'      : files ,
-		\	'cmds_pre'   : cmds_pre,
-		\	'stl_add'    : [ 'V[ v - view ]' ],
-		\	})
-	
+  call base#buf#open_split({ 
+    \ 'lines'      : files ,
+    \ 'cmds_pre'   : cmds_pre,
+    \ 'stl_add'    : [ 'V[ v - view ]' ],
+    \ })
+  
+endfunction
+
+function! base#act#plg_loadvars ()
+  let msg_a = [
+    \  "This will run base#plg#loadvars() subroutine",  
+    \  " ",  
+    \  "Plugin: ",  
+    \  ]
+  let msg = join(msg_a,"\n")
+  let plg = base#input_we(msg,'',{ 'complete' : 'custom,base#complete#plg' })
+
+  call base#plg#loadvars(plg)
 endfunction

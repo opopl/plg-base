@@ -83,6 +83,8 @@ function! base#plg#loadvars (...)
 
   call base#plg#loadvars_dat(plg, ref )
   call base#plg#loadvars_xml(plg, ref )
+
+  call base#rdw(printf('OK: base#plg#loadvars (plugin = %s)',plg))
 endfunction
 
 function! base#plg#loadvars_xml (...)
@@ -138,6 +140,7 @@ for xml_file in xml_files:
           value = entry.attrib.get('value')
           if value is None:
             value = entry.text
+          print(value)
           value_split = map(lambda x: x.strip(), value.split("\n") )
           value       = "\n".join(value_split)
           var.update({ key : value })

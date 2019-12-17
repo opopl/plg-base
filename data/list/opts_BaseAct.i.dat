@@ -39,3 +39,4 @@ cclose
 lopen
 lclose
 data_xml_list_files
+plg_loadvars
