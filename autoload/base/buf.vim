@@ -160,6 +160,9 @@ function! base#buf#open_split (ref)
     let cmds_pre   = get(ref,'cmds_pre',[])
     let cmds_after = get(ref,'cmds_after',[])
 
+    let Fc         = get(ref,'Fc','')
+    let Fc_args    = get(ref,'Fc_args',[])
+
     if len(text)
       let textlines = split(text,"\n")
       call extend(lines, textlines)
@@ -196,6 +199,10 @@ function! base#buf#open_split (ref)
         call append(lnum,l)
         let lnum+=1
       endfor
+    endif
+
+    if type(Fc) == type(function('call'))
+      call call(Fc,Fc_args)
     endif
 
     for cmd in cmds_after
