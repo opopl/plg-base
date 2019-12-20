@@ -121,9 +121,10 @@ import vim,re
 reldir = vim.eval('reldir')
 b_plg  = vim.eval('b:plg')
 
-m = re.match(r'^(\w+)/(.*)$',reldir)
-plg   = ''
-inner = ''
+p = re.compile(r'^(\w+)/(.*)$')
+m = p.match(reldir)
+plg   = ""
+inner = ""
 if m:
   plg   = m.group(1)
   inner = m.group(2)
