@@ -115,7 +115,7 @@ function! base#bufact#xml#update_var ()
     let reldir  = base#file#win2unix(reldir)
 
 "------------------------------------
-python << eof
+python3 << eof
 import vim,re
 
 reldir = vim.eval('reldir')
@@ -123,8 +123,8 @@ b_plg  = vim.eval('b:plg')
 
 p = re.compile(r'^(\w+)/(.*)$')
 m = p.match(reldir)
-plg   = ""
-inner = ""
+plg   = ''
+inner = ''
 if m:
   plg   = m.group(1)
   inner = m.group(2)

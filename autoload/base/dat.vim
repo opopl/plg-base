@@ -15,7 +15,7 @@ function! base#dat#view (...)
   let dat = get(a:000,0,'')
 
   if ! strlen(dat)
-    call base#dat#render_list ()
+    call base#dat#render_list()
     return
   endif
 
