@@ -200,6 +200,7 @@ endfunction
 if 0
   called by:
     base#plg#loadvars_xml
+    base#bufact#xml#update_var
 endif
 
 function! base#var#update_from_xml (...)
