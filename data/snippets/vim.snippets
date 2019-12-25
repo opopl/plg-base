@@ -1536,6 +1536,11 @@ snippet fcasc
 		<++>
 	
 	endf
+snippet bvd
+	let dump = base#var#dump(<++>)
+	call base#buf#open_split({ 'text' : dump })
+snippet bve
+	call base#varecho(<++>) 
 snippet ifrt
 	if <++>
 		return

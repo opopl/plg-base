@@ -221,11 +221,11 @@ function! base#var#update_from_xml (...)
     return 
   endif
 
-	let msg = []
-	let prf = { 
-		\	'plugin' : 'base',
-		\	'func'   : 'base#var#update_from_xml' }
-	call base#log(msg, prf)
+  let msg = []
+  let prf = { 
+    \ 'plugin' : 'base',
+    \ 'func'   : 'base#var#update_from_xml' }
+  call base#log(msg, prf)
 
 python3 << eof
 import vim
