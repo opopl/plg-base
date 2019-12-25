@@ -51,6 +51,8 @@ function! base#bufact_common#help (...)
 endfunction
 
 function! base#bufact_common#nicify_copied ()
+  %s/’/'/g
+
 python3 << eof
 import vim,re
 b = vim.current.buffer
