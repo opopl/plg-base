@@ -1,14 +1,18 @@
  
 
 fun! base#buffers#get_Fc_with(self,with)
-  let self      = a:self
+  let self = a:self
 
   let this = deepcopy(self)
 
   let with = a:with
 
-  let root          = get(with,'root','')
-  let file_full     = get(with,'file_full','')
+  let root = get(with,'root','')
+  let root = base#file#win2unix(root)
+
+  let file_full = get(with,'file_full','')
+  let file_full = base#file#win2unix(file_full)
+
   let file_basename = get(with,'file_basename','')
 
   let buffiles = []
@@ -17,6 +21,7 @@ fun! base#buffers#get_Fc_with(self,with)
 
   for b in self.bufs
       let fullname = get(b,'fullname','')
+      let fullname = base#file#win2unix(fullname)
       
       let ok = 1 
 
