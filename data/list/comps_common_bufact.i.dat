@@ -4,3 +4,4 @@ dos2unix
 unix2dos
 help
 matches_delete
+nicify_copied

@@ -50,6 +50,10 @@ function! base#bufact_common#help (...)
 
 endfunction
 
+function! base#bufact_common#nicify_copied ()
+
+endfunction
+
 function! base#bufact_common#tabs_to_spaces ()
   setlocal et | retab
 
