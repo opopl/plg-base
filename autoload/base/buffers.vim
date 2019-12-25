@@ -91,7 +91,10 @@ fun! base#buffers#get(...)
 
      " Use first and last components after the split on '"', in case a
      " filename with an embedded '"' is present.
-     let b = { "attr" : bits[0], "line": substitute(bits[-1], '\s*', '', '')}
+     let b = { 
+            \ "attr" : bits[0], 
+            \ "line" : substitute(bits[-1], '\s*', '', ''),
+            \ }
 
      let name = bufname(str2nr(b.attr))
      let b["hasNoName"] = empty(name)
