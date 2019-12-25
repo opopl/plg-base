@@ -102,8 +102,9 @@ fun! base#buffers#get(...)
          let name = "[No Name]"
      endif
 
-     for [key, val] in items(types)
+     for [ key, val ] in items(types)
          let b[key] = fnamemodify(name, val)
+         let b[key] = base#file#win2unix(b[key])
      endfor
 
      if getftype(b.fullname) == "dir" && base#opttrue('buf_showdirs')
@@ -186,6 +187,8 @@ endfun
 
 fun! base#buffers#file_is_loaded(file)  
   let file     = a:file
+
+  let file = base#file#win2unix(file)
 
   let bref     = base#buffers#get()
   let buffiles = get(bref, 'buffiles', [])
