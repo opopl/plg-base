@@ -51,7 +51,13 @@ function! base#bufact_common#help (...)
 endfunction
 
 function! base#bufact_common#nicify_copied ()
+python3 << eof
+import vim,re
+b = vim.current.buffer
+for line in b:
+  re.sub(r'’',r"'",line)
 
+eof
 endfunction
 
 function! base#bufact_common#tabs_to_spaces ()
