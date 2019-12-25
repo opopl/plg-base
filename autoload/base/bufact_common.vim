@@ -54,8 +54,12 @@ function! base#bufact_common#nicify_copied ()
 python3 << eof
 import vim,re
 b = vim.current.buffer
+lines = [] 
 for line in b:
   re.sub(r'’',r"'",line)
+  lines.append(line)
+
+b[:] = lines
 
 eof
 endfunction
