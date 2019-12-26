@@ -24,11 +24,22 @@ function! base#tg#set (...)
   
 endfunction
 
+if 0
+  Usage
+    call base#tg#add(tgid)
+    call base#tg#add('plg_idephp')
+    call base#tg#add('plg_base')
+endif
+
 function! base#tg#add (...)
   if a:0 | let tgid = a:1 | endif
 
   let ref = {}
   if a:0 > 1 | let ref = a:2 | endif
+
+  if tgid =~ '^plg_'
+    setlocal isk+=#
+  endif
 
   let tfile = base#tg#tfile(tgid)
   let tfile = get(ref, 'tfile', tfile)
