@@ -2669,7 +2669,7 @@ function! base#info (...)
        endfor
 
    elseif topic == 'snippets'
-       let lines=[]
+       let lines = []
        call add(lines,'--------------------')
        call add(lines,'Snippets INFO')
        call add(lines,'--------------------')
