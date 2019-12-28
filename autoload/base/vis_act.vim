@@ -17,16 +17,22 @@ function! base#vis_act#open_file (...)
   let pat = ''
   let pat = get(pats,mode,pat)
 
-  if !len(lines) | return | endif
 
-  q
+  let files = []
+
   for line in lines
     let file = line
     if pat
       let file = matchstr(line,pat)
     endif
 
+    if strlen(file)
+      call add(files,file)
+    endif
   endfor
+
+  if !len(files) | return | endif
+  q
 
   call base#fileopen({ 
      \ 'files'    : files ,
