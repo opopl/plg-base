@@ -195,6 +195,13 @@ EOF
   
 endfunction
 
+if 0
+  call tree
+    called by:
+      projs#action#_plg_tex_view
+      idephp#pj#act#symfony#twig_template_view
+endif
+
 function! base#find#open_split (...)
   let ref = get(a:000,0,{})
 
