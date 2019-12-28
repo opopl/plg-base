@@ -1,13 +1,14 @@
+
 function! base#rtp#add_plugin(plg)
 
 	let plgdir = base#catpath('plg', a:plg )
 
-	let prf={ 'func' : 'base#rtp#add_plugin', 'plugin' : 'base' }
+	let prf = { 'func' : 'base#rtp#add_plugin', 'plugin' : 'base' }
 	call base#log([
 		\	'Adding plugin:' . a:plg,
 		\	],prf)
 
-	let dirs=[ plgdir, base#file#catfile([ plgdir , 'after' ]) ]
+	let dirs = [ plgdir, base#file#catfile([ plgdir , 'after' ]) ]
 
 	let rtp = []
 	for dir in dirs 

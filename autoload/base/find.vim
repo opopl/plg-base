@@ -163,7 +163,7 @@ EOF
 
 	let map = get(ref,'map','')
 	if strlen(map)
-		call filter(newfiles,"'" . map . "'")
+		call filter(newfiles,printf("'%s'",map))
 	endif
 
 	let mapsub = get(ref,'mapsub',[])
