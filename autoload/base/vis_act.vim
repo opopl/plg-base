@@ -22,7 +22,7 @@ function! base#vis_act#open_file (...)
 
   for line in lines
     let file = line
-    if pat
+    if strlen(pat)
       let file = matchstr(line,pat)
     endif
 
