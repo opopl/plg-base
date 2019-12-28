@@ -2,15 +2,15 @@
 function! base#find#withperl (...)
     let ref = get(a:000,0,{})
 
-		let prf={ 'func' : 'base#find#withperl','plugin' : 'base' }
-		call base#log([
-			\	'ref => ' . base#dump(ref),
-			\	],prf)
+    let prf={ 'func' : 'base#find#withperl','plugin' : 'base' }
+    call base#log([
+      \ 'ref => ' . base#dump(ref),
+      \ ],prf)
 
     let exts_def = []
 
     let do_subdirs   = get(ref,'subdirs',1)
-		let do_dirs_only = get(ref,'dirs_only',0)
+    let do_dirs_only = get(ref,'dirs_only',0)
     let pat          = get(ref,'pat','')
 
     let exts = get(ref,'exts',exts_def)
@@ -43,9 +43,9 @@ function! base#find#withperl (...)
         endif
     endfor
 
-		if has('win32')
-			let dirs = map(dirs,'base#file#win2unix(v:val)')
-		endif
+    if has('win32')
+      let dirs = map(dirs,'base#file#win2unix(v:val)')
+    endif
 
     " list of found files to be returned
     let foundfiles = []
@@ -72,125 +72,125 @@ perl << EOF
 
   my @files=();
 
-	my $pp = sub { @_ };
-	unless ($do_subdirs) {
-		unless ( $dirs_only) {
-			$pp =	sub { return grep { -f  } @_; };
-		}else{
-			my $max_depth = 1;
-			$pp =	sub {
-    		my $depth = $File::Find::dir =~ tr[/][];
-				return grep { -d } @_ if $depth < $max_depth;
-				return;
-			};
-		}
-	}
+  my $pp = sub { @_ };
+  unless ($do_subdirs) {
+    unless ( $dirs_only) {
+      $pp = sub { return grep { -f  } @_; };
+    }else{
+      my $max_depth = 1;
+      $pp = sub {
+        my $depth = $File::Find::dir =~ tr[/][];
+        return grep { -d } @_ if $depth < $max_depth;
+        return;
+      };
+    }
+  }
 
-	my (%qr,$s);
-	if ($exts && @$exts) {
-		$s  = '('. join('|',@$exts) . ')$';
-		$qr{exts} = qr/$s/;
-	}
+  my (%qr,$s);
+  if ($exts && @$exts) {
+    $s  = '('. join('|',@$exts) . ')$';
+    $qr{exts} = qr/$s/;
+  }
 
-	my $D;
+  my $D;
   my $w = sub { 
-		my $name  = $File::Find::name;
+    my $name  = $File::Find::name;
 
-		my $add=1;
+    my $add=1;
 
     if ($qr{exts}){
-			$add   = 0 unless /$qr{exts}/;
+      $add   = 0 unless /$qr{exts}/;
     }
 
     if ( $pat && ! /$pat/ ){
-			$add=0;
+      $add=0;
     }
-		if($pat_exclude && /$pat_exclude/){
-			$add=0;
-		}
-		$name=~s/\.\///g;
-		return if $name eq '.';
+    if($pat_exclude && /$pat_exclude/){
+      $add=0;
+    }
+    $name=~s/\.\///g;
+    return if $name eq '.';
 
-		my $full_path = $D . '/' . $name ;
-		if ($add){
-			if ($ref->{relpath}) {
-				push(@files,$name);
-			}else{
-				push(@files,$full_path);
-			}
-		}
+    my $full_path = $D . '/' . $name ;
+    if ($add){
+      if ($ref->{relpath}) {
+        push(@files,$name);
+      }else{
+        push(@files,$full_path);
+      }
+    }
   };
 
   for my $dir (@$dirs){
       $D = $dir;
       next unless -d $dir;
-	  	chdir $dir;
-	  	File::Find::find({ 
-				wanted     => $w,
-				preprocess => $pp,
-			}, "." );
+      chdir $dir;
+      File::Find::find({ 
+        wanted     => $w,
+        preprocess => $pp,
+      }, "." );
   }
   VimListExtend('files',[@files]);
 EOF
 
-	if has('win32')
-		let files = map(files,'base#file#ossep(v:val)')
-	endif
+  if has('win32')
+    let files = map(files,'base#file#ossep(v:val)')
+  endif
 
-	let newfiles = []
+  let newfiles = []
 
-	for file in files
-		let add = 1
-		let cf = copy(file)
+  for file in files
+    let add = 1
+    let cf = copy(file)
 
-		if get(ref,'rmext')
-			for ext in exts
-				let cf = substitute(cf,'\.'.ext.'$','','g') 
-			endfor
-		endif
+    if get(ref,'rmext')
+      for ext in exts
+        let cf = substitute(cf,'\.'.ext.'$','','g') 
+      endfor
+    endif
 
-		let fnm = get(ref,'fnamemodify','')
-		if strlen(fnm)
-			let cf = fnamemodify(cf,fnm)
-		endif
+    let fnm = get(ref,'fnamemodify','')
+    if strlen(fnm)
+      let cf = fnamemodify(cf,fnm)
+    endif
 
-		let cfname = fnamemodify(cf,':p:t')
+    let cfname = fnamemodify(cf,':p:t')
 
-		if add
-			call add(newfiles,cf)
-		endif
-	endfor
+    if add
+      call add(newfiles,cf)
+    endif
+  endfor
 
-	let map = get(ref,'map','')
-	if strlen(map)
-		call filter(newfiles,printf("'%s'",map))
-	endif
+  let map = get(ref,'map','')
+  if strlen(map)
+    call filter(newfiles,printf("'%s'",map))
+  endif
 
-	let mapsub = get(ref,'mapsub',[])
-	if len(mapsub)
-		let [pat,subpat,subopts]      = base#list#get(mapsub,'0:2')
-		
-		let newfiles = base#mapsub(newfiles,pat,subpat,subopts)
-		
-		call filter(newfiles,"'" . map . "'")
-	endif
+  let mapsub = get(ref,'mapsub',[])
+  if len(mapsub)
+    let [ pat, subpat, subopts ]      = base#list#get(mapsub,'0:2')
+    
+    let newfiles = base#mapsub(newfiles,pat,subpat,subopts)
+    
+    call filter(newfiles,"'" . map . "'")
+  endif
 
-	"if get(ref,'relpath',0) && len(dirs)
-		"let dir = get(dirs,0,'')
-		"if isdirectory(dir)
-			"let newfiles = map(newfiles,'base#file#reldir(v:val,dir)')
-		"endif
-	"endif
+  "if get(ref,'relpath',0) && len(dirs)
+    "let dir = get(dirs,0,'')
+    "if isdirectory(dir)
+      "let newfiles = map(newfiles,'base#file#reldir(v:val,dir)')
+    "endif
+  "endif
 
-	let files = newfiles
+  let files = newfiles
 
-	call extend(foundfiles,files)
+  call extend(foundfiles,files)
 
   call filter(foundfiles,'v:val != ""')
 
-	exe 'cd ' . olddir
+  exe 'cd ' . olddir
 
-	return foundfiles
+  return foundfiles
 
-	
+  
 endfunction
