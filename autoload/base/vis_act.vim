@@ -1,6 +1,12 @@
 
-function! base#vis_act#open_file (mode)
-  let mode = a:mode
+if 0
+  Usage
+    call base#vis_act#open_file()
+    call base#vis_act#open_file('num')
+endif
+
+function! base#vis_act#open_file (...)
+  let mode = get(a:000,0,'')
 
   let lines = base#vim#visual_selection()
 
