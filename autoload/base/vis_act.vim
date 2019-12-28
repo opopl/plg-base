@@ -2,11 +2,16 @@
 if 0
   Usage
     call base#vis_act#open_file()
-    call base#vis_act#open_file('num')
+    call base#vis_act#open_file({ 'mode' : 'num' })
+    call base#vis_act#open_file({ 'mode' : 'num', 'dir' : dir })
 endif
 
 function! base#vis_act#open_file (...)
-  let mode = get(a:000,0,'')
+  let ref = base#varget('ref_vis_act_open_file',{})
+  let ref = get(a:000,0,ref)
+
+  let mode = get(ref,'mode','')
+  let dir  = get(ref,'dir','')
 
   let lines = base#vim#visual_selection()
 
@@ -17,7 +22,6 @@ function! base#vis_act#open_file (...)
   let pat = ''
   let pat = get(pats,mode,pat)
 
-
   let files = []
 
   for line in lines
@@ -27,6 +31,10 @@ function! base#vis_act#open_file (...)
     endif
 
     if strlen(file)
+      if strlen(dir)
+        let file = join([ dir, file ], '/')
+      endif
+      let file = base#file#win2unix(file)
       call add(files,file)
     endif
   endfor
