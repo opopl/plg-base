@@ -201,6 +201,8 @@ function! base#find#open_split (...)
   let opts_find  = get(ref,'opts_find',{})
   let opts_split = get(ref,'opts_split',{})
 
+  let dir = get(opts_find,'dir','')
+
   let files = base#find(opts_find)
   let files = base#uniq(files)
   let files = sort(files)
@@ -210,7 +212,7 @@ function! base#find#open_split (...)
     call add(info,[ file ])
   endfor
 
-  let lines = [ get(opts_split,title,'')  ]
+  let lines = [ get(opts_split,'title','')  ]
   call extend(lines, pymy#data#tabulate({
     \ 'data'    : info,
     \ 'headers' : get(opts_split,'headers',['file']),
