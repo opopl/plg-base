@@ -194,3 +194,50 @@ EOF
 
   
 endfunction
+
+function! base#find#open_split (...)
+  let ref = get(a:000,0,{})
+
+  let opts_find  = get(ref,'opts_find',{})
+  let opts_split = get(ref,'opts_split',{})
+
+  let files = base#find(opts_find)
+  let files = base#uniq(files)
+  let files = sort(files)
+
+  let info = []
+  for file in files
+    call add(info,[ file ])
+  endfor
+
+  let lines = [ get(opts_split,title,'')  ]
+  call extend(lines, pymy#data#tabulate({
+    \ 'data'    : info,
+    \ 'headers' : get(opts_split,'headers',['file']),
+    \ }))
+  
+  let s:obj = {  'dir' : dir }
+  function! s:obj.init (...) dict
+    let r = {
+        \  'dir'  : self.dir,
+        \  'mode' : 'num',
+        \  }
+    call base#varset('ref_vis_act_open_file',r)
+
+    resize 999
+    vnoremap <silent><buffer> v :'<,'>call base#vis_act#open_file()<CR>
+    
+  endfunction
+  
+  let Fc = s:obj.init
+
+  let stl_add = [
+    \ '[ %3* v - view %0* ]'
+    \ ]
+  call base#buf#open_split({ 
+    \ 'lines'   : lines,
+    \ 'stl_add' : stl_add,
+    \ 'Fc'      : Fc,
+    \ })
+
+endfunction
