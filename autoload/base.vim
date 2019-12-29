@@ -1834,6 +1834,22 @@ function! base#find(ref)
 
 endf
 
+function! base#rdw_printf(...)
+	let args = get(a:000,0,[])
+
+	if !len(args)
+		return 
+	endif
+
+	let str = remove(args,0)
+	let args_call = []
+	call add(args_call,str)
+	call extend(args_call,args)
+
+	let msg = call('printf',args_call)
+	call base#rdw(msg)
+endf
+
 function! base#rdw(text,...)
   let hl = get(a:000,0,'MoreMsg')
   call base#echoredraw(a:text,hl)
