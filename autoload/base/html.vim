@@ -250,6 +250,7 @@ if 0
     called by
       projs#action#html_out_view
       projs#html_out#view
+      projs#db_cmd#buf_url_view_in_browser
 endif
 
 function! base#html#view_in_browser(...)
