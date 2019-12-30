@@ -245,6 +245,40 @@ function! base#html#text_between_headings (...)
 
 endfunction
 
+if 0
+  call tree
+    called by
+      projs#action#html_out_view
+      projs#html_out#view
+endif
+
+function! base#html#view_in_browser(...)
+  let ref   = get(a:000,0,{})
+
+  let hfile = get(ref,'file','')
+
+  let browser = base#envvar('browser','')
+  if !len(browser)
+    call base#rdwe('No browser defined!')
+    return 
+  endif
+
+  let cmd = join([ shellescape(browser), shellescape(hfile) ],' ' )
+  
+  let env = {}
+  function env.get(temp_file) dict
+    let code = self.return_code
+
+    call base#rdw(printf('OK: browser open html'))
+  endfunction
+  
+  call asc#run({ 
+    \ 'cmd' : cmd, 
+    \ 'Fn'  : asc#tab_restore(env) 
+    \ })
+
+endfunction
+
 function! base#html#css_pretty(string)
   if !has('perl')
     return
