@@ -256,6 +256,7 @@ function! base#html#view_in_browser(...)
   let ref   = get(a:000,0,{})
 
   let hfile = get(ref,'file','')
+  let url   = get(ref,'url','')
 
   let browser = base#envvar('browser','')
   if !len(browser)
@@ -263,7 +264,14 @@ function! base#html#view_in_browser(...)
     return 
   endif
 
-  let cmd = join([ shellescape(browser), shellescape(hfile) ],' ' )
+  let cmd = ''
+  if strlen(hfile)
+    let cmd = join([ shellescape(browser), shellescape(hfile) ],' ' )
+
+  elseif strlen(url)
+    let cmd = join([ shellescape(browser), shellescape(url) ],' ' )
+
+  endif
   
   let env = {}
   function env.get(temp_file) dict
