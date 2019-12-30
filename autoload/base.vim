@@ -7,13 +7,13 @@ fun! base#loadvimfunc(fun)
   let fun = substitute(fun,'\s*$','','g')
   let fun = substitute(fun,'^\s*','','g')
 
-  let fundir = base#path('funs')
-  let funfile= base#catpath('funs',fun . '.vim')
+  let fundir  = base#path('funs')
+  let funfile = base#catpath('funs',fun . '.vim')
 
   if !exists("g:isloaded") | let g:isloaded={} | endif
 
   if !exists("g:isloaded.vim_funcs_user")
-      let g:isloaded.vim_funcs_user=[]
+      let g:isloaded.vim_funcs_user = []
   else
       if index(g:isloaded.vim_funcs_user,fun) >= 0
         "return
@@ -3844,8 +3844,8 @@ function! base#grep (...)
 
         call add(cmds, 'call setqflist([])' )
         for f in files
-          let a=[]
-          call extend(a,['silent grepadd!',patq])
+          let a = []
+          call extend(a,[ 'silent grepadd!', patq ])
           call extend(a,[f])
           let cmd = join(a,' ')
           call add(cmds, cmd )
