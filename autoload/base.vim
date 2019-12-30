@@ -3833,7 +3833,7 @@ function! base#grep (...)
         call add(cmds, 'vimgrep /'.pat.'/ '. join(files,' ') )
 
     elseif opt == 'grep'
-        let patq = "'".pat."'"
+        let patq = printf("'%s'",pat)
         let a    = []
 
         "if strlen(grepprg)
