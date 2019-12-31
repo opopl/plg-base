@@ -15,6 +15,7 @@ function! base#grep#async (...)
 
   let files = get(ref,'files',[])
   let pat   = get(ref,'pat','')
+  let dir   = get(ref,'dir','')
 
   let args = [ 'grep', '-iRnH -P', shellescape(pat) ]
   call extend(args, files)
@@ -34,6 +35,10 @@ function! base#grep#async (...)
       BaseAct copen
     endif
   endfunction
+
+  if strlen(dir)
+    call base#cd(dir)
+  endif
   
   call asc#run({ 
     \  'cmd' : cmd, 
