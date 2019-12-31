@@ -5,6 +5,7 @@ if 0
     call base#grep#async({ 
       \ 'files' : files ,
       \ 'pat'   : pat   ,
+      \ 'dir'   : dir   ,
       \ })
   Call tree
     Called by
@@ -14,13 +15,18 @@ function! base#grep#async (...)
   let ref = get(a:000,0,{})
 
   let files = get(ref,'files',[])
-  let pat   = get(ref,'pat','')
   let dir   = get(ref,'dir','')
 
-  let args = [ 'grep', '-iRnH -P', shellescape(pat) ]
+  let pat   = get(ref,'pat','')
+  let pat   = escape(pat,'#')
+
+  let pat = substitute(pat,'\',repeat('\',8),'g')
+
+  let args = [ 'grep -iRnH -P', shellescape(pat) ]
   call extend(args, files)
 
   let cmd = join(args, ' ')
+  echo cmd
 
   let env = { 
     \ 'files' : files,
