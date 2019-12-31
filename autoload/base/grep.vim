@@ -26,7 +26,6 @@ function! base#grep#async (...)
   call extend(args, files)
 
   let cmd = join(args, ' ')
-  echo cmd
 
   let env = { 
     \ 'files' : files,
