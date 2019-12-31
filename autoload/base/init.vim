@@ -515,6 +515,8 @@ fun! base#init#au()
   au BufRead,BufNewFile,BufWinEnter *.csv   set filetype=csv
   au BufRead,BufNewFile,BufWinEnter *.tsv   set filetype=tsv
 
+  au BufRead,BufNewFile,BufWinEnter *.py3   set filetype=python
+
   au BufWrite *.snippets MM snippets_reload_all
 
   let plg  = base#path('plg')
