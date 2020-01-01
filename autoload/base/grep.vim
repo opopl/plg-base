@@ -18,9 +18,9 @@ function! base#grep#async (...)
   let dir   = get(ref,'dir','')
 
   let pat   = get(ref,'pat','')
-  let pat   = escape(pat,'#')
 
-  let pat = substitute(pat,'\',repeat('\',8),'g')
+  let pat   = escape(pat,'#')
+  let pat   = substitute(pat,'\',repeat('\',8),'g')
 
   let args = [ 'grep -iRnH -P', shellescape(pat) ]
   call extend(args, files)
@@ -42,7 +42,9 @@ function! base#grep#async (...)
   endfunction
 
   if strlen(dir)
-    call base#cd(dir)
+    if isdirectory(dir)
+      exe 'cd ' . dir
+    endif
   endif
   
   call asc#run({ 
