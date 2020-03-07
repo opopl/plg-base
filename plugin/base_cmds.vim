@@ -5,6 +5,7 @@ if exists("g:base_cmds_done")
 	finish 
 endif
 
+
 command! -nargs=* -complete=custom,base#complete#vimcoms LCOM
 	\ call base#loadvimcom(<f-args>)
 
@@ -19,5 +20,6 @@ command! -nargs=1 -complete=custom,base#complete#vimfuns RFUN
 
 command! -nargs=1 -complete=custom,base#complete#vimfuns VFUN 
 	\ call base#viewvimfunc(<f-args>)
+
 
 
