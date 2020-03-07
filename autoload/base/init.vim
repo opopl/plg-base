@@ -554,13 +554,8 @@ function! base#init#vars (...)
 
     call base#varlist()
 
-    if $COMPUTERNAME == 'OPPC'
-        let v='C:\Users\op\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe'
-        call base#varset('pdfviewer',v)
-    elseif $COMPUTERNAME == 'APOPLAVSKIYNB'
-        let v='C:\Users\apoplavskiy\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe'
-        call base#varset('pdfviewer',v)
-    endif
+    let v=$userprofile . '\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe'
+    call base#varset('pdfviewer',v)
 
     call base#echoprefixold()
 
@@ -580,32 +575,19 @@ fun! base#init#files(...)
     let ref = {}
     if a:0 | let ref = a:1 | endif
 
+	let evince = ''
   if  has('win32')
-      let evince =  base#file#catfile([ 
-        \ base#path('home'),
-        \ '\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe' 
-        \ ])
+    let evince = $userprofile 
+			\	. '\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe' 
   else
     let evince='/usr/bin/evince'
-    endif
+  endif
 
-    if filereadable(evince)
-        call base#exefile#set({  'evince' : evince })
-    endif
+  if filereadable(evince)
+    call base#exefile#set({  'evince' : evince })
+  endif
 
   let pc = base#pcname()
-    if pc == 'APOPLAVSKIYNB'
-
-      let cv  = base#file#catfile([ base#path('imagemagick'), 'convert.exe' ])
-      let idn = base#file#catfile([ base#path('imagemagick'), 'identify.exe' ])
-
-      call base#exefile#set({  'im_convert' : cv })
-      call base#exefile#set({  'im_identify' : idn })
-
-      "call base#txtfile#set({  'im_identify' : idn })
-
-    endif
-
   call base#echoprefixold()
 endf
 
@@ -651,3 +633,17 @@ function! base#init#plugins_all (...)
     call pymy#sqlite#extend_with_list(ref)
 
 endf
+
+"base#init#plugins_all 
+"base#init#plugins 
+"base#init#files
+"base#init#vars 
+"base#init#au
+"base#init#sqlite
+"base#init#tagids 
+"base#init#cmds
+"base#init#paths
+"base#init#cmds_plg 
+"perldo VIM::DoCommand("echo '" . $3 . "'") if /^(fun|function)(.*) (base#init#.*)\(.*\)/
+
+

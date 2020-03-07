@@ -14,6 +14,7 @@ endf
 function! Plg_Base_Complete_W(...)
   let comps = [
     \ 'base_init_vim',
+    \ 'aux_base',
     \ ]
   return join(comps,"\n")
 endf
@@ -24,7 +25,10 @@ function! Plg_Base_W(...)
 	let file = ''
   if fileid == 'base_init_vim'
 		let file = $userprofile 
-			\	. '/repos/git/programs/vim/vim80/plg/base/autoload/base/init.vim'
+			\	. '\programs\vim\vim80\plg\base\autoload\base\init.vim'
+	elseif fileid == 'aux_base'
+		let file = $userprofile 
+			\	. '\programs\vim\vim80\plg\base\plugin\base_aux.vim'
 	endif
 
   redraw!

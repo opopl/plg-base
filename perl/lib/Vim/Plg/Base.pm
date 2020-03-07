@@ -567,7 +567,7 @@ sub init_plugins {
 	my ($self)=@_;
 
 	my ($rows) = dbh_select({ 
-		q => q{select datfile from datfiles where key = ? },
+		q => q{ select datfile from datfiles where key = ? },
 		p => [qw(plugins)],
    	});
 	my ($dat_plg) = map { $_->{datfile} } @$rows;
