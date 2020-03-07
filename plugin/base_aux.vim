@@ -6,6 +6,7 @@ function! Plg_Base_Complete_DD(...)
     \ 'plg_base_autoload',
     \ 'repos_git',
     \ 'texdocs',
+    \ 'userprofile',
     \ ]
   return join(comps,"\n")
 endf
@@ -20,8 +21,23 @@ endf
 function! Plg_Base_W(...)
   let fileid = get(a:000,0,'')
 
-  if dirid == 'base_init_vim'
+	let file = ''
+  if fileid == 'base_init_vim'
+		let file = $userprofile 
+			\	. '/repos/git/programs/vim/vim80/plg/base/autoload/base/init.vim'
 	endif
+
+  redraw!
+	if filereadable(file)
+		exe 'edit ' . file
+    echohl MoreMsg
+    echo 'OPENED FILE: ' . file
+	else
+    echohl WarningMsg
+    echo 'NO FILE: ' . file
+	endif
+
+  echohl None
 
 endf
 
@@ -33,7 +49,7 @@ function! Plg_Base_DD(...)
     let dir = $userprofile . '\repos\git\texdocs'
   elseif dirid == 'repos_git'
     let dir = $userprofile . '\repos\git'
-  elseif dirid == 'home'
+  elseif dirid == 'home' || dirid == 'userprofile'
     let dir = $userprofile
   elseif dirid == 'plg'
     let dir = $userprofile . '\programs\vim\vim80\plg'
