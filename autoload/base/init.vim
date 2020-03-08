@@ -530,6 +530,11 @@ fun! base#init#au()
 
   au BufWrite * call base#buf#onwrite() 
   au BufRead * call base#buf#onread() 
+
+	redraw!
+	echohl MoreMsg
+	echo 'Base plugin: initialized autocommands'
+	echohl None
      
 endfun
 
