@@ -38,8 +38,10 @@ endf
 
 """base_initpaths
 
-"call base#initpaths()
-"call base#initpaths({ "anew": 1 })
+if 0
+  call base#initpaths()
+  call base#initpaths({ "anew": 1 })
+endif
 
 fun! base#init#paths(...)
     call base#echoprefix('(base#init#paths)')
@@ -165,6 +167,8 @@ fun! base#init#paths(...)
     call base#pathlist()
 
   call base#echoprefixold()
+
+  call base#rdw('DONE: base#init#paths')
 endf
 
 
@@ -531,10 +535,10 @@ fun! base#init#au()
   au BufWrite * call base#buf#onwrite() 
   au BufRead * call base#buf#onread() 
 
-	redraw!
-	echohl MoreMsg
-	echo 'Base plugin: initialized autocommands'
-	echohl None
+  redraw!
+  echohl MoreMsg
+  echo 'DONE: base#init#au'
+  echohl None
      
 endfun
 
@@ -570,6 +574,11 @@ function! base#init#vars (...)
     let prf = {'plugin' : 'base', 'func' : 'base#init#vars'}
     call base#log(msg,prf)
     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    "
+  redraw!
+  echohl MoreMsg
+  echo 'Base plugin: base#init#vars'
+  echohl None
 endf    
 
 fun! base#init#files(...)
@@ -580,10 +589,10 @@ fun! base#init#files(...)
     let ref = {}
     if a:0 | let ref = a:1 | endif
 
-	let evince = ''
+  let evince = ''
   if  has('win32')
     let evince = $userprofile 
-			\	. '\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe' 
+      \ . '\AppData\Local\Apps\Evince-2.32.0.145\bin\evince.exe' 
   else
     let evince='/usr/bin/evince'
   endif

@@ -29,6 +29,9 @@ function! Plg_Base_W(...)
 	elseif fileid == 'aux_base'
 		let file = $userprofile 
 			\	. '\programs\vim\vim80\plg\base\plugin\base_aux.vim'
+	elseif fileid == 'snipmate_vim'
+		let file = $userprofile 
+			\	. '\programs\vim\vim80\plg\snipmate\plugin\.vim'
 	endif
 
   redraw!

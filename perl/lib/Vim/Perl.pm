@@ -1683,7 +1683,7 @@ sub init_MODULES {
 }
 
 sub init_PIECES {
-    @PIECES = readarr( catfile( $VDIRS{MKVIMRC}, qw(files.i.dat) ) );
+    #@PIECES = readarr( catfile( $VDIRS{MKVIMRC}, qw(files.i.dat) ) );
 }
 
 sub init_VDIRS {
