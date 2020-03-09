@@ -1,6 +1,7 @@
 *.tags
 *.pyc
 *.log
+*.bat
 tags
 tygs
 nytprof.out
