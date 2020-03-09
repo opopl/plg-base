@@ -43,6 +43,14 @@ if 0
   call base#initpaths({ "anew": 1 })
 endif
 
+if 0
+	call tree
+		called by
+		calls
+			base#pathset
+			base#paths_from_db
+endif
+
 fun! base#init#paths(...)
     call base#echoprefix('(base#init#paths)')
 

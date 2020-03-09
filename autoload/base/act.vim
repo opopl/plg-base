@@ -165,6 +165,12 @@ function! base#act#async_run (...)
 
 endfunction
 
+if 0
+	call tree
+	calls
+		base#paths_to_db
+endif
+
 function! base#act#paths_to_db (...)
   call base#paths_to_db()
 endfunction
