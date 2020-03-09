@@ -76,6 +76,8 @@ fun! base#init#paths(...)
           \ 'pf'            : pf ,
           \ 'include_win_sdk'   : base#envvar('INCLUDE_WIN_SDK'),
           \})
+
+      call base#pathset({ 'pf' : pf })
     endif
 
     let vrt      = base#envvar('VIMRUNTIME')

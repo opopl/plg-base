@@ -116,8 +116,10 @@ eof
 
 endfunction
 
-"Usage:
-"	let text = base#xml#xpath_text_split (xpath)
+if 0
+	Usage:
+		let text = base#xml#xpath_text_split (xpath)
+endif
 
 function! base#xml#xpath_text_split (...)
 		let xpath = get(a:000, 0, '')
@@ -152,9 +154,13 @@ eof
 
 endfunction
 
-"Usage:
-"  let lines = base#xml#xpath_lines(xpath)
-"  let lines = base#xml#xpath_lines(xpath, { 'trim' : 1 })
+if 0
+	Usage:
+	  let lines = base#xml#xpath_lines(xpath)
+	  let lines = base#xml#xpath_lines(xpath, { 'trim' : 1 })
+	Call tree
+		Called by
+endif
 
 function! base#xml#xpath_lines (...)
 		let xpath = get(a:000,0,'')

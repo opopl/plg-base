@@ -2201,6 +2201,12 @@ function! base#pathset_db (ref,...)
     return
 endf
 
+if 0
+	call tree
+		called by
+			base#init#paths
+endif
+
 function! base#pathset (ref,...)
   let ref = a:ref
 
@@ -2208,7 +2214,7 @@ function! base#pathset (ref,...)
   let opts = get(a:000,0,{})
 
 
-  if exists('g:skip_pathset') 
+  if exists('g:skip_pathset') && g:skip_pathset == 1
     return
   endif
 
@@ -2328,8 +2334,9 @@ eof
   endif
   call extend(s:paths,paths)
 
+  let g:skip_pathset = 0
   if !exists('g:skip_pathset')
-    let g:skip_pathset = 1
+    "let g:skip_pathset = 0
   endif
 
   return paths
