@@ -6,6 +6,12 @@ function! base#menus#add (menulist)
 	endfor
 endfunction
 
+if 0
+	call tree
+		called by
+			base#init
+endif
+
 function! base#menus#init ()
 
 		 let menus = base#qw('scp ssh buffers bufact menus')

@@ -2202,9 +2202,9 @@ function! base#pathset_db (ref,...)
 endf
 
 if 0
-	call tree
-		called by
-			base#init#paths
+  call tree
+    called by
+      base#init#paths
 endif
 
 function! base#pathset (ref,...)
@@ -2296,12 +2296,12 @@ function! base#pathlist (...)
 endfunction
 
 if 0
-	call tree
-	calls
-		base#dbfile
-		base#pcname
-	called by
-		base#init#paths
+  call tree
+  calls
+    base#dbfile
+    base#pcname
+  called by
+    base#init#paths
 endif
 
 function! base#paths_from_db ()
@@ -2362,11 +2362,11 @@ function! base#paths_update (...)
 endfunction
 
 if 0
-	call tree
-	called by
-	calls
-		base#dbfile
-		base#pcname
+  call tree
+  called by
+  calls
+    base#dbfile
+    base#pcname
 endif
 
 function! base#paths_to_db ()
@@ -2519,12 +2519,12 @@ function! base#time_start ()
 endfunction
 
 if 0
-	call tree
-	calls
-		base#echoprefix
-		base#varcheckexist
-		base#varget
-		base#info#dbext
+  call tree
+  calls
+    base#echoprefix
+    base#varcheckexist
+    base#varget
+    base#info#dbext
 endif
 
 function! base#info (...)
@@ -2591,13 +2591,13 @@ function! base#info (...)
 
 """info_datfiles
    elseif topic == 'datfiles'
-			call base#info#datfiles()
+      call base#info#datfiles()
       
    elseif topic == 'datfiles_dict'
 
 """info_file
    elseif topic == 'file'
-			call base#info#file()
+      call base#info#file()
 
 """info_perlapp
    elseif topic == 'perlapp'
@@ -3555,6 +3555,30 @@ function! base#home()
   let pc  = (has('win32')) ? base#envvar('USERPROFILE') : base#envvar('HOME')
   return pc
 endf  
+
+if 0
+  call tree
+  calls
+    base#file#catfile
+    base#readarr
+    base#varset
+    base#plgdir
+    base#inlist
+    base#init#cmds
+    base#init#au
+    base#init#sqlite
+    base#init#files
+    base#init#paths
+    base#init#vars
+    base#init#plugins
+    base#init#tagids
+    base#menus#init
+    base#stl#setparts
+    base#env#init
+    base#initpaths#apoplavskiynb()
+    base#omni#init
+    base#rtp#update
+endif
 
 
 function! base#init (...)
