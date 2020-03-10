@@ -399,6 +399,12 @@ function! base#htmlwork (...)
   
 endfunction
 
+if 0
+  call tree
+    called by
+      CD
+endif
+
 function! base#CD(pathid, ... )
     let ref = {}
 
@@ -2273,6 +2279,7 @@ function! base#pathlist (...)
     endif
     
     let pathlist = sort(keys(s:paths))
+    return pathlist
 
     let dbfile = base#dbfile()
     
