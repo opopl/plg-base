@@ -2271,6 +2271,12 @@ function! base#append (...)
 
 endfunction
 
+if 0
+  call tree
+    called by
+      base#complete#CD
+endif
+
 function! base#pathlist (...)
     let pat = get(a:000,0,'')
 
