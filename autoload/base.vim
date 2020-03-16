@@ -3747,12 +3747,17 @@ fun! base#listnew(...)
  
 endfun
 
-"call base#grep({ "pat" : pat, "files" : [ ... ]  })
-"call base#grep({ "pat" : pat, "files" : files })
-"
-"call base#grep({ "pat" : pat, "files" : files, "opt" : 'plg_findstr' })
-"call base#grep({ "pat" : pat, "files" : files, "opt" : 'grep' })
-"call base#grep({ "pat" : pat, "files" : files, "opt" : 'vimgrep' }) -todo
+if 0
+  usage
+    call base#grep({ "pat" : pat, "files" : [ ... ]  })
+    call base#grep({ "pat" : pat, "files" : files })
+    
+    call base#grep({ "pat" : pat, "files" : files, "opt" : 'plg_findstr' })
+    call base#grep({ "pat" : pat, "files" : files, "opt" : 'grep' })
+    call base#grep({ "pat" : pat, "files" : files, "opt" : 'vimgrep' }) -todo
+endif
+
+
 
 function! base#grep (...)
     let ref = {}
