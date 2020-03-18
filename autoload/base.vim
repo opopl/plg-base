@@ -2489,15 +2489,19 @@ endfunction
 "  base#warn({ "text" : "aaa" })
 "  base#warn({ "text" : "aaa", "prefix" : ">>> " })
 "
-function! base#warn (ref)
+function! base#warn (ref,...)
     let ref    = a:ref
 
     let text   = get(ref,'text','')
 
+    let prf = get(a:000,0,{})
+
     let prefix = base#echoprefix()
     let prefix = get(ref,'prefix',prefix)
+    let prefix = get(prf,'prf',prefix)
+
     let hl     = get(ref,'hl','WarningMsg')
-    let rdw     = get(ref,'rdw',0)
+    let rdw    = get(ref,'rdw',0)
 
     if type(text) == type('')
       let text = prefix . text
