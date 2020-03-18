@@ -23,8 +23,12 @@ function! base#grep#async (...)
     let temp_file = a:temp_file
 
     if filereadable(temp_file)
-      exe 'cgetfile' . escape(temp_file,'\ ')
-      BaseAct copen
+      try
+	      exe 'cgetfile ' . escape(temp_file,'\ ')
+	      BaseAct copen
+      catch 
+        call base#rdw('error ' . v:exception)
+      endtry
     endif
   endfunction
   

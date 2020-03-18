@@ -23,7 +23,7 @@ perl << eof
 		my $file   = VimVar('file');
 
 		if(! -e $file ){ 
-			VimWarn('File does not exist:', $file); 
+			VimWarn('base#xml#load_from_file - File does not exist:', $file); 
 			return;
 		}
 
