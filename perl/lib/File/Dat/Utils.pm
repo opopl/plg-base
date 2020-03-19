@@ -7,7 +7,7 @@ File::Dat::Utils - methods for reading text files with dictionaries and list
 
 =head1 USAGE
 
-	use File::Dat::Utils qw(readarr readhash);
+    use File::Dat::Utils qw(readarr readhash);
 
 =head1 METHODS
 
@@ -31,25 +31,25 @@ sub readhash;
 
 =head3 Usage
 
-	# $file - input dat-file
-	my @vars = readarr($file);
+    # $file - input dat-file
+    my @vars = readarr($file);
 
-	# separator between records on the same line
-	my @vars = readarr($file,{ sep => $sep });
+    # separator between records on the same line
+    my @vars = readarr($file,{ sep => $sep });
 
 =head3 Returns
 
-	Array in list context, arrayref in scalar context
+    Array in list context, arrayref in scalar context
 
 =cut
 
 sub readarr {
     my $if   = shift || '';
 
-	my $opts = shift || {};
+    my $opts = shift || {};
 
-	my $splitsep = $opts->{sep} || qr/\s+/;
-	my $joinsep  = $opts->{sep} || ' ';
+    my $splitsep = $opts->{sep} || qr/\s+/;
+    my $joinsep  = $opts->{sep} || ' ';
 
     unless ($if) {
         warn "empty file name provided: $if";
@@ -91,7 +91,7 @@ sub readhash {
 
     my $splitsep = $opts->{sep} || qr/\s+/;
     my $joinsep  = $opts->{sep} || ' ';
-	my $valtype  = $opts->{valtype} || 'scalar';
+    my $valtype  = $opts->{valtype} || 'scalar';
 
     unless ( -e $if ) {
         if (wantarray) {
@@ -135,37 +135,37 @@ sub readhash {
 
             $var = shift @F;
 
-			if ($valtype eq 'scalar'){
-            	$hash{$var} = '' unless defined $hash{$var};
+            if ($valtype eq 'scalar'){
+                $hash{$var} = '' unless defined $hash{$var};
 
-	            if (@F) {
-	                $hash{$var} .= join( $joinsep, @F );
-	            }
+                if (@F) {
+                    $hash{$var} .= join( $joinsep, @F );
+                }
 
-			} elsif ($valtype eq 'array'){
-            	$hash{$var} = [] unless defined $hash{$var};
+            } elsif ($valtype eq 'array'){
+                $hash{$var} = [] unless defined $hash{$var};
 
-	            if (@F) {
-	                push(@{$hash{$var}},@F );
-	            }
-			}
+                if (@F) {
+                    push(@{$hash{$var}},@F );
+                }
+            }
 
 
         }
         else {
 
-			if ($valtype eq 'scalar'){
-            	$hash{$var} .= ' ' . $line;
+            if ($valtype eq 'scalar'){
+                $hash{$var} .= ' ' . $line;
 
-			} elsif ($valtype eq 'array'){
-            	push(@{$hash{$var}},$line);
+            } elsif ($valtype eq 'array'){
+                push(@{$hash{$var}},$line);
 
-			}
+            }
         }
 
-		if ($valtype eq 'scalar'){
-        	$hash{$var} =~ s/\s+/ /g;
-		}
+        if ($valtype eq 'scalar'){
+            $hash{$var} =~ s/\s+/ /g;
+        }
     }
 
     close(FILE);
