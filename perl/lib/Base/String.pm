@@ -34,6 +34,7 @@ my @ex_vars_array=qw(
 ###export_funcs
 	'funcs' => [qw( 
 		str_split
+		str_split_trim
 		str_split_pm
 		str_sum
 		str_eq
