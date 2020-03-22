@@ -134,14 +134,16 @@ fun! base#init#paths(...)
         \ })
     
   let pc = base#pcname()
-  if pc == 'APOPLAVSKIYNB'
-    call base#initpaths#APOPLAVSKIYNB()
-  elseif pc == 'RESTPC'
+  if pc == 'RESTPC'
     call base#initpaths#RESTPC()
   endif
   
   call base#pathset({ 
       \ "repos_git" : base#file#catfile([ base#path('hm'), 'repos', 'git'  ]),
+    \ })
+
+  call base#pathset({ 
+      \ "x_php" : base#file#catfile([ base#path('repos_git'), 'x_php'  ]),
     \ })
     
     call base#pathset({

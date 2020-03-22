@@ -1,7 +1,6 @@
-""
-"http://vim.wikia.com/wiki/Pretty-formatting_XML
-"
-"
+if 0
+	http://vim.wikia.com/wiki/Pretty-formatting_XML
+endif
 
 function! base#xml#load_from_file(file,...)
 		let file = a:file
