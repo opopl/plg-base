@@ -46,6 +46,16 @@ sub str_split {
 }
 
 sub str_split_trim {
+	my ($text) = @_;
+
+	my @a = map { 
+		s/^\t*//g; 
+		s/^\s*//g; 
+		s/\s*$//g; 
+		length > 0 ? $_ : ()
+	} split "\n" => $text;
+
+	return @a;
 }
 
 1;
