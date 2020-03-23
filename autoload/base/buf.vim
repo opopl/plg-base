@@ -208,6 +208,7 @@ function! base#buf#open_split (ref)
     for cmd in cmds_after
       exe cmd
     endfor
+		resize 999
 
 endfunction
 
