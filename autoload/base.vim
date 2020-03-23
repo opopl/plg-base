@@ -791,21 +791,27 @@ fun! base#catpath(key,...)
 
 endf
 
+if 0
+ Usage: 
+   call base#fileopen({ 'files' : [file], 'exec' : 'set ft=html' })
+   call base#fileopen({ 
+     \ 'files' : [ file ], 
+     \ 'exec'  : [ 'set ft=html' ],
+     \ })
+   call base#fileopen([ file1, file2])
 
+   call base#fileopen({ 
+     \ 'files'   : [ file ],
+     \ 'Fc'      : Fc,
+     \ 'Fc_args' : Fc_args,
+     \ })
 
-" Usage: 
-"   base#fileopen({ 'files' : [file], 'exec' : 'set ft=html' })
-"   base#fileopen({ 
-"     \ 'files' : [ file ], 
-"     \ 'exec'  : [ 'set ft=html' ],
-"     \ })
-"   base#fileopen([ file1, file2])
-"
-"   base#fileopen({ 
-"     \ 'files'   : [ file ],
-"     \ 'Fc'      : Fc,
-"     \ 'Fc_args' : Fc_args,
-"     \ })
+Force loading buffer even if open:
+   call base#fileopen({ 
+     \ 'files'    : [ file ],
+     \ 'load_buf' : 1,
+     \ })
+endif
 
  
 """base_fileopen

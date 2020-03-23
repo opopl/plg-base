@@ -4,7 +4,7 @@ function! base#vimlines#action (action,start,end,...)
 
 """vimlines_execute
 	if action == 'execute'
-		let lnum=a:start
+		let lnum = a:start
 
 		let tmp   = tempname()
 		let lines = []
