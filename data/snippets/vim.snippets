@@ -23,6 +23,26 @@ snippet bfw
 	base#file#write_lines
 snippet remove
 	remove(<+list+>,<++>)
+snippet app
+	call append('.',<++>)
+snippet pyprettify
+	import xml.etree.ElementTree as ET
+	import xml.dom.minidom as minidom
+
+	def prettify(elem):
+	    """Return a pretty-printed XML string for the Element.
+	    """
+	    rough_string = ET.tostring(elem, 'utf-8')
+	    reparsed = minidom.parseString(rough_string)
+	    return reparsed.toprettyxml(indent="  ")
+snippet pymy#sqlite#query_fetchone
+	let dbfile = <++>
+	let r = {
+		\	'q'      : '<++>',
+		\	'p'      : [<++>],
+		\	'dbfile' : dbfile,
+		\	}
+	let <++> = pymy#sqlite#query_fetchone(r)
 snippet base#file#write_lines
 	" let r = {
 	"      \   'lines'  : <+lines+>,
@@ -319,7 +339,10 @@ snippet bsqq
 snippet perlusefsf
 	use File::Spec::Functions qw(catfile);
 snippet bfo
-	call base#fileopen({ 'files': [<+file+>] })
+	call base#fileopen({ 
+		\	'files'    : [<+file+>] ,
+		\	'load_buf' : 1,
+		\	})
 snippet ifnoperl
 	if base#noperl() | return | endif
 snippet br
@@ -1446,15 +1469,21 @@ snippet pymy#sqlite#update_hash
 		\	"<++>" : "<++>",
 		\	"<++>" : "<++>",
 		\	}
+
+	let w = {
+		\	"<++>" : "<++>",
+		\	"<++>" : "<++>",
+		\	}
 	
 	let ref = {
 		\ "dbfile" : dbfile,
-		\ "i" : "insert or ignore",
+		\ "u" : "UPDATE",
 		\ "t" : t, 
 		\ "h" : h, 
+		\ "w" : w, 
 		\ }
 		
-	call pymy#sqlite#insert_hash(ref)
+	call pymy#sqlite#update_hash(ref)
 snippet pymy#sqlite#insert_hash
 	let dbfile  = pymy#sqlite#dbfile()
 	let dbfile  = get(ref,'dbfile',dbfile)

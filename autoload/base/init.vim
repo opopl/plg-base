@@ -73,9 +73,9 @@ fun! base#init#paths(...)
     let pc       = base#envvar((has('win32')) ? 'USERPROFILE' : get(split(system('hostname'),"\n"),0) )
     
     let p = base#paths_from_db()
-    if len(p)
-      return
-    endif
+    "if len(p)
+      "return
+    "endif
     
     if has('win32')
       let pf       = base#envvar('PROGRAMFILES')
@@ -530,6 +530,7 @@ fun! base#init#au()
   au BufNewFile,BufWritePost,BufRead,BufWinEnter *.i.dat setf idat
   au BufRead,BufNewFile,BufWinEnter *.csv   set filetype=csv
   au BufRead,BufNewFile,BufWinEnter *.tsv   set filetype=tsv
+  au BufRead,BufNewFile,BufWinEnter *.py3   set filetype=python
 
   au BufWrite *.snippets MM snippets_reload_all
 
