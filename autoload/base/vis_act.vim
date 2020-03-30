@@ -10,7 +10,22 @@ function! base#vis_act#open_file (...)
   let ref = base#varget('ref_vis_act_open_file',{})
   let ref = get(a:000,0,ref)
 
-  let mode = get(ref,'mode','')
+	let files = base#vis_act#files(ref)
+  q
+
+  if !len(files) | return | endif
+
+  call base#fileopen({ 
+     \ 'files'    : files ,
+     \ 'load_buf' : 1     ,
+     \ })
+
+endfunction
+
+function! base#vis_act#files (...)
+  let ref = get(a:000,0,{})
+
+ 	let mode = get(ref,'mode','')
   let dir  = get(ref,'dir','')
 
   let lines = base#vim#visual_selection()
@@ -39,12 +54,6 @@ function! base#vis_act#open_file (...)
     endif
   endfor
 
-  if !len(files) | return | endif
-  q
-
-  call base#fileopen({ 
-     \ 'files'    : files ,
-     \ 'load_buf' : 1     ,
-     \ })
+	return files
 
 endfunction
