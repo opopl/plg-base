@@ -297,6 +297,32 @@ eof
 
 endfunction
 
+function! base#bufact#html#code_insert (...)
+
+	let dir = base#qw#catpath('plg base data bufact html code_insert')
+	let codes = base#find({ 
+		\	"dirs"    : [dir],
+		\	"exts"    : base#qw('html'),
+		\	"relpath" : 1,
+		\	"subdirs" : 1,
+		\	"fnamemodify" : ':r',
+		\	})
+	call base#varset('this',codes)
+
+	let msg_a = [
+		\	"BaseVarEcho bufact_html_codes",	
+		\	"",	
+		\	"HTML code: ",	
+		\	]
+	let msg = join(msg_a,"\n")
+	let code = base#input_we(msg,'',{ 'complete' : 'custom,base#complete#this'})
+
+	let file = join([dir,code . '.html'], '/')
+	let lines=readfile(file)
+	call append('.',lines)
+
+endfunction
+
 """bufact__select
 function! base#bufact#html#_select (...)
    let data_h = [
