@@ -309,6 +309,9 @@ function! base#bufact#html#code_insert (...)
 		\	})
 	call base#varset('this',codes)
 
+	call extend(codes,base#varget('bufact_html_codes',[]))
+	let codes = base#uniq(codes)
+
 	let msg_a = [
 		\	"BaseVarEcho bufact_html_codes",	
 		\	"",	

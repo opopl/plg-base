@@ -531,6 +531,7 @@ fun! base#init#au()
   au BufRead,BufNewFile,BufWinEnter *.csv   set filetype=csv
   au BufRead,BufNewFile,BufWinEnter *.tsv   set filetype=tsv
   au BufRead,BufNewFile,BufWinEnter *.py3   set filetype=python
+  au BufRead,BufNewFile,BufWinEnter *.vue   set filetype=html
 
   au BufWrite *.snippets MM snippets_reload_all
 
