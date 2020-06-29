@@ -26,15 +26,15 @@ use DBD::SQLite;
 use DBI;
 
 use Base::DB qw(
-	dbh_insert_hash
-	dbh_select
-	dbh_select_as_list
-	dbh_do
+    dbh_insert_hash
+    dbh_select
+    dbh_select_as_list
+    dbh_do
 );
 
 use base qw( 
-	Class::Accessor::Complex 
-	Base::Logging
+    Class::Accessor::Complex 
+    Base::Logging
 );
 
 use File::Path qw(mkpath);
@@ -45,7 +45,7 @@ our @TYPES = qw( list dict listlines );
 
 =head1 SYNOPSIS
 
-	my $plgbase=Vim::Plg::Base->new;
+    my $plgbase=Vim::Plg::Base->new;
 
 =head1 METHODS
 
@@ -62,320 +62,320 @@ our @TYPES = qw( list dict listlines );
 =cut
 
 sub init {
-	my $self=shift;
+    my $self=shift;
 
-	return unless $^O eq 'MSWin32';
+    return unless $^O eq 'MSWin32';
 
-	$self
-		->init_dirs
-		->init_sqlstm
-		->init_vars
-		->db_connect
-		->db_drop_tables
-		->db_create_tables
-		->init_dat;
+    $self
+        ->init_dirs
+        ->init_sqlstm
+        ->init_vars
+        ->db_connect
+        ->db_drop_tables
+        ->db_create_tables
+        ->init_dat;
 
-	$self;
+    $self;
 
 }
 
 sub init_vars {
-	my $self=shift;
+    my $self=shift;
 
-	my $dat = catfile($self->dirs('plgroot'),qw( data list db_table_order.i.dat ));
+    my $dat = catfile($self->dirs('plgroot'),qw( data list db_table_order.i.dat ));
 
-	my $tb_order = (-e $dat) ? readarr($dat) : [];
+    my $tb_order = (-e $dat) ? readarr($dat) : [];
 
-	my $h={
-		withvim      => $self->_withvim(),
-		dbfile       => ':memory:',
-		dattypes     => [@TYPES],
-		dbopts       => {
-			tb_reset => {},
-			tb_order => $tb_order,
-		},
+    my $h={
+        withvim      => $self->_withvim(),
+        dbfile       => ':memory:',
+        dattypes     => [@TYPES],
+        dbopts       => {
+            tb_reset => {},
+            tb_order => $tb_order,
+        },
 
-	};
+    };
 
-	my @k=keys %$h;
+    my @k=keys %$h;
 
-	for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
+    for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
 
-	$self;
+    $self;
 }
 
 sub init_sqlstm {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	my $sql_dir = catfile($self->dirs('plgroot'),qw(data sql));
-	
-	my @files;
-	my @exts=qw(sql);
-	my @dirs;
-	push @dirs,$sql_dir;
-	
-	my $h = { sqlstm => {}};
-	File::Find::find({ 
-		wanted => sub { 
-			foreach my $ext (@exts) {
-				if (/\.$ext$/) {
-					s/\.$ext$//g;
-	
-					my $f = $File::Find::name;
-					my $sql = read_file($f);
-					$h->{sqlstm}->{$_} = $sql;
-				}
-			}
-		} 
-	},@dirs
-	);
+    my $sql_dir = catfile($self->dirs('plgroot'),qw(data sql));
+    
+    my @files;
+    my @exts=qw(sql);
+    my @dirs;
+    push @dirs,$sql_dir;
+    
+    my $h = { sqlstm => {}};
+    File::Find::find({ 
+        wanted => sub { 
+            foreach my $ext (@exts) {
+                if (/\.$ext$/) {
+                    s/\.$ext$//g;
+    
+                    my $f = $File::Find::name;
+                    my $sql = read_file($f);
+                    $h->{sqlstm}->{$_} = $sql;
+                }
+            }
+        } 
+    },@dirs
+    );
 
-		
-	my @k = keys %$h;
+        
+    my @k = keys %$h;
 
-	for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
+    for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
 
-	$self;
+    $self;
 }
 
 sub init_dirs {
-	my $self = shift;
+    my $self = shift;
 
-	my $dirs = {
-		plgroot => catfile($ENV{VIMRUNTIME},qw(plg base)),
-		appdata => catfile($ENV{APPDATA},qw(vim plg base)),
-	};
+    my $dirs = {
+        plgroot => catfile($ENV{VIMRUNTIME},qw(plg base)),
+        appdata => catfile($ENV{APPDATA},qw(vim plg base)),
+    };
 
-	my $d = $dirs->{appdata};
-	mkpath $d unless -d $d;
+    my $d = $dirs->{appdata};
+    mkpath $d unless -d $d;
 
-	foreach my $type (@TYPES) {
-		$dirs->{'dat_'.$type} = catfile($dirs->{plgroot},qw(data),$type);
-	}
-	$self->dirs($dirs);
+    foreach my $type (@TYPES) {
+        $dirs->{'dat_'.$type} = catfile($dirs->{plgroot},qw(data),$type);
+    }
+    $self->dirs($dirs);
 
-	$self;
+    $self;
 }
 
 sub db_connect {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	my $dbfile	= $self->dbfile;
-	my $dbname = basename($dbfile);
-	$dbname =~ s/\.(\w+)//g;
-	
-	if ($self->dbh) {
-		eval { $self->dbh->disconnect;  };
-		if ($@) { 
-			my @w;
-			push @w, 'Failure to disconnect db:', DBI->errstr, $@ ;
-				
-			$self->_warn_(@w); 
-		}
-	}
+    my $dbfile  = $self->dbfile;
+    my $dbname = basename($dbfile);
+    $dbname =~ s/\.(\w+)//g;
+    
+    if ($self->dbh) {
+        eval { $self->dbh->disconnect;  };
+        if ($@) { 
+            my @w;
+            push @w, 'Failure to disconnect db:', DBI->errstr, $@ ;
+                
+            $self->_warn_(@w); 
+        }
+    }
 
-	my $dbh;
+    my $dbh;
 
-	$self->debug('sqlite connect:',$dbfile);
-	
-	my $o={
-		PrintError       => 1,
-		RaiseError       => 1,
-		AutoCommit       => 1,
-		FetchHashKeyName => 'NAME_lc',
-	};
-	eval { $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile","","",$o); };
-	if ($@) { 
-		my @w;
-		push @w, 
-			'Failure to connect to database with dbname:',$dbname,
-			DBI->errstr,$@;
-		$self->_warn_(@w); return $self; 
-	}
+    $self->debug('sqlite connect:',$dbfile);
+    
+    my $o={
+        PrintError       => 1,
+        RaiseError       => 1,
+        AutoCommit       => 1,
+        FetchHashKeyName => 'NAME_lc',
+    };
+    eval { $dbh = DBI->connect("dbi:SQLite:dbname=$dbfile","","",$o); };
+    if ($@) { 
+        my @w;
+        push @w, 
+            'Failure to connect to database with dbname:',$dbname,
+            DBI->errstr,$@;
+        $self->_warn_(@w); return $self; 
+    }
 
-	unless ($dbh) {
-		$self->_warn_('dbh undefined!');
-	}else{
-		$self->dbh($dbh);
-		$self->dbname($dbname);
-		$Base::DB::DBH  = $dbh;
+    unless ($dbh) {
+        $self->_warn_('dbh undefined!');
+    }else{
+        $self->dbh($dbh);
+        $self->dbname($dbname);
+        $Base::DB::DBH  = $dbh;
 
-		if (my $s = $self->{sub_on_connect}) {
-			$s->($dbh);
-		}
-	}
+        if (my $s = $self->{sub_on_connect}) {
+            $s->($dbh);
+        }
+    }
 
-	$Base::DB::WARN = sub{ $self->_warn_(@_) };
+    $Base::DB::WARN = sub{ $self->_warn_(@_) };
 
-	$self;
+    $self;
 }
 
 sub update_self {
-	my ($self,%o) = @_;
+    my ($self,%o) = @_;
 
-	foreach my $k (keys %o) {
-		$self->{$k} = $o{$k};
-	}
-	$self;
+    foreach my $k (keys %o) {
+        $self->{$k} = $o{$k};
+    }
+    $self;
 }
 
 sub reload_from_fs {
-	my ($self)=@_;
+    my ($self)=@_;
 
-	my $tb_order = [qw(
-		plugins 
-		plugins_all 
-		datfiles
-	)];
-	my $tb_reset = map { ($_ => 1 ) } @$tb_order;
+    my $tb_order = [qw(
+        plugins 
+        plugins_all 
+        datfiles
+    )];
+    my $tb_reset = map { ($_ => 1 ) } @$tb_order;
 
-	my %o = (
-		dbopts       => {
-			tb_reset => $tb_reset,
-			tb_order => $tb_order,
-		},
-	);
+    my %o = (
+        dbopts       => {
+            tb_reset => $tb_reset,
+            tb_order => $tb_order,
+        },
+    );
 
-	$self
-		->update_self(%o)
-		->db_connect
-		->db_drop_tables
-		->db_create_tables
-		->init_dat;
+    $self
+        ->update_self(%o)
+        ->db_connect
+        ->db_drop_tables
+        ->db_create_tables
+        ->init_dat;
 
-	$self;
+    $self;
 }
 
 sub _withvim {
-	my $self=shift;
+    my $self=shift;
 
-	eval 'VIM::Eval("1")';
-	
-	my $uv = ($@) ? 0 : 1;
-	return $uv;
+    eval 'VIM::Eval("1")';
+    
+    my $uv = ($@) ? 0 : 1;
+    return $uv;
 }
 
 =head2 dat_locate_from_fs 
 
 =head3 Usage
 
-	my $ref={
-		type 	=> TYPE (string, one of of: list,dict,listlines - stored in dattypes array),
-		plugin 	=> PLUGIN (string ),
-		prefix 	=> PREFIX (string ),
-	};
+    my $ref={
+        type    => TYPE (string, one of of: list,dict,listlines - stored in dattypes array),
+        plugin  => PLUGIN (string ),
+        prefix  => PREFIX (string ),
+    };
 
-	$plgbase->dat_locate_from_fs($ref);
+    $plgbase->dat_locate_from_fs($ref);
 
 =head3 Purpose
 
 =cut
 
 sub dat_locate_from_fs {
-	my ($self,$ref) = @_;
+    my ($self,$ref) = @_;
 
-	my @dirs   = grep { (-d $_) } @{$ref->{dirs} || []};
-	return unless @dirs;
+    my @dirs   = grep { (-d $_) } @{$ref->{dirs} || []};
+    return unless @dirs;
 
-	my $prefix = $ref->{prefix} || '';
-	my $type   = $ref->{type} || '';
-	my $plugin = $ref->{plugin} || 'base';
+    my $prefix = $ref->{prefix} || '';
+    my $type   = $ref->{type} || '';
+    my $plugin = $ref->{plugin} || 'base';
 
-	my $pat  = qr/\.i\.dat$/;
-	File::Find::find({ 
-		wanted => sub { 
-			my $name = $File::Find::name;
-			my $dir  = $File::Find::dir;
+    my $pat  = qr/\.i\.dat$/;
+    File::Find::find({ 
+        wanted => sub { 
+            my $name = $File::Find::name;
+            my $dir  = $File::Find::dir;
 
-			/$pat/ && do {
-					s/$pat//g;
-					my $kfull = ($prefix) ? join("_",$prefix,$_) : $_;
+            /$pat/ && do {
+                    s/$pat//g;
+                    my $kfull = ($prefix) ? join("_",$prefix,$_) : $_;
 
-					dbh_insert_hash({
-						t => 'datfiles',
-						h => {
-							key     => $_,
-							keyfull => $kfull,
-							type    => $type,
-							plugin  => $plugin,
-							datfile => $name,
-						}
-					});
-			};
-			 
-		} 
-	},@dirs
-	);
+                    dbh_insert_hash({
+                        t => 'datfiles',
+                        h => {
+                            key     => $_,
+                            keyfull => $kfull,
+                            type    => $type,
+                            plugin  => $plugin,
+                            datfile => $name,
+                        }
+                    });
+            };
+             
+        } 
+    },@dirs
+    );
 }
 
 =head2 db_list_plugins 
 
 =head3 Usage
 
-	my @plugins = $plgbase->db_list_plugins();
+    my @plugins = $plgbase->db_list_plugins();
 
 =head3 Purpose
 
 =cut
 
 sub db_list_plugins {
-	my $self=shift;
+    my $self=shift;
 
-	my $dbh = $self->dbh;
-	my $r   = $dbh->selectall_arrayref('select plugin from plugins');
-	my @p   = map { $_->[0] } @$r;
+    my $dbh = $self->dbh;
+    my $r   = $dbh->selectall_arrayref('select plugin from plugins');
+    my @p   = map { $_->[0] } @$r;
 
-	wantarray ? @p : \@p ;
+    wantarray ? @p : \@p ;
 }
 
 sub db_tables {
-	my $self=shift;
+    my $self=shift;
 
 
-	my $q = qq{  
-		SELECT 
-			name 
-		FROM 
-			sqlite_master
-		WHERE 
-			type IN ('table','view') AND name NOT LIKE 'sqlite_%'
-		UNION ALL
-		SELECT 
-			name 
-		FROM 
-			sqlite_temp_master
-		WHERE 
-			type IN ('table','view')
-		ORDER BY 1
-	};
+    my $q = qq{  
+        SELECT 
+            name 
+        FROM 
+            sqlite_master
+        WHERE 
+            type IN ('table','view') AND name NOT LIKE 'sqlite_%'
+        UNION ALL
+        SELECT 
+            name 
+        FROM 
+            sqlite_temp_master
+        WHERE 
+            type IN ('table','view')
+        ORDER BY 1
+    };
 
-	my ($rows) = dbh_select({ 
-		q    => $q,
-	});
+    my ($rows) = dbh_select({ 
+        q    => $q,
+    });
 
-	my @tables = map { $_->{name} }  @$rows;
+    my @tables = map { $_->{name} }  @$rows;
 
-	wantarray ? @tables : \@tables ;
+    wantarray ? @tables : \@tables ;
 }
 
 sub db_table_exists {
-	my ($self, $tb) = @_;
+    my ($self, $tb) = @_;
 
-	my %tables = map { (defined $_) ? ($_ => 1 ) : () } $self->db_tables;
-	my $ex = $tables{$tb} ? 1 : 0;
+    my %tables = map { (defined $_) ? ($_ => 1 ) : () } $self->db_tables;
+    my $ex = $tables{$tb} ? 1 : 0;
 
-	return $ex;
+    return $ex;
 
 }
 
 sub db_table_empty {
-	my ($self, $tb) = @_;
+    my ($self, $tb) = @_;
 
-	my $q = qq{select * from $tb limit 1};
+    my $q = qq{select * from $tb limit 1};
 
-	my ($rows) = dbh_select({ q => $q });
+    my ($rows) = dbh_select({ q => $q });
 
-	return (@$rows) ? 0 : 1;
+    return (@$rows) ? 0 : 1;
 
 }
 
@@ -385,23 +385,23 @@ sub db_table_empty {
 
 =item Usage
 
-	my $size = $plgbase->db_dbfile_size();
+    my $size = $plgbase->db_dbfile_size();
 
 =back
 
 =cut
 
 sub db_dbfile_size {
-	my $self=shift;
+    my $self=shift;
 
-	my $dbfile =  $self->dbfile;
+    my $dbfile =  $self->dbfile;
 
-	my $st;
+    my $st;
     eval{ $st = stat($dbfile)};
-	$@ && do { $self->_warn_("File::stat errors for $dbfile: $@"); return; };
+    $@ && do { $self->_warn_("File::stat errors for $dbfile: $@"); return; };
 
-	my $size=$st->size;
-	return $size;
+    my $size=$st->size;
+    return $size;
 }
 
 
@@ -410,75 +410,75 @@ sub db_dbfile_size {
 
 =head3 Usage
 
-	$plgbase->db_drop_tables({ tb_reset => { ... }});
+    $plgbase->db_drop_tables({ tb_reset => { ... }});
 
 =head3 Purpose
 
 =cut
 
 sub db_drop_tables {
-	my ($self,$ref) = @_;
+    my ($self,$ref) = @_;
 
-	$ref ||= {};
+    $ref ||= {};
 
-	my $dbopts = $ref->{dbopts} || $self->dbopts;
+    my $dbopts = $ref->{dbopts} || $self->dbopts;
 
-	# which tables to drop 
-	my $tb_reset=$ref->{tb_reset} || $dbopts->{tb_reset} || {};
+    # which tables to drop 
+    my $tb_reset=$ref->{tb_reset} || $dbopts->{tb_reset} || {};
 
-	# order of tables to be dropped
-	my $tb_order=$ref->{tb_order} || $dbopts->{tb_order} || [];
+    # order of tables to be dropped
+    my $tb_order=$ref->{tb_order} || $dbopts->{tb_order} || [];
 
-	my $dbh=$self->dbh;
+    my $dbh=$self->dbh;
 
-	my @drop;
-	foreach my $tb (@$tb_order) {
-		if ($ref->{all} || $tb_reset->{$tb}) {
-			push @drop, qq{ DROP TABLE IF EXISTS $tb; };
-		}
-	}
+    my @drop;
+    foreach my $tb (@$tb_order) {
+        if ($ref->{all} || $tb_reset->{$tb}) {
+            push @drop, qq{ DROP TABLE IF EXISTS $tb; };
+        }
+    }
 
-	for my $q (@drop){
-		dbh_do({ q  => $q });
-	}
+    for my $q (@drop){
+        dbh_do({ q  => $q });
+    }
 
-	$self;
+    $self;
 }
 
 sub db_create_tables {
-	my ($self)=@_;
+    my ($self)=@_;
 
-	my $dbopts = $self->dbopts;
+    my $dbopts = $self->dbopts;
 
-	my $tb_reset = $dbopts->{tb_reset} || {};
-	my $tb_order = $dbopts->{tb_order} || [];
+    my $tb_reset = $dbopts->{tb_reset} || {};
+    my $tb_order = $dbopts->{tb_order} || [];
 
-	my $dbh = $self->dbh;
+    my $dbh = $self->dbh;
 
-	my @create;
-	foreach my $tb (@$tb_order) {
-		push @create,$self->sqlstm('create_table_'.$tb);
-		
-		unless ($self->db_table_exists($tb)) {
-			$tb_reset->{$tb}=1;
-		}
-	}
+    my @create;
+    foreach my $tb (@$tb_order) {
+        push @create,$self->sqlstm('create_table_'.$tb);
+        
+        unless ($self->db_table_exists($tb)) {
+            $tb_reset->{$tb}=1;
+        }
+    }
 
-	for my $q (@create){
-		dbh_do({ q    => $q });
-	}
+    for my $q (@create){
+        dbh_do({ q    => $q });
+    }
 
-	dbh_insert_hash({
-		i => q{INSERT OR IGNORE},
-		t => 'dbfiles',
-		h => {
-			dbfile   => $self->dbfile,
-			dbname   => $self->dbname,
-			dbdriver => 'sqlite',
-		}
-	});
+    dbh_insert_hash({
+        i => q{INSERT OR IGNORE},
+        t => 'dbfiles',
+        h => {
+            dbfile   => $self->dbfile,
+            dbname   => $self->dbname,
+            dbdriver => 'sqlite',
+        }
+    });
 
-	$self;
+    $self;
 }
 
 
@@ -486,189 +486,189 @@ sub db_create_tables {
 
 =head3 Usage
 
-	$plgbase->init_dat_base();
+    $plgbase->init_dat_base();
 
 =head3 Purpose
 
-	Fill datfiles hash either from FS (if one resets "datfiles" table) or from the database
+    Fill datfiles hash either from FS (if one resets "datfiles" table) or from the database
 
 =cut
 
 
 sub init_dat_base {
-	my $self=shift;
+    my $self=shift;
 
-	my @types    = $self->dattypes;
-	my $dbopts   = $self->dbopts_ref;
+    my @types    = $self->dattypes;
+    my $dbopts   = $self->dbopts_ref;
 
-	my $tb_reset = $dbopts->{tb_reset} || {};
+    my $tb_reset = $dbopts->{tb_reset} || {};
 
-	if ($tb_reset->{datfiles} || $self->db_table_empty('datfiles')) {
-		$tb_reset->{datfiles} ||= 1;
-		$self->dbopts(tb_reset => $tb_reset);
+    if ($tb_reset->{datfiles} || $self->db_table_empty('datfiles')) {
+        $tb_reset->{datfiles} ||= 1;
+        $self->dbopts(tb_reset => $tb_reset);
 
-		# find all *.i.dat files in base plugin directory
-		foreach my $type (@types) {
-			my $dir = $self->{dirs}->{'dat_'.$type};
-			next unless -d $dir;
-	
-			$self->dat_locate_from_fs({
-				dirs   => [$dir],
-				type   => $type,
-				prefix => '',
-				plugin => 'base',
-			});
-		}
-	}
-	$self;
+        # find all *.i.dat files in base plugin directory
+        foreach my $type (@types) {
+            my $dir = $self->{dirs}->{'dat_'.$type};
+            next unless -d $dir;
+    
+            $self->dat_locate_from_fs({
+                dirs   => [$dir],
+                type   => $type,
+                prefix => '',
+                plugin => 'base',
+            });
+        }
+    }
+    $self;
 }
 
 sub init_dat_plugins {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	my @types   = $self->dattypes;
+    my @types   = $self->dattypes;
 
-	my $dbopts   = $self->dbopts_ref;
-	my $tb_reset = $dbopts->{tb_reset} || {};
+    my $dbopts   = $self->dbopts_ref;
+    my $tb_reset = $dbopts->{tb_reset} || {};
 
-	my @plugins = dbh_select_as_list({ 
-		t => 'plugins', 
-		f => [qw(plugin)],
-	});
+    my @plugins = dbh_select_as_list({ 
+        t => 'plugins', 
+        f => [qw(plugin)],
+    });
 
-	my @other = dbh_select_as_list({
-		t    => 'datfiles',
-		s    => 'select distinct',
-		f    => [qw(plugin)],
-		cond => qq{where plugin not in (?)},
-		p    => [qw(base)],
-	});
+    my @other = dbh_select_as_list({
+        t    => 'datfiles',
+        s    => 'select distinct',
+        f    => [qw(plugin)],
+        cond => qq{where plugin not in (?)},
+        p    => [qw(base)],
+    });
 
-	if ($tb_reset->{datfiles} || (not @other) ) {
-		# find all *.i.dat files for the rest of plugins, except  base plugin
-		foreach my $p (@plugins) {
-			next if $p eq 'base';
+    if ($tb_reset->{datfiles} || (not @other) ) {
+        # find all *.i.dat files for the rest of plugins, except  base plugin
+        foreach my $p (@plugins) {
+            next if $p eq 'base';
 
-			foreach my $type (@types) {
-				my $pdir = catfile($ENV{VIMRUNTIME},qw(plg),$p,qw(data),$type);
-				$self->dat_locate_from_fs({ 
-					dirs   => [$pdir],
-					type   => $type,
-					plugin => $p,
-					prefix => $p, 
-				});
-			}
-		}
-	}
+            foreach my $type (@types) {
+                my $pdir = catfile($ENV{VIMRUNTIME},qw(plg),$p,qw(data),$type);
+                $self->dat_locate_from_fs({ 
+                    dirs   => [$pdir],
+                    type   => $type,
+                    plugin => $p,
+                    prefix => $p, 
+                });
+            }
+        }
+    }
 
 }
 
 sub init_plugins {
-	my ($self)=@_;
+    my ($self)=@_;
 
-	my ($rows) = dbh_select({ 
-		q => q{ select datfile from datfiles where key = ? },
-		p => [qw(plugins)],
-   	});
-	my ($dat_plg) = map { $_->{datfile} } @$rows;
+    my ($rows) = dbh_select({ 
+        q => q{ select datfile from datfiles where key = ? },
+        p => [qw(plugins)],
+    });
+    my ($dat_plg) = map { $_->{datfile} } @$rows;
 
-	unless ($dat_plg) {
-		$self->_warn_('plugins DAT file NOT defined!!');
-	}
-	if (-e $dat_plg) {
-		my @plugins = readarr($dat_plg);
-	
-		for(@plugins){	
-			dbh_insert_hash({
-				i => 'INSERT OR IGNORE',
-				t => 'plugins', 
-				h => { plugin => $_ }
-			});
-		}
-	}
+    unless ($dat_plg) {
+        $self->_warn_('plugins DAT file NOT defined!!');
+    }
+    if (-e $dat_plg) {
+        my @plugins = readarr($dat_plg);
+    
+        for(@plugins){  
+            dbh_insert_hash({
+                i => 'INSERT OR IGNORE',
+                t => 'plugins', 
+                h => { plugin => $_ }
+            });
+        }
+    }
 
-	$self;
+    $self;
 
 }
 
 sub init_plugins_all {
-	my ($self) = @_;
-	
-	my @dirs;
-	push @dirs,
-		catfile($self->dirs('plgroot'),qw(..));
+    my ($self) = @_;
+    
+    my @dirs;
+    push @dirs,
+        catfile($self->dirs('plgroot'),qw(..));
 
-	# list of all plugins
-	my $r = File::Find::Rule->new;
+    # list of all plugins
+    my $r = File::Find::Rule->new;
 
-	my @pall = $r
-		->directory
-		->relative
-		->maxdepth(1)
-		->in( @dirs );
+    my @pall = $r
+        ->directory
+        ->relative
+        ->maxdepth(1)
+        ->in( @dirs );
 
-	for(@pall){
-		dbh_insert_hash({
-			i => q{INSERT OR IGNORE},
-			t => 'plugins_all',
-			h => {
-				plugin => $_,
-			},
-		});
-	}
-	
-	$self;
+    for(@pall){
+        dbh_insert_hash({
+            i => q{INSERT OR IGNORE},
+            t => 'plugins_all',
+            h => {
+                plugin => $_,
+            },
+        });
+    }
+    
+    $self;
 }
 
 sub init_dat {
-	my $self = shift;
+    my $self = shift;
 
-	$self
-		->init_dat_base
-		->init_plugins
-		->init_plugins_all
-		->init_dat_plugins
-		;
+    $self
+        ->init_dat_base
+        ->init_plugins
+        ->init_plugins_all
+        ->init_dat_plugins
+        ;
 
-	$self;
+    $self;
 
 }
 
 BEGIN {
-	###__ACCESSORS_SCALAR
-	our @scalar_accessors=qw(
-		dbh
-		sth
-		dbfile
-		dbname
-		withvim
-		sub_warn
-		sub_log
-		sub_on_connect
-		def_PRINT
-		def_WARN
-		prepared_query
-	);
-	
-	###__ACCESSORS_HASH
-	our @hash_accessors=qw(
-		dirs
-		vars
-		dbopts
-		done
-		sqlstm
-	);
-	
-	###__ACCESSORS_ARRAY
-	our @array_accessors=qw(
-		dattypes
-	);
+    ###__ACCESSORS_SCALAR
+    our @scalar_accessors=qw(
+        dbh
+        sth
+        dbfile
+        dbname
+        withvim
+        sub_warn
+        sub_log
+        sub_on_connect
+        def_PRINT
+        def_WARN
+        prepared_query
+    );
+    
+    ###__ACCESSORS_HASH
+    our @hash_accessors=qw(
+        dirs
+        vars
+        dbopts
+        done
+        sqlstm
+    );
+    
+    ###__ACCESSORS_ARRAY
+    our @array_accessors=qw(
+        dattypes
+    );
 
-	__PACKAGE__
-		->mk_scalar_accessors(@scalar_accessors)
-		->mk_array_accessors(@array_accessors)
-		->mk_hash_accessors(@hash_accessors)
-		->mk_new;
+    __PACKAGE__
+        ->mk_scalar_accessors(@scalar_accessors)
+        ->mk_array_accessors(@array_accessors)
+        ->mk_hash_accessors(@hash_accessors)
+        ->mk_new;
 
 }
 
