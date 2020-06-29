@@ -641,6 +641,8 @@ bind  = vim.eval('bind')
 base_conn = sqlite3.connect(base_dbfile)
 base_cur = base_conn.cursor()
 
+plgdir = vim.eval('base#plgdir()')
+
 #*******************************
 if not table_exists({ 'table' : 'log', 'cur' : base_cur }):
   q = '''
@@ -652,7 +654,8 @@ if not table_exists({ 'table' : 'log', 'cur' : base_cur }):
           func TEXT,
           plugin TEXT,
           prf TEXT,
-          v_exception TEXT
+          v_exception TEXT,
+          vim_code TEXT
         );
   '''
   base_cur.execute(q)
