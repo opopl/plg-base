@@ -3569,6 +3569,14 @@ function! base#act (...)
 
 endf    
 
+function! base#pcname_lc()
+	return tolower(base#pcname())
+endf    
+
+function! base#pcname_uc()
+	return toupper(base#pcname())
+endf    
+
 function! base#pcname()
   let pc  = (has('win32')) ? base#envvar('COMPUTERNAME') : get(split(system('hostname'),"\n"),0)
   return pc

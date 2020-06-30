@@ -5,6 +5,7 @@ use warnings;
 use File::Spec::Functions qw(catfile);
 
 my @mods_perl = qw(
+   Class::Accessor::Installer
    Data::Miscellany
    Data::Table
    HTML::FormatText
@@ -17,10 +18,20 @@ my @mods_perl = qw(
    URI::Simple
    URL::Normalize
    XML::Dumper
-   Class::Accessor::Installer
+   XML::Hash::LX
    XML::LibXML::Cache
    XML::LibXML::PrettyPrint
-   XML::Hash::LX
+);
+
+# for htmltool
+push @mods_perl,qw(
+   Exception::Base
+   HTML::Encoding
+   Text::Format
+   Tk
+   Tk::HistEntry
+   Tk::HyperText
+   XML::LibXML::Simple
 );
 
 my @packs_py;
