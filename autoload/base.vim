@@ -639,6 +639,8 @@ query = vim.eval('query')
 bind  = vim.eval('bind')
 
 base_conn = sqlite3.connect(base_dbfile)
+base_conn.text_factory=str
+
 base_cur = base_conn.cursor()
 
 plgdir = vim.eval('base#plgdir()')
