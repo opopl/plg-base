@@ -44,11 +44,11 @@ if 0
 endif
 
 if 0
-	call tree
-		called by
-		calls
-			base#pathset
-			base#paths_from_db
+  call tree
+    called by
+    calls
+      base#pathset
+      base#paths_from_db
 endif
 
 fun! base#init#paths(...)
