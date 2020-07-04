@@ -37,12 +37,12 @@ use File::Slurp qw(
 use DBI;
 
 use Base::DB qw(
-	dbh_insert_hash
+    dbh_insert_hash
 );
 
 use Base::Util qw(
-	replace_undefs
-	file_w
+    replace_undefs
+    file_w
 );
 
 $VERSION = '0.01';
@@ -92,11 +92,11 @@ my @ex_vars_array = qw(
 ###export_funcs
     'funcs' => [
         qw(
-		  CurBufSet
-		  EnvVar
-		  UnderVim
-		  VimBufSplit
-		  VimListExtend
+          CurBufSet
+          EnvVar
+          UnderVim
+          VimBufSplit
+          VimListExtend
           VimAppend
           VimArg
           VimBufFiles_Insert_SubName
@@ -213,18 +213,18 @@ our $PAPINFO;
 sub VimCmd {
     my $ref = shift;
 
-	if (ref $ref eq "ARRAY"){
-		my $cmds=$ref;
-		foreach my $cmd (@$cmds) {
-			VimCmd($cmd);
-		}
-		return;
-		
-	}elsif(ref $ref eq ''){
-		my $cmd = $ref;
-		return unless $UnderVim;
-    	return VIM::DoCommand("$cmd"); 
-	}
+    if (ref $ref eq "ARRAY"){
+        my $cmds=$ref;
+        foreach my $cmd (@$cmds) {
+            VimCmd($cmd);
+        }
+        return;
+        
+    }elsif(ref $ref eq ''){
+        my $cmd = $ref;
+        return unless $UnderVim;
+        return VIM::DoCommand("$cmd"); 
+    }
 
 
 }
@@ -239,20 +239,20 @@ sub VimArg {
 }
 
 sub VimExecAu {
-	my ($ref) = @_;
+    my ($ref) = @_;
 
-	my $au      = $ref->{au} || [];
-	my $tmp_dir = $ref->{tmp_dir} || '';
-	my $tmp     = $ref->{tmp} || 'tmp.vim';
+    my $au      = $ref->{au} || [];
+    my $tmp_dir = $ref->{tmp_dir} || '';
+    my $tmp     = $ref->{tmp} || 'tmp.vim';
 
-	my $tmp_vim = catfile($tmp_dir, $tmp);
-	$tmp_vim =~ s/\\/\//g;
+    my $tmp_vim = catfile($tmp_dir, $tmp);
+    $tmp_vim =~ s/\\/\//g;
 
-	file_w({ 
-			file  => $tmp_vim,
-			lines => $au,
-	});
-	VimSo($tmp_vim);
+    file_w({ 
+            file  => $tmp_vim,
+            lines => $au,
+    });
+    VimSo($tmp_vim);
 
 }
 
@@ -261,7 +261,7 @@ sub VimSo {
 
     return unless $file;
 
-	$file =~ s/\\/\//g;
+    $file =~ s/\\/\//g;
     VimCmd("source $file");
 
 }
@@ -282,7 +282,7 @@ sub VimLen {
 
 =head4 Usage
 
-	VimVar($var,$rtype,$vtype);
+    VimVar($var,$rtype,$vtype);
 
 =head4 Purpose
 
@@ -290,9 +290,9 @@ Return Perl representation of a VimScript variable
 
 =head4 Examples
 
-	VimVar('000','arr','a');
+    VimVar('000','arr','a');
 
-	VimVar('confdir','','g');
+    VimVar('confdir','','g');
 
 =cut
 
@@ -303,22 +303,22 @@ sub VimVar {
     return '' unless VimExists($var);
     my $vartype = VimVarType($var);
 
-	for ($vartype) {
+    for ($vartype) {
         /^(String|Number|Float)$/ && do {
             my $res = VimEval($var);
-			return $res;
+            return $res;
         };
 
-		last;
-	}
+        last;
+    }
 
-	my ($dmp,$res);
+    my ($dmp,$res);
 
-	$dmp = VimEval(qq{ pymy#var#pp($var) });
+    $dmp = VimEval(qq{ pymy#var#pp($var) });
 
-	my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
-	$res     = eval {$coder->decode($dmp); };
-	if ($@) { VimWarn([ $@,$dmp ]); }
+    my $coder = JSON::XS->new->ascii->pretty->allow_nonref;
+    $res     = eval {$coder->decode($dmp); };
+    if ($@) { VimWarn([ $@,$dmp ]); }
 
     unless ( ref $res ) {
         $res;
@@ -330,7 +330,7 @@ sub VimVar {
         wantarray ? %$res : $res;
     }
 
-	#return ($res,$dmp);
+    #return ($res,$dmp);
 
 }
 
@@ -340,26 +340,26 @@ sub VimVar {
 
 =head3 Usage 
 
-	my $ref={
-		file => $file,
-		act  => q{split},
-	};
-	VimFileOpen($ref);
+    my $ref={
+        file => $file,
+        act  => q{split},
+    };
+    VimFileOpen($ref);
 
 =cut
 
 sub VimFileOpen {
-	my ($ref) = @_;
+    my ($ref) = @_;
 
-	my $file = $ref->{file};
-	my $act  = $ref->{act} || q{edit};
+    my $file = $ref->{file};
+    my $act  = $ref->{act} || q{edit};
 
-	$file = escape('printable',$file);
-	my $cmd = qq{ 
-		let f="$file"
-		exe '$act ' . f  
-	};
-	VimCmd($cmd);
+    $file = escape('printable',$file);
+    my $cmd = qq{ 
+        let f="$file"
+        exe '$act ' . f  
+    };
+    VimCmd($cmd);
 }
 
 sub VimVarDump {
@@ -496,7 +496,7 @@ sub VimInput {
 
 =head4 Usage
 
-	VimChooseFromPrompt($dialog,$list,$sep,@args);
+    VimChooseFromPrompt($dialog,$list,$sep,@args);
 
 =head4 Input
 
@@ -667,7 +667,7 @@ sub VimPerlGetModuleName {
         foreach my $k(keys %$opts){
           for($k){
             /^selectdialog$/ && do {
-	            $module = VimPerlGetModuleNameFromDialog;
+                $module = VimPerlGetModuleNameFromDialog;
               last LOOP;
             };
           }
@@ -684,26 +684,26 @@ sub VimPerlGetModuleName {
         #   check for the current buffer's name
         #
         my $path=VimCurBuf_Name();
-	    $module = '';
-	
-	    if($path) {
-	        if ($path =~ /\.pm$/){
-	            $module = VimPerlModuleNameFromPath($path);
-	        }
+        $module = '';
+    
+        if($path) {
+            if ($path =~ /\.pm$/){
+                $module = VimPerlModuleNameFromPath($path);
+            }
         }else{
         # 4. If fail to get the current buffer's name, pop up a module chooser dialog
         #
-	        VimMsgE('Failed to get $CurBuf->{name} from Vim::Perl');
-	
-	        $module = VimPerlGetModuleNameFromDialog;
-	    }
-	
-	    unless($module){
-	        VimMsg("Module name is zero");
-	    }else{
-	        VimMsg("Module name is set as: $module");
-	        $ModuleName = $module;
-	    }
+            VimMsgE('Failed to get $CurBuf->{name} from Vim::Perl');
+    
+            $module = VimPerlGetModuleNameFromDialog;
+        }
+    
+        unless($module){
+            VimMsg("Module name is zero");
+        }else{
+            VimMsg("Module name is set as: $module");
+            $ModuleName = $module;
+        }
 
         last;
     }
@@ -858,24 +858,24 @@ sub Vim_MsgDebug {
 
 
 sub VimLog {
-	my @m = @_;
+    my @m = @_;
 
-	for(@m){
-		my $s = escape('printable',$_);
-		VimCmd(qq{ call base#log("$s") });
-	}
+    for(@m){
+        my $s = escape('printable',$_);
+        VimCmd(qq{ call base#log("$s") });
+    }
 }
 
 =head3 VimMsg
 
 =head4 Usage
 
-	my $text='aaa ... ';
+    my $text='aaa ... ';
 
-	VimMsg($text,$options);
-	VimMsg([ $text ],$options);
+    VimMsg($text,$options);
+    VimMsg([ $text ],$options);
 
-	VimMsg([ qw(a b) ],$options);
+    VimMsg([ qw(a b) ],$options);
 
 =head4 Input variables
 
@@ -904,72 +904,72 @@ sub VimMsg {
     my ($text,$ref) = @_;
     return  unless defined $text;
 
-	$ref ||= {};
-	$ref = {} unless (ref $ref eq 'HASH');
+    $ref ||= {};
+    $ref = {} unless (ref $ref eq 'HASH');
 
     if ( ref $text eq "ARRAY" ) {
-		VimMsg($_,$ref) for(@$text);
-		return 1;
-	}
+        VimMsg($_,$ref) for(@$text);
+        return 1;
+    }
 
-	unless (ref $text eq '') { return; }
-	return if $SILENT;
+    unless (ref $text eq '') { return; }
+    return if $SILENT;
 
-	my $hl = $ref->{hl} || '';
+    my $hl = $ref->{hl} || '';
 
- 	VIM::Msg($text,$hl);
+    VIM::Msg($text,$hl);
 
-	$ref->{dbfile} = $DBFILE;
-	$ref->{dbh}    = $DBH;
+    $ref->{dbfile} = $DBFILE;
+    $ref->{dbh}    = $DBH;
 
-	VimMsg_dbh($text,$ref);
+    VimMsg_dbh($text,$ref);
 
-	return 1;
+    return 1;
 
 }
 
 sub VimMsg_dbh {
     my ($text, $ref) = @_;
-	
-	my $dbh    = $ref->{dbh} || $DBH;
-	my $dbfile = $ref->{dbfile} || $DBFILE;
+    
+    my $dbh    = $ref->{dbh} || $DBH;
+    my $dbfile = $ref->{dbfile} || $DBFILE;
 
-	my $start = int(VimVar('g:time_start') || time());
-	my $elapsed = time() -  $start;
-	my $r = {
-		dbh    => $dbh,
-		dbfile => $dbfile,
-		t => 'log',
-		i => q{INSERT OR IGNORE},
-		h => {
-			time     => time(),
-			elapsed  => $elapsed,
-			msg      => "$text",
-			prf      => $ref->{prf} || "vim::perl",
-			loglevel => $ref->{loglevel} || '',
-			func     => $ref->{func} || '',
-			plugin   => $ref->{plugin} || '',
-		},
-	};
-		
-	dbh_insert_hash($r);
+    my $start = int(VimVar('g:time_start') || time());
+    my $elapsed = time() -  $start;
+    my $r = {
+        dbh    => $dbh,
+        dbfile => $dbfile,
+        t => 'log',
+        i => q{INSERT OR IGNORE},
+        h => {
+            time     => time(),
+            elapsed  => $elapsed,
+            msg      => "$text",
+            prf      => $ref->{prf} || "vim::perl",
+            loglevel => $ref->{loglevel} || '',
+            func     => $ref->{func} || '',
+            plugin   => $ref->{plugin} || '',
+        },
+    };
+        
+    dbh_insert_hash($r);
 
 }
 
 sub VimWarn {
-	my($text,$ref)=@_;
-	$ref ||= {};
+    my($text,$ref)=@_;
+    $ref ||= {};
 
-	my $h = {
-		hl       => 'WarningMsg',
-		loglevel => 'warn',
-	};
-	if (ref $ref eq 'HASH') {
-		for (keys %$h){
-			$ref->{$_} = $h->{$_};
-		}
-	}
-	VimMsg($text,$ref);
+    my $h = {
+        hl       => 'WarningMsg',
+        loglevel => 'warn',
+    };
+    if (ref $ref eq 'HASH') {
+        for (keys %$h){
+            $ref->{$_} = $h->{$_};
+        }
+    }
+    VimMsg($text,$ref);
 
 }
 
@@ -978,7 +978,7 @@ sub VimWarn {
 
 =head4 Usage
 
-	VimLet( $var, $ref, $vtype );
+    VimLet( $var, $ref, $vtype );
 
 =head4 Purpose
 
@@ -986,41 +986,41 @@ Set the value of a vimscript variable
 
 =head4 Examples
 
-	VimLet('paths',\%paths,'g')
+    VimLet('paths',\%paths,'g')
 
-	VimLet('PMOD_ModSubs',\@SUBS,'g')
+    VimLet('PMOD_ModSubs',\@SUBS,'g')
 
 =cut
 
 sub VimLet {
     my ($var, $ref, $o) = @_;
 
-	my $refc = clone $ref;
-	replace_undefs($refc);
+    my $refc = clone $ref;
+    replace_undefs($refc);
 
-	my $valstr = "";
-	my $vimcode = "";
+    my $valstr = "";
+    my $vimcode = "";
     unless ( ref $ref ) {
         $valstr .= quote(printable($ref));
-		$vimcode = qq{ let $var = $valstr };
+        $vimcode = qq{ let $var = $valstr };
     }else{
-		my $coder = JSON::XS->new->ascii->pretty(0)->allow_nonref;
-		$valstr = $coder->encode ($refc);
-		$vimcode = qq{ let $var = $valstr };
-		#$vimcode = escape('printable',$vimcode);
-		print $vimcode if $o->{print_vc};
-	}
+        my $coder = JSON::XS->new->ascii->pretty(0)->allow_nonref;
+        $valstr = $coder->encode ($refc);
+        $vimcode = qq{ let $var = $valstr };
+        #$vimcode = escape('printable',$vimcode);
+        print $vimcode if $o->{print_vc};
+    }
 
-	my $cmds = [];
+    my $cmds = [];
 
-	push @$cmds,
-		qq{if exists("$var") | unlet $var  | endif},
-		$vimcode
-		;
+    push @$cmds,
+        qq{if exists("$var") | unlet $var  | endif},
+        $vimcode
+        ;
 
-	for(@$cmds){
-		VimCmd($_);
-	}
+    for(@$cmds){
+        VimCmd($_);
+    }
 }
 
 sub VimLetOld {
@@ -1054,15 +1054,15 @@ sub VimLetOld {
     }
 
     if ($valstr) {
-		my $cmds =[];
+        my $cmds =[];
 
-		push @$cmds,
-			'if exists("' . $var . '") | unlet ' . $var . ' | endif ' ,
-			$lhs . '=' . $valstr ;
+        push @$cmds,
+            'if exists("' . $var . '") | unlet ' . $var . ' | endif ' ,
+            $lhs . '=' . $valstr ;
 
-		for(@$cmds){
-       		VimCmd($_);
-		}
+        for(@$cmds){
+            VimCmd($_);
+        }
     }
 
 }
@@ -1071,7 +1071,7 @@ sub VimLetOld {
 
 =head4 Usage
 
-	VimLetEval($var,$expr);
+    VimLetEval($var,$expr);
 
 =head4 Purpose
 
@@ -1079,11 +1079,11 @@ Assign to the variable C<$var> the result of evaluation of expression C<$expr>.
 
 =head4 Examples
 
-	VimLetEval('tempvar','tempname()') 
+    VimLetEval('tempvar','tempname()') 
 
 equivalent in vimscript to 
 
-	let tempvar=tempname()
+    let tempvar=tempname()
 
 =cut
 
@@ -1108,7 +1108,7 @@ sub VimSet {
 
 =head4 Usage
 
-	VimStrToOpts($str,$sep);
+    VimStrToOpts($str,$sep);
 
 =head4 Input
 
@@ -1128,7 +1128,7 @@ separator between options in the input string.
 
 hash reference of the form: 
 
-	{ OPTION1 => 1, OPTION2 => 0, etc. }
+    { OPTION1 => 1, OPTION2 => 0, etc. }
 
 =cut
 
@@ -1157,7 +1157,7 @@ sub VimStrToOpts {
 
 =head4 Usage
 
-	VimPerlInstallModule($opts);
+    VimPerlInstallModule($opts);
 
 =head4 Purpose
 
@@ -1201,23 +1201,23 @@ sub VimPerlInstallModule {
       }
     }
 
-	# rbi_force: 
+    # rbi_force: 
   #     Force to install module, even if the local vs installed versions are the same
-	# rbi_discard_loaddat: 
+    # rbi_discard_loaddat: 
   #     Discard the list of modules from the modules_to_install.i.dat
 
     foreach my $module (@imodules) {
 
-	    VimMsg("Running install for module $module");
+        VimMsg("Running install for module $module");
 
-	    my ($ok,$success,$fail,$failmods,$errorlines)=$i->run_build_install($module);
-	    if ($ok){
+        my ($ok,$success,$fail,$failmods,$errorlines)=$i->run_build_install($module);
+        if ($ok){
 ###imod_rbi
-	        VimMsg("SUCCESS");
-	    } else {
-	        VimMsg("FAIL");
-	        my $efmperl=catfile($VDIRS{VIMRUNTIME},qw(tools efm_perl.pl));
-	        my $efmfilter=catfile($VDIRS{VIMRUNTIME},qw(tools efm_filter.pl));
+            VimMsg("SUCCESS");
+        } else {
+            VimMsg("FAIL");
+            my $efmperl=catfile($VDIRS{VIMRUNTIME},qw(tools efm_perl.pl));
+            my $efmfilter=catfile($VDIRS{VIMRUNTIME},qw(tools efm_filter.pl));
             my $tmpfile=VimEval('tempname()');
             my $elines=$errorlines->{module} || [];
             write_file($tmpfile,join("\n",@$elines) . "\n");
@@ -1227,16 +1227,16 @@ sub VimPerlInstallModule {
             $qlist=[ {
                 filename  => VimPerlPathFromModuleName($module),
                 lnum  => '20',
-			#text	description of the error
+            #text   description of the error
                 text  => '',
-			#type	single-character error type, 'E', 'W', etc.
+            #type   single-character error type, 'E', 'W', etc.
                 type  => '',
             } ];
 ###imod_qlist
             print Dumper($qlist);
-			VimQuickFixList($qlist,'add');
+            VimQuickFixList($qlist,'add');
 ##TODO todo_quickfix
-	    }
+        }
     }
 
 }
@@ -1277,20 +1277,20 @@ sub VimQuickFixList {
     foreach my $a (@arr) {
         VimLet('qlist',$a);
 
-	    for($action){
-	      /^add$/ && do {
-		        VimCmd("call setqflist([ qlist ], 'a')");
-		        next;
-	      };
-	      /^new$/ && do {
-	          unless($i){
-		          VimCmd("call setqflist([ qlist ])");
-	          }else{
-		          VimCmd("call setqflist([ qlist ],'a')");
-	          }
-	          next;
-	      };
-	    }
+        for($action){
+          /^add$/ && do {
+                VimCmd("call setqflist([ qlist ], 'a')");
+                next;
+          };
+          /^new$/ && do {
+              unless($i){
+                  VimCmd("call setqflist([ qlist ])");
+              }else{
+                  VimCmd("call setqflist([ qlist ],'a')");
+              }
+              next;
+          };
+        }
           VimMsg("Processed QLIST: " . VimEval('getqflist()'));
       $i++;
     }
@@ -1317,78 +1317,78 @@ sub VimPerlViewModule {
 }
 
 sub VimThisLine {
-	my $id=shift;
+    my $id=shift;
 
-	VimEval("line('.')");
+    VimEval("line('.')");
 }
 
 sub VimBufSplit {
-	my $ref = shift;
+    my $ref = shift;
 
-	my $lines = $ref->{lines} || [];
+    my $lines = $ref->{lines} || [];
 
-	my $cmds=[
-		'split',
-		'enew',
-		'setlocal buftype=nofile',
-		#'setlocal nomodifiable'
-	];
-	VimCmd($cmds);
-	my $lnum=0;
-	my @nlines;
+    my $cmds=[
+        'split',
+        'enew',
+        'setlocal buftype=nofile',
+        #'setlocal nomodifiable'
+    ];
+    VimCmd($cmds);
+    my $lnum=0;
+    my @nlines;
 
-	if (@$lines) {
-		foreach(@$lines) {
-			push @nlines, split ("\n" => $_);
-		}
+    if (@$lines) {
+        foreach(@$lines) {
+            push @nlines, split ("\n" => $_);
+        }
 
-		foreach(@nlines) {
-			chomp;
+        foreach(@nlines) {
+            chomp;
 
-			#s/\\/\\\\/g;
-			#s/"/\\"/g;
-			#s/'/\\'/g;
+            #s/\\/\\\\/g;
+            #s/"/\\"/g;
+            #s/'/\\'/g;
 
-			$_=escape('printable',$_);
-			#VimMsg($_);
-			
-			VimCmd([
-				'let line='.'"'.$_.'"',
-				'let lnum='.$lnum,
-				'call append(lnum,line)',
-			]);
-			$lnum++;
-		}
-	}
+            $_=escape('printable',$_);
+            #VimMsg($_);
+            
+            VimCmd([
+                'let line='.'"'.$_.'"',
+                'let lnum='.$lnum,
+                'call append(lnum,line)',
+            ]);
+            $lnum++;
+        }
+    }
 
 }
 
 sub VimListExtend {
     my ($vimlist,$arrayref,$opts) = @_;
 
-	$opts||={};
+    $opts||={};
 
-	for my $l (@$arrayref){
-		local $_ = $l;
+    for my $l (@$arrayref){
+        local $_ = $l;
 
-		unless(defined){
-			$_ = '';
-			if ($opts->{skip}->{undefined}) {
-				next;
-			}
-		}
+        unless(defined){
+            $_ = '';
+            if ($opts->{skip}->{undefined}) {
+                next;
+            }
+        }
 
-		if ($opts->{skip}->{spaces}) {
-			next if /^\s*$/;
-		}
+        if ($opts->{skip}->{spaces}) {
+            next if /^\s*$/;
+        }
 
-		s/\\/\\\\/g;
-		s/"/\\"/g;
+        s/\\/\\\\/g;
+        s/"/\\"/g;
 
-		VimLet('xx',$_);
-		my $cmd = 'call add(' . $vimlist . ',xx)';
-		VimCmd($cmd);
-	}
+        VimLet('xx',$_);
+        my $cmd = 'call add(' . $vimlist . ',xx)';
+        VimCmd($cmd);
+    }
 }
 
 sub VimPieceFullFile {
@@ -1399,25 +1399,25 @@ sub VimPieceFullFile {
 }
 
 sub CurBufSet {
-	my $ref = shift;
+    my $ref = shift;
 
-	my $text   = $ref->{text} || '';
-	my $curbuf = $ref->{curbuf} || $CURBUF;
+    my $text   = $ref->{text} || '';
+    my $curbuf = $ref->{curbuf} || $CURBUF;
 
-	my $c    = $curbuf->Count();
+    my $c    = $curbuf->Count();
 
-	my @lines;
-	if (ref $text eq "ARRAY"){
-		@lines=@$text;
-		
-	}elsif(not ref $text){
-		@lines=split("\n",$text);
-	}
+    my @lines;
+    if (ref $text eq "ARRAY"){
+        @lines=@$text;
+        
+    }elsif(not ref $text){
+        @lines=split("\n",$text);
+    }
 
-	if (@lines) {
-		$curbuf->Delete(1,$c);
-		$curbuf->Append(1,@lines);
-	}
+    if (@lines) {
+        $curbuf->Delete(1,$c);
+        $curbuf->Append(1,@lines);
+    }
 }
 
 sub VimGetLine {
@@ -1470,7 +1470,7 @@ sub VimSetTags {
 
 =head4 Usage
 
-	VimJoin( $arrname, $sep,  $vtype );
+    VimJoin( $arrname, $sep,  $vtype );
 
 =over 4
 
@@ -1572,23 +1572,23 @@ sub VimBufFiles_Edit {
 }
 
 sub EnvVar {
-	my ($varname,$default)=@_;
+    my ($varname,$default)=@_;
 
-	my $env=sub { my $vname=shift; $ENV{$vname} || $default || ''; };
+    my $env=sub { my $vname=shift; $ENV{$vname} || $default || ''; };
 
-	my $val     = $env->($varname);
-	return $val unless $val;
+    my $val     = $env->($varname);
+    return $val unless $val;
 
-	if($^O eq 'MSWin32'){
-		local $_=$val;
-		while(/%(\w+)%/){
-			my $vname = $1;
-			my $vval  = $env->($vname);
-			s/%(\w+)%/$vval/g;
-		}
-		$val=$_;
-	}
-	return $val;
+    if($^O eq 'MSWin32'){
+        local $_=$val;
+        while(/%(\w+)%/){
+            my $vname = $1;
+            my $vval  = $env->($vname);
+            s/%(\w+)%/$vval/g;
+        }
+        $val=$_;
+    }
+    return $val;
 }
 
 sub init {
@@ -1699,19 +1699,19 @@ sub init_VDIRS {
 ###BEGIN
 BEGIN {
 
-	sub UnderVim {
-		eval 'VIM::Eval("1")';
-		
-		my $uv = ($@) ? 0 : 1;
-		return $uv;
-	}
+    sub UnderVim {
+        eval 'VIM::Eval("1")';
+        
+        my $uv = ($@) ? 0 : 1;
+        return $uv;
+    }
 
-	$UnderVim=0;
-	if (&UnderVim()){
-		$UnderVim=1;
-	   	init();
-	}
-	
+    $UnderVim=0;
+    if (&UnderVim()){
+        $UnderVim=1;
+        init();
+    }
+    
 }
 
 1;
