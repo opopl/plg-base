@@ -138,8 +138,9 @@ fun! base#init#paths(...)
     call base#initpaths#RESTPC()
   endif
   
+	let repos_git = base#envvar('REPOSGIT', base#file#catfile([ base#path('hm'), 'repos', 'git'  ]))
   call base#pathset({ 
-      \ "repos_git" : base#file#catfile([ base#path('hm'), 'repos', 'git'  ]),
+      \ "repos_git" : repos_git
     \ })
 
   call base#pathset({ 

@@ -84,6 +84,7 @@ sub dhelp {
 
     EXAMPLES
         $Script --run
+        $Script --r
     };
 
     print $s . "\n";

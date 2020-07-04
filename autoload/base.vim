@@ -3121,6 +3121,12 @@ function! base#envvar_open_split (varname, ... )
 
 endf    
 
+
+if 0
+	Usage
+		let value = base#envvar(variable,default)
+endif
+
 function! base#envvar (varname, ... )
     let default = get(a:000,0,'')
 
