@@ -277,6 +277,8 @@ function! base#tg#update_tygs (...)
   if prompt
     let msg_a = [
       \ " ",  
+      \ "This will produce TYGS for tag ID = " . tdid,  
+      \ " ",  
       \ "REDO flag - sets redo flag in Base::PerlFile, and does all", 
       \ "   calculations from the file system", 
       \ " ",  
@@ -989,10 +991,12 @@ function! base#tg#view (...)
   if a:0 
     let tgid = a:1
   else
-    let tgs = base#tg#ids()
-    for tgid in tgs
-      call base#tg#view(tgid)
-    endfor
+    call base#tags#view()
+
+    "let tgs = base#tg#ids()
+    "for tgid in tgs
+      "call base#tg#view(tgid)
+    "endfor
     return
   endif
 

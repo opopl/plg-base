@@ -4,7 +4,11 @@ function! base#tags#view ()
 
 	for f in files
 		if filereadable(f)
-			call base#fileopen(f)
+			call base#fileopen({ 
+						\	'files'    : [ f ],
+						\	'load_buf' : 1,
+						\	})
+
 			call base#tags#set(f)
 			exe 'autocmd! BufRead,BufWinEnter ' . f . ' TgSet _thisfile_'
 		endif
