@@ -118,6 +118,7 @@ my @ex_vars_array = qw(
           VimLetEval
           VimLog
           VimMsg
+          VimMsgDump
           VimPerlGetModuleName
           VimPerlGetModuleNameFromDialog
           VimPerlInstallModule
@@ -864,6 +865,19 @@ sub VimLog {
         my $s = escape('printable',$_);
         VimCmd(qq{ call base#log("$s") });
     }
+}
+
+sub VimMsgDump {
+	my @vars = @_;
+
+	my $str='';
+	foreach my $var (@vars) {
+		$str .= Dumper($var);
+	}
+	$str =~ s/\n/ /gsm;
+	VimMsg($str);
+	return $str;
+
 }
 
 =head3 VimMsg

@@ -65,6 +65,26 @@ function! base#log#func ()
 
 endfunction
 
+function! base#log#perl ()
+	let dbfile = base#dbfile()
+
+	let q = 'SELECT msg,prf,plugin,func,vim_code FROM log ' 
+	let q .= ' WHERE prf = "vim::perl"'
+
+	let q = input('log view query: ',q)
+
+	let rq = {
+			\	'dbfile' : dbfile,
+			\	'q'      : q,
+			\	'p'      : [],
+			\	}
+
+	let lines = []
+	call extend(lines, pymy#sqlite#query_screen(rq) )
+	call base#buf#open_split({ 'lines' : lines })
+
+endfunction
+
 function! base#log#vim_code ()
 	let dbfile = base#dbfile()
 
