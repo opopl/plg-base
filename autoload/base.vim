@@ -403,6 +403,8 @@ if 0
   call tree
     called by
       CD
+    calls
+			base#path
 endif
 
 function! base#CD(pathid, ... )
@@ -414,6 +416,11 @@ function! base#CD(pathid, ... )
 
     let dir = base#path(pathid)
     call base#varset('pathid',pathid)
+
+    if ! isdirectory(dir)
+			call base#mkdir(dir)
+		endif
+
     if isdirectory(dir)
         call base#cd(dir,ref)
     else

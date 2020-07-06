@@ -110,11 +110,18 @@ fun! base#init#paths(...)
         \ })
 
     call base#pathset({ 
-        \ 'db' : base#qw#catpath('home','db'),
+        \ 'db'      : base#qw#catpath('home','db'),
+        \ 'tmp_bat' : base#envvar('TMP_BAT',base#qw#catpath('home','tmp_bat')),
         \ })
 
+		let dirs_mk = base#qw('tmp_bat')
+		for dirid in dirs_mk
+			let dir = base#path(dirid)
+			call base#mkdir(dir)
+		endfor
+
     call base#pathset({ 
-        \ 'appdata_plg_base'  : base#qw#catpath('appdata','vim plg base'),
+        \ 'appdata_plg_base'    : base#qw#catpath('appdata','vim plg base'),
         \ 'appdata_plg_perlmy'  : base#qw#catpath('appdata','vim plg perlmy'),
         \ })
 

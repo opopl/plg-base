@@ -253,15 +253,20 @@ function! base#tg#update_w_bat (...)
 
 endf
 
-"Call tree:
-" Called by:
-"   base#tg#update
-"
+if 0
+  Call tree
+   Called by
+      base#tg#update
+   Calls
+      base#ty#make
+        base#bat#cmd_for_exe
+endif
+
 function! base#tg#update_tygs (...)
   let ref = get(a:000, 0, {})
 
-  let tgid = get(ref, 'tgid', '' )
-  let dirs = get(ref, 'dirs', [] )
+  let tgid   = get(ref, 'tgid', '' )
+  let dirs   = get(ref, 'dirs', [] )
   let prompt = get(ref, 'prompt', 0 )
 
   let tfile = base#tg#tfile(tgid)
@@ -277,7 +282,7 @@ function! base#tg#update_tygs (...)
   if prompt
     let msg_a = [
       \ " ",  
-      \ "This will produce TYGS for tag ID = " . tdid,  
+      \ "This will produce TYGS for tag ID = " . tgid,  
       \ " ",  
       \ "REDO flag - sets redo flag in Base::PerlFile, and does all", 
       \ "   calculations from the file system", 
