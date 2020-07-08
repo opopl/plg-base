@@ -11,12 +11,7 @@ use Tk;
 use FindBin qw( $Bin $Script );
 use File::Basename qw(basename);
 use File::Slurp qw(
-  append_file
-  edit_file
-  edit_file_lines
   read_file
-  write_file
-  prepend_file
 );
 use Data::Dumper qw(Dumper);
 
@@ -81,10 +76,11 @@ sub dhelp {
     USAGE
         $Script OPTIONS
     OPTIONS
+        --run -r run the script
 
     EXAMPLES
         $Script --run
-        $Script --r
+        $Script -r
     };
 
     print $s . "\n";
@@ -93,7 +89,7 @@ sub dhelp {
 }
 
 sub run {
-    my $self = shift;
+    my ($self) = @_;
 
     $self
         ->get_opt
@@ -119,7 +115,10 @@ sub tk_run {
 sub _data_file {
     my $self = shift;
 
-    my $data_file = catfile( $self->{root_dir}, $self->{script_name} . '_data.json' );
+    my $data_file = catfile( 
+        $self->{root_dir}, 
+        $self->{script_name} . '_data.json' 
+    );
     return $data_file;
 }
 

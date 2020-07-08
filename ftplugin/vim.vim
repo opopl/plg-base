@@ -3,6 +3,9 @@ let comps = base#comps#bufact('vim')
 call add(comps,'stat')
 
 let b:comps_BufAct = comps
+setlocal iskeyword+=#
+setlocal iskeyword+=:
+setlocal sw=2
 
 if exists("b:did_base_vim_ftplugin")
   finish
@@ -29,8 +32,6 @@ let b:is_plgvim = ( b:cr == plgdir )
 let b:is_mkvimrc_com=0
 let b:is_mkvimrc_fun=0
 
-setlocal iskeyword+=#
-setlocal sw=2
 
 let dict_funcs = base#qw#catpath('plg','base dictionaries vim funcs.txt')
 let b:dicts = {
