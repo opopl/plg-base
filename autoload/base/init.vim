@@ -107,6 +107,7 @@ fun! base#init#paths(...)
         \ 'tagdir'        : base#file#catfile([ hm,'tags' ]),
         \ 'appdata'       : base#envvar('APPDATA'),
         \ 'appdata_local' : base#envvar('LOCALAPPDATA'),
+        \ 'www'           : base#envvar('WWW'),
         \ })
 
     call base#pathset({ 
@@ -115,11 +116,11 @@ fun! base#init#paths(...)
         \ 'log_html' : base#envvar('LOG_HTML',base#qw#catpath('home','log html')),
         \ })
 
-		let dirs_mk = base#qw('tmp_bat')
-		for dirid in dirs_mk
-			let dir = base#path(dirid)
-			call base#mkdir(dir)
-		endfor
+    let dirs_mk = base#qw('tmp_bat')
+    for dirid in dirs_mk
+      let dir = base#path(dirid)
+      call base#mkdir(dir)
+    endfor
 
     call base#pathset({ 
         \ 'appdata_plg_base'    : base#qw#catpath('appdata','vim plg base'),
@@ -146,7 +147,7 @@ fun! base#init#paths(...)
     call base#initpaths#RESTPC()
   endif
   
-	let repos_git = base#envvar('REPOSGIT', base#file#catfile([ base#path('hm'), 'repos', 'git'  ]))
+  let repos_git = base#envvar('REPOSGIT', base#file#catfile([ base#path('hm'), 'repos', 'git'  ]))
   call base#pathset({ 
       \ "repos_git" : repos_git
     \ })
