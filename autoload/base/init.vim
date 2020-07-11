@@ -108,6 +108,9 @@ fun! base#init#paths(...)
         \ 'appdata'       : base#envvar('APPDATA'),
         \ 'appdata_local' : base#envvar('LOCALAPPDATA'),
         \ 'www'           : base#envvar('WWW'),
+        \ 'xampp'         : base#envvar('XAMPP'),
+        \ 'apache'        : base#envvar('APACHE'),
+        \ 'java_home'     : base#envvar('JAVA_HOME'),
         \ })
 
     call base#pathset({ 
