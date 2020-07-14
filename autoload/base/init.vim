@@ -98,7 +98,6 @@ fun! base#init#paths(...)
         \ 'hm'            : hm ,
         \ 'vrt'           : vrt,
         \ 'vim'           : base#envvar('VIM'),
-        \ 'conf'          : base#envvar('CONFDIR'),
         \ 'src_vim'       : base#envvar('SRC_VIM'),
         \ 'texdocs'       : projsdir,
         \ 'texinputs'     : base#envvar('texinputs'),
@@ -111,11 +110,13 @@ fun! base#init#paths(...)
         \ 'xampp'         : base#envvar('XAMPP'),
         \ 'apache'        : base#envvar('APACHE'),
         \ 'java_home'     : base#envvar('JAVA_HOME'),
+        \ 'config_win'    : base#envvar('CONFIG_WIN'),
+        \ 'seeddms'       : base#envvar('SEEDDMS'),
         \ })
 
     call base#pathset({ 
-        \ 'db'      : base#qw#catpath('home','db'),
-        \ 'tmp_bat' : base#envvar('TMP_BAT',base#qw#catpath('home','tmp bat')),
+        \ 'db'       : base#qw#catpath('home','db'),
+        \ 'tmp_bat'  : base#envvar('TMP_BAT',base#qw#catpath('home','tmp bat')),
         \ 'log_html' : base#envvar('LOG_HTML',base#qw#catpath('home','log html')),
         \ })
 
