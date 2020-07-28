@@ -1147,9 +1147,22 @@ endfunction
 
 fun! base#readdatalist(id)
     
-    let list=base#readdatfile({ "file" : file, "type" : "List" })
+    let list = base#readdatfile({ 
+			\	"file" : file, 
+			\	"type" : "List" 
+			\	})
 
 endfun
+
+if 0
+	Usage
+		call base#readdatfile({
+			\	"file" : file,
+			\	"type" : type,
+			\	})
+	Values for Type:
+		List ListLines Dictionary
+endif
 
 fun! base#readdatfile(ref,...)
 

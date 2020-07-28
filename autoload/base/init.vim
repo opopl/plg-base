@@ -104,15 +104,21 @@ fun! base#init#paths(...)
         \ 'p'             : base#envvar('TexPapersRoot'),
         \ 'phd_p'         : base#envvar('TexPapersRoot'),
         \ 'tagdir'        : base#file#catfile([ hm,'tags' ]),
-        \ 'appdata'       : base#envvar('APPDATA'),
         \ 'appdata_local' : base#envvar('LOCALAPPDATA'),
-        \ 'www'           : base#envvar('WWW'),
-        \ 'xampp'         : base#envvar('XAMPP'),
-        \ 'apache'        : base#envvar('APACHE'),
-        \ 'java_home'     : base#envvar('JAVA_HOME'),
-        \ 'config_win'    : base#envvar('CONFIG_WIN'),
-        \ 'seeddms'       : base#envvar('SEEDDMS'),
         \ })
+
+		let file_env = base#qw#catpath('plg','base data list envvars.i.dat')
+		let envlist = base#readdatfile({
+					\	"file" : file_env,
+					\	"type" : "List",
+					\	})
+
+		for env in envlist
+			let val = base#envvar(toupper(env))
+			call base#pathset({ 
+				\	env : val,
+				\	})
+		endfor
 
     call base#pathset({ 
         \ 'db'       : base#qw#catpath('home','db'),
@@ -161,9 +167,6 @@ fun! base#init#paths(...)
     \ })
     
     call base#pathset({
-        \   'pdfout'      : base#envvar('PDFOUT'),
-        \   'htmlout'     : base#envvar('HTMLOUT'),
-        \   'jsdocs'      : base#envvar('JSDOCS'),
         \   'htmldocs'    : base#envvar('HTMLDOCS',base#qw#catpath('repos_git','htmldocs')),
         \ })
 
