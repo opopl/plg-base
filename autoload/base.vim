@@ -404,7 +404,7 @@ if 0
     called by
       CD
     calls
-			base#path
+      base#path
 endif
 
 function! base#CD(pathid, ... )
@@ -418,8 +418,8 @@ function! base#CD(pathid, ... )
     call base#varset('pathid',pathid)
 
     if ! isdirectory(dir)
-			call base#mkdir(dir)
-		endif
+      call base#mkdir(dir)
+    endif
 
     if isdirectory(dir)
         call base#cd(dir,ref)
@@ -1148,20 +1148,20 @@ endfunction
 fun! base#readdatalist(id)
     
     let list = base#readdatfile({ 
-			\	"file" : file, 
-			\	"type" : "List" 
-			\	})
+      \ "file" : file, 
+      \ "type" : "List" 
+      \ })
 
 endfun
 
 if 0
-	Usage
-		call base#readdatfile({
-			\	"file" : file,
-			\	"type" : type,
-			\	})
-	Values for Type:
-		List ListLines Dictionary
+  Usage
+    call base#readdatfile({
+      \ "file" : file,
+      \ "type" : type,
+      \ })
+  Values for Type:
+    List ListLines Dictionary
 endif
 
 fun! base#readdatfile(ref,...)
@@ -3143,8 +3143,8 @@ endf
 
 
 if 0
-	Usage
-		let value = base#envvar(variable,default)
+  Usage
+    let value = base#envvar(variable,default)
 endif
 
 function! base#envvar (varname, ... )
@@ -3596,11 +3596,11 @@ function! base#act (...)
 endf    
 
 function! base#pcname_lc()
-	return tolower(base#pcname())
+  return tolower(base#pcname())
 endf    
 
 function! base#pcname_uc()
-	return toupper(base#pcname())
+  return toupper(base#pcname())
 endf    
 
 function! base#pcname()
@@ -3975,10 +3975,10 @@ endfunction
 
 function! base#equalpaths (p1,p2)
 
- let sep='/'
+ let sep = '/'
 
- let a1=filter(split(a:p1,sep),"v:val != ''")
- let a2=filter(split(a:p2,sep),"v:val != ''")
+ let a1 = filter(split(a:p1,sep),"v:val != ''")
+ let a2 = filter(split(a:p2,sep),"v:val != ''")
 
  if len(a1) != len(a2)
      return 0
@@ -3986,8 +3986,8 @@ function! base#equalpaths (p1,p2)
 
  while len(a1) > 0
 
-    let e1=remove(a1,-1)
-    let e2=remove(a2,-1)
+    let e1 = remove(a1,-1)
+    let e2 = remove(a2,-1)
 
     if e1 != e2 
       return 0
@@ -3997,5 +3997,18 @@ function! base#equalpaths (p1,p2)
  
 endfunction
  
+if 0
+  Usage
+    echo base#word('insert_plus')
+endif
 
+function! base#word (...)
+  let id    = get(a:000,0,'')
+
+  let words = base#varget('words',[])
+  let word  = get(words,id,'')
+
+  return word
+  
+endfunction
 
