@@ -107,7 +107,12 @@ fun! base#buffers#get(...)
          let b[key] = base#file#win2unix(b[key])
      endfor
 
-     if getftype(b.fullname) == "dir" && base#opttrue('buf_showdirs')
+		 let full_name = get(b,'fullname','')
+		 if !strlen(full_name)
+			 continue
+		 endif
+
+		 if ( getftype(full_name) == "dir" ) && base#opttrue('buf_showdirs')
          let b.shortname = "<DIRECTORY>"
      endif
  
@@ -125,7 +130,7 @@ fun! base#buffers#get(...)
      endfor
 
      call add(bufs, b)
-     call add(buffiles, b.fullname)
+     call add(buffiles, full_name)
      call add(bufnums,bnum)
   endfor
 
