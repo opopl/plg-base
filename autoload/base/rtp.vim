@@ -64,6 +64,21 @@ function! base#rtp#list_opensplit(...)
 	call base#buf#open_split({ 'lines' : list })
 endf
 
+if 0
+	Purpose:
+		
+	Usage:
+		call base#rtp#update ()
+	Returns:
+
+	Call tree:
+		calls:
+			base#init#plugins
+			base#rtp#add_plugin
+		called by:
+			base#init
+endif
+
 function! base#rtp#update(...)
 	call base#init#plugins()
 
@@ -72,7 +87,7 @@ function! base#rtp#update(...)
 	endfor
 
 	for dir in split(&rtp,',')
-		let docdir=base#file#catfile([ dir , 'doc' ])
+		let docdir = base#file#catfile([ dir , 'doc' ])
 
 		call base#vim#helptags({ 'dir' : docdir})
 	endfor

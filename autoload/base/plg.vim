@@ -498,13 +498,17 @@ function! base#plg#newfile(plg,file)
 
 endfunction
 
-"base#plg#load(plg)
+if 0
+	Call tree
+		Called by
+
+endif
 
 function! base#plg#rtp_s(plg)
 
   let plg = base#catpath('plg', a:plg )
 
-  let dirs=[ plg, base#file#catfile([ plg , 'after' ]) ]
+  let dirs = [ plg, base#file#catfile([ plg , 'after' ]) ]
 
   let rtp = []
   for dir in dirs 
