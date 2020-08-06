@@ -253,7 +253,13 @@ fun! base#exefile#path(...)
   let fileid = get(aa,0,'')
   let index  = get(aa,1,'')
 
+
   let fpath  = get(s:exefiles,fileid,'')
+
+	if !strlen(fpath)
+		let fpath = base#where#first(fileid)
+		return fpath
+	endif
 
   if type(fpath) == type([])
      if len(index)
