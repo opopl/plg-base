@@ -3557,6 +3557,7 @@ eof
 
 endfunction
 
+
 function! base#act (...)
   let act = get(a:000,0,'')
 
