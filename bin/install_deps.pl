@@ -23,6 +23,18 @@ my @mods_perl = qw(
    XML::LibXML::PrettyPrint
 );
 
+# needed for repos_git p
+push @mods_perl,
+   qw(LaTeX::Table),
+   qw(BibTeX::Parser),
+   qw(Switch),
+   qw(Directory::Iterator),
+   qw(Text::Table),
+   qw(ExtUtils::ModuleMaker),
+   qw(Term::ShellUI),
+   qw(List::Compare File::Util),
+   ;
+
 # for htmltool
 push @mods_perl,qw(
    Exception::Base

@@ -158,9 +158,13 @@ fun! base#init#paths(...)
   endif
   
   let repos_git = base#envvar('REPOSGIT', base#file#catfile([ base#path('hm'), 'repos', 'git'  ]))
+
   call base#pathset({ 
       \ "repos_git" : repos_git
-    \ })
+    	\ })
+  call base#pathset({ 
+      	\ "p" : base#qw#catpath('repos_git p')
+   		 	\ })
 
   call base#pathset({ 
       \ "x_php" : base#file#catfile([ base#path('repos_git'), 'x_php'  ]),
