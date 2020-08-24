@@ -35,6 +35,11 @@ push @mods_perl,
    qw(List::Compare File::Util),
    ;
 
+# needed for projs
+push @mods_perl,
+    qw(Capture::Tiny)
+    ;
+
 # for htmltool
 push @mods_perl,qw(
    Exception::Base
@@ -51,6 +56,7 @@ push @packs_py,
     'numpy',
     'sqlparse',
     'tabulate',
+    'peewee',
     ;
 
 sub doPerl {
