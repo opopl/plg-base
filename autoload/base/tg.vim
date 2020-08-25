@@ -697,6 +697,16 @@ function! base#tg#update (...)
     let dir   = 'c:\src\webgui-master\lib'
     let libs .= ' ' . dir
 
+  elseif tgid == 'perl_inc_projs'
+		let dirids = base#varget('projs_projsdirs',[])
+		for dirid in dirids
+			let dir = base#path(dirid)
+    	let dir = base#file#catfile([ dir, 'perl', 'lib' ])
+			if isdirectory(dir)
+    		let libs .= ' ' . dir
+			endif
+		endfor
+
   elseif tgid == 'perl_inc_plg_browser'
 
     let dir   = base#file#catfile([ base#path('plg'), 'browser', 'perl' ])
