@@ -134,7 +134,8 @@ function!  base#stl#setparts ()
 
   let stlparts['projs_rootbasename'] = '%1*\ %{projs#rootbasename()}\ %0*' 
   let stlparts['projs_proj'] = '%2*\ %{projs#proj#name()}\ %0*' 
-  let stlparts['projs_sec']  = '%7*\ %{projs#proj#secname()}\ %0*' 
+  "let stlparts['projs_sec']  = '%7*\ %{projs#proj#secname()}\ %0*' 
+  let stlparts['projs_sec']  = '%7*\ %{projs#buf#sec()}\ %0*' 
 
   let stlparts['vimfun']= '%1*\ %{g:vimfun}\ %0*' 
   let stlparts['vimcom']= '%1*\ %{g:vimcom}\ %0*' 
