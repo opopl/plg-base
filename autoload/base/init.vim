@@ -122,6 +122,7 @@ fun! base#init#paths(...)
 
     call base#pathset({ 
         \ 'db'       : base#qw#catpath('home','db'),
+        \ 'bin'      : base#qw#catpath('home','bin'),
         \ 'tmp_bat'  : base#envvar('TMP_BAT',base#qw#catpath('home','tmp bat')),
         \ 'log_html' : base#envvar('LOG_HTML',base#qw#catpath('home','log html')),
         \ })

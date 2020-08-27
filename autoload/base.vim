@@ -3903,19 +3903,22 @@ endfunction
 
 function! base#grepopt (...)
     if ! base#varexists('grepopt')
-        if has('win32')
-            let opt = 'plg_findstr'
-            let opt = 'grep'
-        else
-            let opt = 'grep'
-        endif
+        let opt = base#envvar('grep','grep')
+
+        "if has('win32')
+            "let opt = 'plg_findstr'
+            "let opt = 'grep'
+        "else
+            "let opt = base#envvar('grep','grep')
+        "endif
     else
         let opt = base#varget('grepopt','')
     endif
 
     if a:0 | let opt = a:1 | endif
 
-    let opt = 'grep'
+    let opt = base#envvar('grep','grep')
+    "let opt = 'plg_findstr'
     call base#varset('grepopt',opt)
 
     "return base#varget('grepopt','')
