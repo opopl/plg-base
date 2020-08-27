@@ -1,3 +1,5 @@
+snippet pbs
+	projs#buf#sec()
 snippet perlpd
 	print Dumper(<++>) . "\n";
 snippet baw
@@ -1651,3 +1653,107 @@ snippet desc
 	
 	call base#buf#open_split({ 'lines' : lines })
 	return
+snippet sid
+	let siteid =  base#varget('idephp_dws_siteid','')
+	if ! strlen(siteid)
+		let siteid = base#input_we(
+			\	'siteid: ','',
+			\	{ 'complete' : 'custom,idephp#complete#dws_siteids' })
+	endif
+snippet livg
+	let <++> = idephp#var#get(<++>,<++>)
+snippet ivg
+	idephp#var#get(<++>,<++>)
+snippet ivs
+	call idephp#var#set(<++>,<++>)
+snippet ipr
+	call base#buf#open_split({ 
+		\ 'lines'    : xmllines,
+		\ 'cmds_pre' : [ 'setlocal ft=xml' ],
+		\ })
+snippet ipr
+	let r_run = {
+		\ 'opts' : opts,
+		\ 'args' : args,
+		\ 'code' : <++>,
+		\	}
+	let res = idephp#php#run(r_run)
+	let out = get(res,'out',[])
+snippet asc
+	let cmd = <++>
+	
+	let env = {}
+	function env.get(temp_file) dict
+		let temp_file = a:temp_file
+		let code = self.return_code
+
+		if filereadable(a:temp_file)
+			let out = readfile(a:temp_file)
+		endif
+	endfunction
+	
+	call asc#run({ 
+		\	'cmd' : cmd, 
+		\	'Fn'  : asc#tab_restore(env) 
+		\	})
+snippet pj
+	let pj = idephp#pj#get()
+snippet md
+	call base#mkdir(<++>)
+snippet ty
+	let r = {
+		\	'dirs'   : dirs_inc,
+		\	'tfile'  : tfile,
+		\	'tgid'   : tgid,
+		\	'dbfile' : dbfile,
+		\	}
+	call base#ty#make(r)
+snippet rtcomps
+	return join(comps, "\n")
+snippet repeat
+	call repeat( <+expr+>, <+count+> )
+snippet iffc
+	if type(Fc) == type(function('call'))
+		call call(Fc,Fc_args)
+	endif
+snippet fca
+	let self      = a:self
+	let temp_file = a:temp_file
+snippet se
+	shellescape(<++>)
+snippet dd
+	BaseVarEcho idephp_pj_files_load
+	return
+snippet ipg
+	idephp#pj#get()
+snippet bd
+	let dump = base#dump(data)
+	call base#buf#open_split({ 'text' : dump })
+snippet bfn
+	base#fun#new({ <++> })
+snippet bfcp
+	call base#file#copy
+snippet base#file#copy
+	base#file#copy(<+old+>, <+new+>)
+snippet if0
+	if 0
+		<++>
+	endif
+snippet sp
+	split(<++>,<++>)
+snippet ins
+	call insert(<++>, <++>)
+snippet matchstr
+	matchstr(<+expr+>, <+pat+> )
+	matchstr({expr}, {pat}[, {start}[, {count}]])			*matchstr()*
+	Same as |match()|, but return the matched string.  Example: >
+	:echo matchstr("testing", "ing")
+	<		results in "ing".
+	When there is no match "" is returned.
+	The {start}, if given, has the same meaning as for |match()|. >
+	:echo matchstr("testing", "ing", 2)
+	<		results in "ing". >
+	:echo matchstr("testing", "ing", 5)
+	<		result is "".
+	When {expr} is a |List| then the matching item is returned.
+	The type isn't changed, it's not necessarily a String.
