@@ -149,8 +149,10 @@ fun! base#init#paths(...)
       call base#pathset({  'evince_bin' : evbin })
     endif
     
+		let progs = base#file#catfile([ base#path('hm'),'programs' ])
+		let progs = base#envvar('PRG',progs)
     call base#pathset({ 
-        \ 'progs'  : base#file#catfile([ base#path('hm'),'programs' ]),
+        \ 'progs'  : progs,
         \ })
     
   let pc = base#pcname()
@@ -554,6 +556,9 @@ fun! base#init#au()
   au BufRead,BufNewFile,BufWinEnter *.tsv   set filetype=tsv
   au BufRead,BufNewFile,BufWinEnter *.py3   set filetype=python
   au BufRead,BufNewFile,BufWinEnter *.vue   set filetype=html
+
+  au BufRead,BufNewFile,BufWinEnter *.html  set filetype=html
+  au BufRead,BufNewFile,BufWinEnter *.htm   set filetype=html
 
   au BufWrite *.snippets MM snippets_reload_all
 
