@@ -21,7 +21,7 @@ sub init {
     my $n_sec = join("|",@n_sec);
 
     my $h = {
-        sec => qr{^\\(?:$n_sec)\{(.*)\}\s*$}
+        sec => qr{^\\(?<secname>$n_sec)\{(?<sectitle>(.*))\}\s*$}
     };
         
     my @k = keys %$h;
