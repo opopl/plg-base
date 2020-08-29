@@ -451,7 +451,7 @@ function! base#tg#update (...)
       \ "add"  : 0, 
       \ }
 
-    let ok= base#tg#ok(okref)
+    let ok = base#tg#ok(okref)
     return
 
   elseif tgid == 'ty_perl_inc'
@@ -459,6 +459,17 @@ function! base#tg#update (...)
     if !cnt | return | endif
 
     let execmd = 'ty --inc --tfile ' . tfile
+
+  elseif tgid == 'ty_perl_perlmod'
+    let dir  = base#path('perlmod')
+    let lib  = base#file#catfile([ dir, 'lib' ])
+    let dirs = [ lib ]
+
+    call base#tg#update_tygs({ 
+      \ 'tgid'   : tgid ,
+      \ 'dirs'   : dirs ,
+      \ 'prompt' : 1 ,
+      \ })
 
   elseif tgid == 'ty_perl_htmltool'
 
@@ -685,6 +696,16 @@ function! base#tg#update (...)
 
     let dir   = 'c:\src\webgui-master\lib'
     let libs .= ' ' . dir
+
+  elseif tgid == 'perl_inc_projs'
+		let dirids = base#varget('projs_projsdirs',[])
+		for dirid in dirids
+			let dir = base#path(dirid)
+    	let dir = base#file#catfile([ dir, 'perl', 'lib' ])
+			if isdirectory(dir)
+    		let libs .= ' ' . dir
+			endif
+		endfor
 
   elseif tgid == 'perl_inc_plg_browser'
 

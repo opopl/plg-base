@@ -3,7 +3,10 @@ function! base#log#view_split ()
 
 	let dbfile = base#dbfile()
 
-	let q = 'SELECT rowid,loglevel,elapsed,prf,plugin,func,msg FROM log ORDER BY elapsed ASC'
+	let f_a = base#qw('prf plugin func msg')
+	let f_s = join(f_a, ',')
+
+	let q = printf('SELECT %s FROM log ORDER BY elapsed ASC',f_s)
 	let q = input('log view query: ',q)
 
 	let rq = {

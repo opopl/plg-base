@@ -1,10 +1,12 @@
 
 let b:comps_BufAct = base#varget('comps_BufAct_idat',[])
 
-if exists("b:idephp_did_ftplugin_idat") | finish | endif
-let b:idephp_did_ftplugin_idat=1
+if exists("b:base_did_ftplugin_idat") | finish | endif
+let b:base_did_ftplugin_idat=1
 
 call base#buf#start()
+
+"""base_ftplugin_idat
 
 let pall     = base#varget('plugins_all',[])
 

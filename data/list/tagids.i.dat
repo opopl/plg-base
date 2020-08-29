@@ -8,6 +8,7 @@ x_php
 php_funcs
 ###perl
 perl_inc
+perl_inc_projs
 perl_inc_select
 perl_inc_plg_browser
 perl_inc_plg_base
@@ -38,7 +39,7 @@ plg_database_client
 plg_dbext
 plg_dicti
 plg_emmet
-plg_snipmate_2009
+plg_snipmate
 plg_findstr
 plg_gps
 plg_vim_prettyprint
@@ -74,4 +75,5 @@ help_javascript
 help_jquery
 help_mysql
 ty_perl_htmltool
+ty_perl_perlmod
 ty_perl_inc
