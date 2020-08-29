@@ -37,7 +37,8 @@ push @mods_perl,
 
 # needed for projs
 push @mods_perl,
-    qw(Capture::Tiny)
+    qw(Capture::Tiny),
+    qw(Date::Manip),
     ;
 
 # for htmltool
