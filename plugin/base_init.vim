@@ -1,6 +1,6 @@
 
 "finish
-let g:base_init_done=1
+let g:base_init_done = 1
 if exists("g:base_init_done")
 	finish
 endif
