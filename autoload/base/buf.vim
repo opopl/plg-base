@@ -201,6 +201,8 @@ function! base#buf#open_split (ref)
       endfor
     endif
 
+		call base#varset('last_split_lines',lines)
+
     if type(Fc) == type(function('call'))
       call call(Fc,Fc_args)
     endif

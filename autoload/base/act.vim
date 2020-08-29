@@ -136,6 +136,12 @@ function! base#act#cclose ()
   call base#qf_list#close()
 endfunction
 
+function! base#act#last_split_open ()
+	let list = base#varget('last_split_lines',[])
+	call base#buf#open_split({ 'lines' : list })
+
+endfunction
+
 function! base#act#async_run (...)
   let cmd = get(a:000,0,'')
 
