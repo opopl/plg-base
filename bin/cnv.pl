@@ -43,26 +43,31 @@ foreach my $dir (@dirs) {
 }
 
 chdir $plg_dir;
-my $j_f=0;
+my $j_f = 0;
 
 my %funcs;
 FILE: foreach my $file (@files) {
     my $path = catfile($plg_dir,$file);
 
     my @lines = read_file $path;
-    
-    my @nlines;
+
+    print $file . "\n";
+
 
     my ($f_now, $is_f);
     LINE: for(@lines){
         chomp;
 
-        /^\s*function!\s*(?<f>[\w\#]+)/ && do {
+        #print $_ . "\n";
+
+        /^\s*fun(?:ction)!\s*(?<f>[\w\#]*)$/ && do {
             my $f = $+{f};
             
             $is_f = 1;
 
             $f_now = $f;
+
+            print $f_now . "\n";
 
         };
 
@@ -79,12 +84,16 @@ FILE: foreach my $file (@files) {
             $is_f = 0;
 
             $j_f++;
+            #print $j_f . "\n";
+            #print Dumper(\%funcs) . "\n";
         };
 
-        last FILE if $j_f == 1;
+        if ($j_f == 10){
+            last FILE;
+        }
     }
 
 }
 
-print Dumper(\%funcs) . "\n";
+#print Dumper(\%funcs) . "\n";
 
