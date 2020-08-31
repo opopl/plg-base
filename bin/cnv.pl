@@ -170,47 +170,59 @@ sub get_funcs {
     
         my @lines = read_file $path;
     
-        my ($f_now, $is_f, $is_f_dec, $is_f_end);
+        my ($f_now, $is_f);
+        
+        my %is_f;
 
         my $push = sub {
-            push @{$funcs{$f_now}->{lines}}, @_;
+            $funcs{$f_now} ||= { 'lines' => [] };
+            push @{$funcs{$f_now}->{lines}}, $_ for(@_);
         };
 
+        my $lnum=0;
         for(@lines){
             chomp;
 
-            m/^\s*function!\s*([\w\#]+)\s*\(.*\)/ && do {
+            $lnum++;
+
+            m/^\s*fun(?:|ction)!\s*([\w\#]+)\s*\(.*\)\s*$/g && do {
                 my $f = $1;
                 my $a = $2;
                 next if $f =~ /^[\w\.]+$/;
 
-                $is_f_dec = 1;
-                
-                $is_f = 1;
-    
                 $f_now = $f;
+
+                $is_f{dec} = 1;
+                $is_f{body} = 1;
+    
             };
 
             m/^\s*endf/ && do {
-                $is_f_end = 1; 
+                $is_f{end} = 1; 
             };
 
-            s/\s/__space__/g;
+
+            printf(q{%s %s} . "\n",$lnum,$_);
+            print Dumper(\%is_f) . "\n";
+
+            #s/\s/__space__/g;
     
-            if ($is_f) {
-                $funcs{$f_now} ||= { 'lines' => [] };
+            if ($is_f{body}) {
     
                 $funcs{$f_now}->{file} = $file;
 
-                if ($is_f_dec) { 
+                if ($is_f{dec}) { 
                     $push->($_, '__hr__');
-                    $is_f_dec = 0; next; 
+
+                    $is_f{dec} = 0; 
+                    next; 
                 }
 
-                if ($is_f_end) { 
-                    $is_f = 0;
-                    $is_f_end = 0; 
+                if ($is_f{end}) { 
                     $push->('__hr__', $_);
+
+                    $is_f{body} = 0;
+                    $is_f{end}  = 0; 
                     next; 
                 }
 
@@ -229,7 +241,7 @@ sub get_funcs {
     }
 
     $self->{funcs} = \%funcs;
-    #print Dumper(\%funcs) . "\n";
+    print Dumper(\%funcs) . "\n";
 
     return $self;
 
