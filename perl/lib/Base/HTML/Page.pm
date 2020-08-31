@@ -44,7 +44,7 @@ sub _str {
 
     my $after = $ref->{after};
 
-    if ($after && ref $after eq 'CODE') {
+    if ( $after && ref $after eq 'CODE' ) {
         $after->();
     }
 
