@@ -14,6 +14,9 @@ use File::Slurp::Unicode;
 use File::Path qw(mkpath);
 use File::Basename qw(basename dirname);
 
+use HTML::HTML5::Writer;
+use XML::LibXML;
+
 
 sub new
 {
@@ -28,17 +31,18 @@ sub new
 sub init {
     my $self = shift;
 
-	my $plg_root = $ENV{PLG} || catfile($ENV{VIMRUNTIME},qw(plg));
-	my $plg      = shift @ARGV || 'base';
-	
-	my $plg_dir = catfile($plg_root,$plg);
-	my $html_dir = catfile($ENV{HTMLOUT},qw(  plg ),$plg);
-	mkpath $html_dir;
+    my $plg_root = $ENV{PLG} || catfile($ENV{VIMRUNTIME},qw(plg));
+    my $plg      = shift @ARGV || 'base';
+    
+    my $plg_dir  = catfile($plg_root,$plg);
+    my $html_dir = catfile($ENV{HTMLOUT},qw(  plg ),$plg);
+    mkpath $html_dir;
 
     my $h = {
-        plg     => $plg,
-        plg_dir => $plg_dir,
-        html_dir => $html_dir,
+        plg       => $plg,
+        plg_dir   => $plg_dir,
+        html_dir  => $html_dir,
+        num_files => 5,
     };
         
     my @k = keys %$h;
@@ -65,28 +69,28 @@ sub run {
 sub find_files {
     my ($self) = @_;
 
-	my @files;
-	my @exts = qw(vim);
-	
-	my @dirs;
-	push @dirs, $self->{plg_dir};
-	
-	foreach my $dir (@dirs) {
-	    find({ 
-	        wanted => sub { 
-	        foreach my $ext (@exts) {
-	            if (/\.$ext$/) {
-	                my $path = $File::Find::name;
-	                $path =~ s{\/}{\\}g;
-	    
-	                push @files,abs2rel($path,$self->{plg_dir});
-	            }
-	        }
-	        } 
-	    },$dir
-	    );
-	
-	}
+    my @files;
+    my @exts = qw(vim);
+    
+    my @dirs;
+    push @dirs, $self->{plg_dir};
+    
+    foreach my $dir (@dirs) {
+        find({ 
+            wanted => sub { 
+            foreach my $ext (@exts) {
+                if (/\.$ext$/) {
+                    my $path = $File::Find::name;
+                    $path =~ s{\/}{\\}g;
+        
+                    push @files,abs2rel($path,$self->{plg_dir});
+                }
+            }
+            } 
+        },$dir
+        );
+    
+    }
 
     $self->{files} = \@files;
 
@@ -100,10 +104,39 @@ sub write_to_tmp {
     my $html_dir = $self->{html_dir};
 
     my $html = catfile($html_dir,'index.html');
+    my $wr = HTML::HTML5::Writer->new(
+        doctype => '<!doctype html>'
+    );
+    my $dom = XML::LibXML::Document->createDocument();
+
+    my $title = $self->{plg};
+
+    my $el = {};
+
+    foreach my $x (qw(html head body title )) {
+        $el->{$x} = $dom->createElement($x);
+    }
+
+    $el->{title}->appendText($title);
+    $el->{head}->appendChild($el->{title});
+
+    foreach my $y (qw(head body)) {
+        $el->{html}->appendChild($el->{$y});
+    }
+    $dom->setDocumentElement($el->{html});
+
+    while(my($k,$v)=each %funcs){
+        my $func = $k;
+
+        my $lines = $v->{lines};
+        
+    }
 
     foreach my $f (keys %funcs) {
         # body...
     }
+
+    print $wr->document($dom);
 
     return $self;
 }
@@ -114,54 +147,52 @@ sub get_funcs {
     my $plg_dir = $self->{plg_dir};
     my @files = @{$self->{files} || [] };
 
-	chdir $plg_dir;
-	
-	my %funcs;
-	
-	my $j_f = 0;
-	
-	my $last_file;
-	foreach my $file (@files) {
-	    my $path = catfile($plg_dir,$file);
-	
-	    my @lines = read_file $path;
-	
-	    my ($f_now, $is_f);
-	    for(@lines){
-	        chomp;
-	
-	        m/^\s*function!\s*([\w\#]+)\s*\(.*\)/ && do {
-	            my $f = $1;
-	            my $a = $2;
-	            next if $f =~ /^[\w\.]+$/;
-	            
-	            $is_f = 1;
-	
-	            $f_now = $f;
-	        };
-	
-	        if ($is_f) {
-	            $funcs{$f_now} ||= { 'lines' => [] };
-	            push @{$funcs{$f_now}->{lines}}, $_;
-	
-	            $funcs{$f_now}->{file} = $file;
-	        }
-	
-	        m/^\s*endf/ && do {
-	            $is_f = 0;
-	        };
-	
-	    }
-	
-	    $j_f++;
-	
-	    if ($j_f == 10){
-	        last;
-	    }
-	
-	}
-
-    print Dumper(\%funcs) . "\n";
+    chdir $plg_dir;
+    
+    my %funcs;
+    
+    my $j_f = 0;
+    
+    my $last_file;
+    foreach my $file (@files) {
+        my $path = catfile($plg_dir,$file);
+    
+        my @lines = read_file $path;
+    
+        my ($f_now, $is_f);
+        for(@lines){
+            chomp;
+    
+            m/^\s*function!\s*([\w\#]+)\s*\(.*\)/ && do {
+                my $f = $1;
+                my $a = $2;
+                next if $f =~ /^[\w\.]+$/;
+                
+                $is_f = 1;
+    
+                $f_now = $f;
+            };
+    
+            if ($is_f) {
+                $funcs{$f_now} ||= { 'lines' => [] };
+                push @{$funcs{$f_now}->{lines}}, $_;
+    
+                $funcs{$f_now}->{file} = $file;
+            }
+    
+            m/^\s*endf/ && do {
+                $is_f = 0;
+            };
+    
+        }
+    
+        $j_f++;
+    
+        if ($j_f == $self->{num_files}){
+            last;
+        }
+    
+    }
 
     $self->{funcs} = \%funcs;
 
