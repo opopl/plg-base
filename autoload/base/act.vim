@@ -137,8 +137,29 @@ function! base#act#cclose ()
 endfunction
 
 function! base#act#last_split_open ()
-	let list = base#varget('last_split_lines',[])
-	call base#buf#open_split({ 'lines' : list })
+  let list = base#varget('last_split_lines',[])
+  call base#buf#open_split({ 'lines' : list })
+
+endfunction
+
+function! base#act#cnv (...)
+  let cmd = 'cnv'
+  
+  let env = {}
+  function env.get(temp_file) dict
+    let temp_file = a:temp_file
+    let code = self.return_code
+  
+    if filereadable(a:temp_file)
+      let out = readfile(a:temp_file)
+      call base#buf#open_split({ 'lines' : out })
+    endif
+  endfunction
+  
+  call asc#run({ 
+    \ 'cmd' : cmd, 
+    \ 'Fn'  : asc#tab_restore(env) 
+    \ })
 
 endfunction
 
@@ -172,9 +193,9 @@ function! base#act#async_run (...)
 endfunction
 
 if 0
-	call tree
-	calls
-		base#paths_to_db
+  call tree
+  calls
+    base#paths_to_db
 endif
 
 function! base#act#paths_to_db (...)
