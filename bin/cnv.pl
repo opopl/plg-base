@@ -113,8 +113,10 @@ sub write_to_tmp {
         title => $plg
     );
 
-    while(my($k,$v)=each %funcs){
-        my $func = $k;
+    my @funcs = sort keys %funcs;
+
+    foreach my $func (@funcs) {
+        my $v = $funcs{$func};
 
         my $lines = $v->{lines};
 
@@ -123,7 +125,7 @@ sub write_to_tmp {
                 text  => $func,
                 attr  => { id => $func },
             })
-            ->add('code',{ 
+            ->add('pre',{ 
                 text => join("__br__",@$lines),
             })
         ;
@@ -131,14 +133,18 @@ sub write_to_tmp {
 
     my $str = $pg->_str({ 
         after => sub {
-            local $_ = shift;
-            s/__br__/<br>/g;
+            s/__br__/<br>\n/g;
+            s/__hr__/<hr>\n/g;
             s/__space__/&nbsp;/g;
 
-            while( my($k,$v) = each %funcs ){
-                s{$k}{<a href="#$k">$k<\/a>}g;
-            }
-            return $_;
+#            while( my($k,$v) = each %funcs ){
+                #print $k . "\n";
+                #m/$k/ && do {
+                    #print $_ . "\n";
+                #};
+                #s{$k}{<a href="#$k">$k<\/a>}g;
+            #}
+            #return $_;
         }
     });
     write_file($html_file,$str . "\n");
@@ -164,32 +170,53 @@ sub get_funcs {
     
         my @lines = read_file $path;
     
-        my ($f_now, $is_f);
+        my ($f_now, $is_f, $is_f_dec, $is_f_end);
+
+        my $push = sub {
+            push @{$funcs{$f_now}->{lines}}, @_;
+        };
+
         for(@lines){
             chomp;
 
-            s/\s/__space__/g;
-    
             m/^\s*function!\s*([\w\#]+)\s*\(.*\)/ && do {
                 my $f = $1;
                 my $a = $2;
                 next if $f =~ /^[\w\.]+$/;
+
+                $is_f_dec = 1;
                 
                 $is_f = 1;
     
                 $f_now = $f;
             };
+
+            m/^\s*endf/ && do {
+                $is_f_end = 1; 
+            };
+
+            s/\s/__space__/g;
     
             if ($is_f) {
                 $funcs{$f_now} ||= { 'lines' => [] };
-                push @{$funcs{$f_now}->{lines}}, $_;
     
                 $funcs{$f_now}->{file} = $file;
+
+                if ($is_f_dec) { 
+                    $push->($_, '__hr__');
+                    $is_f_dec = 0; next; 
+                }
+
+                if ($is_f_end) { 
+                    $is_f = 0;
+                    $is_f_end = 0; 
+                    $push->('__hr__', $_);
+                    next; 
+                }
+
+                $push->($_);
             }
     
-            m/^\s*endf/ && do {
-                $is_f = 0;
-            };
     
         }
     
