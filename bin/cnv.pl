@@ -134,6 +134,10 @@ sub write_to_tmp {
             local $_ = shift;
             s/__br__/<br>/g;
             s/__space__/&nbsp;/g;
+
+            while( my($k,$v) = each %funcs ){
+                s{$k}{<a href="#$k">$k<\/a>}g;
+            }
             return $_;
         }
     });
