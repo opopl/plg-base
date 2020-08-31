@@ -9,6 +9,7 @@ use utf8;
 use Data::Dumper qw(Dumper);
 use File::Spec::Functions qw( catfile abs2rel );
 use File::Find qw(find);
+
 use File::Slurp::Unicode;
 
 use File::Path qw(mkpath);
@@ -104,7 +105,7 @@ sub write_to_tmp {
     my %funcs = %{$self->{funcs} || {}};
     my $html_dir = $self->{html_dir};
 
-    my $html = catfile($html_dir,'index.html');
+    my $html_file = catfile($html_dir,'index.html');
 
 	my $plg = $self->{plg};
 
@@ -117,15 +118,19 @@ sub write_to_tmp {
 
         my $lines = $v->{lines};
 
-		$pg->h1($func);
-        
+		$pg
+			->add('h1',{ 
+				text  => $func,
+				attr  => { id => $func },
+			})
+			->add('code',{ 
+				text => join("<br>",@$lines),
+			})
+		;
     }
 
-    foreach my $f (keys %funcs) {
-        # body...
-    }
-
-    print $pg->_str;
+    my $str = $pg->_str;
+	write_file($html_file,$str . "\n");
 
     return $self;
 }
