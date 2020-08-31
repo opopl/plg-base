@@ -6,6 +6,8 @@ use warnings;
 
 use HTML::HTML5::Writer;
 use XML::LibXML;
+use XML::LibXML::PrettyPrint;
+
 
 sub new
 {
@@ -29,14 +31,32 @@ sub new
 
 
 sub _str {
-    my $self = shift;
+    my ($self, $ref) = @_;
 
     my $dom = $self->{dom};
     my $wr  = $self->{wr};
 
-    my $str = $wr->document($dom);
+    my $pp = XML::LibXML::PrettyPrint->new(indent_string => "  ");
+    $pp->pretty_print($dom); # modified in-place
 
-    return $str;;
+    my $str = $wr->document($dom);
+    local $_ = $str;
+
+    my $after = $ref->{after};
+
+    if ($after && ref $after eq 'CODE') {
+        $_ = $after->($_);
+    }
+
+    #s/\&/\&amp;/\&/g; 
+
+    #s/\&/\&amp;/g; 
+    #s/</\&lt;/g; 
+    #s/>/\&gt;/g; 
+    #s/"/\&quot;/g; 
+    #s/'"'"'/\&apos;/g;
+
+    return $_;
 }
 
 sub init {
@@ -74,12 +94,12 @@ sub add {
     }
 
     if ($attr) {
-	    foreach my $x (keys %$attr) {
-	        my $v = $attr->{$x};
-	        next unless $v;
-	
-	        $e->{$x} = $v;
-	    }
+        foreach my $x (keys %$attr) {
+            my $v = $attr->{$x};
+            next unless $v;
+    
+            $e->{$x} = $v;
+        }
     }
 
     $dom

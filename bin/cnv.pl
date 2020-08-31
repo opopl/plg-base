@@ -31,13 +31,13 @@ sub new
 }
 
 sub init {
-    my $self = shift;
+    my ($self) = @_;
 
     my $plg_root = $ENV{PLG} || catfile($ENV{VIMRUNTIME},qw(plg));
     my $plg      = shift @ARGV || 'base';
     
     my $plg_dir  = catfile($plg_root,$plg);
-    my $html_dir = catfile($ENV{HTMLOUT},qw(  plg ),$plg);
+    my $html_dir = catfile($ENV{HTMLOUT},qw( plg ) );
     mkpath $html_dir;
 
     my $h = {
@@ -107,30 +107,37 @@ sub write_to_tmp {
 
     my $html_file = catfile($html_dir,'index.html');
 
-	my $plg = $self->{plg};
+    my $plg = $self->{plg};
 
-	my $pg = Base::HTML::Page->new(
-		title => $plg
-	);
+    my $pg = Base::HTML::Page->new(
+        title => $plg
+    );
 
     while(my($k,$v)=each %funcs){
         my $func = $k;
 
         my $lines = $v->{lines};
 
-		$pg
-			->add('h1',{ 
-				text  => $func,
-				attr  => { id => $func },
-			})
-			->add('code',{ 
-				text => join("<br>",@$lines),
-			})
-		;
+        $pg
+            ->add('h1',{ 
+                text  => $func,
+                attr  => { id => $func },
+            })
+            ->add('code',{ 
+                text => join("__br__",@$lines),
+            })
+        ;
     }
 
-    my $str = $pg->_str;
-	write_file($html_file,$str . "\n");
+    my $str = $pg->_str({ 
+        after => sub {
+            local $_ = shift;
+            s/__br__/<br>/g;
+            s/__space__/&nbsp;/g;
+            return $_;
+        }
+    });
+    write_file($html_file,$str . "\n");
 
     return $self;
 }
@@ -156,6 +163,8 @@ sub get_funcs {
         my ($f_now, $is_f);
         for(@lines){
             chomp;
+
+            s/\s/__space__/g;
     
             m/^\s*function!\s*([\w\#]+)\s*\(.*\)/ && do {
                 my $f = $1;
@@ -189,6 +198,7 @@ sub get_funcs {
     }
 
     $self->{funcs} = \%funcs;
+    #print Dumper(\%funcs) . "\n";
 
     return $self;
 
