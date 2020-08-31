@@ -17,6 +17,7 @@ use File::Basename qw(basename dirname);
 use HTML::HTML5::Writer;
 use XML::LibXML;
 
+use Base::HTML::Page;
 
 sub new
 {
@@ -104,31 +105,19 @@ sub write_to_tmp {
     my $html_dir = $self->{html_dir};
 
     my $html = catfile($html_dir,'index.html');
-    my $wr = HTML::HTML5::Writer->new(
-        doctype => '<!doctype html>'
-    );
-    my $dom = XML::LibXML::Document->createDocument();
 
-    my $title = $self->{plg};
+	my $plg = $self->{plg};
 
-    my $el = {};
-
-    foreach my $x (qw(html head body title )) {
-        $el->{$x} = $dom->createElement($x);
-    }
-
-    $el->{title}->appendText($title);
-    $el->{head}->appendChild($el->{title});
-
-    foreach my $y (qw(head body)) {
-        $el->{html}->appendChild($el->{$y});
-    }
-    $dom->setDocumentElement($el->{html});
+	my $pg = Base::HTML::Page->new(
+		title => $plg
+	);
 
     while(my($k,$v)=each %funcs){
         my $func = $k;
 
         my $lines = $v->{lines};
+
+		$pg->h1($func);
         
     }
 
@@ -136,7 +125,7 @@ sub write_to_tmp {
         # body...
     }
 
-    print $wr->document($dom);
+    print $pg->_str;
 
     return $self;
 }
@@ -145,7 +134,7 @@ sub get_funcs {
     my ($self) = @_;
 
     my $plg_dir = $self->{plg_dir};
-    my @files = @{$self->{files} || [] };
+    my @files   = @{$self->{files} || [] };
 
     chdir $plg_dir;
     
