@@ -112,7 +112,7 @@ sub find_files {
 sub html_make {
     my ($self) = @_;
 
-    my %funcs = %{$self->{funcs} || {}};
+    my $funcs = $self->{funcs} || {};
 
     my $plg = $self->{plg};
 
@@ -120,13 +120,10 @@ sub html_make {
         title => $plg
     );
 
-    my @funcs = sort keys %funcs;
-
-    my @func_names = keys %funcs;
-
+    my @funcs = sort keys %$funcs;
 
     foreach my $func (@funcs) {
-        my $v = $funcs{$func};
+        my $v = $funcs->{$func};
 
         #if (@sel) {
             #next unless (grep { /^$func$/ } @sel);
@@ -191,7 +188,7 @@ sub html_make {
             };
 
             if ($ln->{is_code}) {
-                foreach my $f (@func_names) {
+                foreach my $f (@funcs) {
                     next unless $f;
                     s{\b$f\b}{<a href="#$f">$f</a>}g;
                 }
@@ -281,8 +278,6 @@ sub get_funcs {
 
             $lnum++;
 
-            #print $_ . "\n";
-
             m/^\s*fun(?:|ction)!\s*([#\w]+)\s*\(.*\)\s*$/g && do {
                 my $f = $1;
                 my $a = $2;
@@ -324,7 +319,7 @@ sub get_funcs {
 
     $self->{funcs} = $funcs;
 
-    print Dumper $funcs;
+    print Dumper [sort keys %$funcs];
     #foreach my $s (@sel) {
         #print Dumper $funcs->{$s};
     #}
