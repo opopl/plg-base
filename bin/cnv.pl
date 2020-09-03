@@ -23,6 +23,7 @@ use Base::HTML::Page;
 use HTML::Toc;
 use HTML::TocInsertor;
 
+my $space = '__space__';
 my @sel;
 #push @sel,
     #q{base#act#dict_view}
@@ -125,12 +126,18 @@ sub html_make {
     foreach my $func (@funcs) {
         my $v = $funcs->{$func};
 
+        next unless $func;
+
         #if (@sel) {
             #next unless (grep { /^$func$/ } @sel);
         #}
 
         my $lines = $v->{lines};
         my $dec   = $v->{dec};
+
+
+        my $i;
+        my @lines_num = map { BEGIN { $i = 1; }; $i++; sprintf("%s %s %s",$i,$space,$_) } @$lines;
 
         $pg
             ->add('h1',{ 
@@ -149,21 +156,21 @@ sub html_make {
             })
             ->add('br') 
             ->add('code',{ 
-                text  => join("__br__\n",@$lines),
+                text  => join("__br__\n",@lines_num),
                 attr  => { id => "code_body_$func" },
             })
-            ->update({ 
-                xpath  => sprintf(q{//code[@id='code_body_%s']/text()},$func),
-                sub    => sub { 
-                    my ($n) = @_;
+#            ->update({ 
+                #xpath  => sprintf(q{//code[@id='code_body_%s']/text()},$func),
+                #sub    => sub { 
+                    #my ($n) = @_;
 
-                    my $text = $n->getData;
-                    local $_ = $text;
+                    #my $text = $n->getData;
+                    #local $_ = $text;
 
-                    $n->setData($_);
-                    return $n;
-                }
-            })
+                    #$n->setData($_);
+                    #return $n;
+                #}
+            #})
         ;
     }
 
@@ -273,6 +280,7 @@ sub get_funcs {
         };
 
         my $lnum = 0;
+        my $level_f = 0;
         for(@lines){
             chomp;
 
@@ -281,6 +289,9 @@ sub get_funcs {
             m/^\s*fun(?:|ction)!\s*([#\w]+)\s*\(.*\)\s*$/g && do {
                 my $f = $1;
                 my $a = $2;
+
+                $level_f++;
+
                 next if $f =~ /^[\w\.]+$/;
 
                 $f_now = $f;
@@ -297,9 +308,17 @@ sub get_funcs {
             };
 
             m/^\s*endf(|un|unction)\s*$/g && do {
-                $is_f{body} = 0;
+                my @input;
 
-                $push->(['__hr__', $_ ]);
+                $level_f--;
+
+                unless($level_f){
+                    $is_f{body} = 0;
+                    push @input, '__hr__', $_ ;
+                }
+                    
+                push @input, $_ ;
+                $push->(\@input);
                 next; 
             };
 
@@ -319,7 +338,7 @@ sub get_funcs {
 
     $self->{funcs} = $funcs;
 
-    print Dumper [sort keys %$funcs];
+    #print Dumper [sort keys %$funcs];
     #foreach my $s (@sel) {
         #print Dumper $funcs->{$s};
     #}
