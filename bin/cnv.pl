@@ -135,9 +135,8 @@ sub html_make {
         my $lines = $v->{lines};
         my $dec   = $v->{dec};
 
-
-        my $i;
-        my @lines_num = map { BEGIN { $i = 1; }; $i++; sprintf("%s %s %s",$i,$space,$_) } @$lines;
+        my $i=0;
+        my @lines_num = map { $i++; sprintf("%s %s %s",$i,$space,$_) } @$lines;
 
         $pg
             ->add('h1',{ 
