@@ -20,6 +20,9 @@ use XML::LibXML;
 
 use Base::HTML::Page;
 
+use HTML::Toc;
+use HTML::TocInsertor;
+
 sub new
 {
     my ($class, %opts) = @_;
@@ -60,7 +63,9 @@ sub run {
     $self
         ->find_files
         ->get_funcs
-        ->write_to_tmp
+        ->html_make
+        ->html_toc
+        ->html_write2file
         ;
 
     return $self;
@@ -99,13 +104,10 @@ sub find_files {
     return $self;
 }
 
-sub write_to_tmp {
+sub html_make {
     my ($self) = @_;
 
     my %funcs = %{$self->{funcs} || {}};
-    my $html_dir = $self->{html_dir};
-
-    my $html_file = catfile($html_dir,'index.html');
 
     my $plg = $self->{plg};
 
@@ -147,10 +149,36 @@ sub write_to_tmp {
             #return $_;
         }
     });
-    write_file($html_file,$str . "\n");
+    $self->{html} = $str;
 
     return $self;
 }
+
+sub html_toc {
+    my ($self) = @_;
+
+    my $toc         = HTML::Toc->new();
+    my $tocInsertor = HTML::TocInsertor->new();
+
+    my $html = $self->{html};
+    
+    $tocInsertor->insert($toc, $html, { 'output' => \$html });
+    $self->{html} = $html;
+
+    return $self;
+}
+
+sub html_write2file {
+    my ($self) = @_;
+
+    my $html_dir = $self->{html_dir};
+    my $html_file = catfile($html_dir,'index.html');
+
+    write_file($html_file,$self->{html} . "\n");
+
+    return $self;
+}
+
 
 sub get_funcs {
     my ($self) = @_;
