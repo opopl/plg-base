@@ -24,8 +24,8 @@ use HTML::Toc;
 use HTML::TocInsertor;
 
 my @sel;
-push @sel,
-    q{base#act#dict_view}
+#push @sel,
+    #q{base#act#dict_view}
 ;
 
 sub new
@@ -128,7 +128,9 @@ sub html_make {
     foreach my $func (@funcs) {
         my $v = $funcs{$func};
 
-        next unless grep { /^$func$/ } @sel;
+        #if (@sel) {
+            #next unless (grep { /^$func$/ } @sel);
+        #}
 
         my $lines = $v->{lines};
         my $dec   = $v->{dec};
@@ -176,11 +178,9 @@ sub html_make {
             s/__br__/<br>/g;
             s/__hr__/<hr>/g;
             s/__space__/&nbsp;/g;
-
-            #<code id="code_dec_base#DIR">
         },
         line_update => sub {
-            m/<code id="code_body_([\w\#]+)">/ && do {
+            m/<code id="code_body_([#\w]+)">/ && do {
                 $ln->{is_code} = 1;
                 return;
             };
@@ -192,9 +192,9 @@ sub html_make {
 
             if ($ln->{is_code}) {
                 foreach my $f (@func_names) {
+                    next unless $f;
                     s{\b$f\b}{<a href="#$f">$f</a>}g;
                 }
-                # body...
             }
         }
     });
@@ -265,8 +265,12 @@ sub get_funcs {
 
             $where ||= 'lines';
 
-            $funcs->{$f_now} ||= { 'lines' => [], 'dec' => [] };
+            $funcs->{$f_now} ||= {};
+            $funcs->{$f_now}->{'lines'} ||= [];
+            $funcs->{$f_now}->{'dec'} ||= [];
+
             for my $a (@$input){
+                $a =~ s/\s/__space__/g;
                 push @{$funcs->{$f_now}->{$where}}, $a;
             }
         };
@@ -277,6 +281,8 @@ sub get_funcs {
 
             $lnum++;
 
+            #print $_ . "\n";
+
             m/^\s*fun(?:|ction)!\s*([#\w]+)\s*\(.*\)\s*$/g && do {
                 my $f = $1;
                 my $a = $2;
@@ -286,43 +292,25 @@ sub get_funcs {
 
                 $is_f{dec}  = 1;
                 $is_f{body} = 1;
-    
-            };
 
-            if (grep { /^$f_now$/ } @sel) {
-                print $_ . "\n";
-            }else{
-                next;
-            }
-
-            m/^\s*endf(|un|unction)\s*$/g && do {
-                $is_f{end} = 1; 
-            };
-
-            #s/\s/__space__/g;
-    
-            if ($is_f{body}) {
-    
                 $funcs->{$f_now}->{file} = $file;
 
-                if ($is_f{dec}) { 
-                    $push->([$_, '__hr__'],'dec');
+                $push->([$_, '__hr__'],'dec');
+                $is_f{dec} = 0; 
+                next;
+    
+            };
 
-                    $is_f{dec} = 0; 
-                    next; 
-                }
+            m/^\s*endf(|un|unction)\s*$/g && do {
+                $is_f{body} = 0;
 
-                if ($is_f{end}) { 
-                    $push->(['__hr__', $_ ]);
+                $push->(['__hr__', $_ ]);
+                next; 
+            };
 
-                    $is_f{body} = 0;
-                    $is_f{end}  = 0; 
-                    next; 
-                }
-
+            if ($is_f{body}) {
                 $push->([$_]);
             }
-    
     
         }
     
@@ -336,10 +324,10 @@ sub get_funcs {
 
     $self->{funcs} = $funcs;
 
-
-    foreach my $s (@sel) {
-        print Dumper $funcs->{$s};
-    }
+    print Dumper $funcs;
+    #foreach my $s (@sel) {
+        #print Dumper $funcs->{$s};
+    #}
 
     return $self;
 
