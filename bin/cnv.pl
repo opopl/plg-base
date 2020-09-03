@@ -129,6 +129,14 @@ sub html_make {
             })
             ->add('pre',{ 
                 text => join("__br__",@$lines),
+                attr  => { id => "pre_$func" },
+            })
+            ->update({ 
+                xpath  => sprintf(q{//pre[@id='pre_%s']},$func),
+                sub    => sub { 
+                    my ($n) = @_;
+                    return $n;
+                }
             })
         ;
     }
@@ -159,6 +167,15 @@ sub html_toc {
 
     my $toc         = HTML::Toc->new();
     my $tocInsertor = HTML::TocInsertor->new();
+
+#    $toc->setOptions({
+        #'doNumberToken' => 1,
+        #'tokenToToc' => [{
+           #'level'          => 1,
+           #'tokenBegin'     => '<h1>',
+           #'numberingStyle' => 'lower-alpha'
+        #}]
+    #});
 
     my $html = $self->{html};
     

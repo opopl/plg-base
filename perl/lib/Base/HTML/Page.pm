@@ -77,6 +77,25 @@ sub init {
     return $self;
 }
 
+sub update {
+    my ($self, $ref) = @_;
+
+    $ref ||= {};
+
+	my $sub   = $ref->{sub};
+	my $xpath = $ref->{xpath};
+
+	unless ($xpath && $sub) {
+		return $self;
+	}
+
+
+    my $dom = $self->{dom};
+	$dom->findnodes($xpath)->map($sub);
+
+    return $self;
+}
+
 sub add {
     my ($self, $tg, $ref) = @_;
 
@@ -90,7 +109,6 @@ sub add {
     my $e = $dom->createElement($tg);
 
     if ($text) {
-		#print $text . "\n";
         $e->appendText($text);
     }
 
