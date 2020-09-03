@@ -23,6 +23,11 @@ use Base::HTML::Page;
 use HTML::Toc;
 use HTML::TocInsertor;
 
+my @sel;
+push @sel,
+    q{base#act#dict_view}
+;
+
 sub new
 {
     my ($class, %opts) = @_;
@@ -119,8 +124,11 @@ sub html_make {
 
     my @func_names = keys %funcs;
 
+
     foreach my $func (@funcs) {
         my $v = $funcs{$func};
+
+        next unless grep { /^$func$/ } @sel;
 
         my $lines = $v->{lines};
         my $dec   = $v->{dec};
@@ -203,9 +211,9 @@ sub html_toc {
     my $tocInsertor = HTML::TocInsertor->new();
 
     $toc->setOptions({
-		'footer'     => '</div>',
-		'header'     => '<div class="toc"> <h1 id="toc">Table of Contents</h1>',
-	});
+        'footer'     => '</div>',
+        'header'     => '<div class="toc"> <h1 id="toc">Table of Contents</h1>',
+    });
 
     my $html = $self->{html};
     
@@ -248,6 +256,7 @@ sub get_funcs {
         my @lines = read_file $path;
     
         my ($f_now, $is_f);
+        $f_now = '';
         
         my %is_f;
 
@@ -280,7 +289,11 @@ sub get_funcs {
     
             };
 
-            m/^\s*endf(?:|un|unction)\s*$/g && do {
+            if (grep { /^$f_now$/ } @sel) {
+                print $_ . "\n";
+            }
+
+            m/^\s*endf(|un|unction)\s*$/g && do {
                 $is_f{end} = 1; 
             };
 
@@ -320,6 +333,11 @@ sub get_funcs {
     }
 
     $self->{funcs} = $funcs;
+
+
+    foreach my $s (@sel) {
+        print Dumper $funcs->{$s};
+    }
 
     return $self;
 
