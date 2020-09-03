@@ -40,13 +40,34 @@ sub _str {
     $pp->pretty_print($dom); # modified in-place
 
     my $str = $wr->document($dom);
-    local $_ = $str;
 
-    my $after = $ref->{after};
+	foreach my $k (qw( text_update line_update )) {
+    	my $sub = $ref->{$k};
+	    if ( $sub && ref $sub eq 'CODE' ) {
 
-    if ( $after && ref $after eq 'CODE' ) {
-        $after->();
-    }
+			for($k){
+				/^text_update$/ && do { 
+    				local $_ = $str;
+	        		$sub->();
+					$str = $_;
+					last;
+				};
+
+				/^line_update$/ && do { 
+					my @lines = split("\n",$str);
+					foreach(@lines) {
+						chomp;
+	        			$sub->();
+					}
+					$str = join("\n",@lines);
+					last;
+				};
+
+				last;
+
+			}
+	    }
+	}
 
     #s/\&/\&amp;/\&/g; 
 
@@ -56,7 +77,7 @@ sub _str {
     #s/"/\&quot;/g; 
     #s/'"'"'/\&apos;/g;
 
-    return $_;
+    return $str;
 }
 
 sub init {

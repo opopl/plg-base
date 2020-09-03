@@ -47,7 +47,7 @@ sub init {
         plg       => $plg,
         plg_dir   => $plg_dir,
         html_dir  => $html_dir,
-        num_files => 5,
+        num_files => 0,
     };
         
     my @k = keys %$h;
@@ -123,50 +123,71 @@ sub html_make {
         my $v = $funcs{$func};
 
         my $lines = $v->{lines};
+        my $dec   = $v->{dec};
 
         $pg
             ->add('h1',{ 
                 text  => $func,
                 attr  => { id => $func },
             })
+            ->add('br') 
             ->add('a',{ 
                 text  => 'TOC',
                 attr  => { href => '#toc' },
             })
             ->add('br') 
             ->add('code',{ 
-                text => join("__br__",@$lines),
-                attr  => { id => "code_$func" },
+                text  => join("__br__\n",@$dec),
+                attr  => { id => "code_dec_$func" },
+            })
+            ->add('br') 
+            ->add('code',{ 
+                text  => join("__br__\n",@$lines),
+                attr  => { id => "code_body_$func" },
             })
             ->update({ 
-                xpath  => sprintf(q{//code[@id='code_%s']/text()},$func),
+                xpath  => sprintf(q{//code[@id='code_body_%s']/text()},$func),
                 sub    => sub { 
                     my ($n) = @_;
 
                     my $text = $n->getData;
+                    local $_ = $text;
 
-					#foreach my $func_name (@func_names) {
-                        ##$text =~ s{\Q($func_name)\E}{<a href="#$1" class="func">$1</a>}g;
-                        #$text =~ s{base#varget}{<a href="#$1" class="func">$1</a>}gms;
-                    #}
-                    #$text =~ s{(base#varget)}{__tgo__a__ $1}gms;
-                    #$text =~ s{(base#varset)}{<a href="#$1" class="func">$1</a>}gms;
-                    #print Dumper($text) . "\n";
-
-                    #$text->replaceDataRegEx( $search_cond, $replace_cond, $reflags );
-
-                    #$n->setData($text);
+                    $n->setData($_);
                     return $n;
                 }
             })
         ;
     }
 
+    my $ln={};
+    my $txt={};
+
     my $str = $pg->_str({ 
-        after => sub {
+        text_update => sub {
             s/__br__/<br>/g;
             s/__hr__/<hr>/g;
             s/__space__/&nbsp;/g;
+
+            #<code id="code_dec_base#DIR">
+        },
+        line_update => sub {
+            m/<code id="code_body_([\w\#]+)">/ && do {
+                $ln->{is_code} = 1;
+                return;
+            };
+
+            m{</code>} && $ln->{is_code} && do {
+                $ln->{is_code} = 0;
+                return;
+            };
+
+            if ($ln->{is_code}) {
+                foreach my $f (@func_names) {
+                    s{\b$f\b}{<a href="#$f">$f</a>}g;
+                }
+                # body...
+            }
         }
     });
 
@@ -215,6 +236,8 @@ sub get_funcs {
     chdir $plg_dir;
     
     my $funcs;
+
+    my $num_files = $self->{num_files};
     
     my $j_f = 0;
     
@@ -229,11 +252,13 @@ sub get_funcs {
         my %is_f;
 
         my $push = sub {
-            my @args = @_;
+            my ($input, $where) = @_;
 
-            $funcs->{$f_now} ||= { 'lines' => [] };
-            for my $a (@args){
-                push @{$funcs->{$f_now}->{lines}}, $a;
+            $where ||= 'lines';
+
+            $funcs->{$f_now} ||= { 'lines' => [], 'dec' => [] };
+            for my $a (@$input){
+                push @{$funcs->{$f_now}->{$where}}, $a;
             }
         };
 
@@ -266,21 +291,21 @@ sub get_funcs {
                 $funcs->{$f_now}->{file} = $file;
 
                 if ($is_f{dec}) { 
-                    $push->($_, '__hr__');
+                    $push->([$_, '__hr__'],'dec');
 
                     $is_f{dec} = 0; 
                     next; 
                 }
 
                 if ($is_f{end}) { 
-                    $push->('__hr__', $_);
+                    $push->(['__hr__', $_ ]);
 
                     $is_f{body} = 0;
                     $is_f{end}  = 0; 
                     next; 
                 }
 
-                $push->($_);
+                $push->([$_]);
             }
     
     
@@ -288,7 +313,7 @@ sub get_funcs {
     
         $j_f++;
     
-        if ($j_f == $self->{num_files}){
+        if ($num_files && $j_f == $num_files){
             last;
         }
     
