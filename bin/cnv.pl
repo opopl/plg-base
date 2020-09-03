@@ -291,13 +291,15 @@ sub get_funcs {
 
             if (grep { /^$f_now$/ } @sel) {
                 print $_ . "\n";
+            }else{
+                next;
             }
 
             m/^\s*endf(|un|unction)\s*$/g && do {
                 $is_f{end} = 1; 
             };
 
-            s/\s/__space__/g;
+            #s/\s/__space__/g;
     
             if ($is_f{body}) {
     
