@@ -268,7 +268,7 @@ sub get_funcs {
 
             $lnum++;
 
-            m/^\s*fun(?:|ction)!\s*([\w\#]+)\s*\(.*\)\s*$/g && do {
+            m/^\s*fun(?:|ction)!\s*([#\w]+)\s*\(.*\)\s*$/g && do {
                 my $f = $1;
                 my $a = $2;
                 next if $f =~ /^[\w\.]+$/;
