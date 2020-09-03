@@ -117,6 +117,8 @@ sub html_make {
 
     my @funcs = sort keys %funcs;
 
+    my @func_names = keys %funcs;
+
     foreach my $func (@funcs) {
         my $v = $funcs{$func};
 
@@ -127,14 +129,33 @@ sub html_make {
                 text  => $func,
                 attr  => { id => $func },
             })
-            ->add('pre',{ 
+            ->add('a',{ 
+                text  => 'TOC',
+                attr  => { href => '#toc' },
+            })
+            ->add('br') 
+            ->add('code',{ 
                 text => join("__br__",@$lines),
-                attr  => { id => "pre_$func" },
+                attr  => { id => "code_$func" },
             })
             ->update({ 
-                xpath  => sprintf(q{//pre[@id='pre_%s']},$func),
+                xpath  => sprintf(q{//code[@id='code_%s']/text()},$func),
                 sub    => sub { 
                     my ($n) = @_;
+
+                    my $text = $n->getData;
+
+					#foreach my $func_name (@func_names) {
+                        ##$text =~ s{\Q($func_name)\E}{<a href="#$1" class="func">$1</a>}g;
+                        #$text =~ s{base#varget}{<a href="#$1" class="func">$1</a>}gms;
+                    #}
+                    #$text =~ s{(base#varget)}{__tgo__a__ $1}gms;
+                    #$text =~ s{(base#varset)}{<a href="#$1" class="func">$1</a>}gms;
+                    #print Dumper($text) . "\n";
+
+                    #$text->replaceDataRegEx( $search_cond, $replace_cond, $reflags );
+
+                    #$n->setData($text);
                     return $n;
                 }
             })
@@ -146,17 +167,9 @@ sub html_make {
             s/__br__/<br>/g;
             s/__hr__/<hr>/g;
             s/__space__/&nbsp;/g;
-
-#            while( my($k,$v) = each %funcs ){
-                #print $k . "\n";
-                #m/$k/ && do {
-                    #print $_ . "\n";
-                #};
-                #s{$k}{<a href="#$k">$k<\/a>}g;
-            #}
-            #return $_;
         }
     });
+
     $self->{html} = $str;
 
     return $self;
@@ -168,14 +181,10 @@ sub html_toc {
     my $toc         = HTML::Toc->new();
     my $tocInsertor = HTML::TocInsertor->new();
 
-#    $toc->setOptions({
-        #'doNumberToken' => 1,
-        #'tokenToToc' => [{
-           #'level'          => 1,
-           #'tokenBegin'     => '<h1>',
-           #'numberingStyle' => 'lower-alpha'
-        #}]
-    #});
+    $toc->setOptions({
+		'footer'     => '</div>',
+		'header'     => '<div class="toc"> <h1 id="toc">Table of Contents</h1>',
+	});
 
     my $html = $self->{html};
     

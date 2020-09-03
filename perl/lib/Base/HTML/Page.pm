@@ -89,9 +89,10 @@ sub update {
 		return $self;
 	}
 
-
     my $dom = $self->{dom};
-	$dom->findnodes($xpath)->map($sub);
+	$dom
+		->findnodes($xpath)
+		->map($sub);
 
     return $self;
 }
