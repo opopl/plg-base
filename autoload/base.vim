@@ -3028,8 +3028,8 @@ endf
  
 fun! base#echovar(ref)
 
- let spliton=''
- let indentlev=2
+ let spliton   = ''
+ let indentlev = 2
 
  if base#type(a:ref) == 'String'
    let varname=a:ref

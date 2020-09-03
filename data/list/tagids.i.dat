@@ -51,7 +51,7 @@ plg_taskman
 plg_my
 plg_jde
 plg_pdoc
-plg_perlsupport
+#plg_perlsupport
 plg_perlmy
 plg_pymy
 plg_projs

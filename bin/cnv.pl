@@ -133,8 +133,8 @@ sub write_to_tmp {
 
     my $str = $pg->_str({ 
         after => sub {
-            s/__br__/<br>\n/g;
-            s/__hr__/<hr>\n/g;
+            s/__br__/<br>/g;
+            s/__hr__/<hr>/g;
             s/__space__/&nbsp;/g;
 
 #            while( my($k,$v) = each %funcs ){
@@ -160,7 +160,7 @@ sub get_funcs {
 
     chdir $plg_dir;
     
-    my %funcs;
+    my $funcs;
     
     my $j_f = 0;
     
@@ -175,11 +175,15 @@ sub get_funcs {
         my %is_f;
 
         my $push = sub {
-            $funcs{$f_now} ||= { 'lines' => [] };
-            push @{$funcs{$f_now}->{lines}}, $_ for(@_);
+            my @args = @_;
+
+            $funcs->{$f_now} ||= { 'lines' => [] };
+            for my $a (@args){
+                push @{$funcs->{$f_now}->{lines}}, $a;
+            }
         };
 
-        my $lnum=0;
+        my $lnum = 0;
         for(@lines){
             chomp;
 
@@ -192,24 +196,20 @@ sub get_funcs {
 
                 $f_now = $f;
 
-                $is_f{dec} = 1;
+                $is_f{dec}  = 1;
                 $is_f{body} = 1;
     
             };
 
-            m/^\s*endf/ && do {
+            m/^\s*endf(?:|un|unction)\s*$/g && do {
                 $is_f{end} = 1; 
             };
 
-
-            printf(q{%s %s} . "\n",$lnum,$_);
-            print Dumper(\%is_f) . "\n";
-
-            #s/\s/__space__/g;
+            s/\s/__space__/g;
     
             if ($is_f{body}) {
     
-                $funcs{$f_now}->{file} = $file;
+                $funcs->{$f_now}->{file} = $file;
 
                 if ($is_f{dec}) { 
                     $push->($_, '__hr__');
@@ -240,8 +240,7 @@ sub get_funcs {
     
     }
 
-    $self->{funcs} = \%funcs;
-    print Dumper(\%funcs) . "\n";
+    $self->{funcs} = $funcs;
 
     return $self;
 

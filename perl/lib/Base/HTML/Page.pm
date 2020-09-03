@@ -90,6 +90,7 @@ sub add {
     my $e = $dom->createElement($tg);
 
     if ($text) {
+		#print $text . "\n";
         $e->appendText($text);
     }
 
