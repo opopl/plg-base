@@ -162,7 +162,7 @@ sub add {
     }
 
     if ($attr) {
-        foreach my $x (keys %$attr) {
+        foreach my $x (sort keys %$attr) {
             my $v = $attr->{$x};
             next unless $v;
     

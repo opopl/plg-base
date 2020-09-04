@@ -24,6 +24,9 @@ use HTML::Toc;
 use HTML::TocInsertor;
 
 my $space = '__space__';
+my $hr    = '__hr__';
+my $br    = '__br__';
+
 my @sel;
 #push @sel,
     #q{base#act#dict_view}
@@ -53,7 +56,7 @@ sub init {
         plg       => $plg,
         plg_dir   => $plg_dir,
         html_dir  => $html_dir,
-        num_files => 10,
+        num_files => 0,
     };
         
     my @k = keys %$h;
@@ -152,13 +155,14 @@ sub html_make {
             })
             ->add('br') 
             ->add('code',{ 
-                text  => join("__br__\n",@$dec),
+                text  => join("$br\n",@$dec),
                 attr  => { id => "code_dec_$func" },
             })
             ->add('br') 
             ->add('div',{ 
                 attr  => { 
-                    id => "div_code_body_$func",
+                    id    => "div_code_body_$func",
+                    class => "div_code_body",
                 },
             })
             ->update({ 
@@ -168,7 +172,7 @@ sub html_make {
 
                     my $e = $pg->{dom}->createElement('code');
 
-                    my $text = join("__br__\n",@lines_num);
+                    my $text = join("$br\n",@lines_num);
 
                     $e->appendText($text);
                     $e->{id} = "code_body_$func";
@@ -194,14 +198,13 @@ sub html_make {
 
     my $str = $pg->_str({ 
         text_update => sub {
-            s/__br__/<br>/g;
-            s/__hr__/<hr>/g;
-            s/__space__/&nbsp;/g;
+            s/$br/<br>/g;
+            s/$hr/<hr>/g;
+            s/$space/&nbsp;/g;
         },
         line_update => sub {
             m/<code id="code_body_([#\w]+)">/ && do {
-                $ln->{is_code} = 1;
-                return;
+                $ln->{is_code} = 1; return;
             };
 
             m{</code>} && $ln->{is_code} && do {
@@ -288,9 +291,10 @@ sub get_funcs {
             $funcs->{$f_now} ||= {};
             $funcs->{$f_now}->{'lines'} ||= [];
             $funcs->{$f_now}->{'dec'} ||= [];
+            $funcs->{$f_now}->{'help'} ||= [];
 
             for my $a (@$input){
-                $a =~ s/\s/__space__/g;
+                $a =~ s/\s/$space/g;
                 push @{$funcs->{$f_now}->{$where}}, $a;
             }
         };
@@ -317,10 +321,14 @@ sub get_funcs {
 
                 $funcs->{$f_now}->{file} = $file;
 
-                $push->([$_, '__hr__'],'dec');
+                $push->([$_, $hr],'dec');
                 $is_f{dec} = 0; 
                 next;
     
+            };
+
+            m/^\s*fun(?:|ction)!.*$/g && do {
+                $level_f++;
             };
 
             m/^\s*endf(|un|unction)\s*$/g && do {
@@ -330,7 +338,7 @@ sub get_funcs {
 
                 unless($level_f){
                     $is_f{body} = 0;
-                    push @input, '__hr__', $_ ;
+                    push @input, $hr ;
                 }
                     
                 push @input, $_ ;
