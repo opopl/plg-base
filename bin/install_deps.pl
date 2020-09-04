@@ -21,6 +21,7 @@ my @mods_perl = qw(
    XML::Hash::LX
    XML::LibXML::Cache
    XML::LibXML::PrettyPrint
+   File::Slurp::Unicode
 );
 
 # for cnv.pl, requires attention on Win32
