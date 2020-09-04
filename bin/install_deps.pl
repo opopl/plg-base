@@ -23,6 +23,16 @@ my @mods_perl = qw(
    XML::LibXML::PrettyPrint
 );
 
+# for cnv.pl, requires attention on Win32
+push @mods_perl,
+qw(
+   XML::LibXML::Debugging
+   HTML::HTML5::Parser
+   HTML::HTML5::Sanity
+   HTML::HTML5::Entities
+   HTML::HTML5::Writer
+);
+
 # needed for repos_git p
 push @mods_perl,
    qw(LaTeX::Table),
@@ -37,7 +47,8 @@ push @mods_perl,
 
 # needed for projs
 push @mods_perl,
-    qw(Capture::Tiny)
+    qw(Capture::Tiny),
+    qw(Date::Manip),
     ;
 
 # for htmltool
