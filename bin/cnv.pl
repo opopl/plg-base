@@ -53,7 +53,7 @@ sub init {
         plg       => $plg,
         plg_dir   => $plg_dir,
         html_dir  => $html_dir,
-        num_files => 0,
+        num_files => 10,
     };
         
     my @k = keys %$h;
@@ -121,7 +121,9 @@ sub html_make {
         title => $plg
     );
 
-    my @funcs = sort keys %$funcs;
+    #my @funcs = sort { length($b) <=> length($a) } keys %$funcs;
+    my @funcs = sort  keys %$funcs;
+    #print Dumper(\@funcs) . "\n";
 
     foreach my $func (@funcs) {
         my $v = $funcs->{$func};
@@ -154,24 +156,38 @@ sub html_make {
                 attr  => { id => "code_dec_$func" },
             })
             ->add('br') 
-            ->add('code',{ 
-                text  => join("__br__\n",@lines_num),
-                attr  => { id => "code_body_$func" },
+            ->add('div',{ 
+                attr  => { 
+                    id => "div_code_body_$func",
+                },
             })
-#            ->update({ 
-                #xpath  => sprintf(q{//code[@id='code_body_%s']/text()},$func),
-                #sub    => sub { 
-                    #my ($n) = @_;
+            ->update({ 
+                xpath  => sprintf(q{//div[@id="div_code_body_%s"]},$func),
+                sub    => sub { 
+                    my ($n) = @_;
 
-                    #my $text = $n->getData;
-                    #local $_ = $text;
+                    my $e = $pg->{dom}->createElement('code');
 
-                    #$n->setData($_);
-                    #return $n;
-                #}
-            #})
+                    my $text = join("__br__\n",@lines_num);
+
+                    $e->appendText($text);
+                    $e->{id} = "code_body_$func";
+
+                    $n->appendChild($e);
+
+                    return $n;
+                }
+            })
         ;
     }
+
+###css
+    my @css;
+    push @css,
+        qq| .func { background-color: blue; } |,
+        qq| .func { color: white; } |,
+        ;
+    $pg->css({ css => \@css });
 
     my $ln={};
     my $txt={};
@@ -196,7 +212,8 @@ sub html_make {
             if ($ln->{is_code}) {
                 foreach my $f (@funcs) {
                     next unless $f;
-                    s{\b$f\b}{<a href="#$f">$f</a>}g;
+                    my $href = sprintf(q{<a href="#%s"><span class="func">%s</span></a>},$f,$f);
+                    s{(?<=[\W^#])$f(?=[\W^#])}{$href}g;
                 }
             }
         }

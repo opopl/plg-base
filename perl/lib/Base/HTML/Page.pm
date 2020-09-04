@@ -98,6 +98,32 @@ sub init {
     return $self;
 }
 
+sub css {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+	my $css   = $ref->{css} || [];
+	my $css_s = (ref $css eq 'ARRAY') ? join("\n",@$css) : $css;
+
+	my $dom = $self->{dom};
+	$self->update({
+		xpath => '/html/head',
+		sub   => sub { 
+			my ($n) = @_;
+
+			my $e = $dom->createElement('style');
+
+			$e->appendText($css_s);
+			$n->appendChild($e);
+
+			return $n;
+		}
+	});
+
+	return $self;
+}
+
+
 sub update {
     my ($self, $ref) = @_;
 
@@ -125,6 +151,7 @@ sub add {
 
     my $text  = $ref->{text};
     my $attr  = $ref->{attr};
+    my $xpath = $ref->{xpath} || '/html/body';
 
     my $dom = $self->{dom};
 
