@@ -572,6 +572,8 @@ sub init_plugins {
     });
     my ($dat_plg) = map { $_->{datfile} } @$rows;
 
+	#print $dat_plg . "\n";
+
     unless ($dat_plg) {
         $self->_warn_('plugins DAT file NOT defined!!');
     }
