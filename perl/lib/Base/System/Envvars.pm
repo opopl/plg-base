@@ -22,63 +22,51 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT  = qw( );
 $VERSION = '0.01';
 
-###export_vars_scalar
-my @ex_vars_scalar=qw(
-);
-###export_vars_hash
-my @ex_vars_hash=qw(
-);
-###export_vars_array
-my @ex_vars_array=qw(
-);
 
 
 BEGIN { 
 ###subs
-    our @subs = qw(
-		    main
-		    init
+    my @subs = qw(
+            main
+            init
 
-		    ENV_alias
-		    ENV_catfile
-		    ENV_get
-		    ENV_join
-		    ENV_set
-		    ENV_set_SYS
-		    
-		    set_PATH_USER
-		    set_PERLLIB
-		    set_vars
+            ENV_alias
+            ENV_catfile
+            ENV_get
+            ENV_join
+            ENV_set
+            ENV_set_SYS
+            
+            set_PATH_USER
+            set_PERLLIB
+            set_vars
+            set_env_perl
 
-		    list_ENV
+            list_ENV
     );
 
     eval sprintf( q{use subs qw(%s)},join(" ",@subs) );
     if ($@) {
         die $@;
     }
-	
-	%EXPORT_TAGS = (
-	###export_funcs
-	    'funcs' => [qw( 
-			    main
-			    ENV_set
-			    ENV_set_SYS
-			    ENV_get
-			    ENV_alias
-			    ENV_join
-			    ENV_catfile
-			    
-			    init
-			    set_vars
-			    set_PATH_USER
-			    set_PERLLIB
-			    list_ENV
-	    )],
-	    'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
-	);
-	
-	@EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
+
+###export_vars_scalar
+    my @ex_vars_scalar=qw(
+    );
+###export_vars_hash
+    my @ex_vars_hash=qw(
+    );
+###export_vars_array
+    my @ex_vars_array=qw(
+    );
+    
+###export_tags
+    %EXPORT_TAGS = (
+        'funcs' => \@subs,
+        'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
+    );
+    
+    @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 };
 
 
@@ -117,17 +105,17 @@ sub main {
     if (@ARGV) {
     }else{ }
 
-    init();
+    init;
 
-    set_env_perl();
+    set_env_perl;
     #list_ENV();
     #exit;
 
-    set_vars();
-    set_PATH_USER();
-    set_CLASSPATH();
+    set_vars;
+    set_PATH_USER;
+    set_CLASSPATH;
 
-    set_env_perl();
+    set_env_perl;
 
     print 'Broadcasting env...' . "\n";
     BroadcastEnv();
@@ -135,7 +123,7 @@ sub main {
 }
 
 sub set_env_perl {
-    set_PERLLIB();
+    set_PERLLIB;
 
     my @p_s=split(";",GetEnv(ENV_SYSTEM,'Path'));
     my %p_s=map { $_ => 1 } @p_s;
@@ -161,20 +149,15 @@ sub set_PERLLIB {
 
     ENV_set 
         PERLLIB => ENV_join(qw(
-            IPTE_LIB_CLIENT
-            PERLMODDIR_LIB
-            HTMLTOOL_LIB
-            PERLMODDIR_VIM_PERL_LIB
-            Perl_Lib_Strawberry
-            Perl_Lib_Strawberry_vendor
-            Perl_Lib_Strawberry_C
-            Perl_Lib_Strawberry_C_Site
+            perlmoddir_lib
+            htmltool_lib
+            perlmoddir_vim_perl_lib
+            perl_lib_strawberry
+            perl_lib_strawberry_vendor
+            perl_lib_strawberry_c
+            perl_lib_strawberry_c_site
         ));
     
-
-
-            #Perl_Lib_ActiveState
-
 }
 
 sub init {
@@ -202,7 +185,7 @@ sub ENV_set_SYS {
 }
 
 sub ENV_catfile {
-    my $root=shift;
+    my $root = shift;
 
     catfile($ENVV{$root},@_);
 }
@@ -231,19 +214,17 @@ sub set_vars {
     $hm   = $home;
     $progs = catfile($hm,qw(programs));
 
-    $pfiles=catfile($ENV{PROGRAMFILES});
+    $pfiles = catfile($ENV{PROGRAMFILES});
 
     ENV_set HOME    => $home;
 
     ENV_set 
         hm               => $hm,
         hm_bin           => catfile($hm,qw(bin)),
-        REPOSGIT         => catfile($hm,qw(repos git)),
-        progs             => $progs,
-        OpenServer       => catfile('C:',qw(OSPanel)),
-        Perl_ActiveState => catfile('C:',qw(Perl)),
-        Perl_Strawberry  => catfile($progs,qw(perl strawberry_522_32bit perl)),
-        VCBIN            => catfile('c:\Program Files (x86)' ,'Microsoft Visual Studio 10.0','VC','bin'),
+        reposgit         => catfile($hm,qw(repos git)),
+        progs            => $progs,
+        perl_strawberry  => catfile(qw( C: strawberry perl )),
+        vcbin            => catfile('c:\Program Files (x86)' ,'Microsoft Visual Studio 10.0','VC','bin'),
     ;
 
     ENV_set 

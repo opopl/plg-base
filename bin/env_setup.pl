@@ -6,4 +6,4 @@ use utf8;
 
 use Data::Dumper qw(Dumper);
 
-use Base::System::Envvars;
+use Base::System::Envvars qw(init);
