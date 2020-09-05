@@ -246,7 +246,7 @@ sub do_perl {
         perl_strawberry  => catfile(qw( C: strawberry perl ));
 
     env_set 
-        perl_strawberry_c  => catfile(qw(c: strawberry perl c));
+        perl_strawberry_c  => catfile(qw(c: strawberry c));
 
     env_set 
         perl_lib_strawberry        => env_catfile(qw(perl_strawberry lib)),
@@ -299,9 +299,6 @@ sub do_perl {
             perl_lib_plg_idephp
             perl_lib_plg_projs
         ));
-
-    put '',$perllib;
-    #exit;
 
     env_set perllib => $perllib;
 }
@@ -547,16 +544,6 @@ sub i_path {
 
     _eval(@ip);
     
-    _path_push ( 
-        [ env_get('bin_wget') ],
-        [ env_get('jdk_bin') ],
-        [ env_get('mvn_bin') ],
-        [ env_get('mysql_bin') ],
-        [ env_get('postgresql_bin') ],
-        [ env_catfile(qw(vimruntime plg idephp scripts perl)) ],
-    );
-    
-
 }
 
 1;
