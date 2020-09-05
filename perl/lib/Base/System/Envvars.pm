@@ -6,26 +6,76 @@ use Win32::Env::Path;
 use File::Spec::Functions qw(catfile);
 use Getopt::Long;
 
-our ($hm,$home,$pdir,@path,$comp);
+our ($hm,$home,$progs,@path,$comp);
 our ($pfiles);
 
 our (%ENVV,%ENVV_SYS);
 
-use subs qw(
-    main
-    ENV_set
-    ENV_set_SYS
-    ENV_get
-    ENV_alias
-    ENV_join
-    ENV_catfile
-    
-    init
-    set_vars
-    set_PATH_USER
-    set_PERLLIB
-    list_ENV
+use warnings;
+use strict;
+
+use Exporter ();
+use base qw(Exporter);
+use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
+
+@ISA     = qw(Exporter);
+@EXPORT  = qw( );
+$VERSION = '0.01';
+
+###export_vars_scalar
+my @ex_vars_scalar=qw(
 );
+###export_vars_hash
+my @ex_vars_hash=qw(
+);
+###export_vars_array
+my @ex_vars_array=qw(
+);
+
+%EXPORT_TAGS = (
+###export_funcs
+    'funcs' => [qw( 
+		    main
+		    ENV_set
+		    ENV_set_SYS
+		    ENV_get
+		    ENV_alias
+		    ENV_join
+		    ENV_catfile
+		    
+		    init
+		    set_vars
+		    set_PATH_USER
+		    set_PERLLIB
+		    list_ENV
+    )],
+    'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
+);
+
+@EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
+
+BEGIN { 
+    our @subs = qw(
+		    main
+		    ENV_set
+		    ENV_set_SYS
+		    ENV_get
+		    ENV_alias
+		    ENV_join
+		    ENV_catfile
+		    
+		    init
+		    set_vars
+		    set_PATH_USER
+		    set_PERLLIB
+		    list_ENV
+    );
+
+    eval sprintf( q{use subs qw(%s)},join(" ",@subs) );
+    if ($@) {
+        die $@;
+    }
+};
 
 main;
 exit 0;
@@ -174,24 +224,20 @@ sub set_vars {
 
     $home = catfile($ENV{HOMEDRIVE},$ENV{HOMEPATH});
     $hm   = $home;
-    $pdir = catfile($hm,qw(programs));
+    $progs = catfile($hm,qw(programs));
 
     $pfiles=catfile($ENV{PROGRAMFILES});
 
     ENV_set HOME    => $home;
 
     ENV_set 
-        pgdata => 'C:\OSPanel\modules\database\PostgreSQL-9.6-x64\data';
-
-    ENV_set 
         hm               => $hm,
         hm_bin           => catfile($hm,qw(bin)),
         REPOSGIT         => catfile($hm,qw(repos git)),
-        REPOSSVN         => catfile($hm,qw(repos svn)),
-        pdir             => $pdir,
+        progs             => $progs,
         OpenServer       => catfile('C:',qw(OSPanel)),
         Perl_ActiveState => catfile('C:',qw(Perl)),
-        Perl_Strawberry  => catfile($pdir,qw(perl strawberry_522_32bit perl)),
+        Perl_Strawberry  => catfile($progs,qw(perl strawberry_522_32bit perl)),
         VCBIN            => catfile('c:\Program Files (x86)' ,'Microsoft Visual Studio 10.0','VC','bin'),
     ;
 
@@ -372,8 +418,6 @@ sub set_vars {
 
     #TMP => #%USERPROFILE%\AppData\Local\Temp
 
-
-
 }
 
 sub set_PATH_USER {
@@ -382,15 +426,15 @@ sub set_PATH_USER {
 
     SetEnv(ENV_USER,'PATH','');
     
-    @path=(
-        [ $pdir ,'ctags58'      ] ,
-        [ $pdir ,'lynx'         ] ,
-        [ $pdir ,'elinks'         ] ,
-        [ $pdir ,'gtags','bin'  ] ,
-        [ $pdir ,'exiv2',       ] ,
-        [ $pdir ,'eclipse',     ] ,
-        [ $pdir ,'mingw', 'bin' ] ,
-        [ $pdir ,'rapidEE',     ] ,
+    @path = ( 
+        [ $progs ,'ctags58'      ] ,
+        [ $progs ,'lynx'         ] ,
+        [ $progs ,'elinks'         ] ,
+        [ $progs ,'gtags','bin'  ] ,
+        [ $progs ,'exiv2',       ] ,
+        [ $progs ,'eclipse',     ] ,
+        [ $progs ,'mingw', 'bin' ] ,
+        [ $progs ,'rapidEE',     ] ,
         [ $home ,qw(bin)        ] ,
         [ $hm   ,qw(bin)        ] ,
         [ $hm   ,qw(bin_phd) ],
