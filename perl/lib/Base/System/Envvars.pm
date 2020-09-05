@@ -32,42 +32,24 @@ my @ex_vars_hash=qw(
 my @ex_vars_array=qw(
 );
 
-%EXPORT_TAGS = (
-###export_funcs
-    'funcs' => [qw( 
-		    main
-		    ENV_set
-		    ENV_set_SYS
-		    ENV_get
-		    ENV_alias
-		    ENV_join
-		    ENV_catfile
-		    
-		    init
-		    set_vars
-		    set_PATH_USER
-		    set_PERLLIB
-		    list_ENV
-    )],
-    'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
-);
-
-@EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 
 BEGIN { 
+###subs
     our @subs = qw(
 		    main
+		    init
+
+		    ENV_alias
+		    ENV_catfile
+		    ENV_get
+		    ENV_join
 		    ENV_set
 		    ENV_set_SYS
-		    ENV_get
-		    ENV_alias
-		    ENV_join
-		    ENV_catfile
 		    
-		    init
-		    set_vars
 		    set_PATH_USER
 		    set_PERLLIB
+		    set_vars
+
 		    list_ENV
     );
 
@@ -75,10 +57,33 @@ BEGIN {
     if ($@) {
         die $@;
     }
+	
+	%EXPORT_TAGS = (
+	###export_funcs
+	    'funcs' => [qw( 
+			    main
+			    ENV_set
+			    ENV_set_SYS
+			    ENV_get
+			    ENV_alias
+			    ENV_join
+			    ENV_catfile
+			    
+			    init
+			    set_vars
+			    set_PATH_USER
+			    set_PERLLIB
+			    list_ENV
+	    )],
+	    'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
+	);
+	
+	@EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 };
 
-main;
-exit 0;
+
+#main;
+#exit 0;
 
 sub list_ENV {
     print "--------- ENV_USER --------" . "\n";
@@ -469,6 +474,8 @@ sub set_PATH_USER {
     InsertPathEnv(ENV_USER, PATH => join(';',@path));
 
 }
+
+1;
 
 
 #C:\Program Files (x86)\ActiveState Perl Dev Kit 7.3\bin;C:\Perl\site\bin;C:\Perl\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Skype\Phone\;C:\Program Files (x86)\Git\cmd;C:\Program Files (x86)\Git\bin;C:\Program Files\TortoiseSVN\bin;C:\Ruby22\bin;C:\Users\op\bin;C:\Users\op\programs\ctags58;C:\texlive\2013\bin\win32;C:\Users\op\programs\Vim\vim74
