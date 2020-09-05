@@ -282,6 +282,7 @@ function! base#buf#maps ()
           \  ';tu'       : 'TgUpdate'              ,
           \  ';tf'       : 'TgUpdate thisfile'     ,
           \  ';tv'       : 'TgView _tagfiles_'     ,
+          \  ';il'       : 'IDEPHP load_project'   ,
           \  ';co'       : 'BaseAct copen'         ,
           \  ';cc'       : 'BaseAct cclose'        ,
           \  '<F3>'      : 'BaseAct copen'         ,

@@ -6,11 +6,20 @@ use Win32::Env::Path;
 
 use File::Spec::Functions qw(catfile);
 use Getopt::Long;
+use Data::Dumper qw(Dumper);
 
 our ($hm,$home,$prg,$comp);
 our ($pfiles);
 
-our @path;
+our @PATH;
+
+# env variables
+our (@do);
+
+# PATH insertions
+our (@ip);
+
+our $debug = 1;
 
 our (%ENVV,%ENVV_SYS);
 
@@ -25,58 +34,87 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT  = qw( );
 $VERSION = '0.01';
 
-
-
 BEGIN { 
+
+###s_do
+    @do = qw(
+       do_core
+
+       do_doc
+       do_microsoft
+       do_perl
+       do_projs
+       do_python
+       do_tdm
+       do_tex
+       do_vim
+       do_www
+    );
+
+###s_ip
+    @ip = qw(
+	    ip_core
+
+	    ip_perl
+	    ip_tdm
+
+	    ip_prg
+	    ip_php
+	    ip_python
+    );
+
+###s_env
+    my @env = qw(
+       env_alias
+       env_catfile
+       env_defined
+       env_get
+       env_join
+       env_set
+       env_force
+       env_set_sys
+    );
+
+###s_i_path
+    my @i_path;
+    push @i_path,
+        qw(i_path),
+        ;
+
+    my @util = qw(
+        _eval
+    );
+
+###s_path
+    my @path = qw(
+        _path_push
+        _path_insert
+        _path_clear
+    );
+
 ###subs
     my @subs = qw(
-            main
-            init
+       setup_env
+       init dmp
 
-            env_alias
-            env_catfile
-            env_defined
-            env_get
-            env_join
-            env_set
-            env_force
-            env_set_sys
-            
-            set_path_user
+       put pute put_dump
 
-		    do_core
-		    do_microsoft
-		    do_perl
-		    do_python
-		    do_tex
-		    do_vim
-		    do_xampp
-
-			path_push
-			path_clear
-
-            list_env
+       list_env
     );
+
+    push @subs,
+        @do, @env, @i_path, @path, @util
+        ;
 
     eval sprintf( q{use subs qw(%s)},join(" ",@subs) );
     if ($@) {
         die $@;
     }
 
-###export_vars_scalar
-    my @ex_vars_scalar=qw(
-    );
-###export_vars_hash
-    my @ex_vars_hash=qw(
-    );
-###export_vars_array
-    my @ex_vars_array=qw(
-    );
-    
 ###export_tags
     %EXPORT_TAGS = (
         'funcs' => \@subs,
-        'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
+        'vars'  => [ ]
     );
     
     @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
@@ -97,12 +135,17 @@ sub list_env {
     print $_ . "\n" for(@p_s);
 }
 
-sub main {
+###main
+sub setup_env {
     init;
 
-    print 'Broadcasting env...' . "\n";
-    BroadcastEnv();
+    unless ($debug) {
+	    put 'Broadcasting env...' ;
+		#BroadcastEnv();
+    }else{
+    }
 
+    dmp;
 }
 
 sub env_push {
@@ -110,15 +153,16 @@ sub env_push {
 
     while(my($k,$v) = each %o){
         $ENVV{$k} = $v;
-        print "Setting env $k => $v" . "\n";
-        SetEnv(ENV_USER,$k,$v);
+
+        put "Setting env $k => $v";
+        #SetEnv(ENV_USER,$k,$v);
     }
 }
 
 sub env_defined {
-	my ($k) = @_;
+    my ($k) = @_;
 
-	defined $ENV{$k} ? 1 : 0;
+    defined $ENV{$k} ? 1 : 0;
 }
 
 sub env_force {
@@ -137,22 +181,22 @@ sub env_set {
     my %o = @_;
 
     while(my($k,$v) = each %o){
-		next unless env_defined($k);
+        next unless env_defined($k);
 
         $ENVV{$k} = $v;
-        print "Setting env $k => $v" . "\n";
+        put "Setting env $k => $v";
 
-        SetEnv(ENV_USER, $k, $v);
+        #SetEnv(ENV_USER, $k, $v) unless $debug;
     }
 }
 
 sub env_set_sys {
-    my %o=@_;
+    my %o = @_;
 
     while(my($k,$v)=each %o){
-		next unless env_defined_sys($k);
+        next unless env_defined_sys($k);
 
-        $ENVV_SYS{$k}=$v;
+        $ENVV_SYS{$k} = $v;
 
         print "Setting SYSTEM env $k => $v" . "\n";
         SetEnv(ENV_SYSTEM,$k,$v);
@@ -162,25 +206,27 @@ sub env_set_sys {
 sub env_catfile {
     my $root = shift;
 
-    catfile($ENVV{$root},@_);
+    catfile(env_get($root),@_);
 }
 
 sub env_alias {
     my %o=@_;
 
-    while(my($k,$v)=each %o){
-        env_set $k => ENV_get($v);
+    while(my($k,$v) = each %o){
+        env_set $k => env_get($v);
     }
 }
 
 sub env_get {
     my ($id, $default) = @_;
 
-    $ENVV{$id} || $ENV{$id};
+    $default ||= '';
+
+    $ENVV{$id} || $ENV{$id} || $default;
 }
 
 sub env_join {
-    join ';' => map { ENV_get($_) } @_;
+    join ';' => map { env_get($_) } @_;
 }
 
 sub do_microsoft {
@@ -270,25 +316,16 @@ sub do_core {
         prg              => $prg,
     ;
 
-    env_set 
-        htmlout => catfile(qw(c: out html )),
-        pdfout  => catfile(qw(c: out pdf ))
-    ;
+
 
     env_set 
-        scriptsdir => env_catfile(qw(home scripts)),
-        confdir    => env_catfile(qw(home config)),
+        config_win => env_catfile(qw(home config_win)),
     ;
 
 }
 
 sub do_tex {
     my @texinputs;
-
-    env_set 
-        projsdir => env_catfile(qw(reposgit texdocs)), 
-        texdocs  => env_catfile(qw(reposgit texdocs)), 
-        ;
 
     env_set 
         texpapersroot => env_catfile(qw(reposgit p));
@@ -320,11 +357,21 @@ sub do_tex {
 
 }
 
-sub do_python {
-
-    # to handle problem with Python vs Windows console
+sub do_doc {
     env_set 
-        pythonioencoding => 'UTF-8';
+        htmlout => catfile(qw(c: out html )),
+        pdfout  => catfile(qw(c: out pdf )),
+        pdf     => env_catfile(qw(home doc pdf )),
+        doc     => env_catfile(qw(home doc  )),
+    ;
+}
+
+sub do_python {
+    env_set 
+        py2_root         => catfile(qw(c: python27 )),
+        py3_root         => catfile(qw(c: python37 )),
+        pythonioencoding => 'UTF-8'
+    ;
 }
 
 sub do_vim {
@@ -347,74 +394,156 @@ sub do_vim {
     ;
 }
 
-sub do_xampp {
+sub do_tdm {
+    env_set 
+        tdm_bin  => catfile(qw(c: tdm-gcc-64 bin));
+}
+
+sub do_projs {
+    env_set 
+        p_saintrussia => env_catfile(qw(reposgit p_saintrussia)),
+        texdocs       => env_catfile(qw(reposgit texdocs)),
+        projsdir      => env_catfile(qw(reposgit texdocs)),
+        ;
+}
+
+sub do_www {
     env_set 
         xampp => env_catfile(qw(prg xampp));
+
     env_set 
-        bin_php => env_catfile(qw(xampp php));
+        bin_php => env_catfile(qw(xampp php)),
+        www     => env_catfile(qw(xampp htdocs))
+        ;
+}
+
+sub _eval {
+    for(@_){ eval $_; pute $@ if ($@); }
+}
+
+sub dmp {
+    put_dump \@PATH, \%ENVV;
 }
 
 sub init {
-
-    do_core;
-
-    do_microsoft;
-    do_xampp;
-    do_python;
-    do_vim;
-    do_perl;
-    do_tex;
-
-    set_path_user;
+    _eval(@do);
+    i_path;
 
 }
 
-sub path_clear {
-	@path = ();
+sub _path_clear {
+    @PATH = ();
 }
 
-sub path_push {
-	push @path, @_;
-}
+sub _path_insert {
 
-sub set_path_user {
-
-    print "Setting User PATH" . "\n";
-
-    SetEnv(ENV_USER,'PATH','');
+    my @path_dirs = map { 
+        my $d = catfile(@{$_}); 
+        ( -d $d ) ? $d : () 
+    } @PATH;
     
-    path_push ( 
-        [ env_get('perl_bin_strawberry') ],
+    InsertPathEnv(ENV_USER, PATH => join(';',@path_dirs));
+
+}
+
+sub _path_push {
+    push @PATH, @_;
+}
+
+sub put {
+    print $_ . "\n" for(@_);
+}
+
+sub pute {
+    die shift;
+}
+
+sub put_dump {
+    for(@_){
+        put Dumper($_);
+    }
+}
+
+sub ip_php {
+
+    _path_push 
         [ env_get('bin_php') ],
         [ env_get('bin_php_pear')],
-        [ env_get('bin_wget') ],
+        ;
+}
+
+sub ip_perl {
+
+    _path_push
+        [ env_get('perl_bin_strawberry') ],
+        [ env_catfile(qw(perl_strawberry_c bin)) ],
+        [ env_catfile(qw(perl_strawberry_c site bin )) ],
+        [ env_catfile(qw(htmltool bin )) ],
+        ;
+}
+
+sub ip_tdm {
+    _path_push
+        [ env_get('tdm_bin') ]
+        ;
+}
+
+
+sub ip_prg {
+    _path_push
         [ $prg ,'ctags58'      ] ,
         [ $prg ,'lynx'         ] ,
-        [ $prg ,'elinks'         ] ,
+        [ $prg ,'elinks'       ] ,
         [ $prg ,'gtags','bin'  ] ,
         [ $prg ,'exiv2',       ] ,
         [ $prg ,'eclipse',     ] ,
         [ $prg ,'mingw', 'bin' ] ,
         [ $prg ,'rapidEE',     ] ,
+        [ $pfiles, 'IrfanView' ],
+        ;
+}
+
+sub ip_core {
+
+    _path_push
         [ $home ,qw(bin)        ] ,
         [ $hm   ,qw(bin)        ] ,
-        [ $hm   ,qw(bin_phd) ],
+        ;
+}
+
+sub ip_python {
+    _path_push 
+        [ env_get('py2_root') ],
+        [ env_get('py3_root') ],
+    ;
+}
+
+sub ip_vim {
+    _path_push
+        [ env_catfile(qw(plg base bin)) ],
+        [ env_catfile(qw(plg base util perl bin)) ],
+        [ env_catfile(qw(plg idephp scripts perl)) ],
+        [ env_catfile(qw(plg projs scripts)) ],
+    ;
+}
+
+sub i_path {
+
+    put "Setting User PATH";
+
+    #SetEnv(ENV_USER,'PATH','') unless $;
+
+    _eval(@ip);
+    
+    _path_push ( 
+        [ env_get('bin_wget') ],
         [ env_get('jdk_bin') ],
         [ env_get('mvn_bin') ],
         [ env_get('mysql_bin') ],
         [ env_get('postgresql_bin') ],
-        [ $pfiles, 'IrfanView' ],
-        [ env_catfile(qw(perl_strawberry_c bin)) ],
-        [ env_catfile(qw(perl_strawberry_c site bin )) ],
         [ env_catfile(qw(vimruntime plg idephp scripts perl)) ],
     );
     
-    my @path_dirs = map { 
-        my $d = catfile(@{$_}); 
-        ( -d $d ) ? $d : () 
-    } @path;
-    
-    InsertPathEnv(ENV_USER, PATH => join(';',@path_dirs));
 
 }
 

@@ -102,7 +102,6 @@ fun! base#init#paths(...)
         \ 'texdocs'       : projsdir,
         \ 'texinputs'     : base#envvar('texinputs'),
         \ 'p'             : base#envvar('TexPapersRoot'),
-        \ 'phd_p'         : base#envvar('TexPapersRoot'),
         \ 'tagdir'        : base#file#catfile([ hm,'tags' ]),
         \ 'appdata_local' : base#envvar('LOCALAPPDATA'),
         \ })
