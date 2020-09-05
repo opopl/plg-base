@@ -202,6 +202,9 @@ sub do_perl {
         perl_lib_plg_base => env_catfile(qw(plg base perl lib));
 
     env_set 
+        perl_lib_plg_base_util => env_catfile(qw( plg base util perl lib ));
+
+    env_set 
         perl_lib_plg_projs => env_catfile(qw(plg projs perl lib));
 
     env_set 
@@ -217,6 +220,7 @@ sub do_perl {
             perl_lib_strawberry_c
             perl_lib_strawberry_c_site
             perl_lib_plg_base
+            perl_lib_plg_base_util
             perl_lib_plg_idephp
             perl_lib_plg_projs
         ));
