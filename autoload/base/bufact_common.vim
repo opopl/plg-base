@@ -15,6 +15,7 @@ function! base#bufact_common#help (...)
   let ref  = get(a:000,0,{})
 
   let help = []
+	call insert(help, 'BUFFER DEFINED MAPS')
 
   let data_h = []
   let b_maps = exists('b:maps') ? b:maps : {}
@@ -40,10 +41,17 @@ function! base#bufact_common#help (...)
 
   endfor
 
+  call add(help,d)
+  call add(help,'SEE ALSO')
+  call add(help,'	base#buf#maps')
+  call add(help,'	base#bufact_common#help')
+  call add(help,'	projs#maps')
+
   call base#buf#open_split({ 
     \ 'lines'    : help,
     \ 'cmds_pre' : [
       \ 'resize 99',
+      \ 'MM tgadd_all',
       \ 'call matchadd("ModeMsg","<F.*>")',
       \ ],
     \ })

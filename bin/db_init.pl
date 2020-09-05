@@ -14,7 +14,7 @@ use Vim::Plg::Base;
 
 my $dbfile = catfile($ENV{HOME},qw(db vim_plg_base.db ));
 
-my $sub_log = sub { print $_."\n" for(@_) };
+my $sub_log  = sub { print $_."\n" for(@_) };
 my $sub_warn = sub { warn $_."\n" for(@_)};
 
 our $plgbase = Vim::Plg::Base->new(

@@ -121,8 +121,9 @@ sub init_sqlstm {
                 if (/\.$ext$/) {
                     s/\.$ext$//g;
     
-                    my $f = $File::Find::name;
+                    my $f   = $File::Find::name;
                     my $sql = read_file($f);
+
                     $h->{sqlstm}->{$_} = $sql;
                 }
             }
@@ -572,7 +573,7 @@ sub init_plugins {
     });
     my ($dat_plg) = map { $_->{datfile} } @$rows;
 
-	#print $dat_plg . "\n";
+    #print $dat_plg . "\n";
 
     unless ($dat_plg) {
         $self->_warn_('plugins DAT file NOT defined!!');

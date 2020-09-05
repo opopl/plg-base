@@ -267,6 +267,47 @@ function! base#buf#map_add (mp, ... )
   endif
 endfunction
 
+function! base#buf#maps ()
+
+  let maps = {
+        \ 'nnoremap' :
+          \ {
+          \  ';fo'       : 'PJact file_open'       ,
+          \  ';h'        : 'BufAct help'           ,
+          \  '?'         : 'BufAct help'           ,
+          \  ';l'        : 'ls!'                   ,
+          \  ';ma'       : 'MM tgadd_all'          ,
+          \  ';sv'       : 'SnippetView ' . &ft    ,
+          \  ';ts'       : 'BufAct tabs_to_spaces' ,
+          \  ';tu'       : 'TgUpdate'              ,
+          \  ';tf'       : 'TgUpdate thisfile'     ,
+          \  ';tv'       : 'TgView _tagfiles_'     ,
+          \  ';co'       : 'BaseAct copen'         ,
+          \  ';cc'       : 'BaseAct cclose'        ,
+          \  '<F3>'      : 'BaseAct copen'         ,
+          \  '<F4>'      : 'BaseAct cclose'        ,
+          \  '<F9>'      : 'TgUpdate'              ,
+          \  '<F11>'     : 'MM tgadd_all'          ,
+          \  '<F12>'     : 'TgView _tagfiles_'     ,
+          \  '<S-S>'     : 'call base#buf#git_status()'   ,
+          \  '<C-S>'     : 'call base#buf#save()'         ,
+          \  '<C-A>'     : 'call base#buf#git_add()'      ,
+          \  '<C-G>'     : 'call base#buf#save_git()'     ,
+          \  '<leader>l' : 'call base#buf#lines_hi()' ,
+          \ }
+        \ }
+
+  let r = { 'maps' : maps }
+  call base#buf#onload_process_ft(r)
+  call base#buf#onload_process_ext(r)
+
+  for [ map, mp ] in items(maps)
+    call base#buf#map_add(mp,{ 'map' : map })
+  endfor
+
+
+endfunction
+
 " Usage
 "   call base#buf#onload()
 "
@@ -283,42 +324,9 @@ function! base#buf#onload ()
     StatusLine simple
   endif
 
-  let maps = {
-        \ 'nnoremap' :
-          \ {
-          \  ';fo'   : 'PJact file_open'       ,
-          \  ';h'    : 'BufAct help'           ,
-          \  '?'     : 'BufAct help'           ,
-          \  ';l'    : 'ls!'                   ,
-          \  ';ma'   : 'MM tgadd_all'          ,
-          \  ';sv'   : 'SnippetView ' . &ft    ,
-          \  ';ts'   : 'BufAct tabs_to_spaces' ,
-          \  ';tu'   : 'TgUpdate'              ,
-          \  ';tv'   : 'TgView _tagfiles_'     ,
-          \  ';co'   : 'BaseAct copen'         ,
-          \  ';cc'   : 'BaseAct cclose'        ,
-          \  '<F3>'  : 'BaseAct copen'         ,
-          \  '<F4>'  : 'BaseAct cclose'        ,
-          \  '<F9>'  : 'TgUpdate'              ,
-          \  '<F11>' : 'MM tgadd_all'          ,
-          \  '<F12>' : 'TgView _tagfiles_'     ,
-          \  '<S-S>' : 'call base#buf#git_status()'   ,
-          \  '<C-S>' : 'call base#buf#save()'         ,
-          \  '<C-A>' : 'call base#buf#git_add()'      ,
-          \  '<C-G>' : 'call base#buf#save_git()'     ,
-          \  '<leader>l' : 'call base#buf#lines_hi()' ,
-          \ }
-        \ }
-
   let b:comps_BufAct = base#comps#bufact()
 
-  let r = { 'maps' : maps }
-  call base#buf#onload_process_ft(r)
-  call base#buf#onload_process_ext(r)
-
-  for [ map, mp ] in items(maps)
-    call base#buf#map_add(mp,{ 'map' : map })
-  endfor
+	call base#buf#maps()
 
   call base#var#update('buf_vars')
 

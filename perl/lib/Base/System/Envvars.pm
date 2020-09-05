@@ -243,6 +243,16 @@ sub do_core {
         prg              => $prg,
     ;
 
+    env_set 
+        htmlout => catfile(qw(c: out html )),
+        pdfout  => catfile(qw(c: out pdf ))
+    ;
+
+    env_set 
+        scriptsdir => env_catfile(qw(home scripts)),
+        confdir    => env_catfile(qw(home config)),
+    ;
+
 }
 
 sub do_tex {
@@ -332,18 +342,6 @@ sub init {
     do_tex;
 
 
-
-    env_set 
-        htmlout => catfile(qw(c: out html )),
-        pdfout  => catfile(qw(c: out pdf ))
-    ;
-
- 
-
-    env_set 
-        scriptsdir => env_catfile(qw(home scripts)),
-        confdir    => env_catfile(qw(home config)),
-    ;
 
 
     #TMP => #%USERPROFILE%\AppData\Local\Temp
