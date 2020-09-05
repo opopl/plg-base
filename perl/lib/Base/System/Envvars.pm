@@ -140,8 +140,8 @@ sub install_env {
     init;
 
     unless ($debug) {
-	    put 'Broadcasting env...' ;
-		#BroadcastEnv();
+        put 'Broadcasting env...' ;
+        #BroadcastEnv();
     }else{
     }
 
@@ -242,7 +242,7 @@ sub do_microsoft {
 sub do_perl {
 
     env_set 
-        perl_strawberry  => catfile(qw( C: strawberry perl )),
+        perl_strawberry  => catfile(qw( C: strawberry perl ));
 
     env_set 
         perl_strawberry_c  => catfile(qw(c: strawberry perl c));
@@ -285,8 +285,7 @@ sub do_perl {
     env_set 
         perl_lib_plg_idephp => env_catfile(qw(plg idephp perl lib));
 
-    env_set 
-        perllib => env_join(qw(
+    my $perllib = env_join(qw(
             perlmoddir_lib
             htmltool_lib
             perlmoddir_vim_perl_lib
@@ -299,6 +298,8 @@ sub do_perl {
             perl_lib_plg_idephp
             perl_lib_plg_projs
         ));
+
+    env_set perllib => $perllib;
 }
 
 sub do_core {
@@ -317,8 +318,6 @@ sub do_core {
         reposgit         => catfile($hm,qw(repos git)),
         prg              => $prg,
     ;
-
-
 
     env_set 
         config_win => env_catfile(qw(home config_win)),
@@ -449,7 +448,14 @@ sub _path_insert {
 }
 
 sub _path_push {
-    push @PATH, map { length($_) ? $_ : () } @_;
+
+#    push @PATH, map { 
+        #my $y;
+        #my @a = @{$_};
+
+        #$y = (@a == 1) && (! length($a[0])) ? 0 : 1;
+        #$y ? $_ : ();
+    #} @_;
 }
 
 sub put {
@@ -550,29 +556,3 @@ sub i_path {
 }
 
 1;
-
-
-#C:\Program Files (x86)\ActiveState Perl Dev Kit 7.3\bin;C:\Perl\site\bin;C:\Perl\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\Skype\Phone\;C:\Program Files (x86)\Git\cmd;C:\Program Files (x86)\Git\bin;C:\Program Files\TortoiseSVN\bin;C:\Ruby22\bin;C:\Users\op\bin;C:\Users\op\programs\ctags58;C:\texlive\2013\bin\win32;C:\Users\op\programs\Vim\vim74
-#
-#C:\Program Files (x86)\ActiveState Perl Dev Kit 7.3\bin
-#C:\Perl\site\bin
-#C:\Perl\bin
-#C:\Windows\system32
-#C:\Windows
-#C:\Windows\System32\Wbem
-#C:\Windows\System32\WindowsPowerShell\v1.0\
-#C:\Program Files (x86)\Skype\Phone\
-#C:\Program Files (x86)\Git\cmd
-#C:\Program Files (x86)\Git\bin
-#C:\Program Files\TortoiseSVN\bin
-#C:\Ruby22\bin
-#C:\Users\op\bin
-#C:\Users\op\programs\ctags58
-#C:\texlive\2013\bin\win32
-#C:\Users\op\programs\Vim\vim74
-
-#C:\Users\op\repos\svn\Perl
-#C:\Users\op\repos\git\perlmod\lib
-#C:\Users\op\repos\git\perlmod\mods\Vim-Perl\lib
- 
-
