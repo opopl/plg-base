@@ -6,7 +6,7 @@ use Win32::Env::Path;
 use File::Spec::Functions qw(catfile);
 use Getopt::Long;
 
-our ($hm,$home,$progs,@path,$comp);
+our ($hm,$home,$prg,@path,$comp);
 our ($pfiles);
 
 our (%ENVV,%ENVV_SYS);
@@ -30,19 +30,22 @@ BEGIN {
             main
             init
 
-            ENV_alias
-            ENV_catfile
-            ENV_get
-            ENV_join
-            ENV_set
-            ENV_set_SYS
+            env_alias
+            env_catfile
+            env_get
+            env_join
+            env_set
+            env_set_sys
             
-            set_PATH_USER
-            set_PERLLIB
-            set_vars
-            set_env_perl
+            set_path_user
+            set_perllib
 
-            list_ENV
+            do_tex
+            do_microsoft
+
+            init
+
+            list_env
     );
 
     eval sprintf( q{use subs qw(%s)},join(" ",@subs) );
@@ -73,7 +76,7 @@ BEGIN {
 #main;
 #exit 0;
 
-sub list_ENV {
+sub list_env {
     print "--------- ENV_USER --------" . "\n";
     my @vars_u=ListEnv(ENV_USER);
     print(join(', ', sort @vars_u) . "\n");
@@ -88,93 +91,38 @@ sub list_ENV {
     print $_ . "\n" for(@p_s);
 }
 
-sub set_CLASSPATH {
-
-    my $a=[
-        [qw(c: lib java httpcomponents-client lib)],
-        [qw(c: lib java)]
-    ];
-    my $cp = join(";", map { catfile(@{$_}) } @$a );
-
-    ENV_set 
-        CLASSPATH => $cp;
-}
-
 sub main {
-
-    if (@ARGV) {
-    }else{ }
-
     init;
 
-    set_env_perl;
-    #list_ENV();
-    #exit;
-
-    set_vars;
-    set_PATH_USER;
-    set_CLASSPATH;
-
-    set_env_perl;
+    set_perllib;
+    set_path_user;
 
     print 'Broadcasting env...' . "\n";
     BroadcastEnv();
 
 }
 
-sub set_env_perl {
-    set_PERLLIB;
+sub env_push {
+    my %o = @_;
 
-    my @p_s=split(";",GetEnv(ENV_SYSTEM,'Path'));
-    my %p_s=map { $_ => 1 } @p_s;
-
-    @p_s{
-        ENV_get('Perl_Bin_ActiveState'),
-        ENV_get('Perl_Site_Bin_ActiveState'),
-        #'C:\Program Files (x86)\Git\bin',
-    }=0;
-    my @n;
-    foreach(@p_s) {
-        push @n,$_ if $p_s{$_};
-    }
-    my $n=join(';',@n);
-    print $n . "\n";
-
-    #ENV_set_SYS(PATH => $n);
-
-
-}
-
-sub set_PERLLIB {
-
-    ENV_set 
-        PERLLIB => ENV_join(qw(
-            perlmoddir_lib
-            htmltool_lib
-            perlmoddir_vim_perl_lib
-            perl_lib_strawberry
-            perl_lib_strawberry_vendor
-            perl_lib_strawberry_c
-            perl_lib_strawberry_c_site
-        ));
-    
-}
-
-sub init {
-    $comp=$ENV{COMPUTERNAME};
-}
-
-sub ENV_set {
-    my %o=@_;
-
-    while(my($k,$v)=each %o){
-        $ENVV{$k}=$v;
+    while(my($k,$v) = each %o){
+        $ENVV{$k} = $v;
         print "Setting env $k => $v" . "\n";
         SetEnv(ENV_USER,$k,$v);
     }
 }
 
-sub ENV_set_SYS {
+sub env_set {
+    my %o = @_;
+
+    while(my($k,$v) = each %o){
+        $ENVV{$k} = $v;
+        print "Setting env $k => $v" . "\n";
+        SetEnv(ENV_USER,$k,$v);
+    }
+}
+
+sub env_set_sys {
     my %o=@_;
 
     while(my($k,$v)=each %o){
@@ -184,221 +132,213 @@ sub ENV_set_SYS {
     }
 }
 
-sub ENV_catfile {
+sub env_catfile {
     my $root = shift;
 
     catfile($ENVV{$root},@_);
 }
 
-sub ENV_alias {
+sub env_alias {
     my %o=@_;
 
     while(my($k,$v)=each %o){
-        ENV_set $k => ENV_get($v);
+        env_set $k => ENV_get($v);
     }
 }
 
-sub ENV_get {
-    my $id=shift;
+sub env_get {
+    my ($id, $default) = @_;
 
     $ENVV{$id} || $ENV{$id};
 }
 
-sub ENV_join {
+sub env_join {
     join ';' => map { ENV_get($_) } @_;
 }
 
-sub set_vars {
+sub do_microsoft {
+    env_set
+        vcbin => catfile('c:\Program Files (x86)' ,'Microsoft Visual Studio 10.0','VC','bin'),
+        include_win_sdk => 'C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include',
+        ;
+
+}
+
+sub do_perl {
+
+    env_set 
+        perl_strawberry  => catfile(qw( C: strawberry perl )),
+
+    env_set 
+        perl_strawberry_c  => catfile(qw(c: strawberry perl c));
+
+    env_set 
+        perl_lib_strawberry        => env_catfile(qw(perl_strawberry lib)),
+        perl_lib_strawberry_vendor => env_catfile(qw(perl_strawberry vendor lib)),
+        perl_lib_strawberry_c      => env_catfile(qw(perl_strawberry_c lib)),
+        perl_lib_strawberry_c_site => env_catfile(qw(perl_strawberry_c site lib)),
+        ;
+
+    env_set 
+        perl_bin_strawberry       => env_catfile(qw(perl_strawberry bin)),
+        ;
+
+    env_set 
+        perlmoddir => env_catfile(qw(reposgit perlmod));
+
+    env_set 
+        htmltool => env_catfile(qw(reposgit htmltool));
+
+    env_set 
+        htmltool_lib => env_catfile(qw(htmltool lib));
+
+    env_set 
+        perlmoddir_vim_perl_lib => env_catfile(qw(perlmoddir mods vim-perl lib ));
+
+    env_set 
+        perlmoddir_lib => env_catfile(qw(perlmoddir lib));
+
+    env_set 
+        perl_lib_plg_base => env_catfile(qw(plg base perl lib));
+
+    env_set 
+        perl_lib_plg_projs => env_catfile(qw(plg projs perl lib));
+
+    env_set 
+        perl_lib_plg_idephp => env_catfile(qw(plg idephp perl lib));
+
+    env_set 
+        perllib => env_join(qw(
+            perlmoddir_lib
+            htmltool_lib
+            perlmoddir_vim_perl_lib
+            perl_lib_strawberry
+            perl_lib_strawberry_vendor
+            perl_lib_strawberry_c
+            perl_lib_strawberry_c_site
+            perl_lib_plg_base
+            perl_lib_plg_idephp
+            perl_lib_plg_projs
+        ));
+}
+
+sub do_core {
+    $comp = $ENV{COMPUTERNAME};
 
     $home = catfile($ENV{HOMEDRIVE},$ENV{HOMEPATH});
     $hm   = $home;
-    $progs = catfile($hm,qw(programs));
+    $prg  = catfile($hm,qw(programs));
 
     $pfiles = catfile($ENV{PROGRAMFILES});
 
-    ENV_set HOME    => $home;
-
-    ENV_set 
+    env_set 
+        home             => $home,
         hm               => $hm,
         hm_bin           => catfile($hm,qw(bin)),
         reposgit         => catfile($hm,qw(repos git)),
-        progs            => $progs,
-        perl_strawberry  => catfile(qw( C: strawberry perl )),
-        vcbin            => catfile('c:\Program Files (x86)' ,'Microsoft Visual Studio 10.0','VC','bin'),
+        prg              => $prg,
     ;
 
-    ENV_set 
-        localhost => ENV_catfile(qw(OpenServer domains localhost));
+}
 
-
-    ENV_set 
-        bin_php => ENV_catfile(qw(OpenServer modules php PHP-7.1-x64));
-
-    ENV_set 
-        bin_php_pear => ENV_catfile(qw(bin_php),'PEAR');
-
-    ENV_set 
-        saved_html => catfile(qw(c: saved html ));
-
-    ENV_set 
-        bin_wget => ENV_catfile(qw(OpenServer modules wget bin));
-
-    # to handle problem with Python vs Windows console
-    ENV_set 
-        PYTHONIOENCODING => 'UTF-8';
-
-    ENV_set 
-        Perl_Strawberry_C  => catfile(qw(C: strawberry perl));
-
-    ENV_set 
-        Perl_Lib_ActiveState       => ENV_catfile(qw(Perl_ActiveState lib)),
-        Perl_Lib_Strawberry        => ENV_catfile(qw(Perl_Strawberry lib)),
-        Perl_Lib_Strawberry_vendor => ENV_catfile(qw(Perl_Strawberry vendor lib)),
-        Perl_Lib_Strawberry_C      => ENV_catfile(qw(Perl_Strawberry_C lib)),
-        Perl_Lib_Strawberry_C_Site => ENV_catfile(qw(Perl_Strawberry_C site lib)),
-        ;
-
-    ENV_set 
-        Perl_Bin_Strawberry       => ENV_catfile(qw(Perl_Strawberry bin)),
-        Perl_Bin_ActiveState      => ENV_catfile(qw(Perl_ActiveState bin)),
-        Perl_Site_Bin_ActiveState => ENV_catfile(qw(Perl_ActiveState site bin)),
-        ;
-
-    ENV_set 
-        inews_local     => ENV_catfile(qw(OpenServer domains inews.local )),
-        ap_local        => ENV_catfile(qw(OpenServer domains ap.local )),
-        jq_course_local => ENV_catfile(qw(OpenServer domains jq-course.local ));
-
-    ENV_set 
-        mysql_bin => ENV_catfile(qw(OpenServer modules database MySQL-5.7-x64 bin )),
-        ;
-
-    ENV_set
-        postgresql_bin => ENV_catfile(qw(OpenServer modules database PostgreSQL-9.6-x64 bin ));
-
-    ENV_set 
-        src_java_imported => ENV_catfile(qw(
-            REPOSGIT java imported
-            ));
-
-    ENV_set 
-        src_vim => catfile(qw(C: src vim));
-
-
-    ENV_set 
-        include_win_sdk => 'C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include';
-
-    ENV_set 
-        src_latexdraw_root => ENV_catfile(qw(
-                src_java_imported
-                latexdraw 
-                latexdraw-core 
-                net.sf.latexdraw
-                src main ));
-
-    ENV_set 
-        src_latexdraw => ENV_catfile(qw(
-            src_latexdraw_root
-            java net sf latexdraw
-        ));
-
-    ENV_alias vrt => 'vimruntime';
-
-    ENV_set 
-        PERLMODDIR => ENV_catfile(qw(REPOSGIT perlmod));
-
-    ENV_set 
-        HTMLTOOL => ENV_catfile(qw(REPOSGIT htmltool));
-
-    ENV_set 
-        HTMLTOOL_LIB => ENV_catfile(qw(HTMLTOOL lib));
-
-    ENV_set 
-        PERLMODDIR_VIM_PERL_LIB => ENV_catfile(qw(PERLMODDIR mods Vim-Perl lib ));
-
-    ENV_set 
-        PERLMODDIR_LIB => ENV_catfile(qw(PERLMODDIR lib));
-
-    ENV_set 
-        CLASSPATH => catfile(qw(c: lib java httpcomponents-client lib));
-
-    ENV_set 
-        JAVA_HOME => catfile('c:','Program Files','Java','jdk-9');
-
-    ENV_set 
-        M2_HOME => catfile('c:','Users','apoplavskiy','programs','maven');
-
-    ENV_set
-        JDK_BIN => ENV_catfile(qw(JAVA_HOME bin));
-
-    ENV_set
-        MVN_BIN => ENV_catfile(qw(M2_HOME bin));
-
+sub do_tex {
     my @texinputs;
+
+    env_set 
+        projsdir => env_catfile(qw(reposgit texdocs)), 
+        texdocs  => env_catfile(qw(reposgit texdocs)), 
+        ;
+
+    env_set 
+        texpapersroot => env_catfile(qw(reposgit p));
 
     push @texinputs, 
         '.',
-        ENV_catfile(qw(REPOSGIT texinputs)),
-        ENV_catfile(qw(REPOSGIT p)),
+        env_catfile(qw(reposgit texinputs)),
+        env_catfile(qw(reposgit p)),
         ''
     ;
-    my $ti=join(';',@texinputs);
+    my $ti = join(';',@texinputs);
     $ti =~ s{\\}{\/}g;
 
-    ENV_set TEXINPUTS => $ti;
+    env_set 
+        texinputs => $ti;
 
     my @bibinputs;
 
     push @bibinputs, 
         '.',
-        ENV_catfile(qw(REPOSGIT p)),
+        env_catfile(qw(reposgit p)),
         ''
     ;
-    my $bi=join(';',@bibinputs);
+    my $bi = join(';',@bibinputs);
     $bi =~ s{\\}{\/}g;
 
-    ENV_set BIBINPUTS => $bi;
+    env_set 
+        bibinputs => $bi;
 
-    ENV_set 
-        IPTE_LIB_CLIENT => ENV_catfile(qw(REPOSSVN Veloxum iPTE trunk Clients Perl)),
-        IPTE_AO => ENV_catfile(qw(REPOSSVN Veloxum iPTE trunk Clients Perl_AO)),
-        IPTE_DOCS       => ENV_catfile(qw(REPOSSVN Veloxum iPTE trunk Docs)),
-        IPTE_RECIPES    => ENV_catfile(qw(REPOSSVN ipteclient recipes)),
-        IPTE_TESTS      => ENV_catfile(qw(C: testipte)),
-        VIM_GFN         => 'Lucida_Console:h15:cANSI',
+}
+
+sub do_python {
+
+    # to handle problem with Python vs Windows console
+    env_set 
+        pythonioencoding => 'UTF-8';
+}
+
+sub do_vim {
+    my $vv = env_get('vim_version', '82');
+
+    env_set 
+        vim => env_catfile(qw(home programs vim));
+
+    env_set 
+        vimruntime => env_catfile(qw(vim), qq{vim$vv} );
+
+    env_alias vrt => 'vimruntime';
+
+    env_set 
+        plg => env_catfile( qw(vimruntime plg) );
+
+
+    env_set 
+        src_vim => env_catfile(qw(reposgit vim)),
+        vim_gfn => 'Lucida_Console:h15:cANSI',
+    ;
+}
+
+sub do_xampp {
+
+    env_set 
+        xampp => env_catfile(qw(prg xampp));
+
+    env_set 
+        bin_php => env_catfile(qw(xampp php));
+}
+
+sub init {
+
+    do_core;
+
+    do_microsoft;
+    do_xampp;
+    do_python;
+    do_vim;
+    do_perl;
+    do_tex;
+
+
+
+    env_set 
+        htmlout => catfile(qw(c: out html )),
+        pdfout  => catfile(qw(c: out pdf ))
     ;
 
-    ENV_set 
-        VIM => ENV_catfile(qw(HOME programs Vim));
+ 
 
-    ENV_set 
-        VIMRUNTIME => ENV_catfile(qw(VIM Vim74));
-
-    ENV_set 
-        HTMLOUT => catfile(qw(C: out html )),
-        PDFOUT  => catfile(qw(C: out pdf ))
-    ;
-
-    ENV_set 
-        PROJSDIR => ENV_catfile(qw(REPOSGIT texdocs)), 
-        TEXDOCS  => ENV_catfile(qw(REPOSGIT texdocs)), 
-        JSDOCS   => ENV_catfile(qw(REPOSGIT jsdocs)); 
-
-    ENV_set 
-        TexPapersRoot => ENV_catfile(qw(REPOSGIT p)); 
-
-    ENV_set 
-        PdfPapersField => 'ChemPhys'; 
-
-    ENV_set 
-        PdfPapersRoot => catfile(qw(C: doc papers )); 
-
-    ENV_set 
-        LINUX_VRT     => ENV_catfile(qw(REPOSGIT vrt));
-
-    ENV_set 
-        SCRIPTSDIR => ENV_catfile(qw(HOME scripts)),
-        CONFDIR  => ENV_catfile(qw(HOME config)),
+    env_set 
+        scriptsdir => env_catfile(qw(home scripts)),
+        confdir    => env_catfile(qw(home config)),
     ;
 
 
@@ -406,48 +346,39 @@ sub set_vars {
 
 }
 
-sub set_PATH_USER {
+sub set_path_user {
 
     print "Setting User PATH" . "\n";
 
     SetEnv(ENV_USER,'PATH','');
     
     @path = ( 
-        [ $progs ,'ctags58'      ] ,
-        [ $progs ,'lynx'         ] ,
-        [ $progs ,'elinks'         ] ,
-        [ $progs ,'gtags','bin'  ] ,
-        [ $progs ,'exiv2',       ] ,
-        [ $progs ,'eclipse',     ] ,
-        [ $progs ,'mingw', 'bin' ] ,
-        [ $progs ,'rapidEE',     ] ,
+        [ env_get('perl_bin_strawberry') ],
+        [ env_get('bin_php') ],
+        [ env_get('bin_php_pear')],
+        [ env_get('bin_wget') ],
+        [ $prg ,'ctags58'      ] ,
+        [ $prg ,'lynx'         ] ,
+        [ $prg ,'elinks'         ] ,
+        [ $prg ,'gtags','bin'  ] ,
+        [ $prg ,'exiv2',       ] ,
+        [ $prg ,'eclipse',     ] ,
+        [ $prg ,'mingw', 'bin' ] ,
+        [ $prg ,'rapidEE',     ] ,
         [ $home ,qw(bin)        ] ,
         [ $hm   ,qw(bin)        ] ,
         [ $hm   ,qw(bin_phd) ],
-        [ ENV_get('JDK_BIN') ],
-        [ ENV_get('MVN_BIN') ],
-        [ ENV_get('mysql_bin') ],
-        [ ENV_get('postgresql_bin') ],
-        [ $pfiles, 'Microsoft Visual Studio 10.0\VC\bin' ],
+        [ env_get('jdk_bin') ],
+        [ env_get('mvn_bin') ],
+        [ env_get('mysql_bin') ],
+        [ env_get('postgresql_bin') ],
         [ $pfiles, 'IrfanView' ],
-        [ ENV_get('Perl_Bin_Strawberry') ],
-        [ ENV_get('bin_php') ],
-        [ ENV_get('bin_php_pear')],
-        [ ENV_get('bin_wget') ],
-        [ ENV_catfile(qw(Perl_Strawberry_C bin)) ],
-        [ ENV_catfile(qw(Perl_Strawberry_C site bin )) ],
-        [ ENV_catfile(qw(OpenServer progs _Office Notepad++ )) ],
-        [ ENV_catfile(qw(VIMRUNTIME plg idephp scripts perl)) ],
+        [ env_catfile(qw(perl_strawberry_c bin)) ],
+        [ env_catfile(qw(perl_strawberry_c site bin )) ],
+        [ env_catfile(qw(vimruntime plg idephp scripts perl)) ],
     );
     
-    push @path, 
-        [ qw(C: texlive 2015 bin win32) ],
-        [ qw(C: Ruby22 bin) ],
-        [ qw(C: ),'Resource Tuner Console' ],
-        [ qw(C: ),'Resource Tuner Console' ],
-    ;
-    
-    @path=map { 
+    @path = map { 
         my $d = catfile(@{$_}); 
         ( -d $d ) ? $d : () 
     } @path;
