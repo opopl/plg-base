@@ -1,3 +1,4 @@
+
 package Base::System::Envvars;
 
 use Win32::Env;
@@ -6,8 +7,10 @@ use Win32::Env::Path;
 use File::Spec::Functions qw(catfile);
 use Getopt::Long;
 
-our ($hm,$home,$prg,@path,$comp);
+our ($hm,$home,$prg,$comp);
 our ($pfiles);
+
+our @path;
 
 our (%ENVV,%ENVV_SYS);
 
@@ -32,18 +35,25 @@ BEGIN {
 
             env_alias
             env_catfile
+            env_defined
             env_get
             env_join
             env_set
+            env_force
             env_set_sys
             
             set_path_user
-            set_perllib
 
-            do_tex
-            do_microsoft
+		    do_core
+		    do_microsoft
+		    do_perl
+		    do_python
+		    do_tex
+		    do_vim
+		    do_xampp
 
-            init
+			path_push
+			path_clear
 
             list_env
     );
@@ -72,10 +82,6 @@ BEGIN {
     @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 };
 
-
-#main;
-#exit 0;
-
 sub list_env {
     print "--------- ENV_USER --------" . "\n";
     my @vars_u=ListEnv(ENV_USER);
@@ -94,9 +100,6 @@ sub list_env {
 sub main {
     init;
 
-    set_perllib;
-    set_path_user;
-
     print 'Broadcasting env...' . "\n";
     BroadcastEnv();
 
@@ -112,13 +115,34 @@ sub env_push {
     }
 }
 
+sub env_defined {
+	my ($k) = @_;
+
+	defined $ENV{$k} ? 1 : 0;
+}
+
+sub env_force {
+    my %o = @_;
+
+    while(my($k,$v) = each %o){
+
+        $ENVV{$k} = $v;
+        print "Forcing env $k => $v" . "\n";
+
+        SetEnv(ENV_USER, $k, $v);
+    }
+}
+
 sub env_set {
     my %o = @_;
 
     while(my($k,$v) = each %o){
+		next unless env_defined($k);
+
         $ENVV{$k} = $v;
         print "Setting env $k => $v" . "\n";
-        SetEnv(ENV_USER,$k,$v);
+
+        SetEnv(ENV_USER, $k, $v);
     }
 }
 
@@ -126,7 +150,10 @@ sub env_set_sys {
     my %o=@_;
 
     while(my($k,$v)=each %o){
+		next unless env_defined_sys($k);
+
         $ENVV_SYS{$k}=$v;
+
         print "Setting SYSTEM env $k => $v" . "\n";
         SetEnv(ENV_SYSTEM,$k,$v);
     }
@@ -314,7 +341,6 @@ sub do_vim {
     env_set 
         plg => env_catfile( qw(vimruntime plg) );
 
-
     env_set 
         src_vim => env_catfile(qw(reposgit vim)),
         vim_gfn => 'Lucida_Console:h15:cANSI',
@@ -322,10 +348,8 @@ sub do_vim {
 }
 
 sub do_xampp {
-
     env_set 
         xampp => env_catfile(qw(prg xampp));
-
     env_set 
         bin_php => env_catfile(qw(xampp php));
 }
@@ -341,11 +365,16 @@ sub init {
     do_perl;
     do_tex;
 
+    set_path_user;
 
+}
 
+sub path_clear {
+	@path = ();
+}
 
-    #TMP => #%USERPROFILE%\AppData\Local\Temp
-
+sub path_push {
+	push @path, @_;
 }
 
 sub set_path_user {
@@ -354,7 +383,7 @@ sub set_path_user {
 
     SetEnv(ENV_USER,'PATH','');
     
-    @path = ( 
+    path_push ( 
         [ env_get('perl_bin_strawberry') ],
         [ env_get('bin_php') ],
         [ env_get('bin_php_pear')],
@@ -380,12 +409,12 @@ sub set_path_user {
         [ env_catfile(qw(vimruntime plg idephp scripts perl)) ],
     );
     
-    @path = map { 
+    my @path_dirs = map { 
         my $d = catfile(@{$_}); 
         ( -d $d ) ? $d : () 
     } @path;
     
-    InsertPathEnv(ENV_USER, PATH => join(';',@path));
+    InsertPathEnv(ENV_USER, PATH => join(';',@path_dirs));
 
 }
 
