@@ -137,6 +137,10 @@ sub list_env {
 
 ###install_env
 sub install_env {
+    my $ref = shift || {};
+
+    local $debug = $ref->{debug} || $debug;
+
     init;
 
     unless ($debug) {
@@ -508,6 +512,7 @@ sub ip_prg {
         [ $prg ,'eclipse',     ] ,
         [ $prg ,'mingw', 'bin' ] ,
         [ $prg ,'rapidEE',     ] ,
+        [ $prg ,'7zip',        ] ,
         [ $pfiles, 'IrfanView' ],
         ;
 }
