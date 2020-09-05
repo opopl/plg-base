@@ -141,11 +141,12 @@ sub install_env {
 
     unless ($debug) {
         put 'Broadcasting env...' ;
-        #BroadcastEnv();
+        BroadcastEnv();
     }else{
+        put 'DEBUG MODE' ;
+        dmp;
     }
 
-    dmp;
 }
 
 sub env_push {
@@ -188,7 +189,7 @@ sub env_set {
         $ENVV{$k} = $v;
         put "Setting env $k => $v";
 
-        #SetEnv(ENV_USER, $k, $v) unless $debug;
+        SetEnv(ENV_USER, $k, $v) unless $debug;
     }
 }
 
@@ -298,6 +299,9 @@ sub do_perl {
             perl_lib_plg_idephp
             perl_lib_plg_projs
         ));
+
+    put '',$perllib;
+    #exit;
 
     env_set perllib => $perllib;
 }
@@ -449,13 +453,13 @@ sub _path_insert {
 
 sub _path_push {
 
-#    push @PATH, map { 
-        #my $y;
-        #my @a = @{$_};
+    push @PATH, map { 
+        my $y;
+        my @a = @{$_};
 
-        #$y = (@a == 1) && (! length($a[0])) ? 0 : 1;
-        #$y ? $_ : ();
-    #} @_;
+        $y = (@a == 1) && (! length($a[0])) ? 0 : 1;
+        $y ? $_ : ();
+    } @_;
 }
 
 sub put {
