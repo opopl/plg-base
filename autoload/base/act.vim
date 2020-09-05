@@ -163,6 +163,27 @@ function! base#act#cnv (...)
 
 endfunction
 
+function! base#act#install_env ()
+	let cmd = base#qw#catpath('plg','base bin install_env.pl')
+	
+	let env = {}
+	function env.get(temp_file) dict
+		let temp_file = a:temp_file
+		let code = self.return_code
+	
+		if filereadable(a:temp_file)
+			let out = readfile(a:temp_file)
+			call base#buf#open_split({ 'lines' : out })
+		endif
+	endfunction
+	
+	call asc#run({ 
+		\	'cmd' : cmd, 
+		\	'Fn'  : asc#tab_restore(env) 
+		\	})
+
+endfunction
+
 function! base#act#async_run (...)
   let cmd = get(a:000,0,'')
 

@@ -6,6 +6,6 @@ use utf8;
 
 use Data::Dumper qw(Dumper);
 
-use Base::System::Envvars qw(setup_env);
+use Base::System::Envvars qw(install_env);
 
-setup_env();
+install_env();

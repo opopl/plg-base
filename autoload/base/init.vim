@@ -106,18 +106,18 @@ fun! base#init#paths(...)
         \ 'appdata_local' : base#envvar('LOCALAPPDATA'),
         \ })
 
-		let file_env = base#qw#catpath('plg','base data list envvars.i.dat')
-		let envlist = base#readdatfile({
-					\	"file" : file_env,
-					\	"type" : "List",
-					\	})
+    let file_env = base#qw#catpath('plg','base data list envvars.i.dat')
+    let envlist = base#readdatfile({
+          \ "file" : file_env,
+          \ "type" : "List",
+          \ })
 
-		for env in envlist
-			let val = base#envvar(toupper(env))
-			call base#pathset({ 
-				\	env : val,
-				\	})
-		endfor
+    for env in envlist
+      let val = base#envvar(toupper(env))
+      call base#pathset({ 
+        \ env : val,
+        \ })
+    endfor
 
     call base#pathset({ 
         \ 'db'       : base#qw#catpath('home','db'),
@@ -148,8 +148,8 @@ fun! base#init#paths(...)
       call base#pathset({  'evince_bin' : evbin })
     endif
     
-		let progs = base#file#catfile([ base#path('hm'),'programs' ])
-		let progs = base#envvar('PRG',progs)
+    let progs = base#file#catfile([ base#path('hm'),'programs' ])
+    let progs = base#envvar('PRG',progs)
     call base#pathset({ 
         \ 'progs'  : progs,
         \ })
@@ -163,10 +163,10 @@ fun! base#init#paths(...)
 
   call base#pathset({ 
       \ "repos_git" : repos_git
-    	\ })
+      \ })
   call base#pathset({ 
-      	\ "p" : base#qw#catpath('repos_git p')
-   		 	\ })
+        \ "p" : base#qw#catpath('repos_git p')
+        \ })
 
   call base#pathset({ 
       \ "x_php" : base#file#catfile([ base#path('repos_git'), 'x_php'  ]),
@@ -280,6 +280,9 @@ fun! base#init#cmds()
 
 """BaseAct
   command! -nargs=* -complete=custom,base#complete#BaseAct      BaseAct
+    \ call base#act(<f-args>) 
+
+  command! -nargs=* -complete=custom,base#complete#BaseAct      BA
     \ call base#act(<f-args>) 
 
 

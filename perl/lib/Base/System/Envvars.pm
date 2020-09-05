@@ -94,7 +94,7 @@ BEGIN {
 
 ###subs
     my @subs = qw(
-       setup_env
+       install_env
        init dmp
 
        put pute put_dump
@@ -135,8 +135,8 @@ sub list_env {
     print $_ . "\n" for(@p_s);
 }
 
-###main
-sub setup_env {
+###install_env
+sub install_env {
     init;
 
     unless ($debug) {
@@ -178,10 +178,12 @@ sub env_force {
 }
 
 sub env_set {
-    my %o = @_;
+    my (%o) = @_;
 
     while(my($k,$v) = each %o){
-        next unless env_defined($k);
+        next if env_defined($k);
+
+        next unless defined $v;
 
         $ENVV{$k} = $v;
         put "Setting env $k => $v";
@@ -447,7 +449,7 @@ sub _path_insert {
 }
 
 sub _path_push {
-    push @PATH, @_;
+    push @PATH, map { length($_) ? $_ : () } @_;
 }
 
 sub put {
