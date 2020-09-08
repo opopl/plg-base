@@ -279,6 +279,7 @@ fun! base#init#cmds()
       \   FileView call base#f#view(<f-args>) 
 
 """BaseAct
+"""BA
   command! -nargs=* -complete=custom,base#complete#BaseAct      BaseAct
     \ call base#act(<f-args>) 
 
@@ -439,8 +440,11 @@ command! -nargs=* -complete=custom,base#complete#omnioptions
   \ call base#vimlines#action('execute',<line1>,<line2>,<f-args>)
   
 """BaseDatView
+"""BDV
   command! -nargs=* -complete=custom,base#complete#datlist
-      \   BaseDatView call base#dat#view(<f-args>) 
+      \   BDV call base#dat#view(<f-args>) 
+	command! -nargs=* -complete=custom,base#complete#datlist
+			\   BaseDatView call base#dat#view(<f-args>) 
 
 """IDAT
   command! -nargs=* -complete=custom,base#complete#datlist
