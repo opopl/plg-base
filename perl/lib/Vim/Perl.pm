@@ -1380,7 +1380,12 @@ sub VimBufSplit {
 sub VimListExtend {
     my ($vimlist,$arrayref,$opts) = @_;
 
-    $opts||={};
+    $opts ||= {};
+
+	$opts = {
+		escape => 1,
+		%$opts,
+	};
 
     for my $l (@$arrayref){
         local $_ = $l;
@@ -1396,8 +1401,10 @@ sub VimListExtend {
             next if /^\s*$/;
         }
 
-        s/\\/\\\\/g;
-        s/"/\\"/g;
+		if ($opts->{escape}) {
+	        s/\\/\\\\/g;
+	        s/"/\\"/g;
+		}
 
         VimLet('xx',$_);
         my $cmd = 'call add(' . $vimlist . ',xx)';

@@ -25,8 +25,8 @@ perl << eof
 
 	my $json = $js->encode($var);
 	my @json = split("\n",$json);
-
-	VimListExtend('jsonlist',\@json);
+	
+	VimListExtend('jsonlist', \@json, { escape => 0 });
 
 eof
 
