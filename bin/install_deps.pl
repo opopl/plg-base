@@ -50,6 +50,7 @@ push @mods_perl,
 push @mods_perl,
     qw(Capture::Tiny),
     qw(Date::Manip),
+	qw(Tk::MatchEntry),
     ;
 
 # for htmltool
