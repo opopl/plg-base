@@ -4,6 +4,8 @@ package Base::RE::TeX;
 use strict;
 use warnings;
 
+use Base::Arg qw( hash_update );
+
 sub new
 {
     my ($class, %opts) = @_;
@@ -21,12 +23,11 @@ sub init {
     my $n_sec = join("|",@n_sec);
 
     my $h = {
-        sec => qr{^\\(?<secname>$n_sec)\{(?<sectitle>(.*))\}\s*$}
+        sec   => qr{^\\(?<secname>$n_sec)\{(?<sectitle>(.*))\}\s*$},
+        label => qr{^\\label\{(?<label>.*)\}\s*$},
     };
-        
-    my @k = keys %$h;
 
-    for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
+    hash_update($self, $h, { keep_already_defined => 1 });
 
     return $self;
 }
