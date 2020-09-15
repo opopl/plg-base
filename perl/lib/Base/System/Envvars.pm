@@ -46,6 +46,7 @@ BEGIN {
        do_projs
        do_python
        do_tdm
+       do_tmp
        do_tex
        do_vim
        do_www
@@ -395,9 +396,20 @@ sub do_vim {
         plg => env_catfile( qw(vimruntime plg) );
 
     env_set 
+        idephp => env_catfile( qw(plg idephp) );
+
+    env_set 
         src_vim => env_catfile(qw(reposgit vim)),
         vim_gfn => 'Lucida_Console:h15:cANSI',
     ;
+}
+
+sub do_tmp {
+
+    env_set 
+        tmp_bat  => env_catfile(qw(home tmp bat )),
+        tmp_html => env_catfile(qw(home tmp html )),
+		;
 }
 
 sub do_tdm {
@@ -421,6 +433,11 @@ sub do_www {
         bin_php => env_catfile(qw(xampp php)),
         www     => env_catfile(qw(xampp htdocs))
         ;
+
+	# image gallery location
+    env_set 
+        piwigo => env_catfile(qw(www piwigo))
+		;
 }
 
 sub _eval {
