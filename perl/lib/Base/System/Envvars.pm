@@ -45,6 +45,7 @@ BEGIN {
        do_perl
        do_projs
        do_python
+	   do_log
        do_tdm
        do_tmp
        do_tex
@@ -402,6 +403,12 @@ sub do_vim {
         src_vim => env_catfile(qw(reposgit vim)),
         vim_gfn => 'Lucida_Console:h15:cANSI',
     ;
+}
+
+sub do_log {
+    env_set 
+        log_html  => env_catfile(qw(home log html )),
+	;
 }
 
 sub do_tmp {
