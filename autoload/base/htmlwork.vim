@@ -368,6 +368,7 @@ function! base#htmlwork#clear_all ()
 	if !yn | return | endif
 
 	let p = []
+	let cond = ''
 	if strlen(siteid)
 		let cond = ' WHERE siteid = ? '
 		call add(p,siteid)
