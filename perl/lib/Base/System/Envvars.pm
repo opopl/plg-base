@@ -45,7 +45,7 @@ BEGIN {
        do_perl
        do_projs
        do_python
-	   do_log
+       do_log
        do_tdm
        do_tmp
        do_tex
@@ -55,14 +55,14 @@ BEGIN {
 
 ###s_ip
     @ip = qw(
-	    ip_core
+        ip_core
 
-	    ip_perl
-	    ip_tdm
+        ip_perl
+        ip_tdm
 
-	    ip_prg
-	    ip_php
-	    ip_python
+        ip_prg
+        ip_php
+        ip_python
     );
 
 ###s_env
@@ -408,7 +408,7 @@ sub do_vim {
 sub do_log {
     env_set 
         log_html  => env_catfile(qw(home log html )),
-	;
+    ;
 }
 
 sub do_tmp {
@@ -416,7 +416,7 @@ sub do_tmp {
     env_set 
         tmp_bat  => env_catfile(qw(home tmp bat )),
         tmp_html => env_catfile(qw(home tmp html )),
-		;
+        ;
 }
 
 sub do_tdm {
@@ -441,10 +441,10 @@ sub do_www {
         www     => env_catfile(qw(xampp htdocs))
         ;
 
-	# image gallery location
+    # image gallery location
     env_set 
         piwigo => env_catfile(qw(www piwigo))
-		;
+        ;
 }
 
 sub _eval {
