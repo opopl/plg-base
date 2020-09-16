@@ -23,5 +23,9 @@ function! base#comps#bufact_common (...)
 
 	let comps = base#varget('comps_common_bufact',[])
 
+	if exists("b:url")
+		call extend(comps,[ 'url_load_src' ])
+	endif
+
 	return comps
 endfunction

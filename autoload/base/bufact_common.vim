@@ -10,6 +10,10 @@ function! base#bufact_common#_file_add_to_db ()
   
 endfunction
 
+function! base#bufact_common#url_load_src ()
+
+endfunction
+
 """bufact_help
 function! base#bufact_common#help (...)
   let ref  = get(a:000,0,{})
