@@ -193,7 +193,7 @@ endf
 
 function! base#file#stat(file,...)
   let file = a:file
-python << eof
+python3 << eof
 
 import vim
 import os
@@ -208,14 +208,14 @@ st = {
 }
 
 eof
-  let st = pyeval('st')
+  let st = py3eval('st')
   return st
 
 endf
 
 function! base#file#mtime(file,...)
   let file = a:file
-python << eof
+python3 << eof
 import vim
 import os
 import datetime
@@ -225,14 +225,14 @@ stat = os.stat(file)
 mtime = stat.st_mtime 
 
 eof
-  return pyeval('str(mtime)')
+  return py3eval('str(mtime)')
 
 endf
 
 function! base#file#size(file,...)
   let file = a:file
   let size = 0
-python << eof
+python3 << eof
 import vim
 import os
 import datetime

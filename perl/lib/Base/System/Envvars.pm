@@ -429,6 +429,7 @@ sub do_projs {
         p_saintrussia => env_catfile(qw(reposgit p_saintrussia)),
         texdocs       => env_catfile(qw(reposgit texdocs)),
         projsdir      => env_catfile(qw(reposgit texdocs)),
+        root_id       => 'p_saintrussia',
         ;
 }
 

@@ -291,7 +291,7 @@ function! base#bufact#html#pretty_beautifulsoup ()
 
   let lines = getline(0,'$')
   let html  = join(lines,"\n")
-python << eof
+python3 << eof
     
 eof
 

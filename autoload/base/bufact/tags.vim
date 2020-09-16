@@ -5,7 +5,7 @@ function! base#bufact#tags#list_of_tags ()
 	let pat = input('pattern for tags:','')
 
 	let tags = []
-python << eof
+python3 << eof
 import vim,re
 from collections import deque
 

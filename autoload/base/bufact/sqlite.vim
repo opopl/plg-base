@@ -52,7 +52,7 @@ function! base#bufact#sqlite#show_tables ()
 	let dbfile = b:file
 	let lines = []
 
-python << eof
+python3 << eof
 
 import vim
 import sqlite3
@@ -91,11 +91,8 @@ tables = [r[0] for r in c.fetchall()]
 conn.commit()
 conn.close()
 
-for table in tables:
-	vim.command("let table = '" + table + "'")
-	vim.command('call add(lines,table)')
-	
 eof
+	let lines = py3eval('tables')
 	call base#buf#open_split({ 'lines' : lines })
 endfunction
 

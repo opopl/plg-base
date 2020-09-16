@@ -2,6 +2,18 @@
 function! base#url#struct (url)
   let url = a:url
   let struct = {}
+
+  if has('python')
+    let struct = base#url#struct_py2(url)
+  endif
+
+  return struct
+endf
+
+function! base#url#struct_py2 (url)
+
+  let url = a:url
+  let struct = {}
 python << eof
 
 import vim

@@ -2,7 +2,7 @@
 function! base#bufact#help#headers_list ()
 	call base#buf#start()
 
-python << eof
+python3 << eof
 import vim
 import re
 	
