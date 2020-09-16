@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+
 use File::Spec::Functions qw(catfile);
 
 my @mods_perl = qw(
@@ -22,6 +23,13 @@ my @mods_perl = qw(
    XML::LibXML::Cache
    XML::LibXML::PrettyPrint
    File::Slurp::Unicode
+);
+
+push @mods_perl,
+   qw(
+   	common::sense
+	Types::Serialiser
+	TAP::Harness::Env
 );
 
 # for cnv.pl, requires attention on Win32
