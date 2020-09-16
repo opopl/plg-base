@@ -216,12 +216,12 @@ function! base#tg#update_w_bat (...)
   let libs        = get(ref,'libs','')
   let files       = get(ref,'files','')
 
-	let cmd = ''
-	if has('win32')
-  	let cmd = 'ctags -R -o "' . ap#file#win( tfile ) . '" ' . libs . ' ' . files
-	elseif has('mac')
-  	let cmd = printf('ctags -R -o "%s" %s %s',  tfile, libs, files)
-	endif
+  let cmd = ''
+  if has('win32')
+    let cmd = 'ctags -R -o "' . ap#file#win( tfile ) . '" ' . libs . ' ' . files
+  elseif has('mac')
+    let cmd = printf('ctags -R -o "%s" %s %s',  tfile, libs, files)
+  endif
 
   call base#varset('last_ctags_cmd',cmd)
 
@@ -230,7 +230,7 @@ function! base#tg#update_w_bat (...)
   endif
 
   let batlines = []
-	let batfile = ''
+  let batfile = ''
 
   let execmd = ''
 
@@ -250,12 +250,12 @@ function! base#tg#update_w_bat (...)
 
     let batfile = base#qw#catpath( printf('tmp_bat tgupdate_%s.bat',tgid) )
 
-	elseif has('mac') || has('unix')
+  elseif has('mac') || has('unix')
 
-    call add(batlines,'#!/bin/sh ')
+    call add(batlines,'#!/bin/sh')
     call add(batlines,' ')
     call add(batlines,'tagid=' . tgid )
-    call add(batlines,'tfile="' . tfile . '"')
+    call add(batlines,'tfile=' . shellescape(tfile) )
     call add(batlines,' ')
     call add(batlines,'echo tagfile: $tfile')
     call add(batlines,'echo tagid: $tagid')
@@ -264,6 +264,7 @@ function! base#tg#update_w_bat (...)
     call add(batlines,' ')
 
     let batfile = base#qw#catpath( printf('tmp_bat tgupdate_%s.sh',tgid) )
+    call system(printf("chmod +rx %s",shellescape(batfile) ))
 
   endif
 
@@ -723,14 +724,14 @@ function! base#tg#update (...)
     let libs .= ' ' . dir
 
   elseif tgid == 'perl_inc_projs'
-		let dirids = base#varget('projs_projsdirs',[])
-		for dirid in dirids
-			let dir = base#path(dirid)
-    	let dir = base#file#catfile([ dir, 'perl', 'lib' ])
-			if isdirectory(dir)
-    		let libs .= ' ' . dir
-			endif
-		endfor
+    let dirids = base#varget('projs_projsdirs',[])
+    for dirid in dirids
+      let dir = base#path(dirid)
+      let dir = base#file#catfile([ dir, 'perl', 'lib' ])
+      if isdirectory(dir)
+        let libs .= ' ' . dir
+      endif
+    endfor
 
   elseif tgid == 'perl_inc_plg_browser'
 
@@ -934,10 +935,6 @@ function! base#tg#update (...)
   if !strlen(execmd)
     let [ cmd, execmd ] = base#tg#update_w_bat(r_bat)
   endif
-
-	echo cmd
-	echo execmd
-	return 
 
   echo "Calling ctags command for: " . tgid 
 
