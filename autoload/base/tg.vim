@@ -206,7 +206,6 @@ function! base#tg#update_w_files (...)
 endf
 
 function! base#tg#update_w_bat (...)
-  let execmd = ''
 
   let ref   = get(a:000,0,{})
 
@@ -217,7 +216,12 @@ function! base#tg#update_w_bat (...)
   let libs        = get(ref,'libs','')
   let files       = get(ref,'files','')
 
-  let cmd = 'ctags -R -o "' . ap#file#win( tfile ) . '" ' . libs . ' ' . files
+	let cmd = ''
+	if has('win32')
+  	let cmd = 'ctags -R -o "' . ap#file#win( tfile ) . '" ' . libs . ' ' . files
+	elseif has('mac')
+  	let cmd = printf('ctags -R -o "%s" %s %s',  tfile, libs, files)
+	endif
 
   call base#varset('last_ctags_cmd',cmd)
 
@@ -225,8 +229,12 @@ function! base#tg#update_w_bat (...)
     let cmd .=   ' -L ' . f_filelist
   endif
 
+  let batlines = []
+	let batfile = ''
+
+  let execmd = ''
+
   if has('win32')
-    let batlines = []
 
     call add(batlines,' ')
     call add(batlines,'@echo off')
@@ -240,14 +248,31 @@ function! base#tg#update_w_bat (...)
     call add(batlines,cmd)
     call add(batlines,' ')
 
-    let home = base#path('home')
     let batfile = base#qw#catpath( printf('tmp_bat tgupdate_%s.bat',tgid) )
-    call base#file#write_lines({ 
-      \ 'lines' : batlines, 
-      \ 'file'  : batfile, 
-      \})
-    let execmd = '"' . batfile .'"'
+
+	elseif has('mac') || has('unix')
+
+    call add(batlines,'#!/bin/sh ')
+    call add(batlines,' ')
+    call add(batlines,'tagid=' . tgid )
+    call add(batlines,'tfile="' . tfile . '"')
+    call add(batlines,' ')
+    call add(batlines,'echo tagfile: $tfile')
+    call add(batlines,'echo tagid: $tagid')
+    call add(batlines,' ')
+    call add(batlines,cmd)
+    call add(batlines,' ')
+
+    let batfile = base#qw#catpath( printf('tmp_bat tgupdate_%s.sh',tgid) )
+
   endif
+
+  call base#file#write_lines({ 
+    \ 'lines' : batlines, 
+    \ 'file'  : batfile, 
+    \})
+
+  let execmd = printf('"%s"', batfile )
 
   return [ cmd, execmd ]
 
@@ -909,6 +934,10 @@ function! base#tg#update (...)
   if !strlen(execmd)
     let [ cmd, execmd ] = base#tg#update_w_bat(r_bat)
   endif
+
+	echo cmd
+	echo execmd
+	return 
 
   echo "Calling ctags command for: " . tgid 
 
