@@ -553,6 +553,9 @@ perl << eof
     node_filter => sub{ 1 },
     attr        => 'href',
   });
+  my %href = map { $_ ? ($_ => 1) : () } @href;
+  @href = sort keys %href;
+
   VimLet('href',[@href]);
 eof
   return href
