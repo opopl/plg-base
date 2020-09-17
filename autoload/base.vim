@@ -606,7 +606,7 @@ function! base#log (msg,...)
     let lib = base#qw#catpath('plg base python lib')
     call pymy#py#add_lib(lib)
 
-python << eof
+python3 << eof
 
 import vim, sys
 import sqlite3
@@ -2351,7 +2351,7 @@ endif
 function! base#paths_from_db ()
   let dbfile = base#dbfile()
   let paths = {}
-python << eof
+python3 << eof
 import vim,sqlite3,re
 
 paths = {}
@@ -2417,7 +2417,7 @@ function! base#paths_to_db ()
   let dbfile = base#dbfile()
   if !exists('s:paths') | let s:paths = {} | endif
 
-python << eof
+python3 << eof
 import vim,sqlite3
 
 paths = vim.eval('s:paths')
