@@ -343,6 +343,10 @@ function! base#htmlwork#help ()
 
 endf
 
+if 0
+	BaseDatView htmlwork
+endif
+
 function! base#htmlwork#clear_all ()
   let dbfile = base#htmlwork#dbfile()
 

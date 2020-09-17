@@ -52,13 +52,27 @@ function! base#dat#render_list ()
       call add(cmds_pre, "call matchadd('MoreMsg','\\s\\+".dat."\\s\\+')")
     endif
   endfor
-  let lines = [ 'DAT files: ' ]
+
+	let delim = repeat( 'x', 50 )
+
+	let lines = []
+	call extend(lines,['BaseDatView'])
+	call extend(lines,[
+		\	delim,
+		\	'	Vim Functions: ',
+		\	'		base#dat#render_list base#dat#view',
+		\	delim,
+		\	])
+
+
+	call extend(lines,['List of DAT files: '])
   call extend(lines, pymy#data#tabulate({
     \ 'data'    : info,
     \ 'headers' : base#qw('dat buf description'),
     \ }))
 
   call add(cmds_pre,'resize 99')
+  call add(cmds_pre,'MM tgadd_all')
   call add(cmds_pre,"vnoremap <buffer><silent> v :'<,'>call base#dat_vis#open()<CR>")
   call add(cmds_pre,"vnoremap <buffer><silent> a :'<,'>call base#dat_vis#append()<CR>")
 
