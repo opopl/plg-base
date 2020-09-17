@@ -1,13 +1,6 @@
 
 
-let s:comps = base#comps#bufact('html') 
-
-if exists("b:db_info")
-  let c_db = base#varget('comps_db_info',[])
-  call extend(s:comps,c_db)
-endif
-
-let b:comps_BufAct = s:comps 
+let b:comps_BufAct = base#comps#bufact('html') 
   
 if exists("b:did_html_vim_ftplugin")
   finish

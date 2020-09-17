@@ -9,6 +9,11 @@ function! base#comps#bufact (...)
 		call extend(comps, base#varget('comps_scp_bufact',[]) )
 	endif
 
+	if exists("b:db_info")
+	  let c_db = base#varget('comps_db_info',[])
+	  call extend(comps,c_db)
+	endif
+
 	return comps
 endfunction
 
