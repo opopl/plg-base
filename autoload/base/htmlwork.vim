@@ -343,6 +343,51 @@ function! base#htmlwork#help ()
 
 endf
 
+function! base#htmlwork#render_cmds ()
+
+  let desc = base#varget('desc_htmlwork',{})
+  let cmds = base#varget('htmlwork',[])
+  let info = []
+
+  for cmd in cmds
+    call add(info,[ cmd, get(desc, cmd, '') ])
+  endfor
+
+	let delim = repeat( 'x', 50 )
+
+	let lines = []
+	call extend(lines,['HTMLWORK'])
+	call extend(lines,[
+		\	delim,
+		\	'base#htmlwork#render_cmds base#htmlwork',
+		\	'base#dat_vis#open',
+		\	delim,
+		\	])
+
+	call extend(lines,['HTMLWORK commands: '])
+  call extend(lines, pymy#data#tabulate({
+    \ 'data'    : info,
+    \ 'headers' : base#qw('cmd description'),
+    \ }))
+
+  let cmds_pre = []
+  call add(cmds_pre,'resize 99')
+  call add(cmds_pre,'MM tgadd_all')
+  "call add(cmds_pre,"vnoremap <buffer><silent> c :'<,'>call base#dat_vis#open()<CR>")
+
+  let stl_add = [ 'V[ %1* c - call %0* ]' ]
+	let stl_add = []
+
+  call base#buf#open_split({ 
+    \ 'lines'    : lines ,
+    \ 'cmds_pre' : cmds_pre,
+    \ 'stl_add'  : [],
+    \ })
+  return
+
+
+endf
+
 if 0
 	BaseDatView htmlwork
 endif

@@ -391,6 +391,11 @@ fun! base#htmlwork (...)
   let cmd  = get(a:000,0,'')
   let cmds = base#varget('htmlwork',[])
 
+	if !len(cmd)
+		call base#htmlwork#render_cmds()
+		return 
+	endif
+
   if base#inlist(cmd,cmds)
     let sub = 'call base#htmlwork#'.cmd.'()'
     exe sub
