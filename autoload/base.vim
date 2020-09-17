@@ -3167,15 +3167,16 @@ perl << eof
   my $varname = VimEval('a:varname');
   my $val     = $env->($varname);
 
-  if($^O eq 'MSWin32'){
-    local $_ = $val;
-    while(/%(\w+)%/){
-      my $vname = $1;
-      my $vval  = $env->($vname);
-      s/%(\w+)%/$vval/g;
-    }
-    $val=$_;
+  my $re = 
+  my $re = ($^O eq 'MSWin32') ? qr/%(\w+)%/ : qr/\$(\w+)/;
+
+  local $_ = $val;
+  while(/$re/){
+    my $vname = $1;
+    my $vval  = $env->($vname);
+    s/$re/$vval/g;
   }
+  $val=$_;
 
   VimLet('val',$val);
 eof
