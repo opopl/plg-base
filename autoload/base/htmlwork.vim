@@ -537,9 +537,25 @@ function! base#htmlwork#view_saved ()
 
   let local = get(files_h, local_bname, '')
 
+	let q = 'SELECT remote FROM saved WHERE local = ? '
+	let p = [local]
+	let url = pymy#sqlite#query_fetchone({
+    \ 'dbfile' : dbfile,
+    \ 'q'      : q,
+    \ 'p'      : p,
+    \ })
+	
+	let s:obj = { 'url' : url }
+	function! s:obj.init (...) dict
+		let b:url = self.url
+		
+	endfunction
+	let Fc = s:obj.init
+
   call base#fileopen({ 
     \ 'files'    : [ local ],
     \ 'load_buf' : 1,
+    \ 'Fc'     	 : Fc,
     \ })
 
 endfunction
