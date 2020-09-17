@@ -537,7 +537,7 @@ function! base#htmlwork#view_saved ()
 
   let local = get(files_h, local_bname, '')
 
-	let q = 'SELECT remote,title FROM saved WHERE local = ? '
+	let q = 'SELECT * FROM saved WHERE local = ? '
 	let p = [local]
 	let [rows,cols] = pymy#sqlite#query({
     \ 'dbfile' : dbfile,
@@ -550,12 +550,18 @@ function! base#htmlwork#view_saved ()
 	let title = get(rh,'title','')
 	
 	let s:obj = { 
-		\	'url'   : url,
-		\	'title' : title,
+		\	'url'      : url,
+		\	'title'    : title,
+		\	'data_htw' : rh,
+		\	'vh_file'  : get(rh,'vh_file',''),
 		\	}
+
 	function! s:obj.init (...) dict
-		let b:url   = self.url
-		let b:title = self.title
+		let b:url      = self.url
+		let b:title    = self.title
+
+		let b:data_htw = self.data_htw
+		let b:vh_file  = self.vh_file
 
 		let b:comps_BufAct = base#comps#bufact('html') 
 	endfunction

@@ -15,6 +15,22 @@ function! base#bufact_common#url_load_src ()
 
 endfunction
 
+function! base#bufact_common#load_vh_file ()
+
+	let s:obj = { }
+	function! s:obj.init (...) dict
+		
+	endfunction
+	
+	let Fc = s:obj.init
+	call base#fileopen({ 
+		\	'files'    : [b:vh_file],
+		\	'load_buf' : 1,
+		\	'Fc'       : Fc,
+		\	})
+
+endfunction
+
 """bufact_help
 function! base#bufact_common#help (...)
   let ref  = get(a:000,0,{})

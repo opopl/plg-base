@@ -34,8 +34,14 @@ function! base#comps#bufact_common (...)
 		call extend(comps,base#varget('comps_common_bufact_unix',[]))
 	endif
 
+	if exists("b:vh_file")
+		call extend(comps,[ 'load_vh_file' ])
+"" base#bufact_common#load_vh_file
+	endif
+
 	if exists("b:url")
 		call extend(comps,[ 'url_load_src' ])
+"" base#bufact_common#url_load_src
 	endif
 
 	return comps
