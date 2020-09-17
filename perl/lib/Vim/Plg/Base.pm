@@ -104,6 +104,18 @@ sub init_vars {
     $self;
 }
 
+=head3 init_sqlstm
+
+=head4 Purpose
+
+Load SQL statements from C<$plg/base/data/sql> directory
+
+=head4 Usage
+
+	$plgbase->init_sqlstm;
+
+=cut
+
 sub init_sqlstm {
     my ($self) = @_;
 
@@ -177,7 +189,7 @@ sub db_connect {
 
     my $dbh;
 
-    $self->debug('sqlite connect:',$dbfile);
+    $self->debug([ 'sqlite connect:',$dbfile ]);
     
     my $o={
         PrintError       => 1,
