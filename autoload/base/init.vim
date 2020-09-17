@@ -36,15 +36,29 @@ fun! base#init#cmds_plg ()
 endf
 
 
+fun! base#init#paths_env()
+		let file_env = base#qw#catpath('plg base data list envvars.i.dat')
+    let envlist = base#readdatfile({
+          \ "file" : file_env,
+          \ "type" : "List",
+          \ })
+
+    for env in envlist
+      let val = base#envvar(toupper(env))
+
+			if len(val)
+	      call base#pathset({ env : val })
+			endif
+    endfor
+endf
+
 """base_initpaths
-
 if 0
-  call base#initpaths()
-  call base#initpaths({ "anew": 1 })
-endif
+	Usage
+	  call base#initpaths()
+	  call base#initpaths({ "anew": 1 })
 
-if 0
-  call tree
+  Call tree
     called by
     calls
       base#pathset
@@ -73,10 +87,15 @@ fun! base#init#paths(...)
     let pc       = base#envvar((has('win32')) ? 'USERPROFILE' : get(split(system('hostname'),"\n"),0) )
     
     let p = base#paths_from_db()
-    "if len(p)
-      "return
-    "endif
-    
+
+	  let repos_git = base#envvar('REPOSGIT', base#file#catfile([ base#path('hm'), 'repos', 'git'  ]))
+	  call base#pathset({ 
+      \ "repos_git" : repos_git
+      \ })
+
+		call base#init#paths_env()
+
+		    
     if has('win32')
       let pf       = base#envvar('PROGRAMFILES')
     
@@ -89,35 +108,28 @@ fun! base#init#paths(...)
     endif
 
     let vrt      = base#envvar('VIMRUNTIME')
-    let projsdir = base#envvar('PROJSDIR')
+
+		let projsdir = base#qw#catpath('repos_git texdocs')
+    let projsdir = base#envvar('PROJSDIR',projsdir)
 
 "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Tools\MSVC\14.16.27023\bin\Hostx64\x64
 
     call base#pathset({ 
-        \ 'home'          : home ,
-        \ 'hm'            : hm ,
+        \ 'home'          : home,
+        \ 'hm'            : hm,
         \ 'vrt'           : vrt,
         \ 'vim'           : base#envvar('VIM'),
         \ 'src_vim'       : base#envvar('SRC_VIM'),
         \ 'texdocs'       : projsdir,
-        \ 'texinputs'     : base#envvar('texinputs'),
+        \ 'texinputs'     : base#envvar('TEXINPUTS'),
         \ 'p'             : base#envvar('TexPapersRoot'),
         \ 'tagdir'        : base#file#catfile([ hm,'tags' ]),
         \ 'appdata_local' : base#envvar('LOCALAPPDATA'),
         \ })
 
-    let file_env = base#qw#catpath('plg','base data list envvars.i.dat')
-    let envlist = base#readdatfile({
-          \ "file" : file_env,
-          \ "type" : "List",
-          \ })
 
-    for env in envlist
-      let val = base#envvar(toupper(env))
-      call base#pathset({ 
-        \ env : val,
-        \ })
-    endfor
+
+
 
     call base#pathset({ 
         \ 'db'       : base#qw#catpath('home','db'),
@@ -159,11 +171,7 @@ fun! base#init#paths(...)
     call base#initpaths#RESTPC()
   endif
   
-  let repos_git = base#envvar('REPOSGIT', base#file#catfile([ base#path('hm'), 'repos', 'git'  ]))
 
-  call base#pathset({ 
-      \ "repos_git" : repos_git
-      \ })
   call base#pathset({ 
         \ "p" : base#qw#catpath('repos_git p')
         \ })

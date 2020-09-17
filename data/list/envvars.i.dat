@@ -4,9 +4,9 @@ config_win
 htmlout
 java_home
 jsdocs
-p_saintrussia
 pdfout
 seeddms
-texdocs
 www
 xampp
+p_saintrussia
+texdocs

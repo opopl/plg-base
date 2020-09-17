@@ -23,6 +23,12 @@ function! base#comps#bufact_common (...)
 
 	let comps = base#varget('comps_common_bufact',[])
 
+	if has('win32')
+		call extend(comps,base#varget('comps_common_bufact_win32',[]))
+	elseif has('unix')
+		call extend(comps,base#varget('comps_common_bufact_unix',[]))
+	endif
+
 	if exists("b:url")
 		call extend(comps,[ 'url_load_src' ])
 	endif

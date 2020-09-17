@@ -92,6 +92,12 @@ function! base#bufact_common#matches_delete ()
   call clearmatches()
 endfunction
 
+function! base#bufact_common#chmod_rx ()
+  let cmd = 'chmod +rx ' . shellescape(b:file)
+	call system(cmd)
+
+endfunction
+
 function! base#bufact_common#dos2unix ()
   let file = bufname('%')
   let cmd = 'dos2unix ' . shellescape(file)

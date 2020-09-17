@@ -3158,7 +3158,11 @@ perl << eof
   use Vim::Perl qw(VimLet VimEval);
 
   my $default = VimEval('default');
-  my $env = sub { my $vname = shift; $ENV{$vname} || $default; };
+  my $env = sub { 
+		my $vname = shift; 
+
+		$ENV{uc $vname} // $default; 
+	};
 
   my $varname = VimEval('a:varname');
   my $val     = $env->($varname);

@@ -619,6 +619,10 @@ function! base#buf#start ()
   let b:dirname  = expand('%:p:h')
   let b:bufnr    = bufnr('%')
 
+	if ! len("&ft")
+		setlocal ft=text
+	endif
+
   let b:file_se  = shellescape(b:file)
 
   let msg = [ 'b:basename = ' . b:basename, 'b:bufnr = ' . b:bufnr ]
