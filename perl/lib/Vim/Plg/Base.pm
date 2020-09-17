@@ -45,7 +45,7 @@ our @TYPES = qw( list dict listlines );
 
 =head1 SYNOPSIS
 
-    my $plgbase=Vim::Plg::Base->new;
+    my $plgbase = Vim::Plg::Base->new;
 
 =head1 METHODS
 
@@ -171,7 +171,7 @@ sub db_connect {
             my @w;
             push @w, 'Failure to disconnect db:', DBI->errstr, $@ ;
                 
-            $self->_warn_(@w); 
+            $self->_warn_([ @w ]); 
         }
     }
 
@@ -191,11 +191,11 @@ sub db_connect {
         push @w, 
             'Failure to connect to database with dbname:',$dbname,
             DBI->errstr,$@;
-        $self->_warn_(@w); return $self; 
+        $self->_warn_([@w]); return $self; 
     }
 
     unless ($dbh) {
-        $self->_warn_('dbh undefined!');
+        $self->_warn_(['dbh undefined!']);
     }else{
         $self->dbh($dbh);
         $self->dbname($dbname);
@@ -206,7 +206,7 @@ sub db_connect {
         }
     }
 
-    $Base::DB::WARN = sub{ $self->_warn_(@_) };
+    $Base::DB::WARN = sub{ $self->_warn_([@_]) };
 
     $self;
 }
@@ -399,7 +399,7 @@ sub db_dbfile_size {
 
     my $st;
     eval{ $st = stat($dbfile)};
-    $@ && do { $self->_warn_("File::stat errors for $dbfile: $@"); return; };
+    $@ && do { $self->_warn_([ "File::stat errors for $dbfile: $@" ]); return; };
 
     my $size=$st->size;
     return $size;
@@ -576,7 +576,7 @@ sub init_plugins {
     #print $dat_plg . "\n";
 
     unless ($dat_plg) {
-        $self->_warn_('plugins DAT file NOT defined!!');
+        $self->_warn_([ 'plugins DAT file NOT defined!!' ]);
     }
     if (-e $dat_plg) {
         my @plugins = readarr($dat_plg);

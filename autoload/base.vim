@@ -199,7 +199,7 @@ fun! base#vimfuncnew(...)
     let end=[]
 
     call add(begin,' ')
-    call add(begin,'function! ' . fun . '(...)')
+    call add(begin,'fun! ' . fun . '(...)')
 
     if funtype == 'usual'
         let contents =[' ']
@@ -279,7 +279,7 @@ fun! base#varcheckexist(ref)
 endfun
 
 " string width
-function! base#sw (s)
+fun! base#sw (s)
   let a=a:s
   let v = (exists('*strwidth')) ? strwidth(a) : len(a)
   return v
@@ -380,14 +380,14 @@ fun! base#type(var)
 endf
 
 
-function! base#cdfile(...)
+fun! base#cdfile(...)
   let file = get(a:000,0,expand('%:p'))
   let dir  = fnamemodify(file,':p:h')
 
   exe 'cd ' . dir
 endf
 
-function! base#htmlwork (...)
+fun! base#htmlwork (...)
   let cmd  = get(a:000,0,'')
   let cmds = base#varget('htmlwork',[])
 
@@ -407,7 +407,7 @@ if 0
       base#path
 endif
 
-function! base#CD(pathid, ... )
+fun! base#CD(pathid, ... )
     let ref = {}
 
     let pathid = a:pathid
@@ -429,7 +429,7 @@ function! base#CD(pathid, ... )
 endf
 
 
-function! base#cd(dir,...)
+fun! base#cd(dir,...)
     let ref = {}
     if a:0 | let ref = a:1 | endif
 
@@ -453,21 +453,21 @@ function! base#cd(dir,...)
     endif
 endf
 
-function! base#isdict(var)
+fun! base#isdict(var)
   if type(a:var) == type({})
     return 1
   endif
   return 0
 endf
 
-function! base#islist(var)
+fun! base#islist(var)
   if type(a:var) == type([])
     return 1
   endif
   return 0
 endf
 
-function! base#dbnames ()
+fun! base#dbnames ()
   let dbfile = base#dbfile()
   
   let q = 'SELECT dbname FROM dbfiles WHERE dbdriver = ?'
@@ -481,25 +481,25 @@ function! base#dbnames ()
 
 endf
 
-function! base#htw_dbfile()
+fun! base#htw_dbfile()
     let dbdir = $HOME . '/db'
     let dbfile = dbdir . '/html_work.sqlite'
     call base#varset('htw_dbfile',dbfile)
     return dbfile
 endf
 
-function! base#dbfile_tmp (...)
+fun! base#dbfile_tmp (...)
     let dbfile = base#dbdir() . '/tmp_vim_base.db'
     return dbfile
 endf
 
-function! base#dbdir (...)
+fun! base#dbdir (...)
     let dbdir = $HOME . '/db'
     call base#mkdir(dbdir)
     return dbdir
 endf
 
-function! base#dbfile (...)
+fun! base#dbfile (...)
   let dbname = get(a:000,0,'')
 
   if !strlen(dbname)
@@ -537,7 +537,7 @@ endfunction
 
 " call base#log (msg,prf)
 
-function! base#log (msg,...)
+fun! base#log (msg,...)
   let msg = a:msg
 
   let ref = get(a:000,0,{})
@@ -604,7 +604,7 @@ function! base#log (msg,...)
     let query = printf(query, fields_str, quotes)
 
     let lib = base#qw#catpath('plg base python lib')
-    call pymy#py#add_lib(lib)
+    call pymy#py3#add_lib(lib)
 
 python3 << eof
 
@@ -700,7 +700,7 @@ eof
   
 endfunction
 
-function! base#noperl()
+fun! base#noperl()
   if !has('perl') | call base#log( 'NO PERL INSTALLED' ) | return 1 | endif
 
   return 0
@@ -709,7 +709,7 @@ endfunction
 
 "" DIR - list directory contents 
 
-function! base#DIR(...)
+fun! base#DIR(...)
     let refdef={
       \ 'exts'         : [],
       \ 'ask_for_exts' : 1,
@@ -951,7 +951,7 @@ fun! base#eval(expr)
 
 endfun
 
-function! base#getfromchoosedialog_nums (ref)
+fun! base#getfromchoosedialog_nums (ref)
   let ref  = a:ref
   let opts = get(ref,'list',{})
 
@@ -988,7 +988,7 @@ function! base#getfromchoosedialog_nums (ref)
 endfun
 
 """base_getfromchoosedialog
-function! base#getfromchoosedialog (opts)
+fun! base#getfromchoosedialog (opts)
 
   if base#type(a:opts) != 'Dictionary'
     call base#warn({ 
@@ -1032,7 +1032,7 @@ function! base#getfromchoosedialog (opts)
     
 endfunction
 
-function! base#qwsort (...)
+fun! base#qwsort (...)
 
  if a:0
    let str=a:1
@@ -1046,7 +1046,7 @@ function! base#qwsort (...)
 
 endfunction
 
-function! base#qw (...)
+fun! base#qw (...)
 
  if a:0
    let str=a:1
@@ -1063,7 +1063,7 @@ function! base#qw (...)
 endf
 
 """base_createprompt
-function! base#createprompt (promptList, cols, sep)
+fun! base#createprompt (promptList, cols, sep)
 
     let g:listSep  = a:sep
     let num_common = base#getlistcount(a:promptList)
@@ -1478,7 +1478,7 @@ fun! base#rmprefix(files)
 
 endf
 
-function! base#gitcmds (...)
+fun! base#gitcmds (...)
     return base#var('gitcmds')
 
 endfunction
@@ -1499,7 +1499,7 @@ endfunction
   "\ "path" : path
 "\ })
 
-function! base#git (...)
+fun! base#git (...)
   let aa=a:000
 
   let cmd = ''
@@ -1685,7 +1685,7 @@ function! base#git (...)
     
 endfunction
 
-function! base#envcmd (...)
+fun! base#envcmd (...)
 
     if a:0
         let cmd = a:1
@@ -1696,7 +1696,7 @@ function! base#envcmd (...)
 
 endfunction
 
-function! base#powershell (...)
+fun! base#powershell (...)
   let aa = a:000
   let pscmd = get(aa,0,'')
 
@@ -1724,7 +1724,7 @@ function! base#powershell (...)
 
 endfunction
 
-function! base#splitsystem (cmd)
+fun! base#splitsystem (cmd)
 
   let lines = system(a:cmd)
   let arr   = split(lines,"\n")
@@ -1824,7 +1824,7 @@ fun! base#mapsub_join(array,pat,subpat,subopts,delim)
 
 endf
 
-function! base#varremove(...)
+fun! base#varremove(...)
   let var = get(a:000,0,'')
 
   if ! exists("s:basevars")
@@ -1863,7 +1863,7 @@ fun! base#readdictdat(ref)
 endfun
 
 """base_find
-function! base#find(ref)
+fun! base#find(ref)
 
     let files = base#find#withperl(a:ref)
 
@@ -1871,7 +1871,7 @@ function! base#find(ref)
 
 endf
 
-function! base#rdw_printf(...)
+fun! base#rdw_printf(...)
   let args = get(a:000,0,[])
 
   if !len(args)
@@ -1887,18 +1887,18 @@ function! base#rdw_printf(...)
   call base#rdw(msg)
 endf
 
-function! base#rdw(text,...)
+fun! base#rdw(text,...)
   let hl = get(a:000,0,'MoreMsg')
   call base#echoredraw(a:text,hl)
 endf
 
-function! base#rdwe(text,...)
+fun! base#rdwe(text,...)
   let hl = get(a:000,0,'WarningMsg')
   call base#echoredraw(a:text,hl)
 endf
 
  
-function! base#echoredraw(text,...)
+fun! base#echoredraw(text,...)
 
   let hl = get(a:000,0,'MoreMsg')
 
@@ -1910,7 +1910,7 @@ function! base#echoredraw(text,...)
 endfunction
 
  
-function! base#readdatpaths(ref)
+fun! base#readdatpaths(ref)
     let ref=a:ref
 
     call base#varcheckexist([ 'pathsep', 'paths' ])
@@ -2209,7 +2209,7 @@ endfun
 "        BasePathAdd
 "  calls:
 
-function! base#pathset_db (ref,...)
+fun! base#pathset_db (ref,...)
     let ref = a:ref
     
     let dbfile = base#dbfile()
@@ -2244,7 +2244,7 @@ if 0
       base#init#paths
 endif
 
-function! base#pathset (ref,...)
+fun! base#pathset (ref,...)
   let ref = a:ref
 
   if ! exists("s:paths") | let s:paths={} | endif
@@ -2277,14 +2277,14 @@ function! base#pathset (ref,...)
 
 endfun
 
-function! base#split (...)
+fun! base#split (...)
   let opt = get(a:000,0,'')
 
   let sub = 'base#split#'.opt
   exe 'call '.sub.'()'
 endfun
 
-function! base#append (...)
+fun! base#append (...)
   let opt = get(a:000,0,'')
 
   " BaseDatView opts_BaseAppend
@@ -2308,7 +2308,7 @@ if 0
       base#complete#CD
 endif
 
-function! base#pathlist (...)
+fun! base#pathlist (...)
     let pat = get(a:000,0,'')
 
     if ! exists("s:paths")
@@ -2348,7 +2348,7 @@ if 0
     base#init#paths
 endif
 
-function! base#paths_from_db ()
+fun! base#paths_from_db ()
   let dbfile = base#dbfile()
   let paths = {}
 python3 << eof
@@ -2396,7 +2396,7 @@ eof
 
 endfunction
 
-function! base#paths_update (...)
+fun! base#paths_update (...)
   let ref = get(a:000,0,{})
   if !exists('s:paths') | let s:paths = {} | endif
 
@@ -2413,7 +2413,7 @@ if 0
     base#pcname
 endif
 
-function! base#paths_to_db ()
+fun! base#paths_to_db ()
   let dbfile = base#dbfile()
   if !exists('s:paths') | let s:paths = {} | endif
 
@@ -2441,7 +2441,7 @@ eof
 
 endfunction
 
-function! base#pathid_cwd ()
+fun! base#pathid_cwd ()
   let path = getcwd()
 
   let dbfile = base#dbfile()
@@ -2458,7 +2458,7 @@ function! base#pathid_cwd ()
 
 endfunction
 
-function! base#pathids (path)
+fun! base#pathids (path)
     let path = a:path
     let ids  = []
 
@@ -2475,7 +2475,7 @@ endfunction
 """base_path
 
 " base#path('funs')
-function! base#path (pathid)
+fun! base#path (pathid)
     let prefix='(base#path) '
 
     if !exists("s:paths")
@@ -2499,7 +2499,7 @@ function! base#path (pathid)
     
 endfunction
 
-function! base#paths_nice ()
+fun! base#paths_nice ()
   if !exists("s:paths") | return | endif
 
   for k in keys(s:paths)
@@ -2508,7 +2508,7 @@ function! base#paths_nice ()
   
 endfunction
 
-function! base#paths()
+fun! base#paths()
   if !exists("s:paths") | return {} | endif
 
   return s:paths
@@ -2520,7 +2520,7 @@ endfunction
 "  base#warn({ "text" : "aaa" })
 "  base#warn({ "text" : "aaa", "prefix" : ">>> " })
 "
-function! base#warn (ref,...)
+fun! base#warn (ref,...)
     let ref    = a:ref
 
     let text   = get(ref,'text','')
@@ -2554,7 +2554,7 @@ function! base#warn (ref,...)
     
 endfunction
 
-function! base#time_start ()
+fun! base#time_start ()
   if !exists('g:time_start')
     let g:time_start = localtime()
   endif
@@ -2575,7 +2575,7 @@ if 0
     base#info#dbext
 endif
 
-function! base#info (...)
+fun! base#info (...)
 
  call base#echoprefix('(base#info)')
 
@@ -3088,7 +3088,7 @@ fun! base#echovar(ref)
  
 endfun
 
-function! base#plgdir ()
+fun! base#plgdir ()
     let plgdir = $VIMRUNTIME . '/plg/base' 
     call base#varset('plgdir',plgdir)
     return plgdir
@@ -3097,7 +3097,7 @@ endf
 "" let dd = base#datadir()
 "" call base#datadir('aaa')
 
-function! base#datadir (...)
+fun! base#datadir (...)
     if a:0
         let datadir = a:1
         return base#varset('datadir',datadir)
@@ -3106,7 +3106,7 @@ function! base#datadir (...)
     return base#varget('datadir','')
 endf    
 
-function! base#delim (...)
+fun! base#delim (...)
    let d = '-'
    let num = 70
    return repeat(d,num)
@@ -3114,12 +3114,12 @@ endf
 
 " go to base plugin root directory
 
-function! base#plgcd ()
+fun! base#plgcd ()
     let dir = base#plgdir()
     exe 'cd ' . dir
 endf    
 
-function! base#envvar_a (varname,...)
+fun! base#envvar_a (varname,...)
   if has('win32')
     let sep =';'
   else
@@ -3135,7 +3135,7 @@ function! base#envvar_a (varname,...)
 endf    
 
 
-function! base#envvar_open_split (varname, ... )
+fun! base#envvar_open_split (varname, ... )
   let a = base#envvar_a(a:varname)
   call base#buf#open_split({'lines' : a})
 
@@ -3147,7 +3147,7 @@ if 0
     let value = base#envvar(variable,default)
 endif
 
-function! base#envvar (varname, ... )
+fun! base#envvar (varname, ... )
     let default = get(a:000,0,'')
 
     let var  = '$' . a:varname
@@ -3185,7 +3185,7 @@ eof
 
 endf    
 
-function! base#var (...)
+fun! base#var (...)
     if a:0 == 1
         let var = a:1
         return base#varget(var)
@@ -3197,7 +3197,7 @@ function! base#var (...)
 endfunction
 
 """base_varecho
-function! base#varecho (varname,...)
+fun! base#varecho (varname,...)
     let val =  base#varget(a:varname)
 
     let ref = { 'text' : a:varname .' => '. base#dump(val), 'prefix' : '' }
@@ -3210,13 +3210,13 @@ function! base#varecho (varname,...)
 
 endfunction
 
-function! base#dump_split (...)
+fun! base#dump_split (...)
   let val = get(a:000,0,'')
   let dump = base#dump(val)
   return split(dump,"\n")
 endfunction
 
-function! base#dump (...)
+fun! base#dump (...)
     let val  = a:1
     let dump = ''
 
@@ -3228,7 +3228,7 @@ function! base#dump (...)
     return dump
 endfunction
 
-function! base#varget_nz (varname,...)
+fun! base#varget_nz (varname,...)
 
     if ! exists("s:basevars") | let s:basevars = {} | endif
     
@@ -3260,7 +3260,7 @@ function! base#varget_nz (varname,...)
     
 endfunction
 
-function! base#varget (varname,...)
+fun! base#varget (varname,...)
 
     if ! exists("s:basevars")
         let s:basevars={}
@@ -3279,7 +3279,7 @@ function! base#varget (varname,...)
     
 endfunction
 
-function! base#varref (varname,...)
+fun! base#varref (varname,...)
     if ! exists("s:basevars")
         let s:basevars={}
     endif
@@ -3299,7 +3299,7 @@ function! base#varref (varname,...)
 endfunction
 
 
-function! base#varset (varname, value)
+fun! base#varset (varname, value)
 
     if ! exists("s:basevars")
         let s:basevars={}
@@ -3313,7 +3313,7 @@ function! base#varset (varname, value)
 endfunction
 
 
-function! base#vars()
+fun! base#vars()
 
     if ! exists("s:basevars")
         let s:basevars={}
@@ -3325,7 +3325,7 @@ endfunction
 
 
 
-function! base#varexists (varname)
+fun! base#varexists (varname)
     if exists("s:basevars")
         if exists("s:basevars[a:varname]")
             return 1
@@ -3338,7 +3338,7 @@ function! base#varexists (varname)
     
 endfunction
 
-function! base#varsetfromdat (...)
+fun! base#varsetfromdat (...)
     let varname = get(a:000,0,'')
     let type    = get(a:000,1,'List')
 
@@ -3362,7 +3362,7 @@ function! base#varsetfromdat (...)
 
 endfunction
 
-function! base#datafile (id)
+fun! base#datafile (id)
     let id = a:id
 
     let files = base#datafiles(a:id)
@@ -3370,7 +3370,7 @@ function! base#datafile (id)
     return file
 endfunction
 
-function! base#plugins (...)
+fun! base#plugins (...)
     let plugins = []
     let dbfile = base#dbfile()
     
@@ -3386,7 +3386,7 @@ function! base#plugins (...)
 
 endfunction
 
-function! base#plugins_all (...)
+fun! base#plugins_all (...)
     let dbfile = base#dbfile()
     
     let q = 'SELECT plugin FROM plugins_all'
@@ -3401,7 +3401,7 @@ function! base#plugins_all (...)
 
 endfunction
 
-function! base#datafiles (...)
+fun! base#datafiles (...)
     let id  = get(a:000,0,'')
     let ref = get(a:000,1,{})
 
@@ -3421,7 +3421,7 @@ function! base#datafiles (...)
 
 endfunction
 
-function! base#datlist (...)
+fun! base#datlist (...)
   let ref = get(a:000,0,{})
 
   let dfiles = base#datafiles('',ref)
@@ -3429,7 +3429,7 @@ function! base#datlist (...)
   return list
 endfunction
 
-function! base#initvarsfromdat ()
+fun! base#initvarsfromdat ()
     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     let msg = ['start']
     let prf = { 'func' : 'base#initvarsfromdat', 'plugin' : 'base'}
@@ -3458,7 +3458,7 @@ function! base#initvarsfromdat ()
     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 endfunction
 
-function! base#initvarsfromdat_vim ()
+fun! base#initvarsfromdat_vim ()
     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     let msg = ['start']
     let prf = { 'func' : 'base#initvarsfromdat_vim', 'plugin' : 'base'}
@@ -3523,7 +3523,7 @@ function! base#initvarsfromdat_vim ()
 endfunction
 
 
-function! base#varlist ()
+fun! base#varlist ()
     let varlist = keys(s:basevars)
     call base#varset('varlist',varlist)
     return varlist
@@ -3534,7 +3534,7 @@ endfunction
 " base#where('perl',0)
 " base#where('perl',0,'perl.exe')
 
-function! base#where (file,...)
+fun! base#where (file,...)
   if base#noperl() | return | endif
 
   let paths = []
@@ -3558,7 +3558,7 @@ eof
 endfunction
 
 
-function! base#act (...)
+fun! base#act (...)
   let act = get(a:000,0,'')
 
   if ! strlen(act) 
@@ -3596,25 +3596,25 @@ function! base#act (...)
 
 endf    
 
-function! base#pcname_lc()
+fun! base#pcname_lc()
   return tolower(base#pcname())
 endf    
 
-function! base#pcname_uc()
+fun! base#pcname_uc()
   return toupper(base#pcname())
 endf    
 
-function! base#pcname()
+fun! base#pcname()
   let pc  = (has('win32')) ? base#envvar('COMPUTERNAME') : get(split(system('hostname'),"\n"),0)
   return pc
 endf    
 
-function! base#username()
+fun! base#username()
   let pc  = (has('win32')) ? base#envvar('USER') : base#envvar('USER')
   return pc
 endf    
 
-function! base#home()
+fun! base#home()
   let pc  = (has('win32')) ? base#envvar('USERPROFILE') : base#envvar('HOME')
   return pc
 endf  
@@ -3644,7 +3644,7 @@ if 0
 endif
 
 
-function! base#init (...)
+fun! base#init (...)
 
   let dat_inor = base#file#catfile([  base#plgdir() , 'data', 'list', 'init_order.i.dat' ])
   let opts = base#readarr(dat_inor) 
@@ -3732,7 +3732,7 @@ function! base#init (...)
 
 endfunction
 
-function! base#mkdir (dir)
+fun! base#mkdir (dir)
 
   if isdirectory(a:dir)
     return  1
@@ -3754,7 +3754,7 @@ endf
 "   base#listnewinc(start,end,inc)
 "
 
-function! base#listnewinc(start,end,inc)
+fun! base#listnewinc(start,end,inc)
 
  let a=[]
 
@@ -3809,7 +3809,7 @@ endif
 
 
 
-function! base#grep (...)
+fun! base#grep (...)
     let ref = {}
     if a:0 | let ref = a:1 | endif
 
@@ -3901,7 +3901,7 @@ function! base#grep (...)
 endfunction
 
 
-function! base#grepopt (...)
+fun! base#grepopt (...)
     if ! base#varexists('grepopt')
         let opt = base#envvar('grep','grep')
 
@@ -3925,7 +3925,7 @@ function! base#grepopt (...)
     return opt
 endfunction
 
-function! base#envvarlist ()
+fun! base#envvarlist ()
     call base#envvars()
     let evlist = base#varget('evlist',[])
 
@@ -3933,7 +3933,7 @@ function! base#envvarlist ()
 
 endfunction
 
-function! base#envvars ()
+fun! base#envvars ()
 
      if has('win32')
          call base#sys({ "cmds" : [ 'env' ]})
@@ -3960,7 +3960,7 @@ function! base#envvars ()
 
 endfunction
 
-function! base#keymap (...)
+fun! base#keymap (...)
 
     if a:0
         let keymap=a:1
@@ -3977,7 +3977,7 @@ function! base#keymap (...)
 
 endfunction
 
-function! base#equalpaths (p1,p2)
+fun! base#equalpaths (p1,p2)
 
  let sep = '/'
 
@@ -4006,7 +4006,7 @@ if 0
     echo base#word('insert_plus')
 endif
 
-function! base#word (...)
+fun! base#word (...)
   let id    = get(a:000,0,'')
 
   let words = base#varget('words',[])
