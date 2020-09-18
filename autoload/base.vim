@@ -360,8 +360,8 @@ endf
 """base_type
 fun! base#type(var)
 
-  let type=''
-  let var=a:var
+  let type = ''
+  let var  = a:var
 
   if type(var) == type('')
     let type='String'

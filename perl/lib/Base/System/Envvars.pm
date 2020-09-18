@@ -249,6 +249,9 @@ sub do_microsoft {
 sub do_perl {
 
     env_set 
+        perl_unicode => 'AS';
+
+    env_set 
         perl_strawberry  => catfile(qw( C: strawberry perl ));
 
     env_set 
