@@ -28,13 +28,16 @@ sub new
 sub init {
     my $self = shift;
 
-    my $h = {
-        'a' => 'aaa',
+    my $h_1 = {
+        'a' => { '1' => 'aaa' },
         'b' => 'bbb',
     };
-    my $m = merge($self, $h);
-    print Dumper($m) . "\n";
-    hash_update($self, $m);
+    my $h_2 = {
+        'a' => { '1' => 'ccc' },
+        'b' => 'bbb',
+    };
+    hash_update($self, $h_1,{ keep_already_defined => 1 });
+    #hash_update($self, $h_2,{ keep_already_defined => 1 });
         
     return $self;
 }
@@ -45,5 +48,6 @@ package main;
 use base qw(A);
 
 my $a = __PACKAGE__->new;
+use Data::Dumper qw(Dumper);
 
-print $a->{a} . "\n";
+print Dumper($a->{a}) . "\n";
