@@ -106,7 +106,6 @@ function! base#buf#act(...)
 
 endf
 
-
 "base#buf#in('plg')
 "base#buf#in('plg',{ 'subdir': base#qw('base autoload') })
 
