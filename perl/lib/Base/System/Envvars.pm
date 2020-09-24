@@ -430,6 +430,7 @@ sub do_tdm {
 sub do_projs {
     env_set 
         p_saintrussia => env_catfile(qw(reposgit p_saintrussia)),
+        p_ae          => env_catfile(qw(reposgit p_ae)),
         texdocs       => env_catfile(qw(reposgit texdocs)),
         projsdir      => env_catfile(qw(reposgit texdocs)),
         root_id       => 'p_saintrussia',
