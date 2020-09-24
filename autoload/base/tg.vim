@@ -219,7 +219,7 @@ function! base#tg#update_w_bat (...)
   let cmd = ''
   if has('win32')
     let cmd = 'ctags -R -o "' . ap#file#win( tfile ) . '" ' . libs . ' ' . files
-  elseif has('mac')
+  elseif has('mac') || has('unix')
     let cmd = printf('ctags -R -o "%s" %s %s',  tfile, libs, files)
   endif
 
@@ -460,7 +460,10 @@ function! base#tg#update (...)
   " file with the list of files
   let filelist = ''
 
-  let libs_as = join(base#qw("C:/Perl/site/lib C:/Perl/lib" ),' ')
+	let libs_as = ''
+	if has('win32')
+  	let libs_as = join(base#qw("C:/Perl/site/lib C:/Perl/lib" ),' ')
+	endif
   let execmd = ''
 
   if tgid  == ''
@@ -903,7 +906,6 @@ function! base#tg#update (...)
       \ ap#file#win( base#catpath(id,'lib') ), 
       \ ] ," ")
 
-    "let libs.=' ' . libs_as
 
 """thisfile
 """tgupdate_thisfile
