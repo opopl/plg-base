@@ -23,6 +23,8 @@ my @mods_perl = qw(
    XML::LibXML::Cache
    XML::LibXML::PrettyPrint
    File::Slurp::Unicode
+   Hash::Merge
+   Deep::Hash::Utils
 );
 
 push @mods_perl,
