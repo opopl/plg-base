@@ -380,6 +380,9 @@ function! base#tg#update_Fc (self,temp_file)
        call call(Fc_fail,[])
      endif
 
+		 let lines = readfile(temp_file)
+		 call base#buf#open_split({ 'lines' : lines })
+
    endif
 
    let okref = { 
@@ -951,6 +954,7 @@ function! base#tg#update (...)
       \ 'start' : l:start,
       \ 'opts'  : opts,
       \ }
+
     if type(Fc_done) == type(function('call'))
       call extend(env,{ 'Fc_done' : Fc_done })
     endif
