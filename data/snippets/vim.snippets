@@ -327,6 +327,10 @@ snippet bbst
 	call base#buf#start()
 snippet bbos
 	call base#buf#open_split({ 'lines' : <++> })
+snippet bbos1
+	call base#buf#open_split({ 
+		\	'lines' : <++>,
+		\	})
 snippet bbi
 	base#buf#in(${1})
 snippet ifhw
