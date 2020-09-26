@@ -1,5 +1,5 @@
 
-package Plg::Base::Dialog;
+package Plg::Base::Tk::Dialog;
 
 use strict;
 use warnings;
@@ -13,6 +13,7 @@ use File::Basename qw(basename);
 use File::Slurp qw(
   read_file
 );
+
 use Data::Dumper qw(Dumper);
 use Base::Arg qw(
     hash_inject

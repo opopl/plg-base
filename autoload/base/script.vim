@@ -40,17 +40,20 @@ function! base#script#run ( ... )
 	let cmd = join(a, ' ')
 	
 	let env = { 
-		\	'script' : script,
-		\	'data'   : data,
-		\	'args'   : args,
+		\	'script'    : script,
+		\	'data'      : data,
+		\	'args'      : args,
+		\	'out_split' : get(ref,'out_split',0),
 		\	}
 
 	function env.get(temp_file) dict
 		let code = self.return_code
 	
-		if filereadable(a:temp_file)
-			let out = readfile(a:temp_file)
-			call base#buf#open_split({ 'lines' : out })
+		if get(self,'out_split',0)
+			if filereadable(a:temp_file)
+				let out = readfile(a:temp_file)
+				call base#buf#open_split({ 'lines' : out })
+			endif
 		endif
 	endfunction
 	

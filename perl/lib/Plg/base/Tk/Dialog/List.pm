@@ -1,5 +1,5 @@
 
-package Plg::Base::Dialog::List;
+package Plg::Base::Tk::Dialog::List;
 
 use strict;
 use warnings;
@@ -10,7 +10,11 @@ use Tk;
 use FindBin qw($Bin $Script);
 use lib "$Bin/../perl/lib";
 
-use base qw(Plg::Base::Dialog);
+use Base::Arg qw(
+	hash_inject
+);
+
+use base qw(Plg::Base::Tk::Dialog);
 
 sub init {
 	my $self = shift;
@@ -18,11 +22,8 @@ sub init {
 	$self->SUPER::init();
 
 	my $h = { };
+	hash_inject($self, $h);
 		
-	my @k = keys %$h;
-
-	for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
-
 	return $self;
 }
 
