@@ -284,6 +284,7 @@ function! base#buf#maps ()
           \  ';il'       : 'IDEPHP load_project'   ,
           \  ';co'       : 'BaseAct copen'         ,
           \  ';cc'       : 'BaseAct cclose'        ,
+          \  '<F1>'      : 'BaseAct make'          ,
           \  '<F3>'      : 'BaseAct copen'         ,
           \  '<F4>'      : 'BaseAct cclose'        ,
           \  '<F9>'      : 'TgUpdate'              ,

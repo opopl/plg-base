@@ -12,6 +12,11 @@ function! base#act#envvar_open_split (...)
 
 endfunction
 
+function! base#act#make (...)
+	make
+
+endfunction
+
 function! base#act#file_view (...)
   let fileid = get(a:000,0,'')
 
