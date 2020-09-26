@@ -17,17 +17,17 @@ endfunction
 
 function! base#bufact_common#load_vh_file ()
 
-	let s:obj = { }
-	function! s:obj.init (...) dict
-		
-	endfunction
-	
-	let Fc = s:obj.init
-	call base#fileopen({ 
-		\	'files'    : [b:vh_file],
-		\	'load_buf' : 1,
-		\	'Fc'       : Fc,
-		\	})
+  let s:obj = { }
+  function! s:obj.init (...) dict
+    
+  endfunction
+  
+  let Fc = s:obj.init
+  call base#fileopen({ 
+    \ 'files'    : [b:vh_file],
+    \ 'load_buf' : 1,
+    \ 'Fc'       : Fc,
+    \ })
 
 endfunction
 
@@ -36,9 +36,12 @@ function! base#bufact_common#help (...)
   let ref  = get(a:000,0,{})
 
   let help = []
-	call insert(help, 'BUFFER DEFINED MAPS')
+  call insert(help, 'BUFFER DEFINED MAPS')
 
   let data_h = []
+  if !exists("b:maps")
+    call base#buf#maps()
+  endif
   let b_maps = exists('b:maps') ? b:maps : {}
 
   let map_types = keys(b_maps)
@@ -64,9 +67,9 @@ function! base#bufact_common#help (...)
 
   call add(help,d)
   call add(help,'SEE ALSO')
-  call add(help,'	base#buf#maps')
-  call add(help,'	base#bufact_common#help')
-  call add(help,'	projs#maps')
+  call add(help,' base#buf#maps')
+  call add(help,' base#bufact_common#help')
+  call add(help,' projs#maps')
 
   call base#buf#open_split({ 
     \ 'lines'    : help,
@@ -110,7 +113,7 @@ endfunction
 
 function! base#bufact_common#chmod_rx ()
   let cmd = 'chmod +rx ' . shellescape(b:file)
-	call system(cmd)
+  call system(cmd)
 
 endfunction
 
