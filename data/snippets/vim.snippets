@@ -325,6 +325,8 @@ snippet ifsl
 	endif
 snippet bbst
 	call base#buf#start()
+snippet osw?
+	= has('win32') ? <++> : <++>
 snippet bbos
 	call base#buf#open_split({ 'lines' : <++> })
 snippet bbos1

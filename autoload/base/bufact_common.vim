@@ -31,6 +31,12 @@ function! base#bufact_common#load_vh_file ()
 
 endfunction
 
+function! base#bufact_common#term (...)
+	call ap#GoToFileLocation()
+	terminal
+
+endfunction
+
 """bufact_help
 function! base#bufact_common#help (...)
   let ref  = get(a:000,0,{})

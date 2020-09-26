@@ -53,6 +53,7 @@ plg_jde
 plg_pdoc
 #plg_perlsupport
 plg_perlmy
+plg_perlsupport
 plg_pymy
 plg_projs
 plg_tagbar

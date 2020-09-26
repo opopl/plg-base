@@ -1,3 +1,7 @@
+# base#bufact_common#
+# base#bufact_common#help
+# base#buf#act
+# base#comps#bufact_common
 _file_add_to_db
 tabs_to_spaces
 dos2unix
@@ -5,3 +9,4 @@ unix2dos
 help
 matches_delete
 nicify_copied
+term

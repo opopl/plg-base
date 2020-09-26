@@ -74,13 +74,13 @@ sub dhelp {
     my $s = qq{
 
     USAGE
-        $Script OPTIONS
+        perl $Script OPTIONS
     OPTIONS
         --run -r run the script
 
     EXAMPLES
-        $Script --run
-        $Script -r
+        perl $Script --run
+        perl $Script -r
     };
 
     print $s . "\n";

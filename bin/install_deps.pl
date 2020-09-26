@@ -25,6 +25,7 @@ my @mods_perl = qw(
    File::Slurp::Unicode
    Hash::Merge
    Deep::Hash::Utils
+   PPI
 );
 
 push @mods_perl,

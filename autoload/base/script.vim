@@ -22,7 +22,8 @@ function! base#script#run ( ... )
 	let args   = get(ref, 'args', [])
 	let data   = get(ref, 'data', {})
 
-	let bat_file  = join([ dir, script . '.bat' ],'/')
+	let ext = has('win32') ? 'bat' : 'sh'
+	let bat_file  = join([ dir, script . '.' . ext ],'/')
 
 	let data_json = base#json#encode(data)
 
@@ -34,7 +35,9 @@ function! base#script#run ( ... )
 	      \   }
 	call base#file#write_lines(r)	
 
-	let cmd = join([ bat_file, args ], ' ')
+	let a = [ bat_file ] 
+	call extend(a,args)
+	let cmd = join(a, ' ')
 	
 	let env = { 
 		\	'script' : script,
