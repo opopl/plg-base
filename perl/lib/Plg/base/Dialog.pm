@@ -14,6 +14,9 @@ use File::Slurp qw(
   read_file
 );
 use Data::Dumper qw(Dumper);
+use Base::Arg qw(
+    hash_inject
+);
 
 use Getopt::Long qw(GetOptions);
 use JSON::XS;
@@ -43,10 +46,7 @@ sub init {
         opt         => {},
     };
     
-        
-    my @k = keys %$h;
-
-    for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
+    hash_inject($self, $h);
 
     return $self;
 }
