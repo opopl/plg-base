@@ -232,6 +232,10 @@ endf
 function! base#file#size(file,...)
   let file = a:file
   let size = 0
+
+  if !filereadable(file)
+    return 0
+  endif
 python3 << eof
 import vim
 import os
@@ -592,14 +596,14 @@ function! base#file#reldir (dir,root)
 endfunction
 
 function! base#file#reldir_str (dir,root,...)
-	let ref = get(a:000,0,{})
+  let ref = get(a:000,0,{})
 
-	let sep = get(ref,'sep',' ')
+  let sep = get(ref,'sep',' ')
 
-	let str = base#file#reldir(a:dir, a:root)
-	let str = substitute(str,'\\',sep,'g')
-	let str = substitute(str,'//',sep,'g')
-	return str
+  let str = base#file#reldir(a:dir, a:root)
+  let str = substitute(str,'\\',sep,'g')
+  let str = substitute(str,'//',sep,'g')
+  return str
 endfunction
 
 function! base#file#removeroot (dir,root)
