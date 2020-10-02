@@ -471,6 +471,16 @@ function! base#tg#update (...)
 
   if tgid  == ''
 
+	elseif tgid  == 'perl_plg'
+		let tagids = base#varget('tagids_perl_plg',[])
+		for tg in tagids
+			call base#tg#update(tg)
+		endfor
+		for tg in tagids
+			call base#tg#add(tg)
+		endfor
+		return 
+
 """tgupdate_idephp_help
   elseif tgid == 'idephp_help'
     call idephp#help#helptags({ 
