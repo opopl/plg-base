@@ -574,6 +574,8 @@ fun! base#init#au()
   au BufRead,BufNewFile,BufWinEnter *.html  set filetype=html
   au BufRead,BufNewFile,BufWinEnter *.htm   set filetype=html
 
+  au BufRead,BufNewFile,BufWinEnter *.py3   set filetype=python
+
   au BufWrite *.snippets MM snippets_reload_all
 
   let plg  = base#path('plg')

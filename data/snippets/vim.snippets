@@ -1466,6 +1466,15 @@ snippet pymy#sqlite#query
 		\	'p'      : p,
 		\	'q'      : q,
 		\	})
+snippet pymy#sqlite#select
+	let dbfile = base#dbfile()
+
+	let [ rows_h, cols ] = pymy#sqlite#select({
+		\	'dbfile' : dbfile,
+		\	't'      : '<++>',
+		\	'f'      : [<++>],
+		\	'w'      : {<++>},
+		\	})
 snippet q
 	let dbfile = base#dbfile()
 	
