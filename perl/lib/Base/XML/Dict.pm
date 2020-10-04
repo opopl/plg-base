@@ -219,9 +219,8 @@ sub _x2d {
 
             if (( $X2A or $X2A{$cnn} ) and !$res->{$cnn}) { $res->{$cnn} = [] }
             if (exists $res->{$cnn} ) {
-                        #warn "Append to $res->{$cnn}: $cnn $chld";
-                        $res->{$cnn} = [ $res->{$cnn} ] unless ref $res->{$cnn} eq 'ARRAY';
-                        push @{$res->{$cnn}}, $chld if defined $chld;
+				$res->{$cnn} = [ $res->{$cnn} ] unless ref $res->{$cnn} eq 'ARRAY';
+				push @{$res->{$cnn}}, $chld if defined $chld;
             } else {
                 if ($cnn eq $text) {
                     $res->{$cnn} = $chld if length $chld;
@@ -275,8 +274,12 @@ sub xml2dict($;%) {
     #use Data::Dumper;
     #warn Dumper \%X2D;
     my $root = $doc->isa('XML::LibXML::Document') ? $doc->documentElement : $doc;
+
+    my $xa  = $X2A || $X2A{$root->nodeName};
+    my $rnn = scalar $root->nodeName;
+
     return {
-        scalar $root->nodeName => $X2A || $X2A{$root->nodeName} ? [ _x2d($root) ] : _x2d($root),
+        $rnn => $xa ? [ _x2d($root) ] : _x2d($root),
     };
 
 }
