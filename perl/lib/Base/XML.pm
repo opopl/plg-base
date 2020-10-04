@@ -305,7 +305,15 @@ sub pl_to_xml {
 
         # nodes which should be converted 
         #   to elements of a perl list
-        list_items => 'item',
+        listas => 'item',
+
+        listall => 1,
+    );
+
+    node_to_pl(
+        node => $node,
+
+        listall => 1,
     );
 
 =head3 Purpose
@@ -318,9 +326,12 @@ sub node_to_pl {
     my $node = $ref->{node};
 
     my @listas = str_split($ref->{listas});
+
     my $n_is_list = sub {
         my ($a) = @_;
-        my $is = grep { /^$a$/ } @listas ? 1 : 0;
+        my $is = 
+            $ref->{listall} ? 1 : 
+            ( grep { /^$a$/ } @listas ? 1 : 0 );
         return $is;
     };
 
