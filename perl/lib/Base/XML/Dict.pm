@@ -178,6 +178,9 @@ sub _x2d {
     my $doc = shift;
     my $res;
 
+    my $text  = $X2D{text};
+    my $join  = $X2D{join};
+
     unless($doc->hasChildNodes or $doc->hasAttributes) {
         $res = $doc->textContent;
         if ($X2D{trim}) {
@@ -185,77 +188,62 @@ sub _x2d {
             $res =~ s{\s+$}{}s;
         }
     }else{
-            if ($X2D{order}) {
-                $res = [];
-                my $attr = {};
-                for ($doc->attributes) {
-                    $attr->{ $X2D{attr} . $_->nodeName } = $_->getValue;
-                }
-                push @$res, $attr if %$attr;
-            } else {
-                $res = {};
-                for ($doc->attributes) {
-                    #warn " .> ".$_->nodeName.'='.$_->getValue;
-                    $res->{ $X2D{attr} . $_->nodeName } = $_->getValue;
-                }
+        my @children = $doc->childNodes;
+        my @nodes_attr     = $doc->attributes;
+
+        $res = {};
+        for (@nodes_attr) {
+           $res->{ $X2D{attr} . $_->nodeName } = $_->getValue;
+        }
+
+        for my $cnode (@children) {
+            my $ref = ref $cnode;
+
+            # child node name
+            my $cnn;
+
+            if ($ref eq 'XML::LibXML::Text') {
+                $cnn = $text
             }
-            for ($doc->childNodes) {
-                my $ref = ref $_;
-                my $nn;
-                if ($ref eq 'XML::LibXML::Text') {
-                    $nn = $X2D{text}
-                }
-                elsif ($ref eq 'XML::LibXML::CDATASection') {
-                    $nn = defined $X2D{cdata} ? $X2D{cdata} : $X2D{text};
-                }
-                elsif ($ref eq 'XML::LibXML::Comment') {
-                    $nn = defined $X2D{comm} ? $X2D{comm} : next;
-                }
-                else {
-                    $nn = $_->nodeName;
-                }
+            elsif ($ref eq 'XML::LibXML::CDATASection') {
+                $cnn = defined $X2D{cdata} ? $X2D{cdata} : $text;
+            }
+            elsif ($ref eq 'XML::LibXML::Comment') {
+                $cnn = defined $X2D{comm} ? $X2D{comm} : next;
+            }
+            else {
+                $cnn = $cnode->nodeName;
+            }
 
-                my $chld = _x2d($_);
+            my $chld = _x2d($cnode);
 
-                if ($X2D{order}) {
-                    if ($nn eq $X2D{text}) {
-                        push @{ $res }, $chld if length $chld;
-                    } else {
-                        push @{ $res }, { $nn => $chld };
-                    }
+            if (( $X2A or $X2A{$cnn} ) and !$res->{$cnn}) { $res->{$cnn} = [] }
+            if (exists $res->{$cnn} ) {
+                        #warn "Append to $res->{$cnn}: $cnn $chld";
+                        $res->{$cnn} = [ $res->{$cnn} ] unless ref $res->{$cnn} eq 'ARRAY';
+                        push @{$res->{$cnn}}, $chld if defined $chld;
+            } else {
+                if ($cnn eq $text) {
+                    $res->{$cnn} = $chld if length $chld;
                 } else {
-                    if (( $X2A or $X2A{$nn} ) and !$res->{$nn}) { $res->{$nn} = [] }
-                    if (exists $res->{$nn} ) {
-                        #warn "Append to $res->{$nn}: $nn $chld";
-                        $res->{$nn} = [ $res->{$nn} ] unless ref $res->{$nn} eq 'ARRAY';
-                        push @{$res->{$nn}}, $chld if defined $chld;
-                    } else {
-                        if ($nn eq $X2D{text}) {
-                            $res->{$nn} = $chld if length $chld;
-                        } else {
-                            $res->{$nn} = $chld;
-                        }
-                    }
+                    $res->{$cnn} = $chld;
                 }
             }
-            if($X2D{order}) {
-                #warn "Ordered mode, have res with ".(0+@$res)." children = @$res";
-                return $res->[0] if @$res == 1;
-            } else {
-                if (defined $X2D{join} and exists $res->{ $X2D{text} } and ref $res->{ $X2D{text} })                {
-                    $res->{ $X2D{text} } = join $X2D{join}, grep length, @{ $res->{ $X2D{text} } };
-                }
+        }
 
-                delete $res->{ $X2D{text} }
+            if (defined $X2D{join} and exists $res->{ $text } and ref $res->{ $text })                          {
+                $res->{ $text } = join $X2D{join}, grep length, @{ $res->{ $text } };
+            }
+
+                delete $res->{ $text }
                     if $X2D{trim} 
                        and keys %$res > 1 
-                       and exists $res->{ $X2D{text} } 
-                       and !length $res->{ $X2D{text} };
+                       and exists $res->{ $text } 
+                       and !length $res->{ $text };
 
-                return $res->{ $X2D{text} } 
+                return $res->{ $text } 
                     if keys %$res == 1 
-                       and exists $res->{ $X2D{text} };
-            }
+                       and exists $res->{ $text };
     }
 
     return $res;
