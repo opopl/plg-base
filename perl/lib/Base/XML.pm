@@ -108,6 +108,8 @@ use vars qw(
     XML_XINCLUDE_END            => 20,
 );
 
+local $|=1;
+
 sub dom_new {
     my ($ref) = @_;
 
@@ -327,6 +329,9 @@ sub node_to_pl {
 
     my @listas = str_split($ref->{listas});
 
+	print 'node_to_pl' . "\n";
+	print Dumper({ %$ref, node => $node->nodeName }) . "\n";
+
     my $n_is_list = sub {
         my ($a) = @_;
         my $is = 
@@ -357,20 +362,20 @@ sub node_to_pl {
     }
 
     my @cnodes = $node->childNodes;
-    #print Dumper([ map { $_->nodeName} @cnodes ]);
+    print Dumper([ map { $_->nodeName} @cnodes ]);
 
-    my $is_text = ( grep { $_->nodeType != XML_TEXT_NODE } @cnodes ) ? 0 : 1;
-    if ($is_text) {
-        #$data = '';
-    }
-    #print $is_text . "\n";
-    print $name . "\n";
+    my $is_text = ( ! grep { $_->nodeType != XML_TEXT_NODE } @cnodes ) ? 1 : 0;
+    if($is_text){
+		$data    = '';
+		$is_list = 0;
+	}
 
     my $has={};
     foreach my $cn (@cnodes) {
         my ($cname, $ctype) = ( $cn->nodeName, $cn->nodeType );
 
         my $cdata = node_to_pl({ 
+			%$ref,
             node => $cn 
         });
 
@@ -380,7 +385,8 @@ sub node_to_pl {
         }
 
         if ($is_list) {
-            push @{$data}, $cdata;
+			print Dumper($data) . "\n";
+            push @$data, $cdata;
 
         }else{
             unless ($has->{$cname}) {
