@@ -49,10 +49,18 @@ sub _croak { require Carp; goto &Carp::croak }
 sub import {
     my $me = shift;
     no strict 'refs';
-    my %e = ( xml2dict => 1, dict2xml => 1, ':inject' => 0 );
+
+    my %e = ( 
+        xml2dict => 1, 
+        dict2xml => 1, 
+        ':inject' => 0 
+    );
+
     if (@_) { %e = map { $_=>1 } @_ }
+
     *{caller().'::xml2dict'} = \&xml2dict if delete $e{xml2dict};
     *{caller().'::dict2xml'} = \&dict2xml if delete $e{dict2xml};
+
     if ( delete $e{':inject'} ) {
         unless (defined &XML::LibXML::Node::toDict) {
             *XML::LibXML::Node::toDict = \&xml2dict;
@@ -166,7 +174,7 @@ sub _d2x {
 }
 
 
-sub _x2h {
+sub _x2d {
     my $doc = shift;
     my $res;
         if ($doc->hasChildNodes or $doc->hasAttributes) {
@@ -200,7 +208,7 @@ sub _x2h {
                 else {
                     $nn = $_->nodeName;
                 }
-                my $chld = _x2h($_);
+                my $chld = _x2d($_);
                 if ($X2D{order}) {
                     if ($nn eq $X2D{text}) {
                         push @{ $res }, $chld if length $chld;
@@ -246,12 +254,16 @@ sub _x2h {
 
 sub xml2dict($;%) {
     my $doc = shift;
+
     defined $doc or _croak("Called xml2dict on undef"),return;
+
     my %opts = @_;
     my $arr = delete $opts{array};
+
     local $X2A = 1 if defined $arr and !ref $arr;
     local @X2A{@$arr} = (1)x@$arr if defined $arr and ref $arr;
     local @X2D{keys %opts} = values %opts if @_;
+
     $PARSER->load_ext_dtd($X2D{load_ext_dtd});
     $PARSER->expand_entities($X2D{expand_entities});
     $PARSER->expand_xinclude($X2D{expand_xinclude});
@@ -263,7 +275,7 @@ sub xml2dict($;%) {
     #warn Dumper \%X2D;
     my $root = $doc->isa('XML::LibXML::Document') ? $doc->documentElement : $doc;
     return {
-        scalar $root->nodeName => $X2A || $X2A{$root->nodeName} ? [ _x2h($root) ] : _x2h($root),
+        scalar $root->nodeName => $X2A || $X2A{$root->nodeName} ? [ _x2d($root) ] : _x2d($root),
     };
 
 }
