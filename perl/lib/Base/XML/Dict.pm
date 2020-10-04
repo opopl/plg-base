@@ -216,8 +216,9 @@ sub _x2d {
             my $chld = _x2d($cnode);
 
             if (exists $res->{$cnn} ) {
-				$res->{$cnn} = [ $res->{$cnn} ] unless ref $res->{$cnn} eq 'ARRAY';
-				push @{$res->{$cnn}}, $chld if defined $chld;
+                $res->{$cnn} = [ $res->{$cnn} ] unless ref $res->{$cnn} eq 'ARRAY';
+
+                push @{$res->{$cnn}}, $chld if defined $chld;
             } else {
                 if ($cnn eq $text) {
                     $res->{$cnn} = $chld if length $chld;
@@ -236,14 +237,16 @@ sub _x2d {
         }
 
         delete $res->{ $text }
-			if $X2D{trim} 
-				and keys %$res > 1 
-				and exists $res->{ $text } 
-				and !length $res->{ $text };
+            if $X2D{trim} 
+                and keys %$res > 1 
+                and exists $res->{ $text } 
+                and !length $res->{ $text };
 
-		return $res->{ $text } 
-			if keys %$res == 1 
-			and exists $res->{ $text };
+        return $res->{ $text } 
+            if keys %$res == 1 
+            and exists $res->{ $text };
+
+        $res = undef unless (keys %$res);
     }
 
     return $res;
