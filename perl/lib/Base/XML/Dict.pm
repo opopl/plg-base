@@ -226,10 +226,11 @@ sub _x2d {
                 }
             }
         }
+        # end loop over child nodes
 
         if (defined $join 
-                and exists $res->{ $text } 
-                and ref $res->{ $text })                          
+            and exists $res->{ $text } 
+            and ref $res->{ $text })                          
         {
             $res->{ $text } = join $join, grep length, @{ $res->{ $text } };
         }
