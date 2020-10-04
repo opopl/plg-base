@@ -14,20 +14,20 @@ our %X2A = ();
 
 our %X2D;
 %X2D = (
-    order  => 0,
-    attr   => '-',
-    text   => '#text',
-    join   => '',
-    trim   => 1,
-    cdata  => undef,
-    comm   => undef,
+    order => 0,
+    attr  => '-',
+    text  => '#text',
+    join  => '',
+    trim  => 1,
+    cdata => undef,
+    comm  => undef,
     #cdata  => '#',
     #comm   => '//',
-    load_ext_dtd => 0,
+    load_ext_dtd    => 0,
     expand_entities => 0,
     expand_xinclude => 0,
-    validation => 0,
-    no_network => 1,
+    validation      => 0,
+    no_network      => 1,
     %X2D,  # also inject previously user-defined options
 );
 
@@ -178,12 +178,17 @@ sub _x2d {
     my $doc = shift;
     my $res;
 
-    if ($doc->hasChildNodes or $doc->hasAttributes) {
+    unless($doc->hasChildNodes or $doc->hasAttributes) {
+        $res = $doc->textContent;
+        if ($X2D{trim}) {
+            $res =~ s{^\s+}{}s;
+            $res =~ s{\s+$}{}s;
+        }
+    }else{
             if ($X2D{order}) {
                 $res = [];
                 my $attr = {};
                 for ($doc->attributes) {
-                    #warn " .> ".$_->nodeName.'='.$_->getValue;
                     $attr->{ $X2D{attr} . $_->nodeName } = $_->getValue;
                 }
                 push @$res, $attr if %$attr;
@@ -237,19 +242,20 @@ sub _x2d {
                 #warn "Ordered mode, have res with ".(0+@$res)." children = @$res";
                 return $res->[0] if @$res == 1;
             } else {
-                if (defined $X2D{join} and exists $res->{ $X2D{text} } and ref $res->{ $X2D{text} }) {
+                if (defined $X2D{join} and exists $res->{ $X2D{text} } and ref $res->{ $X2D{text} })                {
                     $res->{ $X2D{text} } = join $X2D{join}, grep length, @{ $res->{ $X2D{text} } };
                 }
-                delete $res->{ $X2D{text} } if $X2D{trim} and keys %$res > 1 and exists $res->{ $X2D{text} } and !length $res->{ $X2D{text} };
-                return $res->{ $X2D{text} } if keys %$res == 1 and exists $res->{ $X2D{text} };
+
+                delete $res->{ $X2D{text} }
+                    if $X2D{trim} 
+                       and keys %$res > 1 
+                       and exists $res->{ $X2D{text} } 
+                       and !length $res->{ $X2D{text} };
+
+                return $res->{ $X2D{text} } 
+                    if keys %$res == 1 
+                       and exists $res->{ $X2D{text} };
             }
-    }
-    else {
-        $res = $doc->textContent;
-        if ($X2D{trim}) {
-            $res =~ s{^\s+}{}s;
-            $res =~ s{\s+$}{}s;
-        }
     }
 
     return $res;
