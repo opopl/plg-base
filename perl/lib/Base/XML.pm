@@ -329,8 +329,8 @@ sub node_to_pl {
 
     my @listas = str_split($ref->{listas});
 
-	print 'node_to_pl' . "\n";
-	print Dumper({ %$ref, node => $node->nodeName }) . "\n";
+    print 'node_to_pl' . "\n";
+    print Dumper({ %$ref, node => $node->nodeName }) . "\n";
 
     my $n_is_list = sub {
         my ($a) = @_;
@@ -366,16 +366,16 @@ sub node_to_pl {
 
     my $is_text = ( ! grep { $_->nodeType != XML_TEXT_NODE } @cnodes ) ? 1 : 0;
     if($is_text){
-		$data    = '';
-		$is_list = 0;
-	}
+        $data    = '';
+        $is_list = 0;
+    }
 
     my $has={};
     foreach my $cn (@cnodes) {
         my ($cname, $ctype) = ( $cn->nodeName, $cn->nodeType );
 
         my $cdata = node_to_pl({ 
-			%$ref,
+            %$ref,
             node => $cn 
         });
 
@@ -385,7 +385,7 @@ sub node_to_pl {
         }
 
         if ($is_list) {
-			print Dumper($data) . "\n";
+            print Dumper($data) . "\n";
             push @$data, $cdata;
 
         }else{
