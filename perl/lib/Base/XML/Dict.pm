@@ -231,19 +231,22 @@ sub _x2d {
             }
         }
 
-            if (defined $X2D{join} and exists $res->{ $text } and ref $res->{ $text })                          {
-                $res->{ $text } = join $X2D{join}, grep length, @{ $res->{ $text } };
-            }
+        if (defined $join 
+                and exists $res->{ $text } 
+                and ref $res->{ $text })                          
+        {
+            $res->{ $text } = join $join, grep length, @{ $res->{ $text } };
+        }
 
-                delete $res->{ $text }
-                    if $X2D{trim} 
-                       and keys %$res > 1 
-                       and exists $res->{ $text } 
-                       and !length $res->{ $text };
+        delete $res->{ $text }
+			if $X2D{trim} 
+				and keys %$res > 1 
+				and exists $res->{ $text } 
+				and !length $res->{ $text };
 
-                return $res->{ $text } 
-                    if keys %$res == 1 
-                       and exists $res->{ $text };
+		return $res->{ $text } 
+			if keys %$res == 1 
+			and exists $res->{ $text };
     }
 
     return $res;
