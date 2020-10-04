@@ -177,7 +177,8 @@ sub _d2x {
 sub _x2d {
     my $doc = shift;
     my $res;
-        if ($doc->hasChildNodes or $doc->hasAttributes) {
+
+    if ($doc->hasChildNodes or $doc->hasAttributes) {
             if ($X2D{order}) {
                 $res = [];
                 my $attr = {};
@@ -208,7 +209,9 @@ sub _x2d {
                 else {
                     $nn = $_->nodeName;
                 }
+
                 my $chld = _x2d($_);
+
                 if ($X2D{order}) {
                     if ($nn eq $X2D{text}) {
                         push @{ $res }, $chld if length $chld;
@@ -240,15 +243,16 @@ sub _x2d {
                 delete $res->{ $X2D{text} } if $X2D{trim} and keys %$res > 1 and exists $res->{ $X2D{text} } and !length $res->{ $X2D{text} };
                 return $res->{ $X2D{text} } if keys %$res == 1 and exists $res->{ $X2D{text} };
             }
+    }
+    else {
+        $res = $doc->textContent;
+        if ($X2D{trim}) {
+            $res =~ s{^\s+}{}s;
+            $res =~ s{\s+$}{}s;
         }
-        else {
-            $res = $doc->textContent;
-            if ($X2D{trim}) {
-                $res =~ s{^\s+}{}s;
-                $res =~ s{\s+$}{}s;
-            }
-        }
-    $res;
+    }
+
+    return $res;
     
 }
 
