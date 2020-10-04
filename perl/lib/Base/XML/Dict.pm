@@ -9,8 +9,6 @@ use Types::Serialiser;
 
 our $PARSER = XML::LibXML->new();
 
-our $X2A = 0;
-our %X2A = ();
 
 our %X2D;
 %X2D = (
@@ -192,8 +190,8 @@ sub _x2d {
         my @nodes_attr     = $doc->attributes;
 
         $res = {};
-        for (@nodes_attr) {
-           $res->{ $X2D{attr} . $_->nodeName } = $_->getValue;
+        for my $a (@nodes_attr) {
+           $res->{ $X2D{attr} . $a->nodeName } = $a->getValue;
         }
 
         for my $cnode (@children) {
@@ -217,7 +215,6 @@ sub _x2d {
 
             my $chld = _x2d($cnode);
 
-            if (( $X2A or $X2A{$cnn} ) and !$res->{$cnn}) { $res->{$cnn} = [] }
             if (exists $res->{$cnn} ) {
 				$res->{$cnn} = [ $res->{$cnn} ] unless ref $res->{$cnn} eq 'ARRAY';
 				push @{$res->{$cnn}}, $chld if defined $chld;
@@ -260,8 +257,6 @@ sub xml2dict($;%) {
     my %opts = @_;
     my $arr = delete $opts{array};
 
-    local $X2A = 1 if defined $arr and !ref $arr;
-    local @X2A{@$arr} = (1)x@$arr if defined $arr and ref $arr;
     local @X2D{keys %opts} = values %opts if @_;
 
     $PARSER->load_ext_dtd($X2D{load_ext_dtd});
@@ -275,11 +270,10 @@ sub xml2dict($;%) {
     #warn Dumper \%X2D;
     my $root = $doc->isa('XML::LibXML::Document') ? $doc->documentElement : $doc;
 
-    my $xa  = $X2A || $X2A{$root->nodeName};
     my $rnn = scalar $root->nodeName;
 
     return {
-        $rnn => $xa ? [ _x2d($root) ] : _x2d($root),
+        $rnn => _x2d($root)
     };
 
 }
