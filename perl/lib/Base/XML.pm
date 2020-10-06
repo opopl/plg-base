@@ -146,17 +146,19 @@ sub parser_new {
 
 
 sub xml_pretty {
-    my ($xml) = @_;
+    my ($xml,%opts) = @_;
 
-    my $xml_pp;
+    my ($xml_pp, $dom);
+
+    $dom = $xml if ref $xml;
     eval { 
-        my $dom = XML::LibXML->load_xml(
+        $dom ||= XML::LibXML->load_xml(
             string          => $xml,
             recover         => 1,
             suppress_errors => 1,
         );
         my $pp = XML::LibXML::PrettyPrint->new(indent_string => "  ");
-        $pp->pretty_print($dom); # modified in-place
+        $pp->pretty_print($dom); 
         $xml_pp =  $dom->toString;
     };
     $xml = $xml_pp if $xml_pp;

@@ -1736,7 +1736,10 @@ snippet ipr
 snippet asc
 	let cmd = <++>
 	
-	let env = {}
+	let env = {
+		\ 'cmd' : cmd,
+		\ <++>  : <++>,
+		\	}
 	function env.get(temp_file) dict
 		let temp_file = a:temp_file
 		let code      = self.return_code
