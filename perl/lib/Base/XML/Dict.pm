@@ -6,8 +6,12 @@ use warnings;
 
 use XML::LibXML ();
 use Types::Serialiser;
+use Data::Dumper qw(Dumper);
 
 our $PARSER = XML::LibXML->new();
+
+our $X2A = 0;
+our %X2A = ();
 
 
 our %X2D;
@@ -194,8 +198,8 @@ sub _x2d {
            $res->{ $X2D{attr} . $a->nodeName } = $a->getValue;
         }
 
-        for my $cnode (@children) {
-            my $ref = ref $cnode;
+        for my $ch_node (@children) {
+            my $ref = ref $ch_node;
 
             # child node name
             my $cnn;
@@ -210,20 +214,38 @@ sub _x2d {
                 $cnn = defined $X2D{comm} ? $X2D{comm} : next;
             }
             else {
-                $cnn = $cnode->nodeName;
+                $cnn = $ch_node->nodeName;
             }
 
-            my $chld = _x2d($cnode);
+            my $ch_data = _x2d($ch_node);
+
+            if (( $X2A or $X2A{$cnn} ) and !$res->{$cnn}) { 
+                $res->{$cnn} = [];
+
+
+            };
 
             if (exists $res->{$cnn} ) {
                 $res->{$cnn} = [ $res->{$cnn} ] unless ref $res->{$cnn} eq 'ARRAY';
 
-                push @{$res->{$cnn}}, $chld if defined $chld;
+                 if (defined $ch_data){
+                    my @k = keys %$ch_data;
+                    if (@k == 1) {
+                        my $k = shift @k;
+                        $ch_data = $ch_data->{$k};
+                    }
+
+                    if (ref $ch_data eq 'ARRAY') {
+                        push @{$res->{$cnn}}, @$ch_data;
+                    }else{
+                        push @{$res->{$cnn}}, $ch_data;
+                    }
+                }
             } else {
                 if ($cnn eq $text) {
-                    $res->{$cnn} = $chld if length $chld;
+                    $res->{$cnn} = $ch_data if length $ch_data;
                 } else {
-                    $res->{$cnn} = $chld;
+                    $res->{$cnn} = $ch_data;
                 }
             }
         }
@@ -254,12 +276,14 @@ sub _x2d {
 }
 
 sub xml2dict($;%) {
-    my $doc = shift;
+    my ($doc,%opts) = @_;
 
     defined $doc or _croak("Called xml2dict on undef"),return;
 
-    my %opts = @_;
     my $arr = delete $opts{array};
+
+    local $X2A = 1 if defined $arr and !ref $arr;
+    local @X2A{@$arr} = (1)x@$arr if defined $arr and ref $arr;
 
     local @X2D{keys %opts} = values %opts if @_;
 
@@ -276,8 +300,11 @@ sub xml2dict($;%) {
 
     my $rnn = scalar $root->nodeName;
 
+    my $xa = $X2A || $X2A{$rnn};
+    my $d = _x2d($root);
+
     return {
-        $rnn => _x2d($root)
+        $rnn => $xa ? [$d] : $d
     };
 
 }
