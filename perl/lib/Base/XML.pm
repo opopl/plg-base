@@ -203,7 +203,7 @@ sub xml_pretty {
         my (@xp, $xp);
         my %inds;
         foreach(@pp_lines) {
-            /^(?<ind>\s*)<(?<tag>\w+)\s+/ && do {
+            /^(?<ind>\s*)<(?<tag>\w+)>\s*$/ && do {
                 my $t   = $+{tag};
                 my $ind = $+{ind};
 
@@ -217,10 +217,14 @@ sub xml_pretty {
             /^\s*<\/(\w+)>/ && do {
                 $xp = join(" ",@xp);
                 my $t = pop @xp;
+                my $ind = $inds{$xp} || '';
+
+                s/^\s*/$ind/g;
 
                 next;
             };
         }
+        $xml_pp = join("\n",@pp_lines);
     };
     $xml = $xml_pp if $xml_pp;
 
