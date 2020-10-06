@@ -191,8 +191,9 @@ sub xml_pretty {
         
             foreach my $n ($dom->findnodes($xp)){
                 $n->removeChildNodes();
-                $n->appendText(' ' . "\n");
+                $n->appendText("\n");
                 $n->appendText($kept);
+                $n->appendText("\n");
             }
         }
         local $XML::LibXML::skipXMLDeclaration = 0;
