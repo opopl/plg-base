@@ -198,6 +198,29 @@ sub xml_pretty {
         }
         local $XML::LibXML::skipXMLDeclaration = 0;
         $xml_pp =  $dom->toString;
+        my @pp_lines = split("\n" => $xml_pp);
+
+        my (@xp, $xp);
+        my %inds;
+        foreach(@pp_lines) {
+            /^(?<ind>\s*)<(?<tag>\w+)\s+/ && do {
+                my $t   = $+{tag};
+                my $ind = $+{ind};
+
+                push @xp, $t;
+                $xp = join(" ",@xp);
+
+                $inds{$xp} = $ind;
+
+                next;
+            };
+            /^\s*<\/(\w+)>/ && do {
+                $xp = join(" ",@xp);
+                my $t = pop @xp;
+
+                next;
+            };
+        }
     };
     $xml = $xml_pp if $xml_pp;
 
