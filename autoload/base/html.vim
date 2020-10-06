@@ -387,6 +387,12 @@ eof
 
 endfunction
 
+if 0
+  call tree
+    called by
+      base#html#htw_load_buf
+endif
+
 function! base#html#htw_init (...)
   let ref = get(a:000,0,{})
 
@@ -571,7 +577,6 @@ function! base#html#htw_load_buf ( ... )
   call base#log(msg,prf)
   let l:start = localtime()
   "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
 
   let load_as      = base#html#libxml_load_as()
   let load_as      = &ft

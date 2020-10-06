@@ -38,17 +38,26 @@ my @ex_vars_array=qw(
 	'funcs' => [qw( 
 		d_str_split
 		d_str_split_sn
+		d_path
 	)],
 	'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
 
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 
+sub d_path {
+	my ($data, $path, $default) = @_;
+
+	my @path = split(' ',$path);
+	my $val = deepvalue($data,@path) // $default;
+	return $val;
+}
+
 sub d_str_split {
 	my ($data, $path, $ref) = @_;
 	$ref ||= {};
 
-	my $val = deepvalue($data,split(' ' => $path));
+	my $val = d_path($data,$path,'');
 	my @s = str_split($val,$ref);
 	return @s;
 }
@@ -56,7 +65,7 @@ sub d_str_split {
 sub d_str_split_sn {
 	my ($data, $path) = @_;
 
-	my $val = deepvalue($data,split(' ' => $path));
+	my $val = d_path($data,$path,'');
 	my @s = str_split_sn($val);
 	return @s;
 }
