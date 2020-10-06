@@ -34,6 +34,7 @@ my @ex_vars_array=qw(
 ###export_funcs
 	'funcs' => [qw( 
 		str_split
+		str_split_sn
 		str_split_trim
 		str_split_pm
 		str_sum
@@ -43,6 +44,14 @@ my @ex_vars_array=qw(
 );
 
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
+
+sub str_split_sn {
+	my ($str) = @_;
+
+	my $sep = qr/[\s\n]/;
+	my @s = str_split($str,{ sep => $sep });
+	return @s;
+}
 
 sub str_split {
 	my ($str,$ref) = @_;

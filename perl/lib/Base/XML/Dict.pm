@@ -222,18 +222,19 @@ sub _x2d {
             if (( $X2A or $X2A{$cnn} ) and !$res->{$cnn}) { 
                 $res->{$cnn} = [];
 
-
             };
 
             if (exists $res->{$cnn} ) {
                 $res->{$cnn} = [ $res->{$cnn} ] unless ref $res->{$cnn} eq 'ARRAY';
 
                  if (defined $ch_data){
-                    my @k = keys %$ch_data;
-                    if (@k == 1) {
-                        my $k = shift @k;
-                        $ch_data = $ch_data->{$k};
-                    }
+					if (ref $ch_data eq 'HASH') {
+	                    my @k = keys %$ch_data;
+	                    if (@k == 1) {
+	                        my $k = shift @k;
+	                        $ch_data = $ch_data->{$k};
+	                    }
+					}
 
                     if (ref $ch_data eq 'ARRAY') {
                         push @{$res->{$cnn}}, @$ch_data;
