@@ -150,6 +150,15 @@ sub xml_pretty {
 
     my ($xml_pp, $dom);
 
+    my ($ids, $xpath_ids);
+    $ids ||= $opts{ids} || [];
+
+
+    if (@$ids) {
+        $xpath_ids = q{ //*[ } 
+            . join (' or ', map { qq{name()='$_'}} @$ids) . q{ ] };
+    }
+
     $dom = $xml if ref $xml;
     eval { 
         $dom ||= XML::LibXML->load_xml(
@@ -158,7 +167,35 @@ sub xml_pretty {
             suppress_errors => 1,
         );
         my $pp = XML::LibXML::PrettyPrint->new(indent_string => "  ");
+
+        my %vals;
+        if ($xpath_ids) {
+	        $dom->findnodes($xpath_ids)
+	            ->map(
+	                sub{
+	                    my($n)=@_;
+	                    
+	                    my $ind = " " x 5;
+	                    my $xp =  $n->nodePath();
+	                    my $keep = $n->to_literal;
+	                    $keep =~ s/^\s*/$ind/gms;
+	                    $vals{$xp} = $keep;
+	                }
+	            );
+        }
+
         $pp->pretty_print($dom); 
+
+        foreach my $xp (keys %vals) {
+            my $kept = $vals{$xp}; 
+        
+            foreach my $n ($dom->findnodes($xp)){
+                $n->removeChildNodes();
+                $n->appendText(' ' . "\n");
+                $n->appendText($kept);
+            }
+        }
+        local $XML::LibXML::skipXMLDeclaration = 0;
         $xml_pp =  $dom->toString;
     };
     $xml = $xml_pp if $xml_pp;
