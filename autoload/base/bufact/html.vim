@@ -435,10 +435,23 @@ function! base#bufact#html#w_xpath (...)
   function env.get(temp_file) dict
     let temp_file = a:temp_file
     let code      = self.return_code
+
+    let xpath = self.xpath
   
     if filereadable(a:temp_file)
       let out = readfile(a:temp_file)
-      call base#buf#open_split({ 'lines' : out })
+      let stl_add = [
+          \ printf('[ %s xpath = %s %s ]', '%3*',xpath,'%0*'),
+          \ ]
+      let cmds_after = [
+            \ 'setlocal ft=xml',
+            \ ] 
+      
+      call base#buf#open_split({ 
+        \  'lines'      : out,
+        \  'stl_add'    : stl_add,
+        \  'cmds_after' : cmds_after,
+        \  })
     endif
   endfunction
   

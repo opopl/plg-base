@@ -336,9 +336,16 @@ snippet osw?
 	= has('win32') ? <++> : <++>
 snippet bbos
 	call base#buf#open_split({ 'lines' : <++> })
-snippet bbos1
+snippet bbosx
+	let stl_add = [
+			\ '[ %3* v - view %0* ]',
+			\ ]
+	let cmds_after = [] 
+	
 	call base#buf#open_split({ 
-		\	'lines' : <++>,
+		\	'lines'      : <++>,
+		\	'stl_add'    : stl_add,
+		\	'cmds_after' : cmds_after,
 		\	})
 snippet bbi
 	base#buf#in(${1})
