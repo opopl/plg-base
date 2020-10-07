@@ -6,6 +6,12 @@ function! base#bufact#xml#xpath ()
   call base#bufact#html#xpath ()
 endf
 
+function! base#bufact#xml#w_xpath ()
+  call base#buf#start()
+
+  call base#bufact#html#w_xpath ()
+endf
+
 """remove_xpath
 function! base#bufact#xml#remove_xpath ()
   call base#buf#start()

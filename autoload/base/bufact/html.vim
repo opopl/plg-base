@@ -412,6 +412,43 @@ function! base#bufact#html#_select (...)
 
 endfunction
 
+function! base#bufact#html#w_xpath (...)
+  call base#buf#start()
+
+  let pl   = base#qw#catpath('plg projs scripts bufact xml xpath.pl')
+
+  let ple  = shellescape(pl)
+  let f_se = shellescape(b:file)
+
+  let xpath = idephp#hist#input({ 
+      \ 'msg'  : '(w_xpath) XPATH:',
+      \ 'hist' : 'xpath',
+      \ })
+
+  let cmd = join([ 'perl', ple, f_se, xpath ], ' ')
+  
+  let env = {
+    \ 'cmd'   : cmd,
+    \ 'xpath' : xpath,
+    \ }
+
+  function env.get(temp_file) dict
+    let temp_file = a:temp_file
+    let code      = self.return_code
+  
+    if filereadable(a:temp_file)
+      let out = readfile(a:temp_file)
+      call base#buf#open_split({ 'lines' : out })
+    endif
+  endfunction
+  
+  call asc#run({ 
+    \ 'cmd' : cmd, 
+    \ 'Fn'  : asc#tab_restore(env) 
+    \ })
+
+endfunction
+
 """bufact_xpath
 function! base#bufact#html#xpath (...)
   call base#buf#start()
@@ -543,9 +580,10 @@ function! base#bufact#html#quickfix_xpath ()
         \ }
      call extend(line,r)
   endfor
+
   if len(lines)
     call setqflist(lines) 
-    copen
+    BaseAct copen
   endif
 
 endfunction
