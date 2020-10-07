@@ -19,7 +19,7 @@ our %X2D;
     order => 0,
     attr  => '-',
     text  => '#text',
-    join  => '',
+    join  => "\n",
     trim  => 1,
     cdata => undef,
     comm  => undef,
