@@ -1401,16 +1401,12 @@ fun! base#input(msg,default,...)
   let o      = base#varget('opts',{})
   let prompt = get(o,'base#input_prompt',prompt)
 
-  let prompt = get(ref,'prompt',prompt)
+  let prompt    = get(ref,'prompt',prompt)
   let do_redraw = get(ref,'do_redraw',0)
 
-  if !prompt
-    return
-  endif
+  if !prompt | return | endif
 
-  if do_redraw
-     redraw!
-  endif
+  if do_redraw | redraw! |  endif
 
   let complete = get(ref,'complete','')
 
@@ -1876,20 +1872,19 @@ fun! base#find(ref)
 
 endf
 
+if 0
+	Usage
+		call base#rdw_printf(['%s %s','aa','bb'],'MoreMsg')
+endif
+
 fun! base#rdw_printf(...)
   let args = get(a:000,0,[])
+  let hl   = get(a:000,1,'')
 
-  if !len(args)
-    return 
-  endif
+  if !len(args) | return | endif
 
-  let str = remove(args,0)
-  let args_call = []
-  call add(args_call,str)
-  call extend(args_call,args)
-
-  let msg = call('printf',args_call)
-  call base#rdw(msg)
+  let msg = call('printf',args)
+  call base#rdw(msg,hl)
 endf
 
 fun! base#rdw(text,...)
