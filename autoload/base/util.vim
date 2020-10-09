@@ -21,3 +21,43 @@ function! base#util#dirs_from_str (...)
 	return dirs
 	
 endfunction
+
+function! base#util#split_acts (...)
+	let ref = get(a:000,0,{})
+
+	let act  = get(ref,'act','')
+	let acts = get(ref,'acts',[])
+
+	let desc = get(ref,'desc',{})
+
+	let front   = get(ref,'front',[])
+	let fmt_sub = get(ref,'fmt_sub','')
+
+	let Fc      = get(ref,'Fc','')
+
+  if ! strlen(act)
+    let info = []
+    for act in acts
+      call add(info,[ act, get(desc,act,'') ])
+    endfor
+    let lines = [ ]
+
+    call extend(lines,front)
+
+    call extend(lines, pymy#data#tabulate({
+      \ 'data'    : info,
+      \ 'headers' : [ 'act', 'description' ],
+      \ }))
+
+    call base#buf#open_split({ 
+      \ 'lines'    : lines,
+      \ 'cmds_pre' : ['resize 99'] ,
+      \ 'Fc'       : Fc,
+      \ })
+    return
+  endif
+
+  let sub = printf(fmt_sub, act)
+  exe printf('call %s()',sub)
+
+endfunction
