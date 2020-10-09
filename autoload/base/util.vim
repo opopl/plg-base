@@ -25,6 +25,7 @@ endfunction
 if 0
   called by
     projs#pdf#invoke
+    projs#bld#do
 endif
 
 function! base#util#split_acts (...)
