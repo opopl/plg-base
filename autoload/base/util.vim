@@ -1,39 +1,46 @@
 
 function! base#util#dirs_from_str (...)
-	let dirids_str = get(a:000, 0, '')
+  let dirids_str = get(a:000, 0, '')
 
-	let dirids_qw = split(dirids_str, "\n")
-	let dirs = []
+  let dirids_qw = split(dirids_str, "\n")
+  let dirs = []
 
-	for dqw in dirids_qw
-		let dqw   = base#trim(dqw)		
-		let dirid = matchstr(dqw, '^\zs\w\+\ze' )
-		let qw    = matchstr(dqw, '^\w\+\s\+\zs.*\ze$' )
-		let qw    = base#trim( qw )
-		let dir   = base#qw#catpath(dirid, qw)
+  for dqw in dirids_qw
+    let dqw   = base#trim(dqw)    
+    let dirid = matchstr(dqw, '^\zs\w\+\ze' )
+    let qw    = matchstr(dqw, '^\w\+\s\+\zs.*\ze$' )
+    let qw    = base#trim( qw )
+    let dir   = base#qw#catpath(dirid, qw)
 
-		if strlen(dir) 
-			call add(dirs, dir)
-		endif
+    if strlen(dir) 
+      call add(dirs, dir)
+    endif
 
-	endfor
+  endfor
 
-	return dirs
-	
+  return dirs
+  
 endfunction
 
+if 0
+  called by
+    projs#pdf#invoke
+endif
+
 function! base#util#split_acts (...)
-	let ref = get(a:000,0,{})
+  let ref = get(a:000,0,{})
 
-	let act  = get(ref,'act','')
-	let acts = get(ref,'acts',[])
+  let act  = get(ref,'act','')
+  let acts = get(ref,'acts',[])
 
-	let desc = get(ref,'desc',{})
+  let acts = sort(acts)
 
-	let front   = get(ref,'front',[])
-	let fmt_sub = get(ref,'fmt_sub','')
+  let desc = get(ref,'desc',{})
 
-	let Fc      = get(ref,'Fc','')
+  let front   = get(ref,'front',[])
+  let fmt_sub = get(ref,'fmt_sub','')
+
+  let Fc      = get(ref,'Fc','')
 
   if ! strlen(act)
     let info = []
@@ -49,11 +56,16 @@ function! base#util#split_acts (...)
       \ 'headers' : [ 'act', 'description' ],
       \ }))
 
-    call base#buf#open_split({ 
+    let r = { 
       \ 'lines'    : lines,
       \ 'cmds_pre' : ['resize 99'] ,
-      \ 'Fc'       : Fc,
-      \ })
+      \ }
+
+    if type(Fc) == type(function('call'))
+      call extend(r,{ 'Fc' : Fc })
+    endif
+
+    call base#buf#open_split(r)
     return
   endif
 
