@@ -30,6 +30,8 @@ our %X2D;
     expand_xinclude => 0,
     validation      => 0,
     no_network      => 1,
+    # to be used in _x2d
+    txt_sub         => sub {},
     %X2D,  # also inject previously user-defined options
 );
 
@@ -184,7 +186,12 @@ sub _x2d {
     my $join  = $X2D{join};
 
     unless($doc->hasChildNodes or $doc->hasAttributes) {
-        $res = $doc->textContent;
+        my $txt = $doc->textContent;
+
+        $res = $txt;
+        if (my $s = $X2D{txt_sub}) {
+            $s->(\$res);
+        }
         if ($X2D{trim}) {
             $res =~ s{^\s+}{}s;
             $res =~ s{\s+$}{}s;
@@ -199,18 +206,18 @@ sub _x2d {
         }
 
         for my $ch_node (@children) {
-            my $ref = ref $ch_node;
+            my $ref_cn = ref $ch_node;
 
             # child node name
             my $cnn;
 
-            if ($ref eq 'XML::LibXML::Text') {
+            if ($ref_cn eq 'XML::LibXML::Text') {
                 $cnn = $text
             }
-            elsif ($ref eq 'XML::LibXML::CDATASection') {
+            elsif ($ref_cn eq 'XML::LibXML::CDATASection') {
                 $cnn = defined $X2D{cdata} ? $X2D{cdata} : $text;
             }
-            elsif ($ref eq 'XML::LibXML::Comment') {
+            elsif ($ref_cn eq 'XML::LibXML::Comment') {
                 $cnn = defined $X2D{comm} ? $X2D{comm} : next;
             }
             else {
@@ -228,13 +235,13 @@ sub _x2d {
                 $res->{$cnn} = [ $res->{$cnn} ] unless ref $res->{$cnn} eq 'ARRAY';
 
                  if (defined $ch_data){
-					if (ref $ch_data eq 'HASH') {
-	                    my @k = keys %$ch_data;
-	                    if (@k == 1) {
-	                        my $k = shift @k;
-	                        $ch_data = $ch_data->{$k};
-	                    }
-					}
+                    if (ref $ch_data eq 'HASH') {
+                        my @k = keys %$ch_data;
+                        if (@k == 1) {
+                            my $k = shift @k;
+                            $ch_data = $ch_data->{$k};
+                        }
+                    }
 
                     if (ref $ch_data eq 'ARRAY') {
                         push @{$res->{$cnn}}, @$ch_data;
