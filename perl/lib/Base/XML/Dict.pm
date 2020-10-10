@@ -197,8 +197,8 @@ sub _x2d {
             $res =~ s{\s+$}{}s;
         }
     }else{
-        my @children = $doc->childNodes;
-        my @nodes_attr     = $doc->attributes;
+        my @children   = $doc->childNodes;
+        my @nodes_attr = $doc->attributes;
 
         $res = {};
         for my $a (@nodes_attr) {
