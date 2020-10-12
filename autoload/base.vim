@@ -391,10 +391,10 @@ fun! base#htmlwork (...)
   let cmd  = get(a:000,0,'')
   let cmds = base#varget('htmlwork',[])
 
-	if !len(cmd)
-		call base#htmlwork#render_cmds()
-		return 
-	endif
+  if !len(cmd)
+    call base#htmlwork#render_cmds()
+    return 
+  endif
 
   if base#inlist(cmd,cmds)
     let sub = 'call base#htmlwork#'.cmd.'()'
@@ -1453,11 +1453,30 @@ fun! base#input_we(msg,default,...)
   return v
 endf
 
+fun! base#input_hist(msg,default,hist_name)
+  let [ msg, default, hist_name ] = [ a:msg, a:default, a:hist_name ]
+
+  let hist = []
+  if ! strlen(hist_name) | return '' | endif
+
+  let hist     = base#varget(hist_name,[])
+  let complete = 'custom,base#complete#this'
+  call base#varset('this',hist)
+
+  let v = input(msg,default,complete)
+
+  call add(hist, v)
+  let hist = base#uniq(hist)
+  call base#varset(hist_name,hist)
+
+  return v
+endf
+
 fun! base#rmendssplitglob(pathkey,pat)
 
- let files=[]
- let modifiers=":p:t:r"
- let files=base#splitglob(a:pathkey, a:pat )
+ let files = []
+ let modifiers = ":p:t:r"
+ let files = base#splitglob(a:pathkey, a:pat )
 
  call map(files,"fnamemodify(v:val,'" . modifiers . "')")
  let files=base#rmprefix(files)
@@ -1873,8 +1892,8 @@ fun! base#find(ref)
 endf
 
 if 0
-	Usage
-		call base#rdw_printf(['%s %s','aa','bb'],'MoreMsg')
+  Usage
+    call base#rdw_printf(['%s %s','aa','bb'],'MoreMsg')
 endif
 
 fun! base#rdw_printf(...)

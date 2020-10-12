@@ -1,3 +1,7 @@
+snippet bih
+	let <++> =  base#input_hist(msg,default,{ 'hist_name' : <++> })
+snippet trglist
+	let trg_list = projs#bld#trg#list()
 snippet bit
 	call base#varset('this',<++>)
 	let <++> = base#input(<++>,'',{ 'complete' : 'custom,base#complete#this' })
