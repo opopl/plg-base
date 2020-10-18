@@ -545,7 +545,7 @@ endfunction
 function! base#buf#au_write_post ()
   call base#buf#start()
 
-	let ft = b:filetype
+	let ft = &ft
   if base#inlist( ft, base#qw('idat xml') )
     BufAct update_var 
   endif

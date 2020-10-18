@@ -561,20 +561,23 @@ eof
 endfunction
 
 fun! base#init#au()
-  let plgdir = base#plgdir()
+  let plgdir   = base#plgdir()
 
   let datfiles = base#varget('datfiles',{})
 
   au BufNewFile,BufWritePost,BufRead,BufWinEnter *.i.dat setf idat
-  au BufRead,BufNewFile,BufWinEnter *.csv   set filetype=csv
-  au BufRead,BufNewFile,BufWinEnter *.tsv   set filetype=tsv
-  au BufRead,BufNewFile,BufWinEnter *.py3   set filetype=python
-  au BufRead,BufNewFile,BufWinEnter *.vue   set filetype=html
 
-  au BufRead,BufNewFile,BufWinEnter *.html  set filetype=html
-  au BufRead,BufNewFile,BufWinEnter *.htm   set filetype=html
+  au BufRead,BufNewFile,BufWinEnter *.csv   setlocal ft=csv
+  au BufRead,BufNewFile,BufWinEnter *.tsv   setlocal ft=tsv
+  au BufRead,BufNewFile,BufWinEnter *.py3   setlocal ft=python
+  au BufRead,BufNewFile,BufWinEnter *.vue   setlocal ft=html
 
-  au BufRead,BufNewFile,BufWinEnter *.py3   set filetype=python
+  au BufRead,BufNewFile,BufWinEnter *.html  setlocal ft=html
+  au BufRead,BufNewFile,BufWinEnter *.htm   setlocal ft=html
+
+  au BufRead,BufNewFile,BufWinEnter *.tml   setlocal ft=tml
+
+  au BufRead,BufNewFile,BufWinEnter *.py3   setlocal ft=python
 
   au BufWrite *.snippets MM snippets_reload_all
 
@@ -585,8 +588,6 @@ fun! base#init#au()
   exe 'au BufRead,BufNewFile,BufWinEnter '.plgu.'/base/autoload/base/html.vim call base#buf#onload() '  
   au BufWritePost * call base#buf#au_write_post()
 
-  "au BufRead,BufWinEnter * call base#buf#onload()
-  au BufRead,BufWinEnter,BufNewFile * call base#buf#start() 
   au BufRead,BufWinEnter,BufNewFile * call base#buf#onload() 
 
   au BufWrite * call base#buf#onwrite() 
