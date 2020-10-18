@@ -588,6 +588,7 @@ fun! base#init#au()
   exe 'au BufRead,BufNewFile,BufWinEnter '.plgu.'/base/autoload/base/html.vim call base#buf#onload() '  
   au BufWritePost * call base#buf#au_write_post()
 
+  au BufRead,BufWinEnter,BufNewFile * call base#buf#start() 
   au BufRead,BufWinEnter,BufNewFile * call base#buf#onload() 
 
   au BufWrite * call base#buf#onwrite() 
