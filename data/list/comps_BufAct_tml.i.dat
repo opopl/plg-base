@@ -1,0 +1,10 @@
+pretty_perl_libxml
+remove_xpath
+xpath
+quickfix_xpath
+# attributes
+a_delete
+a_rename
+r_win2unix
+r_unix2win
+w_xpath
