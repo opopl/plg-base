@@ -2,12 +2,13 @@ apache
 appdata
 config_win
 htmlout
+img_root
 java_home
 jsdocs
+p_ae
+p_sr
 pdfout
 seeddms
+texdocs
 www
 xampp
-p_sr
-p_ae
-texdocs
