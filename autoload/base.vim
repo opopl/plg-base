@@ -40,13 +40,18 @@ fun! base#pdfview(...)
   let opts = get(a:000,1,{})
 
   let viewer = base#exefile#path('evince')
+	let viewer = 'evince'
 
   if filereadable(file)
      if get(opts,'cdfile',0)
         call base#cdfile(file)
      endif
 
-     let ec= 'silent! !start '.viewer.' '.file
+		 if has('win32')
+     		let ec = 'silent! !start '.viewer.' '.file
+		 else
+     		let ec = printf('! %s %s &', viewer, file)
+		 endif
      exe ec
      redraw!
   endif

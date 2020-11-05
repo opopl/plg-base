@@ -64,7 +64,7 @@ our @TYPES = qw( list dict listlines );
 sub init {
     my $self=shift;
 
-	#return unless $^O eq 'MSWin32';
+    #return unless $^O eq 'MSWin32';
 
     $self
         ->init_dirs
@@ -112,7 +112,7 @@ Load SQL statements from C<$plg/base/data/sql> directory
 
 =head4 Usage
 
-	$plgbase->init_sqlstm;
+    $plgbase->init_sqlstm;
 
 =cut
 
