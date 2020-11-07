@@ -267,13 +267,16 @@ function! base#file#basename(file)
   return bname
 endf
 
-"let r = {
-"      \   'lines'  : <+lines+>,
-"      \   'file'   : <+file+>,
-"      \   'prompt' : <+prompt+>,
-"      \   'mode'   : <+mode+>,
-"      \   }
-"call base#file#write_lines(r)  
+if 0
+	Usage:
+		let r = {
+		      \   'lines'  : <+lines+>,
+		      \   'file'   : <+file+>,
+		      \   'prompt' : <+prompt+>,
+		      \   'mode'   : <+mode+>,
+		      \   }
+		call base#file#write_lines(r)  
+endif
 
 function! base#file#write_lines(...)  
   let ref = get(a:000,0,{})

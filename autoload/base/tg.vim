@@ -205,20 +205,28 @@ function! base#tg#update_w_files (...)
   return f_u
 endf
 
-function! base#tg#update_w_bat (...)
+if 0
+  call tree
+    called by
+      base#tg#update
+    calls 
+      base#file#write_lines
+endif
 
-  let ref   = get(a:000,0,{})
+function! base#tg#update_w_bat (...)
+  let ref        = get(a:000,0,{})
 
   let tgid       = get(ref,'tgid','')
   let tfile      = get(ref,'tfile','')
   let f_filelist = get(ref,'f_filelist','')
 
-  let libs        = get(ref,'libs','')
-  let files       = get(ref,'files','')
+  let libs       = get(ref,'libs','')
+  let files      = get(ref,'files','')
 
   let cmd = ''
   if has('win32')
     let cmd = 'ctags -R -o "' . ap#file#win( tfile ) . '" ' . libs . ' ' . files
+
   elseif has('mac') || has('unix')
     let cmd = printf('ctags -R -o "%s" %s %s',  tfile, libs, files)
   endif
@@ -264,7 +272,6 @@ function! base#tg#update_w_bat (...)
     call add(batlines,' ')
 
     let batfile = base#qw#catpath( printf('tmp_bat tgupdate_%s.sh',tgid) )
-    call system(printf("chmod +rx %s",shellescape(batfile) ))
 
   endif
 
@@ -272,6 +279,10 @@ function! base#tg#update_w_bat (...)
     \ 'lines' : batlines, 
     \ 'file'  : batfile, 
     \})
+
+  if has('mac') || has('unix')
+    call system(printf("chmod +rx %s",shellescape(batfile) ))
+  endif
 
   let execmd = printf('"%s"', batfile )
 
