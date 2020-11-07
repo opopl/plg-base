@@ -89,6 +89,7 @@ function! base#ty#make (...)
     call base#ty#make_Fc(self, a:temp_file)
   endfunction
 
+  call base#rdw_printf([ 'base#ty#make: %s', tgid],'SpellRare')
   call asc#run({ 
     \ 'cmd' : cmd, 
     \ 'Fn'  : asc#tab_restore(env) 
