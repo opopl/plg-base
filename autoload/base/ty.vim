@@ -9,6 +9,7 @@ if 0
         base#bat#lines
         base#file#write_lines
       base#ty#make_Fc
+        base#tg#ok
 
     ----------------
     called by
@@ -90,7 +91,7 @@ function! base#ty#make (...)
 
   echo cmd
   return
-  
+
   call asc#run({ 
     \ 'cmd' : cmd, 
     \ 'Fn'  : asc#tab_restore(env) 
@@ -100,7 +101,7 @@ function! base#ty#make (...)
   
 endfunction
 
-function! base#ty#make_Fc (self,temp_file)
+function! base#ty#make_Fc (self, temp_file)
   let temp_file = a:temp_file
   let self      = a:self
 

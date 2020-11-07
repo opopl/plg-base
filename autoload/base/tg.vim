@@ -300,7 +300,7 @@ function! base#tg#update_tygs (...)
   let dbfile = base#qw#catpath('db', tgid . '.db')
 
   let redo        = 1
-  let do_nyt_prof = 1
+  let do_nyt_prof = 0
   let files_limit = 0
 
   let exe_perl    = 'perl'
@@ -380,8 +380,8 @@ function! base#tg#update_Fc (self,temp_file)
        call call(Fc_fail,[])
      endif
 
-		 let lines = readfile(temp_file)
-		 call base#buf#open_split({ 'lines' : lines })
+     let lines = readfile(temp_file)
+     call base#buf#open_split({ 'lines' : lines })
 
    endif
 
@@ -463,23 +463,23 @@ function! base#tg#update (...)
   " file with the list of files
   let filelist = ''
 
-	let libs_as = ''
-	if has('win32')
-  	let libs_as = join(base#qw("C:/Perl/site/lib C:/Perl/lib" ),' ')
-	endif
+  let libs_as = ''
+  if has('win32')
+    let libs_as = join(base#qw("C:/Perl/site/lib C:/Perl/lib" ),' ')
+  endif
   let execmd = ''
 
   if tgid  == ''
 
-	elseif tgid  == 'perl_plg'
-		let tagids = base#varget('tagids_perl_plg',[])
-		for tg in tagids
-			call base#tg#update(tg)
-		endfor
-		for tg in tagids
-			call base#tg#add(tg)
-		endfor
-		return 
+  elseif tgid  == 'perl_plg'
+    let tagids = base#varget('tagids_perl_plg',[])
+    for tg in tagids
+      call base#tg#update(tg)
+    endfor
+    for tg in tagids
+      call base#tg#add(tg)
+    endfor
+    return 
 
 """tgupdate_idephp_help
   elseif tgid == 'idephp_help'
@@ -500,7 +500,8 @@ function! base#tg#update (...)
     let cnt = input('(TgUpdate ty_perl_inc) Continue with making TYGS? (1/0) : ',0)
     if !cnt | return | endif
 
-    let execmd = 'ty --inc --tfile ' . tfile
+    let ty     = has('win32') ? 'ty.bat' : 'ty.sh'
+    let execmd = printf('%s --inc --tfile %s', ty, tfile)
 
   elseif tgid == 'ty_perl_perlmod'
     let dir  = base#path('perlmod')
@@ -512,6 +513,7 @@ function! base#tg#update (...)
       \ 'dirs'   : dirs ,
       \ 'prompt' : 1 ,
       \ })
+    return
 
   elseif tgid == 'ty_perl_htmltool'
 
@@ -522,7 +524,7 @@ function! base#tg#update (...)
     call base#tg#update_tygs({ 
       \ 'tgid'   : tgid ,
       \ 'dirs'   : dirs ,
-      \ 'prompt' : 1 ,
+      \ 'prompt' : 1,
       \ })
 
     return
