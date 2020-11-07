@@ -86,11 +86,8 @@ function! base#ty#make (...)
     \ }
 
   function env.get(temp_file) dict
-    call base#ty#make_Fc(self, temp_file)
+    call base#ty#make_Fc(self, a:temp_file)
   endfunction
-
-  echo cmd
-  return
 
   call asc#run({ 
     \ 'cmd' : cmd, 
