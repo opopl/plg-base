@@ -1,4 +1,5 @@
 
+@echo off
 set Bin=%~dp0
 
-perl %Bin%\rename.pl %*
+perl %Bin%\rnm.pl %*
