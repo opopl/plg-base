@@ -1,4 +1,5 @@
-"""BufAct_lynx_dump_split
+"
+"""bufact_tags_lynx_dump_split
 function! base#bufact#tags#list_of_tags ()
 	call base#buf#start()
 

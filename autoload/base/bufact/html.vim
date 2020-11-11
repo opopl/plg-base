@@ -1,4 +1,4 @@
-"""BufAct_lynx_dump_split
+"""bufact_html_lynx_dump_split
 function! base#bufact#html#dump_split ()
   call base#buf#start()
 
@@ -266,7 +266,7 @@ eof
   call base#buf#open_split({ 'lines' : lines })
 endfunction
 
-"""BufAct_pretty_perl_libxml
+"""bufact_html_pretty_perl_libxml
 function! base#bufact#html#pretty_perl_libxml ()
   call base#buf#start()
 
@@ -285,7 +285,7 @@ function! base#bufact#html#pretty_perl_libxml ()
 
 endfunction
 
-"""BufAct_pretty_beautifulsoup
+"""bufact_html_pretty_beautifulsoup
 function! base#bufact#html#pretty_beautifulsoup ()
   call base#buf#start()
 
@@ -326,7 +326,7 @@ function! base#bufact#html#code_insert (...)
 
 endfunction
 
-"""bufact__select
+"""bufact_html__select
 function! base#bufact#html#_select (...)
    let data_h = [
       \ { 
@@ -462,7 +462,7 @@ function! base#bufact#html#w_xpath (...)
 
 endfunction
 
-"""bufact_xpath
+"""bufact_html_xpath
 function! base#bufact#html#xpath (...)
   call base#buf#start()
 
@@ -566,7 +566,7 @@ function! base#bufact#html#xpath_to_literal ()
 
 endfunction
 
-"""bufact_quickfix_xpath
+"""bufact_html_quickfix_xpath
 function! base#bufact#html#quickfix_xpath ()
   call base#buf#start()
 
@@ -601,7 +601,7 @@ function! base#bufact#html#quickfix_xpath ()
 
 endfunction
 
-"""bufact_remove_extra
+"""bufact_html_remove_extra
 function! base#bufact#html#remove_extra ()
   call base#buf#start()
   call base#html#htw_load_buf()
@@ -612,7 +612,7 @@ function! base#bufact#html#remove_extra ()
 
 endfunction
 
-"""bufact_remove_xpath
+"""bufact_html_remove_xpath
 function! base#bufact#html#remove_xpath (...)
   call base#buf#start()
   call base#html#htw_load_buf()
@@ -645,13 +645,13 @@ eof
 
 endfunction
 
-"""bufact_htw_load_buf
+"""bufact_html_htw_load_buf
 function! base#bufact#html#htw_load_buf ()
   call base#buf#start()
   call base#html#htw_load_buf()
 endfunction
 
-"""bufact_htw_node_print
+"""bufact_html_htw_node_print
 function! base#bufact#html#htw_node_print ()
   call base#buf#start()
   call base#html#htw_load_buf()

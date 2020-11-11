@@ -125,7 +125,44 @@ function! base#bufact#tex#list_img ()
 
 endf
 
-"""bufact_list_packs
+"""bufact_tex_texify
+function! base#bufact#tex#texify ()
+  let pl   = base#qw#catpath('plg projs scripts bufact tex texify.pl')
+  let pl_e = shellescape(pl)
+  let f_e  = shellescape(b:file)
+
+  let cmd = join([ 'perl', pl_e, f_e ], ' ')
+
+  let env = { 
+		\	'file' : b:file 
+		\	}
+  function env.get(temp_file) dict
+    let temp_file = a:temp_file
+    let code      = self.return_code
+		let file      = self.file
+
+		let lines     = readfile(file)
+python3 << eof
+import vim
+lines = vim.eval('lines')
+b = vim.current.buffer
+b[:] = lines
+eof
+  
+    if filereadable(a:temp_file)
+      let out = readfile(a:temp_file)
+      call base#buf#open_split({ 'lines' : out })
+    endif
+  endfunction
+  
+  call asc#run({ 
+    \ 'cmd' : cmd, 
+    \ 'Fn'  : asc#tab_restore(env) 
+    \ })
+
+endf
+
+"""bufact_tex_list_packs
 function! base#bufact#tex#list_packs ()
   let pl   = base#qw#catpath('plg projs scripts bufact tex list_packs.pl')
   let pl_e = shellescape(pl)

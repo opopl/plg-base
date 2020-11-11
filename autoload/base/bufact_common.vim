@@ -1,4 +1,5 @@
 
+"""bfac__file_add_to_db
 function! base#bufact_common#_file_add_to_db ()
   call base#buf#start()
 
@@ -10,7 +11,7 @@ function! base#bufact_common#_file_add_to_db ()
   
 endfunction
 
-"""bufact_url_load_src
+"""bfac_url_load_src
 function! base#bufact_common#url_load_src ()
 
 endfunction
@@ -31,13 +32,14 @@ function! base#bufact_common#load_vh_file ()
 
 endfunction
 
+"""bfac_term
 function! base#bufact_common#term (...)
 	call ap#GoToFileLocation()
 	terminal
 
 endfunction
 
-"""bufact_help
+"""bfac_help
 function! base#bufact_common#help (...)
   let ref  = get(a:000,0,{})
 

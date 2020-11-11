@@ -9,5 +9,5 @@ if exists("b:did_base_tags_ftplugin")
 endif
 let b:did_base_tags_ftplugin = 1
 
-"""ftplugin_base_tags
+"""ftp_tags_base
 exe 'setlocal tags+=' . expand('%:p')
