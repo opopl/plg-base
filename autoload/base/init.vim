@@ -266,8 +266,8 @@ fun! base#init#cmds()
     \ call base#htmlwork(<f-args>) 
 
 """ImageAct
-  command! -nargs=*  -complete=custom,base#complete#imageact ImageAct 
-    \ call base#image#act(<f-args>)
+"  command! -nargs=*  -complete=custom,base#complete#imageact ImageAct 
+    "\ call base#image#act(<f-args>)
 
 
 """VH

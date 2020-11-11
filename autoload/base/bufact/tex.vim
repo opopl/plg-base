@@ -144,9 +144,11 @@ function! base#bufact#tex#texify ()
 		let lines     = readfile(file)
 python3 << eof
 import vim
+
 lines = vim.eval('lines')
-b = vim.current.buffer
-b[:] = lines
+b     = vim.current.buffer
+
+b[:]  = lines
 eof
   
     if filereadable(a:temp_file)

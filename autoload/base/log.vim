@@ -68,6 +68,29 @@ function! base#log#func ()
 
 endfunction
 
+
+function! base#log#_plg (...)
+	let plg = get(a:000,0,'')
+
+  let dbfile = base#dbfile()
+
+  let q = 'SELECT prf,func,msg,vim_code FROM log ' 
+  let q .= ' WHERE plugin = ?'
+
+  let q = input('log view query: ',q)
+
+  let rq = {
+      \ 'dbfile' : dbfile,
+      \ 'q'      : q,
+      \ 'p'      : [ plg ],
+      \ }
+
+  let lines = []
+  call extend(lines, pymy#sqlite#query_screen(rq) )
+  call base#buf#open_split({ 'lines' : lines })
+
+endfunction
+
 function! base#log#perl ()
   let dbfile = base#dbfile()
 
@@ -204,7 +227,18 @@ endfunction
 
 function! base#log#cmd (...)
   let cmd = get(a:000,0,'view_split')
-  let sub = 'base#log#'.cmd
-  exe 'call ' . sub . '()'
+
+	let sub  = ''
+	let args = ''
+
+	if cmd =~ 'plg_\(\w\+\)$'
+		let plg = substitute(cmd,'plg_\(\w\+\)$','\1','g')
+  	let sub = 'base#log#_plg'
+		let args = printf('"%s"',plg)
+	else
+  	let sub = 'base#log#'.cmd
+	endif
+
+ 	exe printf('call %s(%s)', sub, args)
 
 endfunction
