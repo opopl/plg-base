@@ -1,10 +1,6 @@
-" Vim filetype plugin file
-"     Language:	xml
-"   Maintainer:	Christian Brabandt <cb@256bit.org>
-" Last Changed: Dec 07th, 2018
-"   Repository: https://github.com/chrisbra/vim-xml-ftplugin
-" Previous Maintainer:	Dan Sharp <dwsharp at users dot sourceforge dot net>
-"          URL:		      http://dwsharp.users.sourceforge.net/vim/ftplugin
+
+
+"""ftp_tml_base
 
 if exists("b:did_ftplugin") | finish | endif
 let b:did_ftplugin = 1

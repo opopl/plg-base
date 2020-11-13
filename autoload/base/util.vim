@@ -70,7 +70,17 @@ function! base#util#split_acts (...)
     return
   endif
 
-  let sub = printf(fmt_sub, act)
-  exe printf('call %s()',sub)
+  let fmt_call = ''
+  if len(fmt_sub)
+    let sub = printf(fmt_sub, act)
+    exe printf('call %s()',sub)
+    return
+  endif
+
+  let fmt_call = get(ref,'fmt_call',fmt_call)
+
+  if len(fmt_call)
+    exe printf(fmt_call, act)
+  endif
 
 endfunction
