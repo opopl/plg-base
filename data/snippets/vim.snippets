@@ -6,6 +6,8 @@ snippet bit
 	call base#varset('this',<++>)
 	let <++> = base#input(<++>,'',{ 'complete' : 'custom,base#complete#this' })
 	call add(<++>,<++>)
+snippet bld_trg
+	let target = projs#bld#target()
 snippet ppv
 	call projs#pdf#view(<+PROJ+, <+VIEWER+>, <+TYPE+>)
 snippet siteid
