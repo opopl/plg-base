@@ -1,5 +1,7 @@
 
 
+"""ftp_html_base
+"
 let b:comps_BufAct = base#comps#bufact('html') 
   
 if exists("b:did_html_vim_ftplugin")

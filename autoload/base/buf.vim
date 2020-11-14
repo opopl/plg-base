@@ -552,6 +552,15 @@ function! base#buf#au_write_post ()
   
 endfunction
 
+if 0
+
+	call tree
+		called by
+			base#buf#start
+		calls
+			base#buf#start
+endif
+
 function! base#buf#is_plg ()
   call base#buf#start()
 
@@ -643,6 +652,7 @@ function! base#buf#start ()
 
   call base#buf#is_plg()
 endfunction
+"""end_f_base#buf#start
 
 fun! base#buf#varlist()
   let vars = base#buf#vars()

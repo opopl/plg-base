@@ -391,10 +391,28 @@ if 0
   call tree
     called by
       base#html#htw_load_buf
+
+      base#html#css_select
+      base#html#download_site
+      base#html#fetch_file
+      base#html#list_href
+      base#html#xpath
+      base#html#xpath_attr
+      base#html#xpath_remove_nodes
+
+      BufAct:
+        base#bufact#html#tb_to_txt
+        base#bufact#html#tb_to_tex
+        base#bufact#html#tables_to_txt
+    calls
+      base#htw_dbfile
 endif
 
 function! base#html#htw_init (...)
   let ref = get(a:000,0,{})
+
+"""todo_fix_use_HTML_Work
+	if has('mac') | return | endif
 
   let dbfile = ':memory:'
   let dbfile = base#htw_dbfile() 
@@ -427,6 +445,12 @@ perl << eof
   );
 eof
 endfunction
+
+if 0
+  call tree
+    calls 
+      base#html#htw_init
+endif
 
 function! base#html#fetch_file (...)
   call base#html#htw_init ()
@@ -567,6 +591,12 @@ eof
   return href
 
 endfunction
+
+if 0
+  call tree
+    calls
+      base#html#htw_init
+endif
 
 function! base#html#htw_load_buf ( ... )
   call base#html#htw_init ()
