@@ -131,7 +131,7 @@ function! base#bufact#tex#texify ()
   let pl_e = shellescape(pl)
   let f_e  = shellescape(b:file)
 
-  let cmd = join([ 'perl', pl_e, f_e ], ' ')
+  let cmd = join([ 'perl', pl_e, '--file', f_e ], ' ')
 
   let env = { 
 		\	'file' : b:file 
