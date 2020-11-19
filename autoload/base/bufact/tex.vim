@@ -98,32 +98,6 @@ perl << eof
 eof
 endf
 
-function! base#bufact#tex#list_img ()
-  let pl   = base#qw#catpath('plg projs scripts bufact tex list_img.pl')
-  let pl_e = shellescape(pl)
-  let f_e  = shellescape(b:file)
-
-	call base#cd(b:dirname)
-
-  let cmd = join([ 'perl', pl_e, f_e ], ' ')
-  
-  let env = {}
-  function env.get(temp_file) dict
-    let temp_file = a:temp_file
-    let code      = self.return_code
-  
-    if filereadable(a:temp_file)
-      let out = readfile(a:temp_file)
-      call base#buf#open_split({ 'lines' : out })
-    endif
-  endfunction
-  
-  call asc#run({ 
-    \ 'cmd' : cmd, 
-    \ 'Fn'  : asc#tab_restore(env) 
-    \ })
-
-endf
 
 """bufact_tex_texify
 function! base#bufact#tex#texify ()

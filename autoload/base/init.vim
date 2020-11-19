@@ -226,8 +226,8 @@ fun! base#init#cmds()
     \ call base#cmd#FIND(<f-args>) 
 
 """TEST
-  command! -nargs=* -complete=custom,base#complete#TEST  TEST 
-    \ call base#cmd#TEST(<f-args>) 
+  "command! -nargs=* -complete=custom,base#complete#TEST  TEST 
+    "\ call base#cmd#TEST(<f-args>) 
 
 """SSH
   command! -nargs=* -complete=custom,base#complete#SSH      SSH

@@ -13,6 +13,9 @@ use Plg::Projs::Tex qw( texify );
 my %str;
 
 my $s = q{
+\subsection{Всюди культ "великоросійського преобладанія": гнівний лист до ЦК КПУ – чому його автор спалив себе на Хрещатику}
+\Purl{https://www.5.ua/suspilstvo/vsiudy-kult-velykorosiiskoho-preobladaniia-hnivnyi-lyst-do-tsk-kpu-chomu-ioho-avtor-spalyv-sebe-na-khreshchatyku-228361.html}
+
 \lettrine[lines=3]{5}{листопада 1968 року} поряд із будинком на вулиці Хрещатик, 27-а в Києві
 з'явився охоплений полум'ям чоловік. Він кричав: "Геть комуністичних
 колонізаторів!" і "Хай живе вільна Україна!"

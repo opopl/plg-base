@@ -34,6 +34,22 @@ function! base#buf#cut(...)
   endif
 endf
 
+function! base#buf#lines(...)
+	let start = get(a:000,0,1)
+	let end   = get(a:000,1,line('$'))
+	let lines = []
+	let lnum  = start
+
+	while lnum < end + 1
+		 let line = getline(lnum)
+		 call add(lines,line)
+	
+	   let lnum+=1
+	endw
+
+	return lines
+endf
+
 function! base#buf#lines_hi(...)
   let ref = get(a:000,0,{})
 
