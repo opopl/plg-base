@@ -743,6 +743,10 @@ function! base#tg#update (...)
     let dir   = base#file#catfile([ base#path('htmltool'), 'lib' ])
     let libs .= ' ' . dir
 
+  elseif tgid == 'ae_perlgem'
+    let dir   = base#file#catfile([ base#path('perlgem'), 'server', 'generic' ])
+    let libs .= ' ' . dir
+
   elseif tgid == 'perl_guestbook'
     let dir   = base#file#catfile([ base#path('repos_git'), 'guestbook', 'lib' ])
     let libs .= ' ' . dir

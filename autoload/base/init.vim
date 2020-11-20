@@ -410,6 +410,8 @@ command! -nargs=* -complete=custom,base#complete#omnioptions
 """BaseVarEcho
   command! -nargs=* -complete=custom,base#complete#varlist
       \   BaseVarEcho call base#varecho(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#varlist
+      \   BVE call base#varecho(<f-args>) 
   "
 """BaseVarXml
   command! -nargs=* -complete=custom,base#complete#varlist

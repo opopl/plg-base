@@ -303,6 +303,7 @@ function! base#buf#maps ()
           \  '<F1>'      : 'BaseAct make'          ,
           \  '<F3>'      : 'BaseAct copen'         ,
           \  '<F4>'      : 'BaseAct cclose'        ,
+          \  '<F7>'      : 'GitSave'               ,
           \  '<F9>'      : 'TgUpdate'              ,
           \  '<F11>'     : 'MM tgadd_all'          ,
           \  '<F12>'     : 'TgView _tagfiles_'     ,

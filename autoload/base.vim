@@ -1628,16 +1628,16 @@ fun! base#git (...)
 
 """git_save
     elseif base#inlist(cmd,base#qw('save'))
-        let cmds=base#qw('commit pull push')
+        let cmds = base#qw('commit pull push')
 
-        let gitopts=base#qw('git_prompt git_split_output git_CD')
+        let gitopts = base#qw('git_prompt git_split_output git_CD')
         if exists("ref") | unlet ref | endif
         let ref = { 
             \ 'git_prompt'       : 0,
             \ 'git_split_output' : 0,
             \ 'git_CD'           : 0,
             \ }
-        let kept=base#opt#get(gitopts)
+        let kept = base#opt#get(gitopts)
         call base#opt#set(ref)
 
         call base#echo({ 
@@ -1650,6 +1650,7 @@ fun! base#git (...)
         endfor
 
         call base#opt#set(kept)
+        call base#rdw('GIT REPO SAVED')
 
         return 
     elseif base#inlist(cmd,base#qw('send_to_origin'))
