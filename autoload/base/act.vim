@@ -13,7 +13,7 @@ function! base#act#envvar_open_split (...)
 endfunction
 
 function! base#act#make (...)
-	make
+  make
 
 endfunction
 
@@ -169,23 +169,31 @@ function! base#act#cnv (...)
 endfunction
 
 function! base#act#install_env ()
-	let cmd = base#qw#catpath('plg','base bin install_env.pl')
-	
-	let env = {}
-	function env.get(temp_file) dict
-		let temp_file = a:temp_file
-		let code = self.return_code
-	
-		if filereadable(a:temp_file)
-			let out = readfile(a:temp_file)
-			call base#buf#open_split({ 'lines' : out })
-		endif
-	endfunction
-	
-	call asc#run({ 
-		\	'cmd' : cmd, 
-		\	'Fn'  : asc#tab_restore(env) 
-		\	})
+  let cmd = base#qw#catpath('plg','base bin install_env.pl')
+  
+  let env = {}
+  function env.get(temp_file) dict
+    let temp_file = a:temp_file
+    let code = self.return_code
+  
+    if filereadable(a:temp_file)
+      let out = readfile(a:temp_file)
+      call base#buf#open_split({ 'lines' : out })
+    endif
+  endfunction
+  
+  call asc#run({ 
+    \ 'cmd' : cmd, 
+    \ 'Fn'  : asc#tab_restore(env) 
+    \ })
+
+endfunction
+
+function! base#act#url_parse ()
+  let url    = input('URL: ','')
+
+  let struct = base#url#struct(url)
+  call base#buf#open_split({ 'text' :  base#dump(struct) })
 
 endfunction
 

@@ -3,18 +3,23 @@ function! base#url#struct (url)
   let url = a:url
   let struct = {}
 
-  if has('python')
-    let struct = base#url#struct_py2(url)
+  if has('python3')
+    let struct = base#url#struct_py(url)
   endif
 
   return struct
 endf
 
-function! base#url#struct_py2 (url)
+if 0
+	call tree
+		called by
+endif
 
-  let url = a:url
+function! base#url#struct_py (url)
+
+  let url    = a:url
   let struct = {}
-python << eof
+python3 << eof
 
 import vim
 import re
@@ -22,11 +27,12 @@ import re
 import os
 import posixpath
 
-from urlparse import urlparse
+from urllib.parse import urlparse
+
 from collections import deque
 
 url = vim.eval('url')
-o = urlparse(url)
+o   = urlparse(url)
 
 host = o.netloc
 host = re.sub(r':(\d+)$','',host)
@@ -34,7 +40,7 @@ host = re.sub(r':(\d+)$','',host)
 scheme = o.scheme
 path   = o.path
 
-if ((host is '') and (scheme is '')):
+if ((host == '') and (scheme == '')):
   scheme = 'http:'
   url = scheme + "//" + url
   o = urlparse(url)
@@ -44,7 +50,6 @@ host = re.sub(r':(\d+)$','',host)
 
 scheme = o.scheme
 path   = o.path
-
 
 basename = posixpath.basename(path)
 
