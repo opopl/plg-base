@@ -298,6 +298,8 @@ function! base#buf#maps ()
           \  ';tf'       : 'TgUpdate thisfile'     ,
           \  ';tv'       : 'TgView _tagfiles_'     ,
           \  ';il'       : 'IDEPHP load_project'   ,
+          \  ';sp'       : 'call base#buf#set#paste()'   ,
+          \  ';np'       : 'call base#buf#set#nopaste()'   ,
           \  ';co'       : 'BaseAct copen'         ,
           \  ';cc'       : 'BaseAct cclose'        ,
           \  '<F1>'      : 'BaseAct make'          ,
@@ -558,6 +560,7 @@ function! base#buf#insert_snip ()
 
   let g:snippet_ft = ft_old
 endfunction
+
 
 function! base#buf#au_write_post ()
   call base#buf#start()
