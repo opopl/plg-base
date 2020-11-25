@@ -23,6 +23,8 @@ snippet lsub
 		call add(nlines,line)
 	endfor
 	let lines = nlines
+snippet pauh 
+	let hash = projs#author#hash()
 snippet base#input_hist
 	base#input_hist(<+msg+>,<+default+>,<+hist_name+>)
 snippet e
@@ -356,8 +358,22 @@ snippet bbst
 	call base#buf#start()
 snippet osw?
 	= has('win32') ? <++> : <++>
+snippet prid
+	projs#rootid()
+snippet pad
+	call projs#author#add({ 
+		\	'a_id' : author_id,
+		\	'a'    : author })
+snippet pas
+	let a_data    = projs#author#select()
+	let author_id = get(a_data,'a_id','')
+	let author    = get(a_data,'a','')
+snippet buq
+	base#uniq(<++>)
 snippet bbos
 	call base#buf#open_split({ 'lines' : <++> })
+snippet pppn
+	let proj = projs#proj#name()
 snippet bbosx
 	let stl_add = [
 			\ '[ %3* v - view %0* ]',
