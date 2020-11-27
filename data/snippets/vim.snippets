@@ -12,6 +12,8 @@ snippet ppv
 	call projs#pdf#view(<+PROJ+, <+VIEWER+>, <+TYPE+>)
 snippet siteid
 	let siteid = idephp#dws#siteid()
+snippet epf
+	echo printf('<++>',<++>)
 snippet pf
 	printf('<++>',<++>)
 snippet bus
@@ -1721,6 +1723,12 @@ snippet ifll
 	if len(lines)
 		<++>
 	endif
+snippet zlf
+	let zfile = projs#sec#file('_zlan_')
+snippet zlk
+	let zkeys = base#varget('projs_zlan_keys',[])
+snippet zlan
+	let zfile = projs#sec#file('_zlan_')
 snippet projs#author#select
 	let a_data    = projs#author#select()
 
