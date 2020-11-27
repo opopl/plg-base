@@ -50,10 +50,12 @@ sub dhelp {
     USAGE
         $Script OPTIONS
     OPTIONS
+		-f --file FILE
+		-m --module MODULE
 
     EXAMPLES
-        $Script ...
-
+        $Script --file FILE
+        $Script -m File::Slurp
     };
 
     print $s . "\n";
