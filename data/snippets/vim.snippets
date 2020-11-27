@@ -1721,8 +1721,15 @@ snippet ifll
 	if len(lines)
 		<++>
 	endif
+snippet projs#author#select
+	let a_data    = projs#author#select()
+
+	let author_id = get(a_data,'author_id','')
+	let author    = get(a_data,'author','')
 snippet rdw
 	call base#rdw(<+msg+>)
+snippet rdwpf
+	call base#rdw_printf(['<+format+>',<+val+> ],'<+highlight+>')
 snippet rdwe
 	call base#rdwe(<+msg+>)
 snippet py2

@@ -6,7 +6,7 @@ function! base#buf#set#paste ()
 endfunction
 
 
-function! base#buf#set#no_paste ()
+function! base#buf#set#nopaste ()
 	setlocal nopaste
 	call base#rdw('setlocal nopaste')
 
