@@ -51,6 +51,7 @@ sub get_opt {
     @optstr = ( 
         "help|h",
         "file|f=s",
+        "file_out|o=s",
         "module|m=s",
     );
     
@@ -80,6 +81,7 @@ sub dhelp {
         $Script OPTIONS
     OPTIONS
         -f --file FILE
+        -o --file_out FILE
         -m --module MODULE
 
     EXAMPLES
