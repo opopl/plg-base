@@ -16,7 +16,6 @@ use Data::Dumper qw(Dumper);
 
 use Module::Which::List qw/ list_pm_files /;
 
-
 use Getopt::Long qw(GetOptions);
       
 sub get_opt {
@@ -67,7 +66,7 @@ sub dhelp {
     return $self;   
 }
 
-sub load_fs {
+sub load_f {
 	my ($self, $ref) = @_;
 	$ref ||= {};
 
@@ -87,7 +86,7 @@ sub run {
 
 	$self
 		->get_opt
-		->load_files
+		->load_f
 		;
 	
 	$self;
