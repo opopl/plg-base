@@ -12,6 +12,10 @@ use PPI;
 
 use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
+use Data::Dumper qw(Dumper);
+
+use Module::Which::List qw/ list_pm_files /;
+
 
 use Getopt::Long qw(GetOptions);
       
@@ -61,6 +65,32 @@ sub dhelp {
     print $s . "\n";
 
     return $self;   
+}
+
+sub load_fs {
+	my ($self, $ref) = @_;
+	$ref ||= {};
+
+	my $file = $ref->{file} || $self->{file} || '';
+
+	my $module = $self->{module};
+	my @libs;
+
+	my @files = list_pm_files($module,@libs);
+	print Dumper(\@files) . "\n";
+
+	return $self;
+}
+
+sub run {
+	my ($self) = @_;
+
+	$self
+		->get_opt
+		->load_files
+		;
+	
+	$self;
 }
 
 1;
