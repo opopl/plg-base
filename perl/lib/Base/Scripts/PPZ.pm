@@ -17,6 +17,30 @@ use Data::Dumper qw(Dumper);
 use Module::Which::List qw/ list_pm_files /;
 
 use Getopt::Long qw(GetOptions);
+use Base::Arg qw( hash_inject );
+
+sub new
+{
+    my ($class, %opts) = @_;
+    my $self = bless (\%opts, ref ($class) || $class);
+
+    $self->init if $self->can('init');
+
+    return $self;
+}
+
+
+sub init {
+    my ($self) = @_;
+    
+    my $h = {
+        #<++> => <++>,
+        #<++> => <++>,
+    };
+        
+    hash_inject($self, $h);
+    return $self;
+}
       
 sub get_opt {
     my ($self) = @_;
@@ -50,11 +74,13 @@ sub dhelp {
 
     my $s = qq{
 
+    LOCATION
+        $0
     USAGE
         $Script OPTIONS
     OPTIONS
-		-f --file FILE
-		-m --module MODULE
+        -f --file FILE
+        -m --module MODULE
 
     EXAMPLES
         $Script --file FILE
@@ -67,29 +93,29 @@ sub dhelp {
 }
 
 sub load_f {
-	my ($self, $ref) = @_;
-	$ref ||= {};
+    my ($self, $ref) = @_;
+    $ref ||= {};
 
-	my $file = $ref->{file} || $self->{file} || '';
+    my $file = $ref->{file} || $self->{file} || '';
 
-	my $module = $self->{module};
-	my @libs;
+    my $module = $self->{module};
+    my @libs;
 
-	my @files = list_pm_files($module,@libs);
-	print Dumper(\@files) . "\n";
+    my @files = list_pm_files($module,@libs);
+    print Dumper(\@files) . "\n";
 
-	return $self;
+    return $self;
 }
 
 sub run {
-	my ($self) = @_;
+    my ($self) = @_;
 
-	$self
-		->get_opt
-		->load_f
-		;
-	
-	$self;
+    $self
+        ->get_opt
+        ->load_f
+        ;
+    
+    $self;
 }
 
 1;
