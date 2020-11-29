@@ -111,6 +111,8 @@ sub load_f_ppi {
     my $add = {};
     $add->{$_} = 1 for(qw(vars subs packs));
 
+	my @tex;
+
     for my $node (@nodes){
 
         #$node_count++;
@@ -123,6 +125,14 @@ sub load_f_ppi {
             $ns ||= 'main'; 
             $subname_full  = $ns . '::' . $node->name;
             $subname_short = $node->name; 
+
+			my $cnt = $node->block->content;
+
+			print Dumper({ 
+				subname_full  => $subname_full,
+				subname_short => $subname_short,
+				cnt => $cnt,
+			}) . "\n";
 
         };
 ###PPI_Statement_Variable
