@@ -20,6 +20,8 @@ use Getopt::Long qw(GetOptions);
 use Base::Arg qw( hash_inject );
 use File::Slurp::Unicode;
 
+use File::Dat::Utils qw(readarr);
+
 use Plg::Projs::Tex qw(texify);
 
 use base qw(
@@ -101,6 +103,7 @@ sub dhelp {
     EXAMPLES
         $scr --file FILE
         $scr -m File::Slurp -o 1.tex
+        $scr -m File::Slurp --f_list list.i.dat -o 1.tex
     };
 
     print $s . "\n";
@@ -266,13 +269,28 @@ sub load_f {
     my ($self, $ref) = @_;
     $ref ||= {};
 
-    my $file = $ref->{file} || $self->{file} || '';
+    my $file   = $ref->{file} || $self->{file} || '';
 
-    if ($file) {
-        $self->load_f_ppi_to_data($file);
+    my $f_list = $self->{f_list};
+    my $module = $self->{module};
 
-    }elsif(my $m_list = $self->{m_list}){
+    while (1) {
+	    ($file && -e $file) && do {
+	        $self->load_f_ppi_to_data($file);
+	    };
 
+        ($module) && do {
+            $self->load_module({ module => $module });
+        };
+
+        ($f_list && -e $f_list) && do {
+            my @list = readarr($f_list);
+            foreach my $module (@list) {
+                $self->load_module({ module => $module });
+            }
+        };
+
+        last;
     }
 
     return $self;
