@@ -18,6 +18,7 @@ use Module::Which::List qw/ list_pm_files /;
 
 use Getopt::Long qw(GetOptions);
 use Base::Arg qw( hash_inject );
+use File::Slurp::Unicode;
 
 sub new
 {
@@ -73,6 +74,9 @@ sub get_opt {
 sub dhelp {
     my ($self) = @_;
 
+    my ($scr_bn) = ($Script =~ /^(.*)\.(\w+)$/g );
+
+    my $scr = $^O eq 'MSWin32' ? $scr_bn : $scr_bn . '.sh';
     my $s = qq{
 
     LOCATION
@@ -85,8 +89,8 @@ sub dhelp {
         -m --module MODULE
 
     EXAMPLES
-        $Script --file FILE
-        $Script -m File::Slurp
+        $scr --file FILE
+        $scr -m File::Slurp -o 1.tex
     };
 
     print $s . "\n";
@@ -94,8 +98,41 @@ sub dhelp {
     return $self;   
 }
 
+sub tex_write_f {
+    my ($self) = @_;
+
+    my $fo = $self->{file_out};
+
+    if ($fo) {
+        write_file($fo,join("\n",$self->_tex_lines) . "\n");
+    }
+
+    return $self;   
+}
+
+sub _tex_lines {
+    my ($self) = @_;
+
+    @{$self->{tex_lines} || []};
+}
+
+sub tex_push {
+    my ($self,$lines) = @_;
+
+    $self->{tex_lines} ||= [];
+
+    if ($lines && @$lines) {
+        push @{$self->{tex_lines}}, @$lines;
+    }
+
+    return $self;   
+}
+
 sub load_f_ppi {
     my ($self, $file) = @_;
+
+    $self->{tex} ||= [];
+    my $sect = q{subsubsection};
 
     my $doc = PPI::Document->new($file);
 
@@ -113,8 +150,6 @@ sub load_f_ppi {
     my $add = {};
     $add->{$_} = 1 for(qw(vars subs packs));
 
-	my @tex;
-
     for my $node (@nodes){
 
         #$node_count++;
@@ -128,13 +163,26 @@ sub load_f_ppi {
             $subname_full  = $ns . '::' . $node->name;
             $subname_short = $node->name; 
 
-			my $cnt = $node->block->content;
+            $self->tex_push([ 
+                sprintf(q{\%s{%s}}, $sect, $subname_full),
+                '',
+            ]);
 
-			print Dumper({ 
-				subname_full  => $subname_full,
-				subname_short => $subname_short,
-				cnt => $cnt,
-			}) . "\n";
+            my $code = $node->block->content;
+
+            if ($code) {
+                $self->tex_push([ 
+                    q{\begin{verbatim}}, 
+                    split("\n" => $code),
+                    q{\end{verbatim}}, 
+                ]);
+            }
+
+   #         print Dumper({ 
+                #subname_full  => $subname_full,
+                #subname_short => $subname_short,
+                #cnt => $cnt,
+            #}) . "\n";
 
         };
 ###PPI_Statement_Variable
@@ -194,6 +242,7 @@ sub run {
     $self
         ->get_opt
         ->load_f
+        ->tex_write_f
         ;
     
     $self;
