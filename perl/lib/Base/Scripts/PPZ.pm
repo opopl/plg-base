@@ -278,10 +278,12 @@ sub load_f {
     while (1) {
 	    ($file && -e $file) && do {
 	        $self->load_f_ppi_to_data($file);
+            last;
 	    };
 
         ($module) && do {
             $self->load_module({ module => $module });
+            last;
         };
 
         ($f_list && -e $f_list) && do {
@@ -289,6 +291,7 @@ sub load_f {
             foreach my $module (@list) {
                 $self->load_module({ module => $module });
             }
+            last;
         };
 
         last;
