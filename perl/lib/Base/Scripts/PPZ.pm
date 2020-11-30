@@ -117,7 +117,14 @@ sub tex_write_f {
     my $fo = $self->{file_out};
 
     if ($fo) {
-        write_file($fo,join("\n",$self->_tex_lines) . "\n");
+        my @tex;
+        push @tex,
+            $self->_tex_preamble,
+            $self->_tex_lines,
+            $self->_tex_postamble,
+            ;
+
+        write_file($fo,join("\n",@tex) . "\n");
     }
 
     return $self;   
@@ -153,6 +160,48 @@ sub _tex_lines {
     my ($self) = @_;
 
     @{$self->{tex_lines} || []};
+}
+
+sub _tex_postamble {
+    my ($self) = @_;
+
+    my $p = q{
+\end{document}
+    };
+    return $p;
+}
+
+sub _tex_preamble {
+    my ($self) = @_;
+
+    my $p = q{
+\documentclass[a4paper,11pt]{report}
+\usepackage{titletoc}
+\usepackage{xparse}
+\usepackage{p.core}
+\usepackage{p.env}
+\usepackage{p.rus}
+\usepackage{p.secs}
+\usepackage{p.toc}
+\usepackage[xindy]{imakeidx}
+\usepackage{p.hyperref}
+\usepackage[hmargin={1cm,1cm},vmargin={2cm,2cm},centering]{geometry}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{pgffor}
+\usepackage[export]{adjustbox}
+\usepackage{longtable}
+\usepackage{multicol}
+\usepackage{filecontents}
+\usepackage[useregional]{datetime2}
+\usepackage{mathtext}
+\usepackage{nameref}
+\begin{document}
+};
+    return $p;
 }
 
 sub _sect {
@@ -234,7 +283,6 @@ sub load_f_ppi_to_data {
             $pack = $node->namespace; 
 
             $self->{data}->{$pack} ||= {};
-
 
             next unless $add->{packs};
         };
