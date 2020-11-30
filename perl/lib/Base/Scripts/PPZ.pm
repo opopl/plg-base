@@ -260,6 +260,7 @@ sub load_module {
         my $file = $item->{path};
         next unless $file;
 
+        delete $self->{module};
         $self->load_f({ file => $file });
     }
     return $self;
