@@ -37,8 +37,11 @@ sub init {
     my ($self) = @_;
     
     my $h = {
-        #<++> => <++>,
-        #<++> => <++>,
+        sects => {
+            sub  => 'paragraph',
+            pack => 'subsection',
+        },
+        data => {},
     };
         
     hash_inject($self, $h);
@@ -112,10 +115,45 @@ sub tex_write_f {
     return $self;   
 }
 
+=head3 _subnames($pack)
+
+List of subroutines for the given package
+
+=cut
+
+sub _subnames {
+    my ($self, $pack) = @_;
+
+    return sort keys %{$self->{data}->{$pack} || {}};
+
+    return $self;   
+}
+
+=head3 _subnames()
+
+List of packages
+
+=cut
+
+sub _packages {
+    my ($self) = @_;
+
+    return sort keys %{$self->{data} || {}};
+}
+
 sub _tex_lines {
     my ($self) = @_;
 
     @{$self->{tex_lines} || []};
+}
+
+sub _sect {
+    my ($self,$type) = @_;
+
+    my $sect = $self->{sects}->{$type};
+
+    return $sect;
+
 }
 
 sub tex_push {
@@ -130,11 +168,11 @@ sub tex_push {
     return $self;   
 }
 
-sub load_f_ppi {
+sub load_f_ppi_to_data {
     my ($self, $file) = @_;
 
     $self->{tex} ||= [];
-    my $sect = q{subsubsection};
+    my $sect = q{paragraph};
 
     my $doc = PPI::Document->new($file);
 
@@ -148,7 +186,7 @@ sub load_f_ppi {
     };
     my @nodes = @{ $doc->find( $f ) || [] };
 
-    my( $ns, $subname_short, $subname_full );
+    my( $pack, $subname_short, $subname_full );
     my $add = {};
     $add->{$_} = 1 for(qw(vars subs packs));
 
@@ -161,17 +199,20 @@ sub load_f_ppi {
         $node->isa( 'PPI::Statement::Sub' ) && do { 
             next unless $add->{subs};
 
-            $ns ||= 'main'; 
-            $subname_full  = $ns . '::' . $node->name;
+            $pack ||= 'main'; 
+            $subname_full  = $pack . '::' . $node->name;
             $subname_short = $node->name; 
 
             my $subname_tex = texify($subname_short,'rpl_special');
             $self->tex_push([ 
-                sprintf(q{\%s{%s}}, $sect, $subname_tex),
+                sprintf(q{\%s{%s}}, $self->_sect('sub'), $subname_tex),
                 '',
             ]);
 
             my $code = $node->block->content;
+            $self->{data}->{$pack} ||= {};
+            $self->{data}->{$pack}->{$subname_short} ||= {};
+            $self->{data}->{$pack}->{$subname_short}->{code} = $code;
 
             if ($code) {
                 $self->tex_push([ 
@@ -180,13 +221,6 @@ sub load_f_ppi {
                     q{\end{verbatim}}, 
                 ]);
             }
-
-   #         print Dumper({ 
-                #subname_full  => $subname_full,
-                #subname_short => $subname_short,
-                #cnt => $cnt,
-            #}) . "\n";
-
         };
 ###PPI_Statement_Variable
         $node->isa( 'PPI::Statement::Variable' ) && do { 
@@ -195,13 +229,16 @@ sub load_f_ppi {
             my $type = $node->type;
             next unless $type eq 'our';
 
-            my @a = ($ns,$file,$type);
+            my @a = ($pack,$file,$type);
 
             my $vars = [ $node->variables ];
         };
 ###PPI_Statement_Package
         $node->isa( 'PPI::Statement::Package' ) && do { 
-            $ns = $node->namespace; 
+            $pack = $node->namespace; 
+
+            $self->{data}->{$pack} ||= {};
+
 
             next unless $add->{packs};
         };
@@ -218,7 +255,7 @@ sub load_f {
     my $file = $ref->{file} || $self->{file} || '';
 
     if ($file) {
-        $self->load_f_ppi($file);
+        $self->load_f_ppi_to_data($file);
     }else{
         my $module = $self->{module};
         if ($module) {
@@ -239,12 +276,26 @@ sub load_f {
     return $self;
 }
 
+sub data_to_tex {
+    my ($self) = @_;
+
+    foreach my $pack ($self->_packages) {
+        $self->tex_push([ 
+           sprintf(q{\%s{%s}}, $self->_sect('pack'), texify($pack,'rpl_special')),
+           ' ',
+        ]);
+    }
+
+    return $self;
+}
+
 sub run {
     my ($self) = @_;
 
     $self
         ->get_opt
         ->load_f
+        ->data_to_tex
         ->tex_write_f
         ;
     
