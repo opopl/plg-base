@@ -20,6 +20,8 @@ use Getopt::Long qw(GetOptions);
 use Base::Arg qw( hash_inject );
 use File::Slurp::Unicode;
 
+use Plg::Projs::Tex qw(texify);
+
 sub new
 {
     my ($class, %opts) = @_;
@@ -163,8 +165,9 @@ sub load_f_ppi {
             $subname_full  = $ns . '::' . $node->name;
             $subname_short = $node->name; 
 
+            my $subname_tex = texify($subname_short,'rpl_special');
             $self->tex_push([ 
-                sprintf(q{\%s{%s}}, $sect, $subname_full),
+                sprintf(q{\%s{%s}}, $sect, $subname_tex),
                 '',
             ]);
 

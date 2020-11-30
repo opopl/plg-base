@@ -18,7 +18,8 @@ my @a = (
     q{"віавіа"віавіа},
 );
 
-foreach my $x (@a) {
-    texify(\$x);
-    print qq{$x} . "\n";
-}
+#foreach my $x (@a) {
+    #texify(\$x);
+    #print qq{$x} . "\n";
+#}
+print Dumper(texify('%_a','rpl_special')) . "\n";
