@@ -22,6 +22,10 @@ use File::Slurp::Unicode;
 
 use Plg::Projs::Tex qw(texify);
 
+use base qw(
+    Base::Obj
+);
+
 sub new
 {
     my ($class, %opts) = @_;
@@ -58,6 +62,7 @@ sub get_opt {
         "help|h",
         "file|f=s",
         "file_out|o=s",
+        "f_list|l=s",
         "module|m=s",
     );
     
@@ -203,24 +208,12 @@ sub load_f_ppi_to_data {
             $subname_full  = $pack . '::' . $node->name;
             $subname_short = $node->name; 
 
-            my $subname_tex = texify($subname_short,'rpl_special');
-            $self->tex_push([ 
-                sprintf(q{\%s{%s}}, $self->_sect('sub'), $subname_tex),
-                '',
-            ]);
-
             my $code = $node->block->content;
             $self->{data}->{$pack} ||= {};
             $self->{data}->{$pack}->{$subname_short} ||= {};
             $self->{data}->{$pack}->{$subname_short}->{code} = $code;
 
-            if ($code) {
-                $self->tex_push([ 
-                    q{\begin{verbatim}}, 
-                    split("\n" => $code),
-                    q{\end{verbatim}}, 
-                ]);
-            }
+
         };
 ###PPI_Statement_Variable
         $node->isa( 'PPI::Statement::Variable' ) && do { 
@@ -248,6 +241,27 @@ sub load_f_ppi_to_data {
 
 }
 
+sub load_module {
+    my ($self, $ref) = @_;
+    $ref ||= {};
+
+    my $module = $ref->{module} || $self->{module} || '';
+
+    return $self unless $module;
+
+    my @libs;
+ 
+    my @data = list_pm_files($module,@libs);
+ 
+    foreach my $item (@data) {
+        my $file = $item->{path};
+        next unless $file;
+
+        $self->load_f({ file => $file });
+    }
+    return $self;
+}
+
 sub load_f {
     my ($self, $ref) = @_;
     $ref ||= {};
@@ -256,21 +270,9 @@ sub load_f {
 
     if ($file) {
         $self->load_f_ppi_to_data($file);
-    }else{
-        my $module = $self->{module};
-        if ($module) {
-            my @libs;
-        
-            my @data = list_pm_files($module,@libs);
-        
-            foreach my $item (@data) {
-                my $file = $item->{path};
-                next unless $file;
 
-                $self->load_f({ file => $file });
-            }
-            return $self;
-        }
+    }elsif(my $m_list = $self->{m_list}){
+
     }
 
     return $self;
@@ -284,6 +286,24 @@ sub data_to_tex {
            sprintf(q{\%s{%s}}, $self->_sect('pack'), texify($pack,'rpl_special')),
            ' ',
         ]);
+
+        foreach my $sub ($self->_subnames($pack)) {
+            my $sub_tex = texify($sub,'rpl_special');
+
+            $self->tex_push([ 
+                sprintf(q{\%s{%s}}, $self->_sect('sub'), $sub_tex),
+                '',
+            ]);
+
+            my $code = $self->_val_(qw(data), $pack, $sub, qw(code));
+
+            next unless $code;
+            $self->tex_push([ 
+                q{\begin{verbatim}}, 
+                split("\n" => $code),
+                q{\end{verbatim}}, 
+            ]);
+        }
     }
 
     return $self;
