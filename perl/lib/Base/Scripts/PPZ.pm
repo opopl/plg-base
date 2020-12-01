@@ -64,6 +64,7 @@ sub get_opt {
         "help|h",
         "file|f=s",
         "file_out|o=s",
+        "dir_out|d=s",
         "f_list|l=s",
         "module|m=s",
     );
@@ -98,12 +99,14 @@ sub dhelp {
     OPTIONS
         -f --file FILE
         -o --file_out FILE
+        -d --dir_out DIR
         -m --module MODULE
 
     EXAMPLES
         $scr --file FILE
         $scr -m File::Slurp -o 1.tex
-        $scr -m File::Slurp --f_list list.i.dat -o 1.tex
+        $scr --f_list list.i.dat -o 1.tex
+        $scr --f_list list.i.dat -d 1
     };
 
     print $s . "\n";
@@ -114,17 +117,27 @@ sub dhelp {
 sub tex_write_f {
     my ($self) = @_;
 
-    my $fo = $self->{file_out};
+    while (1) {
+        $self->{file_out} && do {
+            $self->data_to_tex_single;
 
-    if ($fo) {
-        my @tex;
-        push @tex,
-            $self->_tex_preamble,
-            $self->_tex_lines,
-            $self->_tex_postamble,
-            ;
+            my @tex;
+            push @tex,
+                $self->_tex_preamble,
+                $self->_tex_lines,
+                $self->_tex_postamble,
+                ;
+    
+            write_file($self->{file_out},join("\n",@tex) . "\n");
+            last;
+        };
 
-        write_file($fo,join("\n",@tex) . "\n");
+        $self->{dir_out} && do {
+
+            last;
+        };
+
+        last;
     }
 
     return $self;   
@@ -175,7 +188,7 @@ sub _tex_preamble {
     my ($self) = @_;
 
     my $p = q{
-\documentclass[a4paper,11pt]{report}
+\documentclass[a4paper,landscape,11pt]{report}
 \usepackage{titletoc}
 \usepackage{xparse}
 \usepackage{p.core}
@@ -324,10 +337,10 @@ sub load_f {
     my $module = $self->{module};
 
     while (1) {
-	    ($file && -e $file) && do {
-	        $self->load_f_ppi_to_data($file);
+        ($file && -e $file) && do {
+            $self->load_f_ppi_to_data($file);
             last;
-	    };
+        };
 
         ($module) && do {
             $self->load_module({ module => $module });
@@ -348,7 +361,7 @@ sub load_f {
     return $self;
 }
 
-sub data_to_tex {
+sub data_to_tex_single {
     my ($self) = @_;
 
     foreach my $pack ($self->_packages) {
@@ -385,7 +398,6 @@ sub run {
     $self
         ->get_opt
         ->load_f
-        ->data_to_tex
         ->tex_write_f
         ;
     
