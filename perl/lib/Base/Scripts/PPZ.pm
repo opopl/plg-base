@@ -141,7 +141,7 @@ sub tex_write_dir {
     push @tex_preamble,
         $self->_tex_preamble;
 
-    write_file($self->_file_preamble,join("\n",@tex_preamble) . "\n");
+    write_file($self->_file_sec('preamble'),join("\n",@tex_preamble) . "\n");
 
     foreach my $pack ($self->_packages) {
         my (@tex);
@@ -150,7 +150,7 @@ sub tex_write_dir {
         $sec =~ s/::/_/g;
         $sec = lc $sec;
 
-        my $pack_file = catfile($dir,sprintf(q{%s.%s.tex}, $proj, $sec ));
+        my $pack_file = $self->_file_sec($sec);
 
         my $head_pack = sprintf(q{\%s{%s}}, $self->_sect('pack'), texify($pack,'rpl_special'));
         push @tex,$head_pack;
@@ -179,7 +179,7 @@ sub tex_write_dir {
     push @tex_main,
         $self->_tex_postamble;
 
-    write_file($self->_file_main,join("\n",@tex_main) . "\n");
+    write_file($self->_file_sec('main'),join("\n",@tex_main) . "\n");
 
     return $self;   
 }
@@ -270,22 +270,20 @@ sub _tex_def_ii {
     
 }
 
-sub _file_main {
-    my ($self) = @_;
+sub _file_sec {
+    my ($self, $sec) = @_;
+    $sec ||= 'main';
 
     my $dir  = $self->{dir_out};
     my $proj = $self->{proj};
 
-    catfile($dir,$proj . '.tex');
-}
-
-sub _file_preamble {
-    my ($self) = @_;
-
-    my $dir  = $self->{dir_out};
-    my $proj = $self->{proj};
-
-    catfile($dir,$proj . '.preamble.tex');
+    my $f_sec;
+    if ($sec eq 'main') {
+        $f_sec = catfile($dir,$proj . '.tex');
+    }else{
+        $f_sec = catfile($dir,sprintf('%s.%s.tex', $proj, $sec));
+    }
+    return $f_sec;
 }
 
 sub _tex_dclass {
