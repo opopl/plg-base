@@ -127,9 +127,21 @@ sub tex_write_dir {
     my $proj = $self->{proj};
     mkpath $dir unless -d $dir;
 
-    my @tex_main;
+    my $main_file = catfile($dir,$proj . '.tex');
+
+    my (@tex_main, @tex_preamble);
     push @tex_main,
+        $self->_tex_def_ii,
+        $self->_tex_dclass,
+        q{\ii{preamble}},
+        q{\begin{document}},
+        q{\ii{body}},
+        ;
+
+    push @tex_preamble,
         $self->_tex_preamble;
+
+    write_file($self->_file_preamble,join("\n",@tex_preamble) . "\n");
 
     foreach my $pack ($self->_packages) {
         my (@tex);
@@ -142,6 +154,9 @@ sub tex_write_dir {
 
         my $head_pack = sprintf(q{\%s{%s}}, $self->_sect('pack'), texify($pack,'rpl_special'));
         push @tex,$head_pack;
+
+        push @tex_main,
+            sprintf(q{\ii{%s}},$sec);
 
         foreach my $sub ($self->_subnames($pack)) {
             my $sub_tex = texify($sub,'rpl_special');
@@ -160,6 +175,11 @@ sub tex_write_dir {
             write_file($pack_file,join("\n",@tex) . "\n");
         }
     }
+
+    push @tex_main,
+        $self->_tex_postamble;
+
+    write_file($self->_file_main,join("\n",@tex_main) . "\n");
 
     return $self;   
 }
@@ -235,11 +255,50 @@ sub _tex_postamble {
     return $p;
 }
 
+sub _tex_def_ii {
+    my ($self) = @_;
+
+    my $proj = $self->{proj};
+
+    my $p = q{
+\def\PROJ{%s}
+\def\ii#1{\InputIfFileExists{\PROJ.#1.tex}{}{}}
+};
+    $p = sprintf($p,$proj);
+
+    return $p;
+    
+}
+
+sub _file_main {
+    my ($self) = @_;
+
+    my $dir  = $self->{dir_out};
+    my $proj = $self->{proj};
+
+    catfile($dir,$proj . '.tex');
+}
+
+sub _file_preamble {
+    my ($self) = @_;
+
+    my $dir  = $self->{dir_out};
+    my $proj = $self->{proj};
+
+    catfile($dir,$proj . '.preamble.tex');
+}
+
+sub _tex_dclass {
+    my ($self) = @_;
+
+    my $p = q{\documentclass[a4paper,landscape,11pt]{report}};
+    return $p;
+}
+
 sub _tex_preamble {
     my ($self) = @_;
 
     my $p = q{
-\documentclass[a4paper,landscape,11pt]{report}
 \usepackage{titletoc}
 \usepackage{xparse}
 \usepackage{p.core}
@@ -263,7 +322,6 @@ sub _tex_preamble {
 \usepackage[useregional]{datetime2}
 \usepackage{mathtext}
 \usepackage{nameref}
-\begin{document}
 };
     return $p;
 }
