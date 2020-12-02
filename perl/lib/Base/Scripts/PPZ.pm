@@ -106,6 +106,7 @@ sub dhelp {
         -o --file_out FILE
         -d --dir_out DIR
         -m --module MODULE
+        -p --proj PROJ
 
     EXAMPLES
         $scr --file FILE
@@ -119,11 +120,46 @@ sub dhelp {
     return $self;   
 }
 
-sub tex_write_f {
+sub tex_write_dir {
+    my ($self) = @_;
+
+    my $dir = $self->{dir_out};
+    my $proj = $self->{proj};
+    mkpath $dir unless -d $dir;
+
+    foreach my $pack ($self->_packages) {
+        my @tex;
+
+        my $sec = $pack;
+        $sec =~ s/::/_/g;
+        $sec = lc $sec;
+
+        my $pack_file = catfile($dir,sprintf(q{%s.%s.tex}, $proj, $sec ));
+
+        my $head_pack = sprintf(q{\%s{%s}}, $self->_sect('pack'), texify($pack,'rpl_special'));
+
+        foreach my $sub ($self->_subnames($pack)) {
+            my $sub_tex = texify($sub,'rpl_special');
+            my $head_sub = sprintf(q{\%s{%s}}, $self->_sect('sub'), $sub_tex);
+
+            my $code = $self->_val_(qw(data), $pack, $sub, qw(code));
+
+            next unless $code;
+            push @tex,
+                q{\begin{verbatim}}, 
+                split("\n" => $code),
+                q{\end{verbatim}}
+                ;
+        }
+    }
+
+    return $self;   
+}
+
+sub tex_write_fs {
     my ($self) = @_;
 
     while (1) {
-###tex_write_file_out
         $self->{file_out} && do {
             $self->data_to_tex_single;
 
@@ -140,23 +176,7 @@ sub tex_write_f {
 
 ###tex_write_dir_out
         $self->{dir_out} && do {
-            my $dir = $self->{dir_out};
-            my $proj = $self->{proj};
-            mkpath $dir unless -d $dir;
-
-            foreach my $pack ($self->_packages) {
-                my $sec = $pack;
-                $sec =~ s/::/_/g;
-                $sec = lc $sec;
-
-                my $pack_file = catfile($dir,sprintf(q{%s.%s.tex}, $proj, $sec ));
-
-                my $head = sprintf(q{\%s{%s}}, $self->_sect('pack'), texify($pack,'rpl_special'));
-
-                foreach my $sub ($self->_subnames($pack)) {
-                }
-            }
-
+            $self->tex_write_dir;
             last;
         };
 
@@ -421,7 +441,7 @@ sub run {
     $self
         ->get_opt
         ->load_f
-        ->tex_write_f
+        ->tex_write_fs
         ;
     
     $self;
