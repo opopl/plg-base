@@ -139,6 +139,10 @@ sub tex_write_dir {
         q{\begin{document}},
         ' ',
         q{\ii{body}},
+        ' ',
+        q{\ii{index}},
+        ' ',
+        q{\end{document}},
         ;
 
     push @tex_preamble,
@@ -154,8 +158,9 @@ sub tex_write_dir {
         $sec = lc $sec;
 
         my $pack_file = $self->_file_sec($sec);
+        my $pack_tex = texify($pack,'rpl_special');
 
-        my $head_pack = sprintf(q{\%s{%s}}, $self->_sect('pack'), texify($pack,'rpl_special'));
+        my $head_pack = sprintf(q{\%s{%s}}, $self->_sect('pack'), $pack_tex);
         push @tex,$head_pack;
 
         push @tex_body,
@@ -171,19 +176,21 @@ sub tex_write_dir {
 
             next unless $code;
             push @tex,
+                '',
+                sprintf(q{\index[subs]{%s!%s}},$sub_tex,$pack_tex),
+                '',
                 q{\begin{verbatim}}, 
                 split("\n" => $code),
-                q{\end{verbatim}}
+                q{\end{verbatim}},
+                '',
                 ;
             write_file($pack_file,join("\n",@tex) . "\n");
         }
     }
 
-    push @tex_main,
-        $self->_tex_postamble;
-
     write_file($self->_file_sec('main'),join("\n",@tex_main) . "\n");
     write_file($self->_file_sec('body'),join("\n",@tex_body) . "\n");
+    write_file($self->_file_sec('index'),$self->_tex_index);
 
     return $self;   
 }
@@ -244,6 +251,8 @@ sub _packages {
     return sort keys %{$self->{data} || {}};
 }
 
+
+
 sub _tex_lines {
     my ($self) = @_;
 
@@ -256,6 +265,18 @@ sub _tex_postamble {
     my $p = q{
 \end{document}
     };
+    return $p;
+}
+
+sub _tex_index {
+    my ($self) = @_;
+
+    my $p = q{
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Subroutines}
+\printindex[subs]
+};
     return $p;
 }
 
