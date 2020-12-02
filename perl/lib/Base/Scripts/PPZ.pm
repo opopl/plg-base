@@ -14,6 +14,9 @@ use FindBin qw($Bin $Script);
 use File::Basename qw(basename dirname);
 use Data::Dumper qw(Dumper);
 
+use File::Path qw(make_path remove_tree mkpath rmtree);
+use File::Spec::Functions qw(catfile);
+
 use Module::Which::List qw/ list_pm_files /;
 
 use Getopt::Long qw(GetOptions);
@@ -48,6 +51,7 @@ sub init {
             pack => 'subsection',
         },
         data => {},
+        proj => 'main',
     };
         
     hash_inject($self, $h);
@@ -67,6 +71,7 @@ sub get_opt {
         "dir_out|d=s",
         "f_list|l=s",
         "module|m=s",
+        "proj|p=s",
     );
     
     unless( @ARGV ){ 
@@ -118,6 +123,7 @@ sub tex_write_f {
     my ($self) = @_;
 
     while (1) {
+###tex_write_file_out
         $self->{file_out} && do {
             $self->data_to_tex_single;
 
@@ -132,7 +138,24 @@ sub tex_write_f {
             last;
         };
 
+###tex_write_dir_out
         $self->{dir_out} && do {
+            my $dir = $self->{dir_out};
+            my $proj = $self->{proj};
+            mkpath $dir unless -d $dir;
+
+            foreach my $pack ($self->_packages) {
+                my $sec = $pack;
+                $sec =~ s/::/_/g;
+                $sec = lc $sec;
+
+                my $pack_file = catfile($dir,sprintf(q{%s.%s.tex}, $proj, $sec ));
+
+                my $head = sprintf(q{\%s{%s}}, $self->_sect('pack'), texify($pack,'rpl_special'));
+
+                foreach my $sub ($self->_subnames($pack)) {
+                }
+            }
 
             last;
         };
