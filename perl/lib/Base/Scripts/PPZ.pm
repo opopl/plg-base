@@ -123,12 +123,16 @@ sub dhelp {
 sub tex_write_dir {
     my ($self) = @_;
 
-    my $dir = $self->{dir_out};
+    my $dir  = $self->{dir_out};
     my $proj = $self->{proj};
     mkpath $dir unless -d $dir;
 
+    my @tex_main;
+    push @tex_main,
+        $self->_tex_preamble;
+
     foreach my $pack ($self->_packages) {
-        my @tex;
+        my (@tex);
 
         my $sec = $pack;
         $sec =~ s/::/_/g;
@@ -137,10 +141,13 @@ sub tex_write_dir {
         my $pack_file = catfile($dir,sprintf(q{%s.%s.tex}, $proj, $sec ));
 
         my $head_pack = sprintf(q{\%s{%s}}, $self->_sect('pack'), texify($pack,'rpl_special'));
+        push @tex,$head_pack;
 
         foreach my $sub ($self->_subnames($pack)) {
             my $sub_tex = texify($sub,'rpl_special');
             my $head_sub = sprintf(q{\%s{%s}}, $self->_sect('sub'), $sub_tex);
+
+            push @tex,$head_sub;
 
             my $code = $self->_val_(qw(data), $pack, $sub, qw(code));
 
@@ -150,6 +157,7 @@ sub tex_write_dir {
                 split("\n" => $code),
                 q{\end{verbatim}}
                 ;
+            write_file($pack_file,join("\n",@tex) . "\n");
         }
     }
 
