@@ -129,12 +129,15 @@ sub tex_write_dir {
 
     my $main_file = catfile($dir,$proj . '.tex');
 
-    my (@tex_main, @tex_preamble);
+    my (@tex_main, @tex_preamble, @tex_body);
     push @tex_main,
+        ' ',
         $self->_tex_def_ii,
-        $self->_tex_dclass,
+        ' ',
         q{\ii{preamble}},
+        ' ',
         q{\begin{document}},
+        ' ',
         q{\ii{body}},
         ;
 
@@ -155,7 +158,7 @@ sub tex_write_dir {
         my $head_pack = sprintf(q{\%s{%s}}, $self->_sect('pack'), texify($pack,'rpl_special'));
         push @tex,$head_pack;
 
-        push @tex_main,
+        push @tex_body,
             sprintf(q{\ii{%s}},$sec);
 
         foreach my $sub ($self->_subnames($pack)) {
@@ -180,6 +183,7 @@ sub tex_write_dir {
         $self->_tex_postamble;
 
     write_file($self->_file_sec('main'),join("\n",@tex_main) . "\n");
+    write_file($self->_file_sec('body'),join("\n",@tex_body) . "\n");
 
     return $self;   
 }
@@ -297,6 +301,8 @@ sub _tex_preamble {
     my ($self) = @_;
 
     my $p = q{
+\documentclass[a4paper,landscape,11pt]{report}
+
 \usepackage{titletoc}
 \usepackage{xparse}
 \usepackage{p.core}
@@ -320,6 +326,9 @@ sub _tex_preamble {
 \usepackage[useregional]{datetime2}
 \usepackage{mathtext}
 \usepackage{nameref}
+
+\makeindex[title=Subroutines,name=subs]
+
 };
     return $p;
 }
