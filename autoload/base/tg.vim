@@ -743,6 +743,7 @@ function! base#tg#update (...)
     let dir   = base#file#catfile([ base#path('htmltool'), 'lib' ])
     let libs .= ' ' . dir
 
+"""tgupdate_ae_perlgem
   elseif tgid == 'ae_perlgem'
     let dir   = base#file#catfile([ base#path('perlgem'), 'server', 'generic' ])
     let libs .= ' ' . dir
