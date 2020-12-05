@@ -58,8 +58,8 @@ sub _dmap {
                 };
                 if($recurse) {
                     foreach my $val (@mapped) {
-                        given(reftype $val) {
-                            when('HASH') {
+                        my $rt = reftype $val || '';
+                        if($rt eq 'HASH'){ 
                                 for(keys %$val) {
                                     my @res = _dmap($cache, $callback, $val->{$_});
                                     croak 'Multi value return in hash value assignment'
@@ -70,9 +70,7 @@ sub _dmap {
                                         delete $val->{$_};
                                     }
                                 }
-                                push @result, $val;
-                            }
-                            when('ARRAY') {
+                        }elsif($rt eq 'ARRAY'){ 
                                 my $i = 0;
                                 while($i <= $#$val) {
                                     if(exists $val->[$i]) {
@@ -88,19 +86,14 @@ sub _dmap {
                                     }
                                     $i++;
                                 }
-                                push @result, $val;
-                            }
-                            when('SCALAR') {
+                        }elsif($rt eq 'SCALAR'){ 
                                 my @res = _dmap($cache, $callback, $$val);
                                 croak 'Multi value return in single value assignment'
                                     if @res > 1;
                                 $$val = $res[0] if @res and $$val ne $res[0];
-                                push @result, $val;
-                            }
-                            default {
-                                push @result, $val;
-                            }
                         }
+
+                        push @result, $val;
                     }
                 }
                 _store_cache($cache, $orig_ref, @result);

@@ -7,11 +7,12 @@ use utf8;
 use Data::Dumper qw(Dumper);
 
 use Base::Data::Dmap;
+#use Data::Dmap;
  
 my $foo = {
-	cars => [ 'ford', 'opel', 'BMW' ],
-	birds => [ 'cuckatoo', 'ostrich', 'frigate' ],
-	handler => sub { print "barf\n" }
+    cars => [ 'ford', 'opel', 'BMW' ],
+    birds => [ 'cuckatoo', 'ostrich', 'frigate' ],
+    handler => sub { print "barf\n" }
 };
  
 # This removes all keys named 'cars'    
