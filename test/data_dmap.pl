@@ -6,7 +6,7 @@ use utf8;
 
 use Data::Dumper qw(Dumper);
 
-use Base::Data::Dmap;
+use Base::Data::Dmap qw(dmap);
 #use Data::Dmap;
  
 my $foo = {

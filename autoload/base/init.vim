@@ -579,7 +579,8 @@ fun! base#init#au()
 
   au BufRead,BufNewFile,BufWinEnter *.zlan  setlocal ft=zlan
 
-  au BufRead,BufNewFile,BufWinEnter *.tml   setlocal ft=tml
+  au BufRead,BufNewFile,BufWinEnter *.tml  setlocal ft=tml
+  au BufRead,BufNewFile,BufWinEnter *.zc   setlocal ft=zc
 
   au BufRead,BufNewFile,BufWinEnter *.py3   setlocal ft=python
 

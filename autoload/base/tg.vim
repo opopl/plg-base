@@ -782,6 +782,10 @@ function! base#tg#update (...)
     let dir   = base#file#catfile([ base#path('plg'), 'projs', 'perl', 'lib' ])
     let libs .= ' ' . dir
 
+  elseif tgid == 'pipp'
+		call base#tg#update('perl_inc_plg_projs')
+		return 
+
   elseif tgid == 'perl_inc_plg_idephp'
 
     let dir   = base#file#catfile([ base#path('plg'), 'idephp', 'perl', 'lib' ])

@@ -10,8 +10,8 @@ use feature 'switch';
 
 use Exporter 'import';
 
-our @EXPORT = qw{ dmap };
-our @EXPORT_OK = qw{ cut };
+our @EXPORT = qw{};
+our @EXPORT_OK = qw{ cut dmap };
 
 use Carp 'croak';
 use Scalar::Util qw{ reftype refaddr };
