@@ -1304,11 +1304,11 @@ fun! base#readdict(ref)
      call extend(opts,ref)
   endif
 
-  let lines=readfile(opts.file)
+  let lines = readfile(opts.file)
 
-  let dict={}
-  let sep=opts.sep
-  let key=''
+  let dict = {}
+  let sep  = opts.sep
+  let key  = ''
 
   let ientry=0
 
@@ -1317,7 +1317,7 @@ fun! base#readdict(ref)
       continue
     endif
 
-    let vars=split(line,sep)
+    let vars = split(line,sep)
 
     if line =~ '^\w\+'
       let ientry+=1
@@ -1346,7 +1346,10 @@ fun! base#readdict(ref)
 
     endif
 
-    let dict[key]=base#rmwh(dict[key])
+    let w = get(dict,key,'')
+    if len(w)
+      let dict[key] = base#rmwh(w)
+    endif
 
   endfor
 
