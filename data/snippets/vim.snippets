@@ -572,7 +572,16 @@ snippet setqflist
 		    nr		error number
 		    text	description of the error
 		    type	single-character error type, 'E', 'W', etc.
-
+snippet cf
+	if 0
+		usage
+			<++>
+		call tree
+			called by
+				<++>
+			calls
+				<++>
+	endif
 snippet choosedialog
 	let opt=base#getfromchoosedialog({ 
 		\ 'list'        : <++>,
