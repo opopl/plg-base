@@ -85,9 +85,9 @@ sub readarr {
 =cut
 
 sub readhash {
-    my $if = shift;
+    my ($if, $opts) = @_;
 
-    my $opts = shift || {};
+    $opts ||= {};
 
     my $splitsep = $opts->{sep} || qr/\s+/;
     my $joinsep  = $opts->{sep} || ' ';
