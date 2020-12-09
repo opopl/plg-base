@@ -339,13 +339,11 @@ fun! base#init#cmds()
   command! -nargs=* -complete=custom,base#complete#powershell PowerShell
     \ call base#powershell(<f-args>)
 
-"""EnvCmd
-  command! -nargs=* -complete=custom,base#complete#envcmd     EnvCmd
-    \ call base#envcmd(<f-args>)
+  "command! -nargs=* -complete=custom,base#complete#envcmd     EnvCmd
+    "\ call base#envcmd(<f-args>)
 
-"""EnvEcho
-  command! -nargs=* -complete=custom,base#complete#envecho   EnvEcho
-    \ call base#env#echo(<f-args>)
+  "command! -nargs=* -complete=custom,base#complete#envecho   EnvEcho
+    "\ call base#env#echo(<f-args>)
 
 """GitCmd
   command! -nargs=* -complete=custom,base#complete#gitcmds GitCmd 
