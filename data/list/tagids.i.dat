@@ -63,6 +63,8 @@ plg_txtmy
 plg_vim-latex
 plg_vimproc
 plg_vim-php-manual
+plg_lts
+plg_ae
 ##########
 mkvimrc
 idephp_help
@@ -80,5 +82,4 @@ ty_perl_htmltool
 ty_perl_perlmod
 ty_perl_inc
 ae_perlgem
-plg_ae
 pipp

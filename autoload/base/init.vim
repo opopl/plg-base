@@ -316,8 +316,8 @@ fun! base#init#cmds()
     \ call base#split(<f-args>)
 
 """LCOM
-  command! -nargs=* -complete=custom,base#complete#vimcoms LCOM 
-    \ call base#loadvimcom(<f-args>)
+  "command! -nargs=* -complete=custom,base#complete#vimcoms LCOM 
+    "\ call base#loadvimcom(<f-args>)
   
 """VCOM
   command! -nargs=* -complete=custom,base#complete#vimcoms VCOM 
