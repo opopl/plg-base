@@ -1325,7 +1325,7 @@ fun! base#readdict(ref)
          break
       endif
   
-      let key=remove(vars,0)
+      let key = remove(vars,0)
     
           if opts.value_type == 'String'
             let val=join(vars,sep)
