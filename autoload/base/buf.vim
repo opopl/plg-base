@@ -35,19 +35,19 @@ function! base#buf#cut(...)
 endf
 
 function! base#buf#lines(...)
-	let start = get(a:000,0,1)
-	let end   = get(a:000,1,line('$'))
-	let lines = []
-	let lnum  = start
+  let start = get(a:000,0,1)
+  let end   = get(a:000,1,line('$'))
+  let lines = []
+  let lnum  = start
 
-	while lnum < end + 1
-		 let line = getline(lnum)
-		 call add(lines,line)
-	
-	   let lnum+=1
-	endw
+  while lnum < end + 1
+     let line = getline(lnum)
+     call add(lines,line)
+  
+     let lnum+=1
+  endw
 
-	return lines
+  return lines
 endf
 
 function! base#buf#lines_hi(...)
@@ -216,7 +216,7 @@ function! base#buf#open_split (ref)
       endfor
     endif
 
-		call base#varset('last_split_lines',lines)
+    call base#varset('last_split_lines',lines)
 
     if type(Fc) == type(function('call'))
       call call(Fc,Fc_args)
@@ -225,7 +225,7 @@ function! base#buf#open_split (ref)
     for cmd in cmds_after
       exe cmd
     endfor
-		resize 999
+    resize 999
 
 endfunction
 
@@ -346,7 +346,7 @@ function! base#buf#onload ()
 
   let b:comps_BufAct = base#comps#bufact()
 
-	call base#buf#maps()
+  call base#buf#maps()
 
   call base#var#update('buf_vars')
 
@@ -360,6 +360,7 @@ function! base#buf#onload_process_ext (...)
 
   elseif b:ext == 'nsh'
     setf nsis
+
   endif
 endfunction
 
@@ -376,6 +377,9 @@ function! base#buf#onload_process_ft (...)
   if &ft == 'php'
     setlocal iskeyword+=\
     call extend(maps.nnoremap,{ ';gg' : 'BufAct tggen_phpctags' })
+
+  elseif &ft == 'snippets'
+    setlocal ts=2
 
   elseif &ft == 'vim'
     call extend(maps.nnoremap,{ ';ss' : 'BufAct source_script' })
@@ -565,7 +569,7 @@ endfunction
 function! base#buf#au_write_post ()
   call base#buf#start()
 
-	let ft = &ft
+  let ft = &ft
   if base#inlist( ft, base#qw('idat xml') )
     BufAct update_var 
   endif
@@ -574,11 +578,11 @@ endfunction
 
 if 0
 
-	call tree
-		called by
-			base#buf#start
-		calls
-			base#buf#start
+  call tree
+    called by
+      base#buf#start
+    calls
+      base#buf#start
 endif
 
 function! base#buf#is_plg ()
@@ -648,9 +652,9 @@ function! base#buf#start ()
   let b:dirname  = expand('%:p:h')
   let b:bufnr    = bufnr('%')
 
-	if ! len("&ft")
-		setlocal ft=text
-	endif
+  if ! len("&ft")
+    setlocal ft=text
+  endif
 
   let b:file_se  = shellescape(b:file)
 
