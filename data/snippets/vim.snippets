@@ -1746,7 +1746,7 @@ snippet projs#author#select
 	let author_id = get(a_data,'author_id','')
 	let author    = get(a_data,'author','')
 snippet rdw
-	call base#rdw(<+msg+>)
+	call base#rdw(printf(<+msg+>,<++>))
 snippet rdwpf
 	call base#rdw_printf(['<+format+>',<+val+> ],'<+highlight+>')
 snippet rdwe

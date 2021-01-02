@@ -14,6 +14,8 @@ use Base::DB qw(
     dbh_select_as_list
     dbi_connect
 );
+use FindBin qw($Bin $Script);
+use Getopt::Long qw(GetOptions);
 
 use base qw(
     Base::Cmd
@@ -28,6 +30,53 @@ sub new
     $self->init if $self->can('init');
 
     return $self;
+}
+
+      
+sub get_opt {
+	my ($self) = @_;
+	
+	Getopt::Long::Configure(qw(bundling no_getopt_compat no_auto_abbrev no_ignore_case_always));
+	
+	my (@optstr, %opt);
+	@optstr=( 
+		"cmd|c=s",
+		"remote|r=s",
+		"local|l=s",
+	);
+	
+	unless( @ARGV ){ 
+		$self->dhelp;
+		exit 0;
+	}else{
+		GetOptions(\%opt,@optstr);
+		$self->{opt} = \%opt;
+	}
+
+	foreach my $k (keys %opt) {
+		$self->{$k} = $opt{$k};
+	}
+
+	return $self;	
+}
+
+sub dhelp {
+	my ($self) = @_;
+
+	my $s = qq{
+
+	USAGE
+		$Script OPTIONS
+	OPTIONS
+
+	EXAMPLES
+		$Script ...
+
+	};
+
+	print $s . "\n";
+
+	return $self;	
 }
 
 sub init {
