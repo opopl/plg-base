@@ -7,6 +7,7 @@ use utf8;
 
 use Data::Dumper qw(Dumper);
 use Base::Arg qw( hash_inject );
+
 use Base::DB qw(
     dbh_do
     dbh_insert_hash
@@ -16,9 +17,10 @@ use Base::DB qw(
     dbh_select_fetchone
 );
 
-use FindBin qw($Bin $Script);
-use Getopt::Long qw(GetOptions);
-use File::Spec::Functions qw(catfile);
+use FindBin qw( $Bin $Script );
+use Getopt::Long qw( GetOptions );
+use File::Spec::Functions qw( catfile );
+use File::Path qw(mkpath rmtree);
 
 use base qw(
     Base::Cmd
@@ -48,7 +50,7 @@ sub get_opt {
         "local|l=s",
         "dbfile=s",
         "html_root=s",
-        "drop_tables",
+        "reset_tables",
     );
     
     unless( @ARGV ){ 
@@ -83,11 +85,34 @@ sub dhelp {
                 --reset_tables  Reset tables in DBFILE
 
     EXAMPLES
-        perl $Script ...
+        perl $Script -c fetch
 
     };
 
     print $s . "\n";
+
+    return $self;   
+}
+
+sub alter_db {
+    my ($self) = @_;
+
+    my $dbh = $self->{dbh};
+    return $self unless $dbh;
+
+    my @alter = ();
+    #push @alter, 
+            ##qq{ ALTER TABLE saved ADD COLUMN data TEXT},
+            ##qq{ ALTER TABLE saved ADD COLUMN doc_type TEXT},
+    #;
+
+    foreach my $q (@alter) {
+        dbh_do({
+            dbh  => $dbh,
+            q    => $q,
+            warn => sub {},
+        });
+    }
 
     return $self;   
 }
@@ -144,22 +169,19 @@ sub init_db {
         });
     }
 
-    my @alter = ();
-        push @alter, 
-            #qq{ ALTER TABLE saved ADD COLUMN data TEXT},
-            #qq{ ALTER TABLE saved ADD COLUMN doc_type TEXT},
-        ;
-
-    foreach my $q (@alter) {
-        dbh_do({
-            dbh  => $dbh,
-            q    => $q,
-            warn => sub {},
-        });
-    }
-
-
     $self;
+}
+
+sub _dir_h {
+    my ($self) = @_;
+
+    catfile($self->{html_root},qw(h));
+}
+
+sub _local {
+    my ($self, $rid) = @_;
+
+    catfile($self->_dir_h,$rid . '.htm');
 }
 
 sub _rid_free {
@@ -168,7 +190,7 @@ sub _rid_free {
     my $dbh = $self->{dbh};
     my $r = { 
         dbh => $dbh,
-        q   => q{SELECT MAX(rid) FROM urls},
+        q   => q{ SELECT MAX(rid) FROM urls },
     };
     my $rid = dbh_select_fetchone($r) || 0;
     $rid++;
@@ -181,12 +203,22 @@ sub cmd_fetch {
     my $dbh = $self->{dbh};
 
     my $rid = $self->_rid_free();
+    my $local = $self->_local($rid);
 
     my $time_saved = time();
 
+    foreach my $x (qw(remote)) {
+	    unless ($self->{$x}) {
+            warn sprintf('[fetch] not defined: %s',$x) . "\n";
+	        return $self;
+	    }
+    }
+
+    mkpath $self->_dir_h unless -d $self->_dir_h;
+
     my $h = {
         remote     => $self->{remote},
-        local      => $self->{local},
+        local      => $local,
         time_saved => $time_saved,
         rid        => $rid,
     };
@@ -221,6 +253,7 @@ sub run {
     $self
         ->get_opt
         ->init_db
+        ->alter_db
         ->run_cmd
         ;
 
