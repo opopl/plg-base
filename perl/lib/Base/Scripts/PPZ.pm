@@ -153,7 +153,7 @@ sub wf_main {
         q{\end{document}},
         ;
 
-    write_file($self->_file_sec('main'),join("\n",@tex_main) . "\n");
+    write_file($self->_file_sec('_main_'),join("\n",@tex_main) . "\n");
     return $self;   
 }
 
