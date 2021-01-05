@@ -157,6 +157,28 @@ sub wf_main {
     return $self;   
 }
 
+sub wf_files_make4ht {
+    my ($self) = @_;
+
+    my $dir = $self->{dir_out};
+
+    my $p =<< 'eof';
+if mode=="draft" then
+	Make:htlatex {}
+else
+	Make:htlatex {}
+	Make:xindy {}
+	Make:biber {}
+	Make:htlatex {}
+end
+eof
+
+    write_file(catfile($dir,'build.lua'),$p);
+    return $self;   
+}
+
+
+
 sub wf_cfg {
     my ($self) = @_;
 
@@ -165,6 +187,8 @@ sub wf_cfg {
         $self->_tex_cfg;
 
     write_file($self->_file_sec('_cfg_'),join("\n",@tex_cfg) . "\n");
+
+    return $self;   
 }
 
 sub wf_packs {
@@ -262,6 +286,7 @@ sub cmd_tex_write_dir {
         ->wf_body
         ->wf_packs
         ->wf_cfg
+        ->wf_files_make4ht
         ;
 
     write_file($self->_file_sec('index'),$self->_tex_index);
@@ -436,7 +461,7 @@ sub _tex_cfg {
 }{}
 
 \newcommand{\thealt}{No alt test was set.}
-\renewcommand{\nextalt}[1]{\renewcommand{\thealt}{#1}}
+\newcommand{\nextalt}[1]{\renewcommand{\thealt}{#1}}
 
 \Configure{graphics*}{jpg}{
 \Picture[\HCode{\thealt}]{\csname Gin@base\endcsname.jpg}}
@@ -447,7 +472,7 @@ sub _tex_cfg {
 \Configure{graphics*}  
 {pdf}  
 {%
-    \Needs{"imconvert \csname Gin@base\endcsname.pdf \csname Gin@base\endcsname.png"}%  
+    \Needs{"convert \csname Gin@base\endcsname.pdf \csname Gin@base\endcsname.png"}%  
     \Picture[pict]{\csname Gin@base\endcsname.png}%  
     \special{t4ht+@File: \csname Gin@base\endcsname.png}
 }%  
