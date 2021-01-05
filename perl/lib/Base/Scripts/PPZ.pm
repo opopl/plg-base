@@ -224,7 +224,7 @@ sub wf_packs {
             my $head_sub = sprintf(q{\%s{%s}}, $self->_sect('sub'), $sub_tex);
             push @tex,$head_sub;
 
-            my $code = $self->_val_(qw(data), $pack, $sub, qw(code));
+            my $code = $self->_val_(qw(data), $pack, qw(subs), $sub, qw(code));
 
             next unless $code;
             push @tex,
@@ -361,7 +361,7 @@ List of subroutines for the given package
 sub _subnames {
     my ($self, $pack) = @_;
 
-    return sort keys %{$self->{data}->{$pack} || {}};
+    return sort keys %{$self->{data}->{$pack}->{subs} || {}};
 
     return $self;   
 }
@@ -613,8 +613,9 @@ sub load_f_ppi_to_data {
 
             my $code = $node->block->content;
             $self->{data}->{$pack} ||= {};
-            $self->{data}->{$pack}->{$subname_short} ||= {};
-            $self->{data}->{$pack}->{$subname_short}->{code} = $code;
+            $self->{data}->{$pack}->{subs} ||= {};
+            $self->{data}->{$pack}->{subs}->{$subname_short} ||= {};
+            $self->{data}->{$pack}->{subs}->{$subname_short}->{code} = $code;
 
 
         };
