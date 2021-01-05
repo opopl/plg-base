@@ -210,6 +210,8 @@ sub wf_packs {
         my $pack_file = $self->_file_sec($sec);
         my $pack_tex = texify($pack,'rpl_special');
 
+        my $subs_file = $self->_file_sec($sec . '.subs');
+
         my $head_pack = sprintf(q{\%s{%s}}, $self->_sect('pack'), $pack_tex);
         push @tex,$head_pack;
 
