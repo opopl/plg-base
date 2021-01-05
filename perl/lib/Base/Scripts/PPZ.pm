@@ -146,6 +146,7 @@ sub wf_main {
         ' ',
         q{\begin{document}},
         ' ',
+        q{\ii{tabcont}},
         q{\ii{body}},
         ' ',
         q{\ii{index}},
@@ -242,6 +243,32 @@ sub wf_packs {
     return $self;   
 }
 
+sub wf_index {
+    my ($self) = @_;
+
+    write_file($self->_file_sec('index'),$self->_tex_index);
+
+    return $self;   
+}
+
+sub wf_tabcont {
+    my ($self) = @_;
+
+my $p =<< 'eof';
+\phantomsection
+ 
+\addcontentsline{toc}{chapter}{\contentsname}
+\hypertarget{tabcont}{}
+ 
+\tableofcontents
+\newpage
+eof
+
+    write_file($self->_file_sec('tabcont'),$p);
+
+    return $self;   
+}
+
 sub wf_body {
     my ($self) = @_;
 
@@ -283,12 +310,12 @@ sub cmd_tex_write_dir {
         ->wf_preamble
         ->wf_main
         ->wf_body
+        ->wf_tabcont
+        ->wf_index
         ->wf_packs
         ->wf_cfg
         ->wf_files_make4ht
         ;
-
-    write_file($self->_file_sec('index'),$self->_tex_index);
 
     return $self;   
 }
