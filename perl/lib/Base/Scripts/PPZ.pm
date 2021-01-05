@@ -50,8 +50,9 @@ sub init {
     
     my $h = {
         sects => {
-            sub  => 'paragraph',
-            pack => 'subsection',
+            sub       => 'paragraph',
+            pack      => 'subsection',
+            packs     => 'section',
         },
         data => {},
         proj => 'main',
@@ -158,6 +159,66 @@ sub wf_main {
 
 sub wf_packs {
     my ($self) = @_;
+
+    my @tex_packs;
+
+    push @tex_packs,
+       sprintf(q{\%s{%s}}, $self->_sect('packs'), 'Packages');
+       ; 
+    foreach my $pack ($self->_packages) {
+        my (@tex);
+
+        my $sec = $pack;
+        $sec =~ s/::/_/g;
+        $sec = lc $sec;
+        $sec = sprintf(q{pack.%s},$sec);
+
+        my $pack_file = $self->_file_sec($sec);
+        my $pack_tex = texify($pack,'rpl_special');
+
+        my $head_pack = sprintf(q{\%s{%s}}, $self->_sect('pack'), $pack_tex);
+        push @tex,$head_pack;
+
+        push @tex_packs,
+            sprintf(q{\ii{%s}},$sec);
+
+        foreach my $sub ($self->_subnames($pack)) {
+            my $sub_tex = texify($sub,'rpl_special');
+            my $head_sub = sprintf(q{\%s{%s}}, $self->_sect('sub'), $sub_tex);
+
+            push @tex,$head_sub;
+
+            my $code = $self->_val_(qw(data), $pack, $sub, qw(code));
+
+            next unless $code;
+            push @tex,
+                '',
+                sprintf(q{\index[subs]{%s!%s}},$sub_tex,$pack_tex),
+                '',
+                q{\begin{verbatim}}, 
+                split("\n" => $code),
+                q{\end{verbatim}},
+                '',
+                ;
+            write_file($pack_file,join("\n",@tex) . "\n");
+        }
+    }
+
+    write_file($self->_file_sec('packs'),join("\n",@tex_packs) . "\n");
+
+    return $self;   
+}
+
+sub wf_body {
+    my ($self) = @_;
+
+    my (@tex_body);
+
+    push @tex_body,
+        q{\ii{packs}};
+
+    write_file($self->_file_sec('body'),join("\n",@tex_body) . "\n");
+
     return $self;   
 }
 
@@ -185,54 +246,13 @@ sub cmd_tex_write_dir {
 
     my $main_file = catfile($dir,$proj . '.tex');
 
-    my (@tex_body);
-
     $self
         ->wf_preamble
         ->wf_main
+        ->wf_body
         ->wf_packs
         ;
 
-    foreach my $pack ($self->_packages) {
-        my (@tex);
-
-        my $sec = $pack;
-        $sec =~ s/::/_/g;
-        $sec = lc $sec;
-        $sec = sprintf(q{pack.%s},$sec);
-
-        my $pack_file = $self->_file_sec($sec);
-        my $pack_tex = texify($pack,'rpl_special');
-
-        my $head_pack = sprintf(q{\%s{%s}}, $self->_sect('pack'), $pack_tex);
-        push @tex,$head_pack;
-
-        push @tex_body,
-            sprintf(q{\ii{%s}},$sec);
-
-        foreach my $sub ($self->_subnames($pack)) {
-            my $sub_tex = texify($sub,'rpl_special');
-            my $head_sub = sprintf(q{\%s{%s}}, $self->_sect('sub'), $sub_tex);
-
-            push @tex,$head_sub;
-
-            my $code = $self->_val_(qw(data), $pack, $sub, qw(code));
-
-            next unless $code;
-            push @tex,
-                '',
-                sprintf(q{\index[subs]{%s!%s}},$sub_tex,$pack_tex),
-                '',
-                q{\begin{verbatim}}, 
-                split("\n" => $code),
-                q{\end{verbatim}},
-                '',
-                ;
-            write_file($pack_file,join("\n",@tex) . "\n");
-        }
-    }
-
-    write_file($self->_file_sec('body'),join("\n",@tex_body) . "\n");
     write_file($self->_file_sec('index'),$self->_tex_index);
 
     return $self;   
