@@ -8,6 +8,26 @@ use utf8;
 use Data::Dumper qw(Dumper);
 use Base::Arg qw( hash_inject );
 
+use locale;
+
+use LWP;
+use HTTP::Request;
+
+use Base::Enc qw(
+    UNC
+    enc_in
+    enc_out
+    unc_decode
+    unc_encode
+);
+
+use Base::Util qw(
+    now
+    file_w
+    file_r
+    dmp
+);
+
 use Base::DB qw(
     dbh_do
     dbh_insert_hash
@@ -21,9 +41,11 @@ use FindBin qw( $Bin $Script );
 use Getopt::Long qw( GetOptions );
 use File::Spec::Functions qw( catfile );
 use File::Path qw(mkpath rmtree);
+use File::Basename qw(basename dirname);
 
 use base qw(
     Base::Cmd
+    Base::Logging
 );
 
 
@@ -120,7 +142,7 @@ sub alter_db {
 sub init_db {
     my ($self) = @_;
 
-    my $dbfile = $self->{dbfile} || catfile($self->{html_root},'urls.db');
+    my $dbfile = $self->{dbfile} || catfile($self->{html_root},'h.db');
         
     my $dbh = dbi_connect({ dbfile => $dbfile }); 
     return $self unless $dbh;
@@ -181,7 +203,7 @@ sub _dir_h {
 sub _local {
     my ($self, $rid) = @_;
 
-    catfile($self->_dir_h,$rid . '.htm');
+    catfile($self->_dir_h,qw(fetched),$rid . '.htm');
 }
 
 sub _rid_free {
@@ -203,15 +225,18 @@ sub cmd_fetch {
     my $dbh = $self->{dbh};
 
     my $rid = $self->_rid_free();
+    print qq{$rid} . "\n";
+    exit;
+    
     my $local = $self->_local($rid);
 
     my $time_saved = time();
 
     foreach my $x (qw(remote)) {
-	    unless ($self->{$x}) {
+        unless ($self->{$x}) {
             warn sprintf('[fetch] not defined: %s',$x) . "\n";
-	        return $self;
-	    }
+            return $self;
+        }
     }
 
     mkpath $self->_dir_h unless -d $self->_dir_h;
@@ -232,6 +257,100 @@ sub cmd_fetch {
     dbh_insert_hash($r_db);
 
     return $self;
+}
+
+sub grab_file {
+    my ($self,$ref) = @_;
+
+    my $start = time();
+
+    $ref ||= {};
+
+    my $url  = $ref->{remote};
+    my $file = $ref->{local};
+
+    mkpath dirname($file) unless -d dirname($file);
+
+    my $savedir  = dirname($file);
+
+    my $rw = $ref->{rewrite} || 0;
+
+    url_normalize(\$url);
+
+    my ($ua, $req);
+
+    $ua  = LWP::UserAgent->new;
+    $ua->agent("Mozilla/8.0");
+
+    $req = HTTP::Request->new(GET => $url);
+
+    print "FETCH: \n\t$url" . "\n";
+    my $res = eval { $ua->request($req); };
+    if ($@ || !$res->is_success) {
+        print "FAIL:\n\t $url" . "\n";
+        print "\tEval error: $@" . "\n" if $@;
+        print "\t".$res->status_line . "\n";
+    }
+
+    # process response headers
+    #   HTTP::Headers instance
+    my $h = $res->headers;
+
+    my $ct = $h->content_type || '';
+
+    # decoded content, stored in Perl's internal format
+    my $content;
+
+    my $binmode;
+
+    my $ok = $res->is_success;
+    my $charset;
+
+    if($ok){
+        #$charset = encoding_from_http_message($res) || UNC;
+        my $ih = {};
+        
+        for($ct){   
+            m{image\/(\w+)} && do {
+                $content = $res->decoded_content( charset => 'none' );
+                $binmode = ':raw';
+                $charset = 'none';
+
+                last;
+            };
+
+            $content = $res->decoded_content;
+            $charset = $res->content_charset || UNC;
+            unless ($content) {
+                $content = unc_decode( $res->content, $charset );
+            }
+
+            last;
+        }
+
+        if ((! -e $file) || ($rw)) {
+            file_w({ 
+                    file    => $file,
+                    text    => $content,
+                    enc     => $charset,
+                    binmode => $binmode,
+            });
+        }
+    }
+
+    $ref->{stats} = {
+        ok      => $ok,
+        stl     => $res->status_line,
+        charset => $charset,
+        headers => $h,
+    };
+
+    my $end = time();
+    my $duration = $end - $start;
+    my $msg = '#fetch_file duration: ' . $duration . "\n";
+    $self->log({ 'msg' => $msg });
+            
+    $self;
 }
 
 sub init {
