@@ -157,6 +157,14 @@ sub wf_main {
     return $self;   
 }
 
+sub wf_cfg {
+    my ($self) = @_;
+
+    my @tex_cfg;
+
+    write_file($self->_file_sec('_cfg_'),join("\n",@tex_cfg) . "\n");
+}
+
 sub wf_packs {
     my ($self) = @_;
 
@@ -251,6 +259,7 @@ sub cmd_tex_write_dir {
         ->wf_main
         ->wf_body
         ->wf_packs
+        ->wf_cfg
         ;
 
     write_file($self->_file_sec('index'),$self->_tex_index);
@@ -360,18 +369,93 @@ sub _tex_def_ii {
 
 sub _file_sec {
     my ($self, $sec) = @_;
-    $sec ||= 'main';
+    $sec ||= '_main_';
 
     my $dir  = $self->{dir_out};
     my $proj = $self->{proj};
 
     my $f_sec;
-    if ($sec eq 'main') {
+    if ($sec eq '_main_') {
         $f_sec = catfile($dir,$proj . '.tex');
-    }else{
+
+    } elsif ($sec eq '_cfg_') {
+        $f_sec = catfile($dir,$proj . '.cfg');
+
+    } else {
         $f_sec = catfile($dir,sprintf('%s.%s.tex', $proj, $sec));
     }
     return $f_sec;
+}
+
+sub _tex_cfg {
+
+    my $p =<< 'eof';
+\Preamble{xhtml,frames,4,index=2,next,charset=utf-8,javascript}
+
+% Don't output xml version tag
+\Configure{VERSION}{}
+
+\Configure{DOCTYPE}{\HCode{<!DOCTYPE html>\Hnewline}}
+\Configure{HTML}{\HCode{<html>\Hnewline}}{\HCode{\Hnewline</html>}}
+
+% We don't want to translate font suggestions with ugly wrappers like
+% <span class="cmti-10"> for italic text
+\NoFonts
+
+% Set custom page title
+%\Configure{TITLE+}{__TITLE_}
+%\Configure{TITLE+}{\PROJ}
+%https://gist.github.com/stefanozanella/8892211
+
+% Reset <head>, aka delete all default boilerplate
+%\Configure{@HEAD}{}
+
+\Css{
+  .verbatim,.verb {
+    font-weight      : bold;
+    background-color : gray;
+    color            : white;
+  }
+} 
+
+
+\ifOption{frames}{%
+    \Configure{frames}%
+             {\HorFrames[
+                   frameborder="yes" 
+                   border="1"  
+                   %framespacing="1" 
+                   rows="*"]{*,3*}  
+               \Frame[ name="tex4ht-menu" frameborder="2" ]{tex4ht-toc}  
+               \Frame[ name="tex4ht-main" frameborder="2" ]{tex4ht-body}
+             }  
+    {\let\contentsname=\empty \tableofcontents}  
+}{}
+
+\newcommand{\thealt}{No alt test was set.}
+\renewcommand{\nextalt}[1]{\renewcommand{\thealt}{#1}}
+
+\Configure{graphics*}{jpg}{
+\Picture[\HCode{\thealt}]{\csname Gin@base\endcsname.jpg}}
+
+\Configure{graphics*}{png}{
+\Picture[\HCode{\thealt}]{\csname Gin@base\endcsname.png}}
+  
+\Configure{graphics*}  
+{pdf}  
+{%
+	\Needs{"imconvert \csname Gin@base\endcsname.pdf \csname Gin@base\endcsname.png"}%  
+	\Picture[pict]{\csname Gin@base\endcsname.png}%  
+	\special{t4ht+@File: \csname Gin@base\endcsname.png}
+}%  
+
+\begin{document}
+
+%\input{_cfg.TOC.tex}
+
+\EndPreamble
+eof
+    return $p;
 }
 
 sub _tex_dclass {
