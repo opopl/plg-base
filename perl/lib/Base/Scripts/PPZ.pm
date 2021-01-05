@@ -70,7 +70,7 @@ sub get_opt {
         "file|f=s",
         "file_out|o=s",
         "dir_out|d=s",
-        "f_list|l=s",
+        "f_yaml|y=s",
         "module|m=s",
         "proj|p=s",
         "cmd|c=s",
@@ -114,14 +114,16 @@ sub dhelp {
         -m --module     MODULE
         -p --proj       PROJ
 
+        -y --yaml       FILE_YAML input yaml file
+
     EXAMPLES
         Writing to a single output file:
             $scr -c tex_write_fs --file FILE
             $scr -c tex_write_fs -m File::Slurp -o 1.tex
-            $scr -c tex_write_fs --f_list list.i.dat -o 1.tex
+            $scr -c tex_write_fs -y 1.yaml -o 1.tex
 
         Writing to an output directory:
-            $scr -c tex_write_dir --f_list list.i.dat -d 1
+            $scr -c tex_write_dir -y 1.yaml
     };
 
     print $s . "\n";
@@ -475,29 +477,47 @@ sub load_module {
     return $self;
 }
 
+sub load_yaml {
+    my ($self) = @_;
+
+    my $f_yaml = $self->{yaml};
+    return $self unless $f_yaml;
+
+    ($self->{pref}) = (basename($f_yaml) =~ m/^(.*)\.yaml$/);
+
+    my $data = LoadFile($f_yaml) || {};
+    foreach my $x (keys %$data) {
+        $self->{$x} = $data->{$x};
+    }
+
+    return $self;
+}
+
 sub load_f {
     my ($self, $ref) = @_;
     $ref ||= {};
 
     my $file   = $ref->{file} || $self->{file} || '';
 
-    my $f_list = $self->{f_list};
-    my $module = $self->{module};
+    my $module  = $self->{module};
+    my $modules = $self->{modules};
 
     while (1) {
+        # single Perl file
         ($file && -e $file) && do {
             $self->load_f_ppi_to_data($file);
             last;
         };
 
+        # single Perl module, provided via -m option or through input YAML file
         ($module) && do {
             $self->load_module({ module => $module });
             last;
         };
 
-        ($f_list && -e $f_list) && do {
-            my @list = readarr($f_list);
-            foreach my $module (@list) {
+        # list of Perl modules
+        ($modules && ref $modules eq 'ARRAY' && @$modules) && do {
+            foreach my $module (@$modules) {
                 $self->load_module({ module => $module });
             }
             last;
@@ -545,6 +565,7 @@ sub run {
 
     $self
         ->get_opt
+        ->load_yaml
         ->load_f
         ->run_cmd       # Base::Cmd
         ;
