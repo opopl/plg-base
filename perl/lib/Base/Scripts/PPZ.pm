@@ -636,6 +636,9 @@ sub load_f_ppi_to_data {
 
             $self->{data}->{$pack} ||= {};
 
+            #my $code = $node->block->content;
+            #$self->{data}->{$pack}->{code} = $code;
+
             next unless $add->{packs};
         };
     }
