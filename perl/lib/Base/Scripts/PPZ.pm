@@ -372,7 +372,7 @@ sub _tex_index {
     my $p = q{
 \cleardoublepage
 \phantomsection
-\addcontentsline{toc}{chapter}{Subroutines}
+\addcontentsline{toc}{chapter}{Subroutine Index}
 \printindex[subs]
 };
     return $p;
@@ -520,7 +520,7 @@ sub _tex_preamble {
 \usepackage{mathtext}
 \usepackage{nameref}
 
-\makeindex[title=Subroutines,name=subs]
+\makeindex[title=Subroutine Index,name=subs]
 
 };
     return $p;
