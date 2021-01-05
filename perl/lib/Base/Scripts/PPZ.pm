@@ -168,12 +168,11 @@ if mode=="draft" then
 else
 	Make:htlatex {}
 	Make:xindy {}
-	Make:biber {}
 	Make:htlatex {}
 end
 eof
 
-    write_file(catfile($dir,'build.lua'),$p);
+    write_file(catfile($dir,$self->{proj} . '.mk4'),$p);
     return $self;   
 }
 
