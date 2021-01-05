@@ -217,8 +217,8 @@ sub wf_packs {
 
         foreach my $sub ($self->_subnames($pack)) {
             my $sub_tex = texify($sub,'rpl_special');
-            my $head_sub = sprintf(q{\%s{%s}}, $self->_sect('sub'), $sub_tex);
 
+            my $head_sub = sprintf(q{\%s{%s}}, $self->_sect('sub'), $sub_tex);
             push @tex,$head_sub;
 
             my $code = $self->_val_(qw(data), $pack, $sub, qw(code));
