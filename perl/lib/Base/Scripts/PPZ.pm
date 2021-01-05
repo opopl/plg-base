@@ -29,6 +29,7 @@ use Plg::Projs::Tex qw(texify);
 
 use base qw(
     Base::Obj
+    Base::Cmd
 );
 
 sub new
@@ -72,6 +73,7 @@ sub get_opt {
         "f_list|l=s",
         "module|m=s",
         "proj|p=s",
+        "cmd|c=s",
     );
     
     unless( @ARGV ){ 
@@ -100,19 +102,26 @@ sub dhelp {
     LOCATION
         $0
     USAGE
-        $Script OPTIONS
+        perl $Script OPTIONS
     OPTIONS
-        -f --file FILE
-        -o --file_out FILE
-        -d --dir_out DIR
-        -m --module MODULE
-        -p --proj PROJ
+        -c --cmd        CMD, available commands:
+                            tex_write_fs
+                            tex_write_dir
+
+        -f --file       FILE
+        -o --file_out   FILE_OUT
+        -d --dir_out    DIR_OUT
+        -m --module     MODULE
+        -p --proj       PROJ
 
     EXAMPLES
-        $scr --file FILE
-        $scr -m File::Slurp -o 1.tex
-        $scr --f_list list.i.dat -o 1.tex
-        $scr --f_list list.i.dat -d 1
+        Writing to a single output file:
+            $scr -c tex_write_fs --file FILE
+            $scr -c tex_write_fs -m File::Slurp -o 1.tex
+            $scr -c tex_write_fs --f_list list.i.dat -o 1.tex
+
+        Writing to an output directory:
+            $scr -c tex_write_dir --f_list list.i.dat -d 1
     };
 
     print $s . "\n";
@@ -120,7 +129,7 @@ sub dhelp {
     return $self;   
 }
 
-sub tex_write_dir {
+sub cmd_tex_write_dir {
     my ($self) = @_;
 
     my $dir  = $self->{dir_out};
@@ -195,7 +204,7 @@ sub tex_write_dir {
     return $self;   
 }
 
-sub tex_write_fs {
+sub cmd_tex_write_fs {
     my ($self) = @_;
 
     while (1) {
@@ -262,9 +271,9 @@ sub _tex_lines {
 sub _tex_postamble {
     my ($self) = @_;
 
-    my $p = q{
+    my $p =<< 'eof';
 \end{document}
-    };
+eof
     return $p;
 }
 
@@ -349,6 +358,8 @@ sub _tex_preamble {
 \usepackage{nameref}
 
 \makeindex[title=Subroutines,name=subs]
+
+\begin{document}
 
 };
     return $p;
@@ -535,7 +546,7 @@ sub run {
     $self
         ->get_opt
         ->load_f
-        ->tex_write_fs
+        ->run_cmd       # Base::Cmd
         ;
     
     $self;
