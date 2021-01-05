@@ -134,7 +134,7 @@ sub dhelp {
 sub cmd_tex_write_dir {
     my ($self) = @_;
 
-    my $dir  = $self->{dir_out};
+    my $dir  = $self->{dir_out} || $self->{pref};
     my $proj = $self->{proj};
     mkpath $dir unless -d $dir;
 
@@ -480,10 +480,12 @@ sub load_module {
 sub load_yaml {
     my ($self) = @_;
 
-    my $f_yaml = $self->{yaml};
+    my $f_yaml = $self->{f_yaml};
     return $self unless $f_yaml;
 
-    ($self->{pref}) = (basename($f_yaml) =~ m/^(.*)\.yaml$/);
+    print $f_yaml . "\n";
+
+    ($self->{pref}) = ( basename($f_yaml) =~ m/^(.*)\.yaml$/) ;
 
     my $data = LoadFile($f_yaml) || {};
     foreach my $x (keys %$data) {
