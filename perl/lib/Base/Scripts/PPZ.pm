@@ -133,18 +133,10 @@ sub dhelp {
     return $self;   
 }
 
-sub cmd_tex_write_dir {
+sub wf_main {
     my ($self) = @_;
 
-    $self->{dir_out} ||= $self->{pref};
-    my $dir  = $self->{dir_out};
-
-    my $proj = $self->{proj};
-    mkpath $dir unless -d $dir;
-
-    my $main_file = catfile($dir,$proj . '.tex');
-
-    my (@tex_main, @tex_preamble, @tex_body);
+    my (@tex_main);
     push @tex_main,
         ' ',
         $self->_tex_def_ii,
@@ -160,10 +152,46 @@ sub cmd_tex_write_dir {
         q{\end{document}},
         ;
 
+    write_file($self->_file_sec('main'),join("\n",@tex_main) . "\n");
+    return $self;   
+}
+
+sub wf_packs {
+    my ($self) = @_;
+    return $self;   
+}
+
+sub wf_preamble {
+    my ($self) = @_;
+
+    my (@tex_preamble);
+
     push @tex_preamble,
         $self->_tex_preamble;
 
     write_file($self->_file_sec('preamble'),join("\n",@tex_preamble) . "\n");
+
+    return $self;   
+}
+
+sub cmd_tex_write_dir {
+    my ($self) = @_;
+
+    $self->{dir_out} ||= $self->{pref};
+    my $dir  = $self->{dir_out};
+
+    my $proj = $self->{proj};
+    mkpath $dir unless -d $dir;
+
+    my $main_file = catfile($dir,$proj . '.tex');
+
+    my (@tex_body);
+
+    $self
+        ->wf_preamble
+        ->wf_main
+        ->wf_packs
+        ;
 
     foreach my $pack ($self->_packages) {
         my (@tex);
@@ -171,6 +199,7 @@ sub cmd_tex_write_dir {
         my $sec = $pack;
         $sec =~ s/::/_/g;
         $sec = lc $sec;
+        $sec = sprintf(q{pack.%s},$sec);
 
         my $pack_file = $self->_file_sec($sec);
         my $pack_tex = texify($pack,'rpl_special');
@@ -203,7 +232,6 @@ sub cmd_tex_write_dir {
         }
     }
 
-    write_file($self->_file_sec('main'),join("\n",@tex_main) . "\n");
     write_file($self->_file_sec('body'),join("\n",@tex_body) . "\n");
     write_file($self->_file_sec('index'),$self->_tex_index);
 
