@@ -23,6 +23,8 @@ use Getopt::Long qw(GetOptions);
 use Base::Arg qw( hash_inject );
 use File::Slurp::Unicode;
 
+use YAML qw(LoadFile);
+
 use File::Dat::Utils qw(readarr);
 
 use Plg::Projs::Tex qw(texify);
@@ -134,7 +136,9 @@ sub dhelp {
 sub cmd_tex_write_dir {
     my ($self) = @_;
 
-    my $dir  = $self->{dir_out} || $self->{pref};
+    $self->{dir_out} ||= $self->{pref};
+    my $dir  = $self->{dir_out};
+
     my $proj = $self->{proj};
     mkpath $dir unless -d $dir;
 
@@ -360,8 +364,6 @@ sub _tex_preamble {
 \usepackage{nameref}
 
 \makeindex[title=Subroutines,name=subs]
-
-\begin{document}
 
 };
     return $p;
