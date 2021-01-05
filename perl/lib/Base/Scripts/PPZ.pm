@@ -161,6 +161,8 @@ sub wf_cfg {
     my ($self) = @_;
 
     my @tex_cfg;
+    push @tex_cfg, 
+        $self->_tex_cfg;
 
     write_file($self->_file_sec('_cfg_'),join("\n",@tex_cfg) . "\n");
 }
@@ -388,6 +390,7 @@ sub _file_sec {
 }
 
 sub _tex_cfg {
+    my ($self) = @_;
 
     my $p =<< 'eof';
 \Preamble{xhtml,frames,4,index=2,next,charset=utf-8,javascript}
@@ -444,14 +447,12 @@ sub _tex_cfg {
 \Configure{graphics*}  
 {pdf}  
 {%
-	\Needs{"imconvert \csname Gin@base\endcsname.pdf \csname Gin@base\endcsname.png"}%  
-	\Picture[pict]{\csname Gin@base\endcsname.png}%  
-	\special{t4ht+@File: \csname Gin@base\endcsname.png}
+    \Needs{"imconvert \csname Gin@base\endcsname.pdf \csname Gin@base\endcsname.png"}%  
+    \Picture[pict]{\csname Gin@base\endcsname.png}%  
+    \special{t4ht+@File: \csname Gin@base\endcsname.png}
 }%  
 
 \begin{document}
-
-%\input{_cfg.TOC.tex}
 
 \EndPreamble
 eof
