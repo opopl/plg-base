@@ -178,6 +178,24 @@ eof
 }
 
 
+sub wf_mk_pdf {
+    my ($self) = @_;
+
+    my $proj = $self->{proj};
+
+    my $p =<< "eof";
+#!/bin/bash
+
+latexmk -pdf $proj
+
+eof
+    my $f = catfile($self->{dir_out},'mk_pdf.sh');
+    write_file($f,$p);
+    system("chmod +rx $f");
+
+    return $self;   
+}
+
 
 sub wf_cfg {
     my ($self) = @_;
@@ -316,6 +334,7 @@ sub cmd_tex_write_dir {
         ->wf_index
         ->wf_packs
         ->wf_cfg
+        ->wf_mk_pdf
         ->wf_files_make4ht
         ;
 
