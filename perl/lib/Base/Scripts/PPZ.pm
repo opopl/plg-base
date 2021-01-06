@@ -283,18 +283,18 @@ sub wf_packs {
                 ;
         }
 
-        my $code = $self->{data}->{$pack}->{code} || '';
-        if ($code) {
-	        push @tex,
-                '',
-	            sprintf(q{\%s{%s}}, $self->_sect('code'), 'Code'),
-                '',
-                q{\begin{verbatim}}, 
-                split("\n" => $code),
-                q{\end{verbatim}},
-                ''
-                ;
-        }
+#        my $code = $self->{data}->{$pack}->{code} || '';
+        #if ($code) {
+			#push @tex,
+                #'',
+				#sprintf(q{\%s{%s}}, $self->_sect('code'), 'Code'),
+                #'',
+                #q{\begin{verbatim}}, 
+                #split("\n" => $code),
+                #q{\end{verbatim}},
+                #''
+                #;
+        #}
 
 
         write_file($pack_file,join("\n",@tex) . "\n");
