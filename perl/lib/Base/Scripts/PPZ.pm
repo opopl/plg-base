@@ -186,7 +186,7 @@ sub wf_mk_pdf {
     my $p =<< "eof";
 #!/bin/bash
 
-latexmk -pdf $proj
+run_tex.sh $proj
 
 eof
     my $f = catfile($self->{dir_out},'mk_pdf.sh');
