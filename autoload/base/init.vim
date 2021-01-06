@@ -581,6 +581,7 @@ fun! base#init#au()
   au BufRead,BufNewFile,BufWinEnter *.zc   setlocal ft=zc
 
   au BufRead,BufNewFile,BufWinEnter *.py3   setlocal ft=python
+  au BufRead,BufNewFile,BufWinEnter *.mk4   setlocal ft=lua
 
   au BufWrite *.snippets MM snippets_reload_all
 
