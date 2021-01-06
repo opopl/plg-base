@@ -165,11 +165,11 @@ sub wf_files_make4ht {
 
     my $p =<< 'eof';
 if mode=="draft" then
-	Make:htlatex {}
+    Make:htlatex {}
 else
-	Make:htlatex {}
-	Make:xindy {}
-	Make:htlatex {}
+    Make:htlatex {}
+    Make:xindy {}
+    Make:htlatex {}
 end
 eof
 
