@@ -52,6 +52,7 @@ sub init {
         sects => {
             sub       => 'paragraph',
             subs      => 'subsubsection',
+            code      => 'subsubsection',
             pack      => 'subsection',
             packs     => 'section',
         },
@@ -280,8 +281,24 @@ sub wf_packs {
                 q{\end{verbatim}},
                 '',
                 ;
-            write_file($pack_file,join("\n",@tex) . "\n");
         }
+
+        my $code = $self->{data}->{$pack}->{code} || '';
+        if ($code) {
+	        push @tex,
+                '',
+	            sprintf(q{\%s{%s}}, $self->_sect('code'), 'Code'),
+                '',
+                q{\begin{verbatim}}, 
+                split("\n" => $code),
+                q{\end{verbatim}},
+                ''
+                ;
+        }
+
+
+        write_file($pack_file,join("\n",@tex) . "\n");
+
     }
 
     write_file($self->_file_sec('packs'),join("\n",@tex_packs) . "\n");
