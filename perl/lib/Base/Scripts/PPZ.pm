@@ -51,6 +51,7 @@ sub init {
     my $h = {
         sects => {
             sub       => 'paragraph',
+            subs      => 'subsubsection',
             pack      => 'subsection',
             packs     => 'section',
         },
@@ -258,6 +259,9 @@ sub wf_packs {
         push @tex_packs,
             sprintf(q{\ii{%s}},$sec);
 
+
+        my $head_subs = sprintf(q{\%s{%s}}, $self->_sect('subs'), 'Subroutines');
+        push @tex,$head_subs;
         foreach my $sub ($self->_subnames($pack)) {
             my $sub_tex = texify($sub,'rpl_special');
 
@@ -627,26 +631,30 @@ sub load_f_ppi_to_data {
 
     $doc->index_locations;
 
-    my $f = sub { 
-        $_[1]->isa( 'PPI::Statement::Sub' ) 
-        || $_[1]->isa( 'PPI::Statement::Package' )
-        || $_[1]->isa( 'PPI::Statement::Variable' )
-        || $_[1]->isa( 'PPI::Statement::Include' )
-    };
-    my @nodes = @{ $doc->find( $f ) || [] };
-
     my( $pack, $subname_short, $subname_full );
     my $add = {};
     $add->{$_} = 1 for(qw(vars subs packs));
 
-    for my $node (@nodes){
+    my $f = sub { 
+        my $node = $_[1];
 
-        #$node_count++;
-        #last if ( $max_node_count && ( $node_count == $max_node_count ) );
+        if ($pack && exists $self->{data}->{$pack}->{code}){
+            $self->{data}->{$pack}->{code} .= $node->content;
+        }
+
+###PPI_Statement_Package
+        $node->isa( 'PPI::Statement::Package' ) && do { 
+            $pack = $node->namespace; 
+
+            $self->{data}->{$pack} ||= {};
+            $self->{data}->{$pack}->{code} ||= '';
+
+            return unless $add->{packs};
+        };
 
 ###PPI_Statement_Sub
         $node->isa( 'PPI::Statement::Sub' ) && do { 
-            next unless $add->{subs};
+            return unless $add->{subs};
 
             $pack ||= 'main'; 
             $subname_full  = $pack . '::' . $node->name;
@@ -657,32 +665,24 @@ sub load_f_ppi_to_data {
             $self->{data}->{$pack}->{subs} ||= {};
             $self->{data}->{$pack}->{subs}->{$subname_short} ||= {};
             $self->{data}->{$pack}->{subs}->{$subname_short}->{code} = $code;
-
-
         };
+
 ###PPI_Statement_Variable
         $node->isa( 'PPI::Statement::Variable' ) && do { 
-            next unless $add->{vars};
+            return unless $add->{vars};
 
             my $type = $node->type;
-            next unless $type eq 'our';
+            return unless $type eq 'our';
 
             my @a = ($pack,$file,$type);
 
             my $vars = [ $node->variables ];
         };
-###PPI_Statement_Package
-        $node->isa( 'PPI::Statement::Package' ) && do { 
-            $pack = $node->namespace; 
 
-            $self->{data}->{$pack} ||= {};
+        $node->isa( 'PPI::Statement::Include' ) && do {};
+    };
+    my @nodes = @{ $doc->find( $f ) || [] };
 
-            #my $code = $node->block->content;
-            #$self->{data}->{$pack}->{code} = $code;
-
-            next unless $add->{packs};
-        };
-    }
 
     return $self;   
 
