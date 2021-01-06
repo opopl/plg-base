@@ -164,13 +164,35 @@ sub wf_files_make4ht {
     my $dir = $self->{dir_out};
 
     my $p =<< 'eof';
+
+Make:add("xindy", function(par)
+	par.idxfile = par.idxfile or par.input .. ".idx"
+	local modules = par.modules or {par.input}
+	local t = {}
+	for k,v in ipairs(modules) do
+		t[#t+1] = "-M ".. v
+	end
+	par.moduleopt = table.concat(t, " ")
+	local xindy_call = "xindy -L ${language} -C ${encoding} ${moduleopt} ${idxfile}" % par
+	print(xindy_call)
+	return os.execute(xindy_call)
+end, { language = "english", encoding = "utf8"} )
+
 if mode=="draft" then
     Make:htlatex {}
+
+elseif mode == "index" then
+    Make:htlatex {}
+    Make:xindy { idxfile = "subs.idx" }
+    Make:htlatex {}
+    Make:htlatex {}
+
 else
     Make:htlatex {}
-    Make:xindy {}
+    Make:htlatex {}
     Make:htlatex {}
 end
+
 eof
 
     write_file(catfile($dir,$self->{proj} . '.mk4'),$p);
