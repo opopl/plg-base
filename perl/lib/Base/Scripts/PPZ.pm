@@ -742,6 +742,11 @@ sub load_yaml {
         $self->{$x} = $data->{$x};
     }
 
+	my $paths = $self->{paths};
+	foreach my $path (@$paths) {
+		my @env = ($path =~ s/\$(\w+)/);
+	}
+
     return $self;
 }
 
@@ -753,6 +758,12 @@ sub load_f {
 
     my $module  = $self->{module};
     my $modules = $self->{modules};
+
+	unless (keys %$ref) {
+	print Dumper($self->{path}) . "\n";
+	print Dumper($self->{files}) . "\n";
+	}
+
 
     while (1) {
         # single Perl file

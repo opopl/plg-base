@@ -39,6 +39,7 @@ my @ex_vars_array=qw(
         str_split_pm
         str_sum
         str_eq
+        str_env
     )],
     'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -51,6 +52,26 @@ sub str_split_sn {
     my $sep = qr/[\s\n]/;
     my @s = str_split($str,{ sep => $sep });
     return @s;
+}
+
+sub str_env {
+  my ($str) = @_;
+
+  my $env = sub { 
+    my $vname = shift; 
+
+    $ENV{uc $vname} // ''; 
+  };
+
+  my $re = ($^O eq 'MSWin32') ? qr/%(\w+)%/ : qr/\$(\w+)/;
+
+  local $_ = $str;
+  while(/$re/){
+    my $vname = $1;
+    my $vval  = $env->($vname);
+    s/$re/$vval/g;
+  }
+  return $_;
 }
 
 sub str_split {
