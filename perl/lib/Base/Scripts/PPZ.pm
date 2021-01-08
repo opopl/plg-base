@@ -24,6 +24,7 @@ use Base::Arg qw( hash_inject );
 use File::Slurp::Unicode;
 
 use YAML qw(LoadFile);
+use Base::String qw(str_env);
 
 use File::Dat::Utils qw(readarr);
 
@@ -716,6 +717,7 @@ sub load_module {
     my @libs;
  
     my @data = list_pm_files($module,@libs);
+	print Dumper(\@data) . "\n";
  
     foreach my $item (@data) {
         my $file = $item->{path};
@@ -744,8 +746,9 @@ sub load_yaml {
 
 	my $paths = $self->{paths};
 	foreach my $path (@$paths) {
-		my @env = ($path =~ s/\$(\w+)/);
+		$path = str_env($path);
 	}
+	print Dumper($self->{paths}) . "\n";
 
     return $self;
 }
@@ -760,7 +763,7 @@ sub load_f {
     my $modules = $self->{modules};
 
 	unless (keys %$ref) {
-	print Dumper($self->{path}) . "\n";
+	print Dumper($self->{paths}) . "\n";
 	print Dumper($self->{files}) . "\n";
 	}
 
