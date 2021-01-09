@@ -314,6 +314,8 @@ function! base#buf#maps ()
           \  '<C-A>'     : 'call base#buf#git_add()'      ,
           \  '<C-G>'     : 'call base#buf#save_git()'     ,
           \  '<leader>l' : 'call base#buf#lines_hi()' ,
+          \  '.'         : 'vertical resize -3' ,
+          \  ','         : 'vertical resize +3' ,
           \ }
         \ }
 
