@@ -16,6 +16,10 @@ use YAML qw(LoadFile);
 use Getopt::Long qw(GetOptions);
 use FindBin qw($Bin $Script);
 
+use base qw(
+    Base::Cmd
+);
+
 sub new
 {
     my ($class, %opts) = @_;
@@ -98,7 +102,7 @@ sub dhelp {
     OPTIONS
 
     EXAMPLES
-        perl $Script ...
+        perl $Script -y 1.yaml -c run
 
     };
 
@@ -112,34 +116,42 @@ my @urls = map { Mojo::URL->new($_) } qw(
     www.bbc.com
 );
 
-# Limit parallel connections to 4
-my $max_conn = 4;
 
-# User agent following up to 5 redirects
-my $ua = Mojo::UserAgent->new(max_redirects => 5);
-$ua->proxy->detect;
+sub cmd_run {
+    my ($self) = @_;
 
-# Keep track of active connections
-my $active = 0;
+    # Limit parallel connections to 4
+    my $max_conn = 4;
 
-Mojo::IOLoop->recurring(
-    0 => sub {
-        for ($active + 1 .. $max_conn) {
-
-            # Dequeue or halt if there are no active crawlers anymore
-            return ($active or Mojo::IOLoop->stop)
-                unless my $url = shift @urls;
-
-            # Fetch non-blocking just by adding
-            # a callback and marking as active
-            ++$active;
-            $ua->get($url => \&get_callback);
+    # User agent following up to 5 redirects
+    my $ua = Mojo::UserAgent->new(max_redirects => 5);
+    $ua->proxy->detect;
+    
+    # Keep track of active connections
+    my $active = 0;
+    
+    Mojo::IOLoop->recurring(
+        0 => sub {
+            for ($active + 1 .. $self->{max_conn}) {
+    
+                # Dequeue or halt if there are no active crawlers anymore
+                return ($active or Mojo::IOLoop->stop)
+                    unless my $url = shift @urls;
+    
+                # Fetch non-blocking just by adding
+                # a callback and marking as active
+                ++$active;
+                $ua->get($url => \&get_callback);
+            }
         }
-    }
-);
+    );
+
+    Mojo::IOLoop->start unless Mojo::IOLoop->is_running;
+
+    return $self;
+}
 
 # Start event loop if necessary
-Mojo::IOLoop->start unless Mojo::IOLoop->is_running;
 
 sub get_callback {
     my (undef, $tx) = @_;
