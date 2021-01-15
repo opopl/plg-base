@@ -11,31 +11,100 @@ use warnings qw(all);
 use Data::Dumper qw(Dumper);
 
 use Mojo::UserAgent;
+use Base::Arg qw( hash_inject );
+use YAML qw(LoadFile);
+use Getopt::Long qw(GetOptions);
+use FindBin qw($Bin $Script);
 
 sub new
 {
-	my ($class, %opts) = @_;
-	my $self = bless (\%opts, ref ($class) || $class);
+    my ($class, %opts) = @_;
+    my $self = bless (\%opts, ref ($class) || $class);
 
-	$self->init if $self->can('init');
+    $self->init if $self->can('init');
 
-	return $self;
+    return $self;
 }
 
-use Base::Arg qw( hash_inject );
+sub load_yaml {
+    my ($self) = @_;
+
+    my $f_yaml = $self->{f_yaml};
+    my $data = LoadFile($f_yaml);
+
+    foreach my $k (keys %$data) {
+        $self->{$k} = $$data{$k};
+    }
+
+    return $self;
+}
 
 sub init {
-	my ($self) = @_;
-	
-	$self->SUPER::init();
-	
-	my $h = {
-		<++> => <++>,
-		<++> => <++>,
-	};
-		
-	hash_inject($self, $h);
-	return $self;
+    my ($self) = @_;
+    
+    my $h = {
+    };
+        
+    hash_inject($self, $h);
+    return $self;
+}
+
+sub run {
+    my ($self) = @_;
+
+    $self
+        ->get_opt
+        ->load_yaml
+        ->run_cmd
+        ;
+
+    return $self;
+}
+      
+sub get_opt {
+    my ($self) = @_;
+    
+    Getopt::Long::Configure(qw(bundling no_getopt_compat no_auto_abbrev no_ignore_case_always));
+    
+    my (@optstr, %opt);
+    @optstr = ( 
+        "help|h=s",
+        "f_yaml|y=s",
+        "cmd|c=s",
+    );
+    
+    unless( @ARGV ){ 
+        $self->dhelp;
+        exit 0;
+    }else{
+        GetOptions(\%opt,@optstr);
+        $self->{opt} = \%opt;
+    }
+
+    foreach my $k (keys %opt) {
+        $self->{$k} = $opt{$k};
+    }
+
+    return $self;   
+}
+
+sub dhelp {
+    my ($self) = @_;
+
+    my $s = qq{
+
+    USAGE
+        perl $Script OPTIONS
+    OPTIONS
+
+    EXAMPLES
+        perl $Script ...
+
+    };
+
+    print $s . "\n";
+
+    return $self;   
 }
 
 # FIFO queue
