@@ -133,14 +133,14 @@ sub cmd_run {
     Mojo::IOLoop->recurring(
         0 => sub {
             for ($active + 1 .. $self->{max_conn}) {
+                my $url = shift @urls;
     
                 # Dequeue or halt if there are no active crawlers anymore
-                return ($active or Mojo::IOLoop->stop)
-                    unless my $url = shift @urls;
+                return ($active or Mojo::IOLoop->stop) unless $url;
     
                 # Fetch non-blocking just by adding
                 # a callback and marking as active
-                ++$active;
+                ++$self->{active};
                 $ua->get($url => \&get_callback);
             }
         }
