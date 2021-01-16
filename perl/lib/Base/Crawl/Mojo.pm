@@ -20,6 +20,11 @@ use base qw(
     Base::Cmd
 );
 
+# FIFO queue
+my @urls = map { Mojo::URL->new($_) } qw(
+    www.bbc.com
+);
+
 sub new
 {
     my ($class, %opts) = @_;
@@ -34,6 +39,8 @@ sub load_yaml {
     my ($self) = @_;
 
     my $f_yaml = $self->{f_yaml};
+	return $self unless $f_yaml;
+
     my $data = LoadFile($f_yaml);
 
     foreach my $k (keys %$data) {
@@ -47,6 +54,12 @@ sub init {
     my ($self) = @_;
     
     my $h = {
+    	ua => Mojo::UserAgent->new(max_redirects => 5),
+		loop => { 
+			active => 0,
+    		# Limit parallel connections to 4
+			max_conn => 4,
+		}
     };
         
     hash_inject($self, $h);
@@ -111,37 +124,24 @@ sub dhelp {
     return $self;   
 }
 
-# FIFO queue
-my @urls = map { Mojo::URL->new($_) } qw(
-    www.bbc.com
-);
-
-
 sub cmd_run {
     my ($self) = @_;
 
-    # Limit parallel connections to 4
-    my $max_conn = 4;
-
-    # User agent following up to 5 redirects
-    my $ua = Mojo::UserAgent->new(max_redirects => 5);
+	my $ua = $self->{ua};
     $ua->proxy->detect;
-    
-    # Keep track of active connections
-    my $active = 0;
     
     Mojo::IOLoop->recurring(
         0 => sub {
-            for ($active + 1 .. $self->{max_conn}) {
+            for ($self->{loop}->{active} + 1 .. $self->{loop}->{max_conn}) {
                 my $url = shift @urls;
     
                 # Dequeue or halt if there are no active crawlers anymore
-                return ($active or Mojo::IOLoop->stop) unless $url;
+                return ($self->{loop}->{active} or Mojo::IOLoop->stop) unless $url;
     
                 # Fetch non-blocking just by adding
                 # a callback and marking as active
-                ++$self->{active};
-                $ua->get($url => \&get_callback);
+                ++$self->{loop}->{active};
+                $self->{ua}->get($url => $self->cb_ua_get );
             }
         }
     );
@@ -153,26 +153,30 @@ sub cmd_run {
 
 # Start event loop if necessary
 
-sub get_callback {
-    my (undef, $tx) = @_;
+sub cb_ua_get {
+	my ($self) = @_;
 
-    # Deactivate
-    --$active;
-
-    # Parse only OK HTML responses
-    return unless ( $tx->res->is_success && $tx->res->headers->content_type =~ m{^text/html\b}ix );
-
-    # Request URL
-    my $url = $tx->req->url;
-
-    say $url;
-    parse_html($url, $tx);
-
-    return;
+	sub { 
+	    my (undef, $tx) = @_;
+	
+	    # Deactivate
+	    --$self->{loop}->{active};
+	
+	    # Parse only OK HTML responses
+	    return unless ( $tx->res->is_success && $tx->res->headers->content_type =~ m{^text/html\b}ix );
+	
+	    # Request URL
+	    my $url = $tx->req->url;
+	
+	    say $url;
+	    $self->parse_html($url, $tx);
+	
+	    return;
+	};
 }
 
 sub parse_html {
-    my ($url, $tx) = @_;
+    my ($self, $url, $tx) = @_;
 
     say $tx->res->dom->at('html title')->text;
 
@@ -203,7 +207,7 @@ sub parse_html {
     }
     say '';
 
-    return;
+    return $self;
 }
 
 1;
