@@ -50,7 +50,7 @@ sub get_callback {
 
     # Parse only OK HTML responses
     return
-        if not $tx->res->is_status_class(200)
+        if not $tx->res->is_success
         or $tx->res->headers->content_type !~ m{^text/html\b}ix;
 
     # Request URL
