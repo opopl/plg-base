@@ -38,7 +38,7 @@ Mojo::IOLoop->recurring(
         }
     }
 );
-
+#$DB::single = 1;
 # Start event loop if necessary
 Mojo::IOLoop->start unless Mojo::IOLoop->is_running;
 
