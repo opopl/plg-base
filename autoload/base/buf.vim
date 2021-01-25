@@ -292,6 +292,7 @@ function! base#buf#maps ()
           \  '?'         : 'BufAct help'           ,
           \  ';l'        : 'ls!'                   ,
           \  ';ma'       : 'MM tgadd_all'          ,
+          \  ';ms'       : 'MM snippets_reload_all'  ,
           \  ';sv'       : 'SnippetView ' . &ft    ,
           \  ';ts'       : 'BufAct tabs_to_spaces' ,
           \  ';tu'       : 'TgUpdate'              ,
