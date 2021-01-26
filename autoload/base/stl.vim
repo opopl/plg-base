@@ -327,6 +327,7 @@ function! base#stl#setorders ()
             \   'idephp_pj_name'   ,
             \   'buffer_number'    ,
             \   'line_number'      ,
+            \   'column_number'    ,
             \   'file_name'        ,
             \   'idephp_pj_reldir' ,
             \   ],
