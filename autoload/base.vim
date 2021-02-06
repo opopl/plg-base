@@ -2498,6 +2498,7 @@ fun! base#pathids (path)
 
     for id in base#pathlist()
         let rdir = base#file#reldir(path, base#path(id) )
+				"echo rdir
         if strlen(rdir)
             call add(ids, id)
         endif

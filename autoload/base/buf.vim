@@ -287,6 +287,8 @@ function! base#buf#maps ()
   let maps = {
         \ 'nnoremap' :
           \ {
+          \  ';za'       : 'ZLAN add'              ,
+          \  ';zv'       : 'ZLAN view'             ,
           \  ';fo'       : 'PJact file_open'       ,
           \  ';h'        : 'BufAct help'           ,
           \  '?'         : 'BufAct help'           ,
