@@ -15,7 +15,10 @@ use Data::Dumper qw(Dumper);
 
 my $s = q{174056|1|1:167838|1|1};
 
-foreach my $x (split(":" => $s)) {
-	print Dumper([ split('\|' => $x) ] ) . "\n";
-}
+#foreach my $x (split(":" => $s)) {
+	#print Dumper([ split('\|' => $x) ] ) . "\n";
+#}
 
+my @a = (1,2,);
+my $t =(@a > 1) ? 1 : 0;
+print $t;
