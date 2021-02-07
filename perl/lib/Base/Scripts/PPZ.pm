@@ -717,7 +717,7 @@ sub load_module {
     my @libs;
  
     my @data = list_pm_files($module,@libs);
-	print Dumper(\@data) . "\n";
+	#print Dumper(\@data) . "\n";
  
     foreach my $item (@data) {
         my $file = $item->{path};
@@ -748,7 +748,7 @@ sub load_yaml {
 	foreach my $path (@$paths) {
 		$path = str_env($path);
 	}
-	print Dumper($self->{paths}) . "\n";
+	#print Dumper($self->{paths}) . "\n";
 
     return $self;
 }
@@ -762,10 +762,10 @@ sub load_f {
     my $module  = $self->{module};
     my $modules = $self->{modules};
 
-	unless (keys %$ref) {
-	print Dumper($self->{paths}) . "\n";
-	print Dumper($self->{files}) . "\n";
-	}
+	#unless (keys %$ref) {
+	#print Dumper($self->{paths}) . "\n";
+	#print Dumper($self->{files}) . "\n";
+	#}
 
 
     while (1) {
