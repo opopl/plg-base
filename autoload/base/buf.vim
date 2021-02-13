@@ -284,10 +284,11 @@ endfunction
 
 function! base#buf#maps ()
 
+  "\  '\t'        : 'call ap#GoToFileLocation() | terminal'              ,
+
   let maps = {
         \ 'nnoremap' :
           \ {
-          \  '\t'        : 'call ap#GoToFileLocation() | terminal'              ,
           \  ';za'       : 'ZLAN add'              ,
           \  ';zv'       : 'ZLAN view'             ,
           \  ';fo'       : 'PJact file_open'       ,

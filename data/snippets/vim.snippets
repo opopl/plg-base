@@ -1,5 +1,16 @@
 snippet bih
 	let <++> =  base#input_hist(msg,default,{ 'hist_name' : <++> })
+snippet w1
+	while 1
+	  <++>
+	  break
+	endw
+snippet ifhk
+	if has_key(<+dict+>,<+key+>)
+	  <++>
+	endif
+snippet cnt
+	continue
 snippet trglist
 	let trg_list = projs#bld#trg#list()
 snippet bit
