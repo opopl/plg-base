@@ -881,6 +881,13 @@ fun! base#fileopen(ref)
    let load_buf       = get(opts,'load_buf',0)
   
    let buf_nums = []
+
+	 if base#inlist(action,base#qw('split vsplit'))
+		 if len(files)
+		 		enew
+		 endif
+	 endif
+
    for file in files
     if ! filereadable(file)
       if ! anew_if_absent
@@ -897,7 +904,7 @@ fun! base#fileopen(ref)
       endif
     endif
 
-    exe action . ' ' . file
+   	exe action . ' ' . file
   
     let au      = get(opts,'au',{})
     for [ aucmd, auexec ] in items(au)
