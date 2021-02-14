@@ -1,5 +1,5 @@
 snippet bih
-	let <++> =  base#input_hist(msg,default,{ 'hist_name' : <++> })
+	let <++> =  base#input_hist(<+msg+>,<+default+>,<+hist+>)
 snippet w1
 	while 1
 	  <++>
@@ -685,8 +685,10 @@ snippet join
 	join(${1},${2})
 snippet jn
 	join(lines,"\n")
+snippet sp
+	split(<++>,<++>)
 snippet split
-	split(${1},${2})
+	split(<+str+>,<+sep+>)
 snippet usevimperl
 	use Vim::Perl qw(:funcs :vars);
 snippet vimmsg
@@ -1880,8 +1882,6 @@ snippet if0
 	if 0
 		<++>
 	endif
-snippet sp
-	split(<++>,<++>)
 snippet bev
 	base#envvar('<++>','<++>')
 snippet p

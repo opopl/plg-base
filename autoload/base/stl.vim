@@ -164,6 +164,8 @@ function!  base#stl#setparts ()
   let stlparts['is_modified']="%6*%{&modified?'modified':''}"
 
   let stlparts['plg_name'] = '%1*\ %{base#plg#name()}\ %0*' 
+
+  let stlparts['projs_bs_site'] = '%1*\ %{projs#bs#site()}\ %0*' 
   
   let stlparts['vimfun']= '%1*\ %{g:vimfun}\ %0*' 
   let stlparts['vimcom']= '%1*\ %{g:vimcom}\ %0*' 
@@ -228,6 +230,16 @@ function! base#stl#setorders ()
             \   'pathid_first'     ,
             \   'line_number'      ,
             \   'column_number'      ,
+                \           ],
+        \   'projs_bs'   :   [ 
+            \   'file_name'    ,
+            \   'buffer_number'    ,
+            \   'line_number'      ,
+            \   'column_number'    ,
+            \   'file_type'        ,
+            \   'file_encoding'    ,
+            \   'encoding'         ,
+            \   'projs_bs_site'         ,
                 \           ],
         \   'javascript'   :   [ 
             \   'file_name'    ,
