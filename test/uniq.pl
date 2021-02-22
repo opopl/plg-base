@@ -30,7 +30,7 @@ sub filter {
 my @a =  split ',' => '11,11,22,11';
 
 filter(\@a);
-print Dumper(\@a) . "\n";
+print Dumper([@a]) . "\n";
 
 #my $b;
 ##$b++;
