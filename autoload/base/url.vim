@@ -11,9 +11,29 @@ function! base#url#struct (url)
 endf
 
 if 0
-	call tree
-		called by
+  call tree
+    called by
 endif
+
+function! base#url#parse (url,...)
+  let url  = a:url
+
+  let opts = get(a:000,0,{})
+
+python3 << eof
+
+import vim
+import Base.Util as util
+
+url  = vim.eval('url')
+opts = vim.eval('opts')
+
+u = util.url_parse(url,opts)
+
+eof
+  let u = py3eval('u')
+  return u
+endf
 
 function! base#url#struct_py (url)
 
