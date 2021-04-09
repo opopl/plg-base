@@ -24,5 +24,14 @@ my $b = {
 
 hash_apply($a, $b);
 
-print Dumper($a) . "\n";
 
+$$a{2}{4}{6} =3333;
+
+my @a;
+push @a , join " " => (1,2,3);
+#print Dumper(\@a) . "\n";
+
+my $d = $$b{222} = 'a';
+
+print Dumper($b) . "\n";
+print Dumper($d) . "\n";

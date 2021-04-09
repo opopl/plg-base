@@ -617,9 +617,11 @@ function! base#file#removeroot (dir,root)
   let sep  = escape(sep,'\')
   let root = escape(root,'\')
 
+	echo root
   let pat = '^'.root.sep.'\(.*\)'
 
-  let rm = substitute(dir,pat,'\1','g')
+  "let rm = substitute(dir,pat,'\1','g')
+	let rm = matchstr(dir,'\V^'.root.sep.'\zs\(.*\)\ze$')
   return rm
 
 endfunction
