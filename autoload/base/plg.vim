@@ -227,7 +227,7 @@ function! base#plg#name()
   let relpath = base#plg#relpath()
 
   let sp = base#file#ossplit(relpath)
-  let name = sp[0]
+  let name = get(sp,0,'')
   
   return name
 endf  
