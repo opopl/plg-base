@@ -197,6 +197,17 @@ function! base#act#url_parse ()
 
 endfunction
 
+function! base#act#rm_menus(...)
+	let rm_menus = base#varget('baseact_rm_menus',[])
+	for m in rm_menus
+		try
+		  silent exe printf('aunmenu %s',m)
+		catch 
+		endtry
+	endfor
+
+endfunction
+
 function! base#act#async_run (...)
   let cmd = get(a:000,0,'')
 

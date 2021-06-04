@@ -124,6 +124,11 @@ endf
 
 "base#buf#in('plg')
 "base#buf#in('plg',{ 'subdir': base#qw('base autoload') })
+"
+function! base#buf#terminal(...)
+	call ap#GoToFileLocation()
+	terminal
+endf
 
 function! base#buf#in(...)
   let is = 0

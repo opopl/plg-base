@@ -520,6 +520,22 @@ function! base#menu#add(...)
      call base#menu#additem(item)
    endfor
 
+"""menuopt_lts
+ elseif menuopt == 'lts'
+   call base#menu#pref('lts')
+   call base#menu#clear()
+
+   let items = []
+   call add(items,{
+      \ 'item' : '&LTS.&add',
+      \ 'cmd'  : 'ZLAN add',
+      \ 'tab'  : 'add ZLAN entry',
+      \ })
+
+   for item in items
+      call base#menu#additem(item)
+   endfor
+
 """menuopt_menus
  elseif menuopt == 'menus'
 
