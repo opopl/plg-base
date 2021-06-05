@@ -527,9 +527,20 @@ function! base#menu#add(...)
 
    let items = []
    call add(items,{
-      \ 'item' : '&LTS.&add',
+      \ 'item' : '&LTS.&ZLAN\ add',
       \ 'cmd'  : 'ZLAN add',
-      \ 'tab'  : 'add ZLAN entry',
+      \ 'tab'  : 'ZLAN, add entry',
+      \ })
+
+   call add(items,{
+      \ 'item' : '&LTS.&ZLAN\ view',
+      \ 'cmd'  : 'ZLAN view',
+      \ 'tab'  : 'ZLAN, view file',
+      \ })
+   call add(items,base#menu#sep())
+   call add(items,{
+      \ 'item' : '&LTS.&slovo\ add',
+      \ 'cmd'  : 'LTS slovo_add',
       \ })
 
    for item in items
