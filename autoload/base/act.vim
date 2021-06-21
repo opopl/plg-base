@@ -205,6 +205,7 @@ function! base#act#rm_menus(...)
 		catch 
 		endtry
 	endfor
+	MenuAdd lts
 
 endfunction
 

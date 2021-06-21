@@ -542,6 +542,19 @@ function! base#menu#add(...)
       \ 'item' : '&LTS.&slovo\ add',
       \ 'cmd'  : 'LTS slovo_add',
       \ })
+   call add(items,base#menu#sep())
+
+   call add(items,{
+      \ 'item' : '&LTS.&PIN\ ii',
+      \ 'cmd'  : 'PIN ii',
+      \ })
+
+   call add(items,{
+      \ 'item' : '&LTS.&PIN\ ii_url',
+      \ 'cmd'  : 'PIN ii_url',
+      \ })
+
+   call add(items,base#menu#sep())
 
    for item in items
       call base#menu#additem(item)
