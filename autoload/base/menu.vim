@@ -521,6 +521,7 @@ function! base#menu#add(...)
    endfor
 
 """menuopt_lts
+"""menu_lts
  elseif menuopt == 'lts'
    call base#menu#pref('lts')
    call base#menu#clear()
@@ -553,6 +554,23 @@ function! base#menu#add(...)
       \ 'item' : '&LTS.&PIN\ ii_url',
       \ 'cmd'  : 'PIN ii_url',
       \ })
+
+   call add(items,base#menu#sep())
+
+   call add(items,{
+      \ 'item' : '&LTS.&Build.&XeLaTeX\ This\ Buffer',
+      \ 'cmd'  : 'PA bld_compile_xelatex',
+      \ })
+
+   call add(items,base#menu#sep())
+
+	 let ids = projs#data#dict#ids ()
+	 for id in ids
+	   call add(items,{
+	      \ 'item' : '&LTS.&LTS\ dict_view.' . id,
+				\ 'cmd'  : printf('call lts#cmd#mk#dict_view({ "id" : "%s" })', id),
+	      \ })
+	 endfor
 
    call add(items,base#menu#sep())
 
