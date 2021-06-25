@@ -564,6 +564,13 @@ function! base#menu#add(...)
 
    call add(items,base#menu#sep())
 
+   call add(items,{
+      \ 'item' : '&LTS.&Buffer.&Build.&XeLaTeX',
+      \ 'cmd'  : 'PA bld_compile_xelatex',
+      \ })
+
+   call add(items,base#menu#sep())
+
 	 let ids = projs#data#dict#ids ()
 	 for id in ids
 	   call add(items,{
