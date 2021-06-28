@@ -5,6 +5,10 @@ snippet w1
 	  <++>
 	  break
 	endw
+snippet trg
+	let target = projs#bld#target({ 'target' : target })
+snippet tfull
+	let target = projs#bld#trg#full({ 'target' : target })
 snippet grefs
 	get(ref,'<++>','<++>')
 snippet ifbt
