@@ -1,36 +1,55 @@
 
 "Purpose
-"		json encode vim variables
+"   json encode vim variables
 "Usage
-"		let json = base#json#encode (data)
+"   let json = base#json#encode (data)
 
 function! base#json#encode (...)
-	if !has('perl') | return | endif
+  if !has('python3') | return | endif
 
-	let jsonlist = []
-	let var      = get(a:000,0,'')
+  let data      = get(a:000,0,'')
 
-perl << eof
-	use JSON::XS;
-	use Data::Dumper;
+python3 << eof
+import json
 
-	use Vim::Perl qw(
-		VimVar
-		VimListExtend
-	);
+data = vim.eval('data')
 
-	my $var = VimVar('var');
-
-	my $js  = JSON::XS->new->ascii->pretty->allow_nonref;
-
-	my $json = $js->encode($var);
-	my @json = split("\n",$json);
-	
-	VimListExtend('jsonlist', \@json, { escape => 0 });
+js = json.dumps(data, ensure_ascii=False)
 
 eof
 
-	let json = join(jsonlist,"\n")
-	return json
-	
+  let json = py3eval('js')
+  return json
+  
+endfunction
+
+function! base#json#encode_perl (...)
+  if !has('perl') | return | endif
+
+  let jsonlist = []
+  let var      = get(a:000,0,'')
+
+perl << eof
+  use JSON::XS;
+  use Data::Dumper;
+
+  use Vim::Perl qw(
+    VimVar
+    VimListExtend
+  );
+
+  my $var = VimVar('var');
+
+  my $js  = JSON::XS->new->ascii->pretty->allow_nonref;
+
+  my $json = $js->encode($var);
+  my @json = split("\n",$json);
+  
+  VimListExtend('jsonlist', \@json, { escape => 0 });
+
+eof
+
+  let json = join(jsonlist,"\n")
+  return json
+  
 endfunction
