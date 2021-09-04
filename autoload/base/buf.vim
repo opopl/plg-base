@@ -126,8 +126,8 @@ endf
 "base#buf#in('plg',{ 'subdir': base#qw('base autoload') })
 "
 function! base#buf#terminal(...)
-	call ap#GoToFileLocation()
-	terminal
+  call ap#GoToFileLocation()
+  terminal
 endf
 
 function! base#buf#in(...)
@@ -739,6 +739,15 @@ fun! base#buf#vars_buf_set(...)
   call extend(bv,{ buf_num : bbv })
   call base#varset('buf_vars', bv)
 
+endfun
+
+fun! base#buf#var(...)
+  let varname = get(a:000,0,'')
+
+  let vars  = base#buf#vars()
+  let value = get(vars,varname,'')
+
+  return value
 endfun
 
 fun! base#buf#vars()

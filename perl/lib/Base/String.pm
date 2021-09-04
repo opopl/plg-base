@@ -15,6 +15,7 @@ use base qw(Exporter);
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 
 use String::Util qw(trim);
+use Base::List qw(uniq);
 
 @ISA     = qw(Exporter);
 @EXPORT  = qw( );
@@ -79,17 +80,18 @@ sub str_split {
 
     return () unless $str;
 
+    $ref ||= {};
+
     my @res;
     if (ref $str eq "ARRAY"){
         foreach my $s (@$str) {
-            push @res, str_split($s);
+            push @res, str_split($s,$ref);
         }
+        @res = uniq(\@res) if ($ref->{uniq});
         return @res;
     }elsif( not ( ref $str eq "" ) ){
         return ();
     }
-
-    $ref ||= {};
 
     my $c   = $ref->{comment_start}  || '#';
     my $sep = $ref->{sep}  || "\n";
@@ -98,6 +100,8 @@ sub str_split {
         map { trim($_) } 
         grep { !/^\s*$/ && !/^\s*$c/ } 
         split( $sep => $str );
+
+    @res = uniq(\@res) if ($ref->{uniq});
 
     wantarray ? @res : \@res;
 }

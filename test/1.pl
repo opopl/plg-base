@@ -6,7 +6,8 @@ use utf8;
 
 use Data::Dumper qw(Dumper);
 
-my $a;
+my $a = undef if 0 || 1;
 
-$a .= '2';
-print qq{$a} . "\n";
+my @b;
+push @b, 0 || undef || 2;
+print Dumper(\@b) . "\n";

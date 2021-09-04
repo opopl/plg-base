@@ -783,8 +783,8 @@ function! base#tg#update (...)
     let libs .= ' ' . dir
 
   elseif tgid == 'pipp'
-		call base#tg#update('perl_inc_plg_projs')
-		return 
+    call base#tg#update('perl_inc_plg_projs')
+    return 
 
   elseif tgid == 'perl_inc_plg_idephp'
 
@@ -922,6 +922,35 @@ function! base#tg#update (...)
         let tfile = projs#path([ proj . '.tags' ])
     
         call projs#rootcd()
+
+        let root = projs#root()
+        let bsh = join([ root, printf('b_vimtags_%s.sh',proj) ], '/')
+        if filereadable(bsh)
+          let cmd = bsh
+          
+          let env = { 'Fc_done' : Fc_done }
+
+          function env.get(temp_file) dict
+            let temp_file = a:temp_file
+            let code      = self.return_code
+          
+            if filereadable(a:temp_file)
+              let out = readfile(a:temp_file)
+              call base#buf#open_split({ 'lines' : out })
+            endif
+
+            let Fc_done = get(self,'Fc_done','')
+            if type(Fc_done) == type(function('call'))
+              call call(Fc_done,[])
+            endif
+          endfunction
+          
+          call asc#run({ 
+            \  'cmd' : cmd, 
+            \  'Fn'  : asc#tab_restore(env) 
+            \  })
+          return 1
+        endif
     endif
 
 """tgupdate_dir_this
