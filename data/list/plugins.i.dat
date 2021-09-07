@@ -126,5 +126,5 @@ vue
 ae
 lts
 vim-ingo-library
-vim-latexencode
+#vim-latexencode
 vim-unicode-homoglyphs

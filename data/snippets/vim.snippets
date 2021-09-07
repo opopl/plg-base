@@ -15,6 +15,25 @@ snippet ifbt
 	if base#type(<++>) == '<++>'
 	  <++>
 	endif
+snippet lts#py#act
+	let args = [ { } ]
+	let act  = '<++>'
+	
+	let s:obj = {}
+	function! s:obj.init (...) dict
+	endfunction
+	
+	let Fc_done = s:obj.init
+	let Fc_done_args = []
+	
+	call lts#py#act({ 
+	  \ 'act'          : act,
+	  \ 'args'         : args,
+	  \ 'Fc_done'      : Fc_done,
+	  \ 'Fc_done_args' : Fc_done_args,
+	  \ })
+snippet bil
+	base#inlist(<+element+>,<+list+>)
 snippet ifbil
 	if base#inlist(<+element+>,<+list+>)
 	  <++>
