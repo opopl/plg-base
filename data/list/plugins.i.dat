@@ -1,6 +1,5 @@
 #viewdoc
 #vim-fugitive
-ae
 ap
 base
 txtmy
@@ -123,8 +122,8 @@ tagbar_phpctags
 phpctags
 web-indent
 vue
-ae
 lts
 vim-ingo-library
 #vim-latexencode
 vim-unicode-homoglyphs
+ae
