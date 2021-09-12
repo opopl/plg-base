@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use utf8;
 
+binmode STDOUT,':encoding(utf8)';
+
 use Data::Dumper qw(Dumper);
 
 #local $_ = 'Mac::NA_MS_asdsad';
@@ -11,22 +13,14 @@ use Data::Dumper qw(Dumper);
 #
 #local $_ = ' ig@';
 #print $1 if /^\s*(\w+)/;
+#
+local $_ = '@a b';
+my @b = ( m/^\s*(?<pref>@|)(?<key>\w+)\s+(?<value>\w+)/g );
 
+print Dumper(\@b) . "\n";
+print Dumper(\%+) . "\n";
 
-my $b = { 2 => undef, 1 => 1 };
+print "\N{SMILING FACE WITH OPEN MOUTH}";
+print "\N{SMILING FACE WITH SUNGLASSES}";
 
-
-my $c = $b->{1};
-$b->{1} = 2;
-
-#print $c;
-
-sub a {
-	my ($a,$b ) = @_;
-return Dumper([ $a, $b]);
-}
-
-local $_= '@fbicon{2}{w} sdfsfsdf @fbicon{3} sfdsf';
-s/\@fbicon\{(\d+)\}(?:\{(\w+)\}|)/a($1,$2)/eg;
-
-print;
+print "\N{FULL MOON WITH FACE}";

@@ -1,4 +1,47 @@
 
+function! base#find#py (...)
+    let ref = get(a:000,0,{})
+
+python3 << eof
+import vim
+import os,re,sys
+from pathlib import Path
+import Base.Util as util
+
+found = []
+
+ref = vim.eval('ref')
+
+dirs    = ref.get('dirs',[])
+
+relpath = ref.get('relpath',0)
+ext     = ref.get('ext',[])
+inc     = ref.get('inc',util.qw('dir file'))
+
+for dir in dirs:
+  d = Path(dir)
+  for item in d.rglob('*'):
+    full_path = str(item.as_posix())
+    f = full_path
+    if relpath:
+      f = os.path.relpath(full_path,dir)
+
+    ok = False
+    for i in inc:
+      ok = ok or (i == 'dir' and os.path.isdir(full_path))
+      ok = ok or (i == 'file' and os.path.isfile(full_path))
+      if ok:
+        break
+
+    if f and ok:
+      found.append(f)
+
+eof
+  let found = py3eval('found')
+  return found
+
+endf
+
 function! base#find#withperl (...)
     let ref = get(a:000,0,{})
 
