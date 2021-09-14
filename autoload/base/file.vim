@@ -261,6 +261,14 @@ function! base#file#tmp()
     return tmp
 endf
 
+function! base#file#chmod(...)
+	let ref = get(a:000,0,{})
+	let file = get(ref,'file','')
+
+	let cmd = 'chmod +rx ' . shellescape(file)
+	call system(cmd)
+endf
+
 function! base#file#basename(file)
   let file  = a:file
   let bname = fnamemodify(file,':p:t')

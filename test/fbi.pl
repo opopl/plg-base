@@ -13,10 +13,6 @@ use Plg::Projs::Tex qw(
 );
 
 use Data::Dumper qw(Dumper);
-use Plg::Projs::Regex qw(
-	match
-	%regex
-);
 
 #local $_ = 'Mac::NA_MS_asdsad';
 #print 'a' if /^(\w+)::(\w+)_MS(?:|_(\w+))$/;
@@ -25,18 +21,16 @@ use Plg::Projs::Regex qw(
 #print $1 if /^\s*(\w+)/;
 #
 local $_ = '🤬🤯🙂😡🙁';
-#$DB::single = 1;
-#
-my $pat;
-$pat = '^\d+\w+';
-#$pat = '^(2)(.*)';
 
-#my $d = match($pat,'23434a b');
-#print Dumper($d) . "\n";
-my $self = {
-	d => { 1 => 1 }
-};
-my $d = $self->{d};
-$d->{3} = 3;
+my @utf = keys %fbicons;
+my @fbi;
+while(@utf){
+  my $k = shift @utf;
 
-print Dumper($self) . "\n";
+  #while(/($k+)/){
+  #}
+  s/($k+)/fbicon_igg($1)/ge;
+}
+
+print ;
+

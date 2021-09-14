@@ -120,8 +120,7 @@ function! base#bufact_common#matches_delete ()
 endfunction
 
 function! base#bufact_common#chmod_rx ()
-  let cmd = 'chmod +rx ' . shellescape(b:file)
-  call system(cmd)
+	call base#file#chmod({ 'file' : b:file })
 
 endfunction
 

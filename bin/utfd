@@ -1,6 +1,10 @@
 #!/usr/bin/env perl
 #
+
 #https://perlgeek.de/blog-en/perl-tips/utf8-dump.html
+#https://www.perl.com/pub/2012/05/perlunicookbook-convert-non-ascii-unicode-numerics.html/
+#https://perlgeek.de/en/article/encodings-and-unicode
+#https://en.wikibooks.org/wiki/Perl_Programming/Unicode_UTF-8#Input_-_HTML_templates
 
 use strict;
 use warnings;
@@ -8,7 +12,13 @@ use charnames ();
 
 use Encode qw(decode_utf8);
 
-while (<>){
+# pipe
+#while (<>){
+
+while (@ARGV){
+	local $_ = shift @ARGV;
+	chomp;
+
     $_ = decode_utf8($_);
     s{([^\0-\177])}{N_escape($1)}eg;
     print;

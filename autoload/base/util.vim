@@ -2,7 +2,7 @@
 function! base#util#dirs_from_str (...)
   let dirids_str = get(a:000, 0, '')
 
-  let dirids_qw = split(dirids_str, "\n")
+  let dirids_qw = split(dirids_str, \enquote{\n})
   let dirs = []
 
   for dqw in dirids_qw
@@ -65,6 +65,7 @@ endfunction
 function! base#util#call_itm (...)
   let ref = get(a:000,0,{})
 
+
   let itm = get(ref,'itm',{})
 	if ( type(itm) == type({}) && !len(itm)) | return | endif
 	if ( type(itm) == type(v:none)) | return | endif
@@ -85,6 +86,7 @@ function! base#util#call_itm (...)
 
     call add(opts,k)
   endfor
+
 
   if len(opts)
     call base#varset('this',opts)
@@ -153,6 +155,7 @@ function! base#util#split_acts (...)
   endif
 
   let itm = get(itms,act,{})
+
   if len(itm)
     call base#util#call_itm({ 
       \ 'itm'  : itm, 
@@ -167,3 +170,4 @@ function! base#util#split_acts (...)
   endif
 
 endfunction
+
