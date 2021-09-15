@@ -65,16 +65,67 @@ endfunction
 function! base#util#call_itm (...)
   let ref = get(a:000,0,{})
 
-
   let itm = get(ref,'itm',{})
-	if ( type(itm) == type({}) && !len(itm)) | return | endif
-	if ( type(itm) == type(v:none)) | return | endif
+
+  if ( type(itm) == type({}) && !len(itm)) | return | endif
+  if ( type(itm) == type(v:none)) | return | endif
 
   let prev = get(ref,'prev',[])
 
-	let d_call      = get(itm,'@call','')
-	let d_code      = get(itm,'@code','')
-	let d_call_args = get(itm,'@call_args',[])
+  let d_call      = get(itm,'@call','')
+  let d_code      = get(itm,'@code','')
+  let d_call_args = get(itm,'@call_args',[])
+
+  let d_sh        = get(itm,'@sh',{})
+
+  if len(d_sh)
+    "let dd_define = get(d_sh,'@define',{})
+    let dd_cmd    = get(d_sh,'@cmd','')
+    let dd_pathid = get(d_sh,'@pathid','')
+    let dd_async  = get(d_sh,'@async',0)
+    let dd_split  = get(d_sh,'@split',0)
+
+    let dd_done  = get(d_sh,'@done',{})
+
+    let path = base#path(dd_pathid)
+    let path = isdirectory(path) ? path : getcwd() 
+
+    if !dd_async
+      let ok = base#sys({ 
+        \  "cmds"         : [dd_cmd],
+        \  "split_output" : dd_split,
+        \  })
+      let out    = base#varget('sysout',[])
+
+      let vim_cmds = get(dd_done,'@vim',[])
+      for vcmd in vim_cmds 
+        exec vcmd
+      endfor
+    else
+      let env = {
+        \ 'cmd'   : dd_cmd,
+        \ 'split' : dd_split,
+        \  }
+      function env.get(temp_file) dict
+        let temp_file = a:temp_file
+        let code      = self.return_code
+
+        let split = get(self,'split',0)
+      
+        if filereadable(a:temp_file)
+          let out = readfile(a:temp_file)
+          if split
+            call base#buf#open_split({ 'lines' : out })
+          endif
+        endif
+      endfunction
+      
+      call asc#run({ 
+        \  'cmd' : dd_cmd, 
+        \  'Fn'  : asc#tab_restore(env) 
+        \  })
+    endif
+  endif
 
   if len(d_call)
     call call(d_call,d_call_args)
@@ -86,7 +137,6 @@ function! base#util#call_itm (...)
 
     call add(opts,k)
   endfor
-
 
   if len(opts)
     call base#varset('this',opts)
