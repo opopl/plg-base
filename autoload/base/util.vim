@@ -98,9 +98,10 @@ function! base#util#call_itm (...)
       let out    = base#varget('sysout',[])
 
       let vim_cmds = get(dd_done,'@vim',[])
-      for vcmd in vim_cmds 
-        exec vcmd
-      endfor
+      let vcode = join(vim_cmds, "\n")
+      "call base#buf#open_split({ 'lines' : [vcode] })
+      "echo vcode
+      exec vcode
     else
       let env = {
         \ 'cmd'   : dd_cmd,
