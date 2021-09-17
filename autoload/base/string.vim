@@ -35,6 +35,34 @@ EOF
 
 endfunction
 
+if 0
+  usage
+    let lst = base#string#split_trim('a dsgdfg ') | echo lst
+endif
+
+" {
+function! base#string#split_trim (str,...)
+  let opts = get(a:000,0,{})
+  let str = a:str
+python3 << eof
+import vim
+str  = vim.eval('str')
+
+opts = vim.eval('opts')
+sep  = opts.get('sep',' ')
+
+if sep:
+  lst = str.split(sep)
+else:
+  lst = list(str)
+
+lst = list(map(lambda x: x.strip(), lst))
+eof
+  return py3eval('lst')
+
+endfunction
+" }
+
 function! base#string#quote (string)
   return '"'.a:string.'"'
 endfunction

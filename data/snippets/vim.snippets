@@ -646,9 +646,11 @@ snippet cmmcom
 snippet com
 	command! -nargs=${1} ${2}
 snippet f
+	"{
 	function! ${1} (${2})
 		${3}
 	endfunction
+	"} end: 
 snippet fcomplete
 	fun! ${1}_Complete${2}(...)
 		let comps=[]
@@ -810,7 +812,7 @@ snippet bps
 	call base#pathset({ 
 		\	${1} : ${2},	
 		\	})
-snippet iftype
+snippet ift
 	if base#type(ref) == 'String'
 		${1}
 	elseif base#type(ref) == 'List'

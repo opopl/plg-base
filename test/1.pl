@@ -14,3 +14,6 @@ print Dumper(\@b) . "\n";
 
 my $a = { a_2 => 'a'} ;
 print Dumper($a) . "\n";
+
+my $a = "\N{CITYSCAPE}\N{VARIATION SELECTOR-16}";
+print qq{$a} . "\n";

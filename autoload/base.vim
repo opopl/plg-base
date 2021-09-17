@@ -446,29 +446,28 @@ fun! base#cd(dir,...)
     let dir = a:dir
     let dir = base#file#win2unix(dir)
 
-    let ech = get(ref,'echo',1)
+    let ech = get(ref,'echo',0)
 
-    if ech
-        try 
-          if isdirectory(dir)
-            silent exe 'cd ' . dir
-            echohl MoreMsg
-            echo 'Changed to: ' . dir
-            echohl None
-          endif
-        endtry
+    try 
+      if isdirectory(dir)
+        silent exe 'cd ' . dir
+        if ech
+          echohl MoreMsg
+          echo 'Changed to: ' . dir
+          echohl None
+        endif
+      endif
+    endtry
 
-        let cwd = getcwd()
-
-    endif
-endf
+    let cwd = getcwd()
+endfun
 
 fun! base#isdict(var)
   if type(a:var) == type({})
     return 1
   endif
   return 0
-endf
+endfun
 
 fun! base#islist(var)
   if type(a:var) == type([])
@@ -624,75 +623,36 @@ fun! base#log (msg,...)
 
 python3 << eof
 
-import vim, sys
+import vim
+import sys, os, re
+
 import sqlite3
 
-def table_exists (ref):
-       table  = ref.get('table')
-       cur    = ref.get('cur')
-       dbfile = ref.get('dbfile')
-       tables = []
-       q='''
-               SELECT
-                       name
-               FROM
-                       sqlite_master
-               WHERE
-                       type IN ('table','view') AND name NOT LIKE 'sqlite_%'
-               UNION ALL
-               SELECT
-                       name
-               FROM
-                       sqlite_temp_master
-               WHERE
-                       type IN ('table','view')
-               ORDER BY 1
-       '''
-       if cur:
-               cur.execute(q)
-               rows = cur.fetchall()
-               tables = map(lambda x: x[0], rows)
-               if table in tables:
-                       return 1
-       return 0
+import Base.DBW as dbw
 
 base_dbfile = vim.eval('base#dbfile()')
+plg = os.environ.get('PLG')
 
 query = vim.eval('query')
 bind  = vim.eval('bind')
 
-base_conn = sqlite3.connect(base_dbfile)
-base_conn.text_factory=str
+exist = dbw._tb_exist({ 'table' : 'log', 'db_file' : base_dbfile })
+if not exist:
+  sql_file = os.path.join(plg,'base','data','sql','create_table_log.sql')
+  dbw.sql_file_exec(base_dbfile,sql_file) 
 
-base_cur = base_conn.cursor()
+  dbw.sql_do({ 
+    'sql_file' : sql_file,
+    'db_file'  : base_dbfile
+  })
 
-plgdir = vim.eval('base#plgdir()')
-
-#*******************************
-if not table_exists({ 'table' : 'log', 'cur' : base_cur }):
-  q = '''
-        CREATE TABLE IF NOT EXISTS log (
-          msg TEXT,
-          time INTEGER,
-          elapsed INTEGER,
-          loglevel TEXT,
-          func TEXT,
-          plugin TEXT,
-          prf TEXT,
-          v_exception TEXT,
-          vim_code TEXT
-        );
-  '''
-  base_cur.execute(q)
-#*******************************
-
-base_cur.execute(query,bind)
-
-base_conn.commit()
-base_conn.close()
-
+dbw.sql_do({ 
+	'sql'     : query,
+  'p'       : bind,
+	'db_file' : base_dbfile,
+})
+ 
 eof
-    
     if do_echo
       echo msg_prf
     endif
@@ -882,11 +842,11 @@ fun! base#fileopen(ref)
   
    let buf_nums = []
 
-	 if base#inlist(action,base#qw('split vsplit'))
-		 if len(files)
-		 		enew
-		 endif
-	 endif
+   if base#inlist(action,base#qw('split vsplit'))
+     if len(files)
+        enew
+     endif
+   endif
 
    for file in files
     if ! filereadable(file)
@@ -904,7 +864,7 @@ fun! base#fileopen(ref)
       endif
     endif
 
-   	exe action . ' ' . file
+    exe action . ' ' . file
   
     let au      = get(opts,'au',{})
     for [ aucmd, auexec ] in items(au)
@@ -2161,7 +2121,7 @@ fun! base#sys(...)
 
  let start_dir = get(opts, 'start_dir', '' )
  let old_dir = ''
- if start_dir && isdirectory(start_dir)
+ if len(start_dir) && isdirectory(start_dir)
    let old_dir = getcwd()
    call base#cd(start_dir)
  endif
@@ -2218,20 +2178,22 @@ fun! base#sys(...)
  if get(opts,'split_output',0)
     let so_cmds=get(opts,'split_output_cmds',[])
 
-    split
-    enew
-
-    call append(0,output)
-
-    if len(so_cmds)
-       for cmd in so_cmds
-           exe cmd
-       endfor
+    if len(output)
+      split
+      enew
+  
+      call append(0,output)
+  
+      if len(so_cmds)
+         for cmd in so_cmds
+             exe cmd
+         endfor
+      endif
+  
+      setlocal buftype=nofile
+      setlocal nobuflisted
+      setlocal nomodifiable
     endif
-
-    setlocal buftype=nofile
-    setlocal nobuflisted
-    setlocal nomodifiable
 
  endif
 
@@ -2505,7 +2467,7 @@ fun! base#pathids (path)
 
     for id in base#pathlist()
         let rdir = base#file#reldir(path, base#path(id) )
-				"echo rdir
+        "echo rdir
         if strlen(rdir)
             call add(ids, id)
         endif

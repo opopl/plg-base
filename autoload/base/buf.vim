@@ -349,6 +349,10 @@ endfunction
 " call tree: 
 "   called by: 
 "     base#init#au
+"   calls:
+"     base#buf#maps
+"       base#buf#onload_process_ft
+"       base#buf#onload_process_ext
 
 function! base#buf#onload ()
   call base#buf#start()
@@ -389,6 +393,11 @@ function! base#buf#onload_process_ft (...)
 
   let maps = get(ref,'maps',{})
 
+  let dict = base#qw#catpath('plg','base data txt vim_dict '.&ft. ' dict.txt' )
+  if filereadable(dict)
+    exe 'setlocal dict+='.dict
+  endif
+
   if &ft == 'php'
     setlocal iskeyword+=\
     call extend(maps.nnoremap,{ ';gg' : 'BufAct tggen_phpctags' })
@@ -401,6 +410,7 @@ function! base#buf#onload_process_ft (...)
     if b:basename == 'html.vim'
       TgAdd perl_html
     endif
+
 
   elseif &ft == 'idat'
     "BufAct update_var 
