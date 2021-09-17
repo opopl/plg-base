@@ -36,58 +36,17 @@ eof
 endf
 
 function! base#url#struct_py (url)
-
   let url    = a:url
-  let struct = {}
 python3 << eof
-
 import vim
-import re
-
-import os
-import posixpath
-
-from urllib.parse import urlparse
-
-from collections import deque
+import Base.Util as util
 
 url = vim.eval('url')
-o   = urlparse(url)
-
-host = o.netloc
-host = re.sub(r':(\d+)$','',host)
-
-scheme = o.scheme
-path   = o.path
-
-if ((host == '') and (scheme == '')):
-  scheme = 'http:'
-  url = scheme + "//" + url
-  o = urlparse(url)
-
-host = o.netloc
-host = re.sub(r':(\d+)$','',host)
-
-scheme = o.scheme
-path   = o.path
-
-basename = posixpath.basename(path)
-
-cmds = deque([])
-cmds.append('call extend(struct,{ "path" :' + '"' + path +'"' + '})' )
-cmds.append('call extend(struct,{ "host" :' + '"' + host +'"' + '})' )
-cmds.append('call extend(struct,{ "port" :' + '"' + str(o.port) +'"' + '})' )
-cmds.append('call extend(struct,{ "fragment" :' + '"' + o.fragment +'"' + '})' )
-cmds.append('call extend(struct,{ "query" :' + '"' + o.query +'"' + '})' )
-cmds.append('call extend(struct,{ "scheme" :' + '"' + o.scheme +'"' + '})' )
-cmds.append('call extend(struct,{ "basename" :' + '"' + basename +'"' + '})' )
-cmds.append('call extend(struct,{ "url" :' + '"' + url +'"' + '})' )
-
-for cmd in cmds:
-  vim.command(cmd)
+u   = util.url_parse(url)
 
 eof
-  return struct
+	let u = py3eval('u')
+  return u
 endfunction
 
 function! base#url#basename (url)

@@ -233,9 +233,7 @@ function! base#file#size(file,...)
   let file = a:file
   let size = 0
 
-  if !filereadable(file)
-    return 0
-  endif
+  if !filereadable(file) | return 0 | endif
 python3 << eof
 import vim
 import os
@@ -245,9 +243,10 @@ file = vim.eval('file')
 stat = os.stat(file)
 size = stat.st_size 
 
-vim.command('let size=' + str(size) )
+#vim.command('let size=' + str(size) )
   
 eof
+	let size = py3eval('size')
   return size
 
 endf
