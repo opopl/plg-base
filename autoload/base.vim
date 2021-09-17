@@ -591,7 +591,7 @@ fun! base#log (msg,...)
     call add(log,ref)
     call base#varset('base_log',log)
 
-    let fields = {
+    let insert = {
         \ 'elapsed'     : elapsed,
         \ 'func'        : func,
         \ 'loglevel'    : loglevel,
@@ -602,21 +602,6 @@ fun! base#log (msg,...)
         \ 'v_exception' : v_exception,
         \ 'vim_code'    : vim_code,
         \ }
-
-    let field_list = keys(fields)
-    let fields_str = join(field_list, ',')
-
-    let bind = []
-    for f in field_list 
-      if has_key(fields, f)
-        call add(bind, get(fields,f,''))
-      endif
-    endfor
-
-    let quotes = join( map(base#listnewinc(1,len(field_list),1), '"?"' ), ',' )
-
-    let query = 'INSERT OR IGNORE INTO log (%s) VALUES(%s)'
-    let query = printf(query, fields_str, quotes)
 
     let lib = base#qw#catpath('plg base python lib')
     call pymy#py3#add_lib(lib)
@@ -633,8 +618,7 @@ import Base.DBW as dbw
 base_dbfile = vim.eval('base#dbfile()')
 plg = os.environ.get('PLG')
 
-query = vim.eval('query')
-bind  = vim.eval('bind')
+insert = vim.eval('insert')
 
 exist = dbw._tb_exist({ 'table' : 'log', 'db_file' : base_dbfile })
 if not exist:
@@ -646,10 +630,10 @@ if not exist:
     'db_file'  : base_dbfile
   })
 
-dbw.sql_do({ 
-	'sql'     : query,
-  'p'       : bind,
-	'db_file' : base_dbfile,
+dbw.insert_dict({ 
+  'insert'  : insert,
+  'table'   : 'log',
+  'db_file' : base_dbfile,
 })
  
 eof
