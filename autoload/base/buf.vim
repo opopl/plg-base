@@ -394,9 +394,7 @@ function! base#buf#onload_process_ft (...)
   let maps = get(ref,'maps',{})
 
   let dict = base#qw#catpath('plg','base data txt vim_dict '.&ft. ' dict.txt' )
-  if filereadable(dict)
-    exe 'setlocal dict+='.dict
-  endif
+  exe 'setlocal dict+='.dict
 
   if &ft == 'php'
     setlocal iskeyword+=\
