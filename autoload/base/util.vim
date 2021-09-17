@@ -65,7 +65,6 @@ endfunction
 "} base#util#list_acts
 
 
-
 function! base#util#call_fmt (...)
   let ref = get(a:000,0,{})
 
@@ -119,7 +118,7 @@ function! base#util#split_acts (...)
   let itm = get(itms,act,{})
 
   if len(itm)
-    call base#util#x_itm({ 
+    call base#util#itm#x({ 
       \ 'itm'  : itm, 
       \ 'prev' : [act], 
       \ })

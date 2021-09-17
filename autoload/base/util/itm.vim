@@ -23,13 +23,20 @@ function! base#util#itm#x (...)
 	let info = []
 	call extend(info,d_desc_a)
 	"call extend(info,opts)
+	let data_o = []
 	for o in sort(opts)
-		let oo = get(itms,o,{})
+		let oo = get(itm,o,{})
 		let ooi = base#util#itm#info(oo)
-		call add(info,printf('%s %s',o,ooi))
+		call add(data_o,[ o, ooi ] )
 	endfor
-	let info_txt = "\n" . join(info, "\n")
-	"echo info_txt
+	let info_o = pymy#data#tabulate ({ 
+			\	'data' : data_o, 
+			\	'header' : [ 'opt', 'info' ]
+			\	})
+	call extend(info,info_o)
+	let info_txt = (len(prev) > 1 ? "\n" : '' ) . join(info, "\n")
+
+	echo info_txt
 
   let d_call      = get(itm,'@call','')
   let d_code      = get(itm,'@code','')
@@ -69,7 +76,7 @@ function! base#util#itm#info (...)
 	let ref = get(a:000,0,{})
 
 	let desc = get(ref,'@desc','')
-	let desc_a = base#x#list(desc)
+	let desc_a = base#x#list(desc,{ 'sep' : "\n" })
 
 	let info = get(desc_a,0,'')
 	return info
