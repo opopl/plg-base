@@ -37,7 +37,7 @@ endf
 
 
 fun! base#init#paths_env()
-		let file_env = base#qw#catpath('plg base data list envvars.i.dat')
+    let file_env = base#qw#catpath('plg base data list envvars.i.dat')
     let envlist = base#readdatfile({
           \ "file" : file_env,
           \ "type" : "List",
@@ -46,17 +46,17 @@ fun! base#init#paths_env()
     for env in envlist
       let val = base#envvar(toupper(env))
 
-			if len(val)
-	      call base#pathset({ env : val })
-			endif
+      if len(val)
+        call base#pathset({ env : val })
+      endif
     endfor
 endf
 
 """base_initpaths
 if 0
-	Usage
-	  call base#initpaths()
-	  call base#initpaths({ "anew": 1 })
+  Usage
+    call base#initpaths()
+    call base#initpaths({ "anew": 1 })
 
   Call tree
     called by
@@ -88,14 +88,14 @@ fun! base#init#paths(...)
     
     let p = base#paths_from_db()
 
-	  let repos_git = base#envvar('REPOSGIT', base#file#catfile([ base#path('hm'), 'repos', 'git'  ]))
-	  call base#pathset({ 
+    let repos_git = base#envvar('REPOSGIT', base#file#catfile([ base#path('hm'), 'repos', 'git'  ]))
+    call base#pathset({ 
       \ "repos_git" : repos_git
       \ })
 
-		call base#init#paths_env()
+    call base#init#paths_env()
 
-		    
+        
     if has('win32')
       let pf       = base#envvar('PROGRAMFILES')
     
@@ -109,7 +109,7 @@ fun! base#init#paths(...)
 
     let vrt      = base#envvar('VIMRUNTIME')
 
-		let projsdir = base#qw#catpath('repos_git texdocs')
+    let projsdir = base#qw#catpath('repos_git texdocs')
     let projsdir = base#envvar('PROJSDIR',projsdir)
 
 "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Tools\MSVC\14.16.27023\bin\Hostx64\x64
@@ -243,7 +243,7 @@ fun! base#init#cmds()
 
 """CD
   command! -nargs=* -complete=custom,base#complete#CD      CD
-    \ call base#CD(<f-args>) 
+    \ call base#CD(<f-args>,{ 'echo' : 1 }) 
 
 """DIR
   command! -nargs=* -complete=custom,base#complete#DIR     DIR
@@ -451,8 +451,8 @@ command! -nargs=* -complete=custom,base#complete#omnioptions
 """BDV
   command! -nargs=* -complete=custom,base#complete#datlist
       \   BDV call base#dat#view(<f-args>) 
-	command! -nargs=* -complete=custom,base#complete#datlist
-			\   BaseDatView call base#dat#view(<f-args>) 
+  command! -nargs=* -complete=custom,base#complete#datlist
+      \   BaseDatView call base#dat#view(<f-args>) 
 
 """IDAT
   command! -nargs=* -complete=custom,base#complete#datlist

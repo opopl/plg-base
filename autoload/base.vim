@@ -418,11 +418,9 @@ if 0
 endif
 
 fun! base#CD(pathid, ... )
-    let ref = {}
+    let ref = get(a:000,0,{})
 
     let pathid = a:pathid
-
-    if a:0 | let ref = a:1 | endif
 
     let dir = base#path(pathid)
     call base#varset('pathid',pathid)
@@ -436,7 +434,8 @@ fun! base#CD(pathid, ... )
     else
         call base#warn({ "text" : "Is NOT a directory: " . dir })
     endif
-endf
+
+endfunction
 
 
 fun! base#cd(dir,...)
