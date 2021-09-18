@@ -4,6 +4,7 @@ function! base#util#itm#x (...)
   let ref = get(a:000,0,{})
 
   let itm = get(ref,'itm',{})
+  let g:a = 1
 
   if ( type(itm) == type({}) && !len(itm)) | return | endif
   if ( type(itm) == type(v:none)) | return | endif
@@ -25,7 +26,7 @@ function! base#util#itm#x (...)
   "call extend(info,opts)
   let data_o = []
   for o in sort(opts)
-    let oo = get(itm,o,{})
+    let oo = base#x#get(itm,o,{})
     let ooi = base#util#itm#info(oo)
     call add(data_o,[ o, ooi ] )
   endfor
@@ -114,7 +115,9 @@ function! base#util#itm#x_sh (...)
       \  "start_dir"    : path,
       \  })
     let out    = base#varget('sysout',[])
-    call base#buf#open_split({ 'lines' : out })
+    if dd_split
+      call base#buf#open_split({ 'lines' : out })
+    endif
     exec done_vcode
 
   " }{

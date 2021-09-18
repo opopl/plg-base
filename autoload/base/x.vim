@@ -25,3 +25,27 @@ function! base#x#list (...)
   return lst
   
 endfunction
+
+" v:none, '' => default
+function! base#x#get (ref,key,default)
+  let ref     = a:ref
+  let key     = a:key
+  let default = a:default
+
+  let val = ''
+  let okv = 1
+
+  let tp = base#type(ref)
+
+  if base#inlist(tp,base#qw('Dictionary List'))
+    let val = get(ref,key,default)
+  
+    let okv = okv && (type(val) != type(v:none))
+    let okv = okv && (type(val) != type('') || len(val))
+  else
+    let okv = 0
+  endif
+
+  return okv ? val : default
+
+endfunction

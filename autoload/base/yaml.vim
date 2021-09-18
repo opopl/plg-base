@@ -24,19 +24,20 @@ function! base#yaml#parse_fs (...)
 
   let ref  = get(a:000,0,{})
 
-  let file = get(ref,'file','')
+  let file  = get(ref,'file','')
+  let lines = readfile(file)
+  let ytxt  = join(lines, "\n")
 
 python3 << eof
-import vim,os
+import vim,os,sys
 import yaml
 #from ruamel import yaml
 #
 file = vim.eval('file')
+ytxt = vim.eval('ytxt')
 
-data = ''
-if os.path.isfile(file):
-  with open(file, 'r') as stream:
-    data = yaml.safe_load(stream)
+data = {}
+data = yaml.safe_load(ytxt)
 
 eof
   let data = py3eval('data')

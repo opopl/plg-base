@@ -1390,12 +1390,17 @@ fun! base#input_we(msg,default,...)
 
   let complete  = get(ref, 'complete' , '')
   let hist_name = get(ref, 'hist_name' , '')
+  let use_this  = get(ref, 'this' , 0)
 
   let hist = []
   if strlen(hist_name)
      let hist = base#varget(hist_name,[])
      let complete = 'custom,base#complete#this'
      call base#varset('this',hist)
+  endif
+
+	if use_this
+    let complete = 'custom,base#complete#this'
   endif
 
   let v = ''
