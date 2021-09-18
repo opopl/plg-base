@@ -1,4 +1,11 @@
 
+if 0
+  call tree
+    calls
+      pymy#sqlite#query_screen
+      base#buf#open_split
+endif
+
 function! base#log#view_split ()
 
   let dbfile = base#dbfile()
@@ -70,7 +77,7 @@ endfunction
 
 
 function! base#log#_plg (...)
-	let plg = get(a:000,0,'')
+  let plg = get(a:000,0,'')
 
   let dbfile = base#dbfile()
 
@@ -228,17 +235,17 @@ endfunction
 function! base#log#cmd (...)
   let cmd = get(a:000,0,'view_split')
 
-	let sub  = ''
-	let args = ''
+  let sub  = ''
+  let args = ''
 
-	if cmd =~ 'plg_\(\w\+\)$'
-		let plg = substitute(cmd,'plg_\(\w\+\)$','\1','g')
-  	let sub = 'base#log#_plg'
-		let args = printf('"%s"',plg)
-	else
-  	let sub = 'base#log#'.cmd
-	endif
+  if cmd =~ 'plg_\(\w\+\)$'
+    let plg = substitute(cmd,'plg_\(\w\+\)$','\1','g')
+    let sub = 'base#log#_plg'
+    let args = printf('"%s"',plg)
+  else
+    let sub = 'base#log#'.cmd
+  endif
 
- 	exe printf('call %s(%s)', sub, args)
+  exe printf('call %s(%s)', sub, args)
 
 endfunction

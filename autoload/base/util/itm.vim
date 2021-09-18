@@ -18,46 +18,46 @@ function! base#util#itm#x (...)
   let prev = get(ref,'prev',[])
 
   let d_desc    = get(itm,'@desc','')
-	let d_desc_a  = base#x#list(d_desc,{ 'sep' : "\n" })
-	let d_info    = get(d_desc_a,0,'')
-	let info = []
-	call extend(info,d_desc_a)
-	"call extend(info,opts)
-	let data_o = []
-	for o in sort(opts)
-		let oo = get(itm,o,{})
-		let ooi = base#util#itm#info(oo)
-		call add(data_o,[ o, ooi ] )
-	endfor
-	let info_o = pymy#data#tabulate ({ 
-			\	'data' : data_o, 
-			\	'header' : [ 'opt', 'info' ]
-			\	})
-	call extend(info,info_o)
-	let info_txt = (len(prev) > 1 ? "\n" : '' ) . join(info, "\n")
+  let d_desc_a  = base#x#list(d_desc,{ 'sep' : "\n" })
+  let d_info    = get(d_desc_a,0,'')
+  let info = []
+  call extend(info,d_desc_a)
+  "call extend(info,opts)
+  let data_o = []
+  for o in sort(opts)
+    let oo = get(itm,o,{})
+    let ooi = base#util#itm#info(oo)
+    call add(data_o,[ o, ooi ] )
+  endfor
+  let info_o = pymy#data#tabulate ({ 
+      \ 'data' : data_o, 
+      \ 'header' : [ 'opt', 'info' ]
+      \ })
+  call extend(info,info_o)
+  let info_txt = (len(prev) > 1 ? "\n" : '' ) . join(info, "\n")
 
-	echo info_txt
+  echo info_txt
 
   let d_call      = get(itm,'@call','')
   let d_code      = get(itm,'@code','')
   let d_call_args = get(itm,'@call_args',[])
 
   let d_sh        = get(itm,'@sh',{})
-	call base#util#itm#x_sh(d_sh)
+  call base#util#itm#x_sh(d_sh)
   
   if len(d_call)
     call call(d_call,d_call_args)
   endif
 
-	let pref = ''
+  let pref = ''
   if len(opts)
     call base#varset('this',opts)
 
-		" input message for next level of commands
-		let msg_next_a = []
+    " input message for next level of commands
+    let msg_next_a = []
 
-		call add(msg_next_a, printf('[%s] opt: ',join(prev, '.')) )
-		let msg_next = join(msg_next_a, "\n")
+    call add(msg_next_a, printf('[%s] opt: ',join(prev, '.')) )
+    let msg_next = join(msg_next_a, "\n")
     let opt = input(msg_next,'','custom,base#complete#this')
     call add(prev,opt)
 
@@ -73,14 +73,14 @@ endfunction
 "
 "{
 function! base#util#itm#info (...)
-	let ref = get(a:000,0,{})
+  let ref = get(a:000,0,{})
 
-	let desc = get(ref,'@desc','')
-	let desc_a = base#x#list(desc,{ 'sep' : "\n" })
+  let desc = get(ref,'@desc','')
+  let desc_a = base#x#list(desc,{ 'sep' : "\n" })
 
-	let info = get(desc_a,0,'')
-	return info
-	
+  let info = get(desc_a,0,'')
+  return info
+  
 endfunction
 "} end: 
 
@@ -88,13 +88,15 @@ endfunction
 function! base#util#itm#x_sh (...)
   let d_sh = get(a:000,0,{})
 
-	if !len(d_sh) | return | endif
+  if !len(d_sh) | return | endif
 
   "let dd_define = get(d_sh,'@define',{})
   let dd_cmd    = get(d_sh,'@cmd','')
   let dd_pathid = get(d_sh,'@pathid','')
   let dd_async  = get(d_sh,'@async',0)
   let dd_split  = get(d_sh,'@split',0)
+
+  let dd_cmd = base#sh#expand({ 'sh' : dd_cmd })
 
   let dd_done  = get(d_sh,'@done',{})
 
@@ -104,7 +106,7 @@ function! base#util#itm#x_sh (...)
   let vim_cmds = get(dd_done,'@vim',[])
   let done_vcode = join(vim_cmds, "\n")
 
-	" {
+  " {
   if !dd_async
     let ok = base#sys({ 
       \  "cmds"         : [dd_cmd],
@@ -115,7 +117,7 @@ function! base#util#itm#x_sh (...)
     call base#buf#open_split({ 'lines' : out })
     exec done_vcode
 
-	" }{
+  " }{
   else
     let env = {
       \ 'cmd'   : dd_cmd,
@@ -125,7 +127,7 @@ function! base#util#itm#x_sh (...)
           \ },
       \  }
 
-		"{
+    "{
     function env.get(temp_file) dict
       let temp_file = a:temp_file
       let code      = self.return_code
@@ -149,14 +151,14 @@ function! base#util#itm#x_sh (...)
       endtry
 
     endfunction
-		"} env.get
+    "} env.get
     
     call asc#run({ 
       \  'cmd' : dd_cmd, 
       \  'Fn'  : asc#tab_restore(env) 
       \  })
   endif
-	"} dd_async
+  "} dd_async
 
 endfunction
 "} base#util#itm#x_sh
