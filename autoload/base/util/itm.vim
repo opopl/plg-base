@@ -1,14 +1,37 @@
 
 
+"
 "{
-function! base#util#itm#str_expand (...)
+function! base#util#itm#x_prepare (...)
   let ref = get(a:000,0,{})
 
-	let str = base#x#get(ref,'str','')
-	let path = base#x#get(ref,'path','')
+  let itm_    = base#x#get(ref,'%itm',{})
+  let dd_vars = base#x#get(ref,'%vars',{})
 
-	let _itm = base#x#get(ref,'%itm',{})
-	
+  let d_yaml = base#x#get(ref,'@yaml',{})
+
+  let path = base#x#getpath(itm_,'@path','')
+
+  let yfile = base#x#get(d_yaml,'@file','')
+  let ydata = base#x#get(d_yaml,'@data',{})
+
+  let r = {
+     \ '%itm'  : itm_,
+     \ '%vars' : dd_vars
+     \ }
+  call extend(r,{ 'data' : ydata })
+
+  let ydata = base#util#itm#expand#data(r)
+
+  if len(path)
+    let yfile = join([path,yfile], '/')
+  endif
+
+  debug call base#yaml#dump_fs ({
+      \ 'data' : ydata,
+      \ 'file' : yfile,
+      \ })
+  
 endfunction
 "} end: 
 
@@ -57,8 +80,10 @@ function! base#util#itm#x (...)
   let d_call_args = get(itm,'@call_args',[])
 
   let d_sh        = get(itm,'@sh',{})
-	call extend(d_sh,{ '%itm' : itm })
-  call base#util#itm#x_sh(d_sh)
+  if len(d_sh)
+    call extend(d_sh,{ '%itm' : itm })
+    call base#util#itm#x_sh(d_sh)
+  endif
   
   if len(d_call)
     call call(d_call,d_call_args)
@@ -143,7 +168,7 @@ function! base#util#itm#x_sh (...)
 
   if !len(d_sh) | return | endif
 
-	let _itm = base#x#get(d_sh,'%itm',{})
+  let itm_ = base#x#get(d_sh,'%itm',{})
 
   "let dd_define = get(d_sh,'@define',{})
   let dd_cmd    = base#x#get(d_sh,'@cmd','')
@@ -179,9 +204,9 @@ function! base#util#itm#x_sh (...)
   let dd_cmd = base#sh#expand({ 
       \ 'sh'   : dd_cmd,
       \ 'vars' : dd_vars })
-  let dd_cmd = base#util#itm#str_expand({ 
+  let dd_cmd = base#util#itm#expand#str({ 
       \ 'str'   : dd_cmd,
-      \ '%itm' :  _itm })
+      \ '%itm' :  itm_ })
 
   let dd_done  = base#x#get(d_sh,'@done',{})
   let dd_out   = base#x#get(dd_done,'@out',{})
@@ -194,20 +219,24 @@ function! base#util#itm#x_sh (...)
 
   let dd_path = base#qw#catpath(dd_pathid)
   let dd_path = isdirectory(dd_path) ? dd_path : getcwd() 
-	let dd_path = base#x#get(d_sh,'@path',dd_path)
+  let dd_path = base#x#get(d_sh,'@path',dd_path)
 
   let dd_path = base#sh#expand({ 
       \ 'sh'   : dd_path,
       \ 'vars' : dd_vars })
-
-	let dd_prep      = base#x#get(d_sh,'@prepare',{})
-	let dd_prep_yaml = base#x#get(dd_prep,'@yaml',{})
+  call extend(itm_,{ '@path' : dd_path })
+ 
+  let dd_prep      = base#x#get(d_sh,'@prepare',{})
+  call extend(dd_prep,{ '%itm' : itm_, '%vars' : dd_vars })
+  call base#util#itm#x_prepare(dd_prep)
 
   let vim_cmds = base#x#get(dd_done,'@vim',[])
   let vim_cmds = base#x#list(vim_cmds,{ 'sep' : "\n" })
 
   let done_vcode = join(vim_cmds, "\n")
-  let done_vcode = base#sh#expand({ 'sh' : done_vcode, 'vars' : dd_vars })
+  let done_vcode = base#sh#expand({ 
+    \ 'sh' : done_vcode, 
+    \ 'vars' : dd_vars })
 
   " {
   if !dd_async

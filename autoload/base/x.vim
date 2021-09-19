@@ -43,9 +43,9 @@ ref_     = vim.eval('ref') or {}
 path_    = vim.eval('path') or ''
 default_ = vim.eval('default')
 
-val = util.get( ref_, path_, default_ )
+val_ = util.get( ref_, path_, default_ )
 eof
-	let val = py3eval('val')
+	let val = py3eval('val_')
 	return val
 
 endfunction
