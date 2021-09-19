@@ -26,6 +26,30 @@ function! base#x#list (...)
   
 endfunction
 
+if 0
+	let d = { 'a' : { 'b' : 2 }}
+	let val = base#x#getpath(d,'a.b',3)
+	echo val
+endif
+
+function! base#x#getpath (ref,path,default)
+  let ref     = a:ref
+  let path    = a:path
+  let default = a:default
+python3 << eof
+import vim
+import Base.Util as util
+ref_     = vim.eval('ref') or {}
+path_    = vim.eval('path') or ''
+default_ = vim.eval('default')
+
+val = util.get( ref_, path_, default_ )
+eof
+	let val = py3eval('val')
+	return val
+
+endfunction
+
 " v:none, '' => default
 function! base#x#get (ref,key,default)
   let ref     = a:ref

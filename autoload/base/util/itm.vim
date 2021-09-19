@@ -1,4 +1,17 @@
 
+
+"{
+function! base#util#itm#str_expand (...)
+  let ref = get(a:000,0,{})
+
+	let str = base#x#get(ref,'str','')
+	let path = base#x#get(ref,'path','')
+
+	let _itm = base#x#get(ref,'%itm',{})
+	
+endfunction
+"} end: 
+
 "" {
 function! base#util#itm#x (...)
   let ref = get(a:000,0,{})
@@ -44,6 +57,7 @@ function! base#util#itm#x (...)
   let d_call_args = get(itm,'@call_args',[])
 
   let d_sh        = get(itm,'@sh',{})
+	call extend(d_sh,{ '%itm' : itm })
   call base#util#itm#x_sh(d_sh)
   
   if len(d_call)
@@ -129,6 +143,8 @@ function! base#util#itm#x_sh (...)
 
   if !len(d_sh) | return | endif
 
+	let _itm = base#x#get(d_sh,'%itm',{})
+
   "let dd_define = get(d_sh,'@define',{})
   let dd_cmd    = base#x#get(d_sh,'@cmd','')
   let dd_pathid = base#x#get(d_sh,'@pathid','')
@@ -163,6 +179,9 @@ function! base#util#itm#x_sh (...)
   let dd_cmd = base#sh#expand({ 
       \ 'sh'   : dd_cmd,
       \ 'vars' : dd_vars })
+  let dd_cmd = base#util#itm#str_expand({ 
+      \ 'str'   : dd_cmd,
+      \ '%itm' :  _itm })
 
   let dd_done  = base#x#get(d_sh,'@done',{})
   let dd_out   = base#x#get(dd_done,'@out',{})
@@ -173,8 +192,16 @@ function! base#util#itm#x_sh (...)
   "/@done/@out/@qflist
   let dd_qflist = base#x#get(dd_out,'@qflist',{})
 
-  let dd_path = base#path(dd_pathid)
+  let dd_path = base#qw#catpath(dd_pathid)
   let dd_path = isdirectory(dd_path) ? dd_path : getcwd() 
+	let dd_path = base#x#get(d_sh,'@path',dd_path)
+
+  let dd_path = base#sh#expand({ 
+      \ 'sh'   : dd_path,
+      \ 'vars' : dd_vars })
+
+	let dd_prep      = base#x#get(d_sh,'@prepare',{})
+	let dd_prep_yaml = base#x#get(dd_prep,'@yaml',{})
 
   let vim_cmds = base#x#get(dd_done,'@vim',[])
   let vim_cmds = base#x#list(vim_cmds,{ 'sep' : "\n" })
