@@ -92,39 +92,72 @@ function! base#util#itm#x_sh (...)
   if !len(d_sh) | return | endif
 
   "let dd_define = get(d_sh,'@define',{})
-  let dd_cmd    = get(d_sh,'@cmd','')
-  let dd_pathid = get(d_sh,'@pathid','')
-  let dd_async  = get(d_sh,'@async',0)
-  let dd_split  = get(d_sh,'@split',0)
+  let dd_cmd    = base#x#get(d_sh,'@cmd','')
+  let dd_pathid = base#x#get(d_sh,'@pathid','')
+  let dd_async  = base#x#get(d_sh,'@async',0)
 
-  let dd_cmd = base#sh#expand({ 'sh' : dd_cmd })
+  let dd_input  = base#x#get(d_sh,'@input',{})
+  let dd_prompt = base#x#get(dd_input,'@prompt',[])
 
-  let dd_done  = get(d_sh,'@done',{})
+  " variables to be expanded via base#sh#expand
+  let dd_vars = {}
+  call extend(dd_vars,{ 
+    \ '@pathid' : dd_pathid 
+    \ })
 
-  let path = base#path(dd_pathid)
-  let path = isdirectory(path) ? path : getcwd() 
+  for i in dd_prompt
+    let var_name = base#x#get(i,'@var','')
+    if !len(var_name) | continue | endif
 
-  let vim_cmds = get(dd_done,'@vim',[])
+    let comps   = base#x#get(i,'@comps',[])
+    let default = base#x#get(i,'@default','')
+
+    let msg  = printf('%s: ',var_name)
+    let msg  = base#x#get(i,'@msg',msg)
+
+    call base#varset('this',comps)
+
+    let value = base#input_we(msg,default,{ 'this' : 1 })
+    call extend(dd_vars,{ var_name : value })
+
+  endfor
+
+  let dd_cmd = base#sh#expand({ 
+      \ 'sh'   : dd_cmd,
+      \ 'vars' : dd_vars })
+
+  let dd_done  = base#x#get(d_sh,'@done',{})
+  let dd_out   = base#x#get(dd_done,'@out',{})
+  let dd_split = base#x#get(dd_out,'@split',0)
+
+  let dd_path = base#path(dd_pathid)
+  let dd_path = isdirectory(dd_path) ? dd_path : getcwd() 
+
+  let vim_cmds = base#x#get(dd_done,'@vim',[])
+  let vim_cmds = base#x#list(vim_cmds,{ 'sep' : "\n" })
+
   let done_vcode = join(vim_cmds, "\n")
+  let done_vcode = base#sh#expand({ 'sh' : done_vcode, 'vars' : dd_vars })
 
   " {
   if !dd_async
     let ok = base#sys({ 
       \  "cmds"         : [dd_cmd],
       \  "split_output" : dd_split,
-      \  "start_dir"    : path,
+      \  "start_dir"    : dd_path,
       \  })
+    exec done_vcode
+
     let out    = base#varget('sysout',[])
     if dd_split
       call base#buf#open_split({ 'lines' : out })
     endif
-    exec done_vcode
 
   " }{
   else
     let env = {
       \ 'cmd'   : dd_cmd,
-      \ 'split' : dd_split,
+      \ 'dd_split' : dd_split,
       \ 'done' : { 
           \  'vcode' : done_vcode
           \ },
@@ -135,17 +168,12 @@ function! base#util#itm#x_sh (...)
       let temp_file = a:temp_file
       let code      = self.return_code
 
-      let split = get(self,'split',0)
+      let dd_split = get(self,'dd_split',0)
 
       let done = get(self,'done',{})
       let done_vcode = get(done,'vcode','')
     
-      if filereadable(a:temp_file)
-        let out = readfile(a:temp_file)
-        if split
-          call base#buf#open_split({ 'lines' : out })
-        endif
-      endif
+      let out = filereadable(a:temp_file) ? readfile(a:temp_file) : []
 
       try 
         exec done_vcode 
@@ -153,12 +181,17 @@ function! base#util#itm#x_sh (...)
         call base#rdwe('[base#util#x_itm] Error executing vim code')
       endtry
 
+      if dd_split
+        call base#buf#open_split({ 'lines' : out })
+      endif
+
     endfunction
     "} env.get
     
     call asc#run({ 
-      \  'cmd' : dd_cmd, 
-      \  'Fn'  : asc#tab_restore(env) 
+      \  'cmd'  : dd_cmd,
+      \  'path' : dd_path,
+      \  'Fn'   : asc#tab_restore(env)
       \  })
   endif
   "} dd_async

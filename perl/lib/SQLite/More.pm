@@ -13,8 +13,8 @@ use DBI         1.609; #minimum with $dbh->sqlite_create_function
 use Digest::MD5;
 use Carp;
 
-use Plg::Projs::Regex qw(
-   match
+use Plg::Projs::Rgx qw(
+   rgx_match
 );
 
 use File::Basename qw(basename dirname);
@@ -26,7 +26,7 @@ sub sqlite_more
   # my 
   my %funcs = (
      # regex($pattern, $string, $flags, $index )
-     'regex'    => [ -1, sub { match(@_) } ],
+     'regexp'    => [ -1, sub { rgx_match(@_) } ],
      'basename' => [ 1, sub { basename(shift) } ],
      'dirname'  => [ 1, sub { dirname(shift) } ],
      'extension'  => [ 1, sub { 

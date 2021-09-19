@@ -229,6 +229,8 @@ function! base#var#update_from_xml (...)
 
 python3 << eof
 import vim
+import io
+
 from xml.etree import ElementTree
 from xml.etree.ElementTree import (
   tostring
@@ -239,7 +241,7 @@ plg      = vim.eval('plg')
 
 vars = {}
 
-with open(xml_file, 'rt') as f:
+with io.open(xml_file, 'rt') as f:
   tree = ElementTree.parse(f)
   for var_node in tree.findall('.//var'):
       v_name = var_node.attrib.get('name')

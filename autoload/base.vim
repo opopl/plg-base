@@ -1383,6 +1383,8 @@ fun! base#input(msg,default,...)
   return v
 endf
 
+
+
 fun! base#input_we(msg,default,...)
   let [msg, default] = [ a:msg, a:default ]
 
