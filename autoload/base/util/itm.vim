@@ -84,6 +84,44 @@ function! base#util#itm#info (...)
   
 endfunction
 "} end: 
+"
+"{
+function! base#util#itm#x_sh_qflist (...)
+  let ref = get(a:000,0,{})
+
+  let d_copen    = base#x#get(ref,'@copen',0)
+  let d_ln_match = base#x#get(ref,'@ln_match','')
+
+  let out        = base#x#get(ref,'out',[])
+python3 << eof
+import vim,re
+
+pat_ = '^(?P<filename>[^:]*):(?P<lnum>\d+):(?P<text>.*)$'
+pat_ = vim.eval('d_ln_match') or pat_
+out_ = vim.eval('out') or []
+
+keys_ = util.qw('filename lnum text')
+list_ = []
+for ln in out_:
+  m = re.match(rf'{pat_}',ln)
+  qf = {}
+  if not m:
+    continue
+  for k in keys_:
+    val = m.group(k)
+    qf.update({ k : val })
+  list_.append(qf)
+  
+eof
+  let list_ = py3eval('list_')
+  call setqflist(list_)
+
+  if d_copen
+    call base#act#copen()
+  endif
+  
+endfunction
+"} end: 
 
 "{
 function! base#util#itm#x_sh (...)
@@ -128,7 +166,12 @@ function! base#util#itm#x_sh (...)
 
   let dd_done  = base#x#get(d_sh,'@done',{})
   let dd_out   = base#x#get(dd_done,'@out',{})
+
+  "/@done/@out/@split
   let dd_split = base#x#get(dd_out,'@split',0)
+
+  "/@done/@out/@qflist
+  let dd_qflist = base#x#get(dd_out,'@qflist',{})
 
   let dd_path = base#path(dd_pathid)
   let dd_path = isdirectory(dd_path) ? dd_path : getcwd() 
@@ -146,18 +189,27 @@ function! base#util#itm#x_sh (...)
       \  "split_output" : dd_split,
       \  "start_dir"    : dd_path,
       \  })
-    exec done_vcode
 
     let out    = base#varget('sysout',[])
+
     if dd_split
       call base#buf#open_split({ 'lines' : out })
     endif
 
+    if len(dd_qflist)
+      let r_qflist = dd_qflist
+      call extend(r_qflist,{ 'out' : out })
+      call base#util#itm#x_sh_qflist(r_qflist)
+    endif
+
+    exec done_vcode
+
   " }{
   else
     let env = {
-      \ 'cmd'   : dd_cmd,
-      \ 'dd_split' : dd_split,
+      \ 'cmd'       : dd_cmd,
+      \ 'dd_split'  : dd_split,
+      \ 'dd_qflist' : dd_qflist,
       \ 'done' : { 
           \  'vcode' : done_vcode
           \ },
@@ -169,22 +221,29 @@ function! base#util#itm#x_sh (...)
       let code      = self.return_code
 
       let dd_split = get(self,'dd_split',0)
+      let dd_qflist = get(self,'dd_qflist',0)
 
       let done = get(self,'done',{})
       let done_vcode = get(done,'vcode','')
     
       let out = filereadable(a:temp_file) ? readfile(a:temp_file) : []
+      call base#varset('sysout',out)
+
+      if dd_split
+        call base#buf#open_split({ 'lines' : out })
+      endif
+
+      if len(dd_qflist)
+        let r_qflist = dd_qflist
+        call extend(r_qflist,{ 'out' : out })
+        call base#util#itm#x_sh_qflist(r_qflist)
+      endif
 
       try 
         exec done_vcode 
       catch
         call base#rdwe('[base#util#x_itm] Error executing vim code')
       endtry
-
-      if dd_split
-        call base#buf#open_split({ 'lines' : out })
-      endif
-
     endfunction
     "} env.get
     

@@ -13,6 +13,7 @@ function! base#sh#expand (...)
   let sh   = get(ref,'sh','')
 
   let vars = get(ref,'vars',{})
+	let out = base#varget('sysout',[])
 
 python3 << eof
 import vim
@@ -22,6 +23,13 @@ import Base.Util as util
 
 vars_ = vim.eval('vars') or {}
 sh_   = vim.eval('sh')
+
+# inject vars into vim variables
+#for v in vars_:
+#	m = re.match('^@',v)
+#	if not m:
+#		continue
+#	vim.command(f'let ')
 
 def ev_(m):
   w = {}
