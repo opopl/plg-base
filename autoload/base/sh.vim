@@ -11,8 +11,8 @@ function! base#sh#expand (...)
   let ref  = get(a:000,0,{})
 
   let sh   = get(ref,'sh','')
-
   let vars = get(ref,'vars',{})
+
 	let out = base#varget('sysout',[])
 
 python3 << eof

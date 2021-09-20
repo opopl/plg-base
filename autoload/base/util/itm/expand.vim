@@ -8,6 +8,11 @@ function! base#util#itm#expand#str (...)
   let itm_    = base#x#get(ref,'%itm',{})
   let dd_vars = base#x#get(ref,'%vars',{})
 
+  let str = base#sh#expand({ 
+    \ 'sh'   : str,
+    \ 'vars' : dd_vars,
+    \ })
+
 python3 << eof
 import vim
 import re
@@ -50,6 +55,7 @@ function! base#util#itm#expand#list (...)
   let ref = get(a:000,0,{})
 
   let lst     = base#x#get(ref,'list',[])
+  let lst  = copy(lst)
 
   let itm_    = base#x#get(ref,'%itm',{})
   let dd_vars = base#x#get(ref,'%vars',{})
@@ -104,6 +110,7 @@ function! base#util#itm#expand#dict (...)
   let ref = get(a:000,0,{})
 
   let dict    = base#x#get(ref,'dict',{})
+  let dict    = copy(dict)
 
   let itm_    = base#x#get(ref,'%itm',{})
   let dd_vars = base#x#get(ref,'%vars',{})

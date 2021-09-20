@@ -27,7 +27,7 @@ function! base#util#itm#x_prepare (...)
     let yfile = join([path,yfile], '/')
   endif
 
-  debug call base#yaml#dump_fs ({
+  call base#yaml#dump_fs ({
       \ 'data' : ydata,
       \ 'file' : yfile,
       \ })
@@ -180,9 +180,11 @@ function! base#util#itm#x_sh (...)
 
   " variables to be expanded via base#sh#expand
   let dd_vars = {}
-  call extend(dd_vars,{ 
-    \ '@pathid' : dd_pathid 
-    \ })
+  if len(dd_pathid)
+    call extend(dd_vars,{ 
+      \ '@pathid' : dd_pathid 
+      \ })
+  endif
 
   for i in dd_prompt
     let var_name = base#x#get(i,'@var','')

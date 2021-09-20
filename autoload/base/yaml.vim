@@ -63,6 +63,7 @@ function! base#yaml#dump_fs (...)
 
   let data = get(ref,'data',{})
   let file = get(ref,'file','')
+
 python3 << eof
 import vim
 import yaml
@@ -74,7 +75,7 @@ file = vim.eval('file')
 
 y = yaml.dump(data, allow_unicode = True)
 
-if file:
+if file and os.path.isfile(file):
   with io.open(file, 'w', encoding='utf8') as f:
     f.write(y)
 eof
