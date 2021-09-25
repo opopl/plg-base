@@ -17,6 +17,12 @@ endfunction
 
 function! base#bufact#yaml#check_syntax ()
   let file = b:file
-  let d = base#yaml#parse_fs({ 'file' : file })
+
+  try
+    let d = base#yaml#parse_fs({ 'file' : file })
+    call base#rdw(printf('YAML Syntax OK: %s',b:basename))
+  catch
+    call base#rdwe(printf('YAML Syntax FAIL: %s',b:basename))
+  endtry
 
 endfunction

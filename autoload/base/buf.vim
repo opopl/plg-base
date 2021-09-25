@@ -561,6 +561,11 @@ function! base#buf#onwrite ()
     call base#scp#send({ 'scp_data' : b:scp_data })
   endif
 
+  if &ft == 'yaml'
+    call base#bufact#yaml#check_syntax()
+
+  endif
+
 endfunction
 
 function! base#buf#stat ()

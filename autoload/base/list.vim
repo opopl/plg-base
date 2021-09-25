@@ -102,6 +102,28 @@ fun! base#list#matched(list,pat)
   return m
 endfun
 
+" remove elements from a list
+fun! base#list#rm(...)
+  let lst = get(a:000,0,[])
+  let elems = get(a:000,1,[])
+
+  if base#type(elems) == 'String'
+    let elems = [ elems ]
+  elseif base#type(elems) != 'List'
+    return lst
+  endif
+
+  let new = []
+  for itm in lst
+    if ! base#inlist(itm,elems)
+      call add(new,itm)
+    endif
+  endfor
+
+  return new
+
+endfun
+
 fun! base#list#contains_matches(list,pat)
   let matched = base#list#matched(a:list,a:pat)
   return ( len(matched) ) ? 1 : 0
