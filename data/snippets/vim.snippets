@@ -2,6 +2,16 @@ snippet bih
 	let <++> =  base#input_hist(<+msg+>,<+default+>,<+hist+>)
 snippet lrm
 	let lst = base#list#rm(lst,<+elems+>)
+snippet inpx
+	let r = { 
+	  \ 'list'  : tag_list,
+	  \ 'thing' : 'tag',
+	  \ 'prefix' : 'select',
+	  \ 'header' : [
+	    \ 'projs/bs tags selection dialog',
+	    \ ],
+	  \ }
+	let tags = base#inpx#ctl(r)
 snippet w1
 	while 1
 	  <++>

@@ -47,6 +47,28 @@ my @ex_vars_array=qw(
 
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 
+#sub opts2dict {
+  #my ($opts_s) = @_;
+  #no strict;
+
+  #return unless defined $opts_s;
+
+  #my @opts = grep { length } map { defined ? trim($_) : () } split("," => $opts_s);
+
+  #return unless @opts;
+  #my $dict = {};
+  #my $pat = qr/^([^=]+)(?:\s*|=([^=]+))$/;
+
+  #for(@opts){
+	 #my ($k, $v) = (m/$pat/);
+	 #$k = trim($k);
+
+	 #$dict->{$k} = defined $v ? trim($v) : 1;
+  #}
+
+  #return $dict;
+#}
+
 sub str_split_sn {
     my ($str) = @_;
 

@@ -21,6 +21,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 $VERSION = '0.01';
 
 use Base::String qw(str_split);
+use String::Util qw(trim);
 
 ###export_vars_scalar
 my @ex_vars_scalar=qw(
@@ -46,6 +47,8 @@ my @ex_vars_array=qw(
         hash_apply
 
         v_copy
+
+		opts2dict
     )],
     'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -259,6 +262,8 @@ sub v_copy {
 
     return $w;
 }
+
+
 
 # recursive injection
 sub hash_inject {
