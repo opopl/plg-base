@@ -75,7 +75,7 @@ file = vim.eval('file')
 
 y = yaml.dump(data, allow_unicode = True)
 
-if file:
+if file and not os.path.isdir(file):
   with io.open(file, 'w', encoding='utf8') as f:
     f.write(y)
 eof

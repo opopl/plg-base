@@ -206,6 +206,7 @@ function! base#util#itm#x_sh (...)
   let dd_cmd = base#sh#expand({ 
       \ 'sh'   : dd_cmd,
       \ 'vars' : dd_vars })
+
   let dd_cmd = base#util#itm#expand#str({ 
       \ 'str'   : dd_cmd,
       \ '%itm' :  itm_ })
