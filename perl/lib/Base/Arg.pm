@@ -46,9 +46,11 @@ my @ex_vars_array=qw(
         hash_inject
         hash_apply
 
+        hash_rw
+
         v_copy
 
-		opts2dict
+        opts2dict
     )],
     'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -176,6 +178,10 @@ sub hash_merge {
         $hash->{$k} = $v;
     }
     return;
+}
+
+sub hash_rw {
+    my ($hash, $update) = @_;
 }
 
 sub hash_apply {

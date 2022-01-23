@@ -272,6 +272,7 @@ sub dbh_select {
         $warn->(@w);
         return [];
     }
+
     
     eval { $sth->execute(@p) or do { $warn->($dbh->errstr,$q,@p); }; };
     if($@){ $warn->($@,$dbh->errstr,$q,@p); }

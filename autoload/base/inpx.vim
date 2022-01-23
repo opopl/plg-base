@@ -25,6 +25,8 @@ fun! base#inpx#ctl(...)
   " e.g. author_id, tag
   let thing  = base#x#get(ref,'thing','')
 
+  let default = base#x#get(ref,'default','')
+
   " message to always appear at the top
   let header  = base#x#get(ref,'header',[])
 
@@ -71,7 +73,7 @@ fun! base#inpx#ctl(...)
     let cmpl = ''
     call base#varset('this',lst)
 
-    let tgs = input(msg_head . "\n" . msg,'','custom,base#complete#this')
+    let tgs = input(msg_head . "\n" . msg, default,'custom,base#complete#this')
     let tgs = base#trim(tgs)
 
     let things_s = tgs
