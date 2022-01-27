@@ -43,6 +43,8 @@ my @ex_vars_array=qw(
         hash_merge_left
         hash_merge_right
 
+        recursive_update
+
         hash_inject
         hash_apply
 
@@ -296,6 +298,22 @@ sub hash_inject {
     }
 
     return;
+}
+
+sub recursive_update {
+    my ($dict, $update) = @_;
+
+    foreach my $k (keys %$update) {
+        my $v_upd = $update->{$k};
+        my $v_old = $dict->{$k};
+        if (ref $v_upd eq 'dict' && ref $v_old eq 'dict') {
+            $dict->{$k} = recursive_update($dict->{$k}, $v_upd);
+        }else{
+            $dict->{$k} = $v_upd;
+        }
+    }
+
+    return $dict;
 }
 
 1;
