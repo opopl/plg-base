@@ -48,8 +48,6 @@ my @ex_vars_array=qw(
         hash_inject
         hash_apply
 
-        hash_rw
-
         v_copy
 
         opts2dict
@@ -85,19 +83,9 @@ sub arg_to_list {
 
     my ($hash, $update);
 
-    my $opts = {
-        # OPTIONAL: 
-        #   default: 0
-        keep_already_defined => 1,
-
-        # OPTIONAL: 
-        #   default: 0
-        update_from_defined => 1,
-    };
     # update $hash with the contents of 
     #   $update;
-    #   $opts defined additional update options
-    hash_update($hash, $update, $opts);
+    hash_update($hash, $update);
 
 =head3 Examples
 
@@ -107,83 +95,11 @@ sub hash_update {
     my ($hash, $update, $opts) = @_;
 
     $opts ||= {};
-    unless ($update) {
-        return;
-    }
-
-    if (my $mrg = $opts->{merge}) {
-        if ($mrg eq 'left') {
-            Hash::Merge::set_behavior('LEFT_PRECEDENT');
-        } elsif ($mrg eq 'right') {
-            Hash::Merge::set_behavior('RIGHT_PRECEDENT');
-        } elsif ($mrg eq 'retain') {
-            Hash::Merge::set_behavior('RETAINMENT_PRECEDENT');
-        }
-        
-        my $c = merge($hash,$update);
-        while( my($k, $v) = each %{$c} ){
-            $hash->{$k} = $v;
-        }
-        return;
-    }
+    return unless $update;
 
     while( my($k, $v) = each %{$update} ){
-        # do not update if the corresponding field
-        #   has been already defined before and elsewhere
-        if ($opts->{keep_already_defined}) {
-            if(defined $hash->{$k}){
-                next;
-            }
-        }
-
-        # update $hash ONLY if the corresponding value 
-        # is defined in the update hash, i.e. is not undef
-        if ($opts->{update_from_defined} || $opts->{update_if_defined}) {
-            next unless defined $update->{$k};
-        }
-
         $hash->{$k} = $v;
     }
-}
-
-sub hash_merge_left {
-    my ($hash, $update) = @_;
-
-    Hash::Merge::set_behavior('LEFT_PRECEDENT');
-
-    my $c = merge($hash,$update);
-    while( my($k, $v) = each %{$c} ){
-        $hash->{$k} = $v;
-    }
-    return;
-}
-
-sub hash_merge_right {
-    my ($hash, $update) = @_;
-
-    Hash::Merge::set_behavior('RIGHT_PRECEDENT');
-
-    my $c = merge($hash,$update);
-    while( my($k, $v) = each %{$c} ){
-        $hash->{$k} = $v;
-    }
-    return;
-}
-
-sub hash_merge {
-    my ($hash, $update) = @_;
-
-    Hash::Merge::set_behavior('RETAINMENT_PRECEDENT');
-
-    my $c = merge($hash,$update);
-    while( my($k, $v) = each %{$c} ){
-        $hash->{$k} = $v;
-    }
-    return;
-}
-
-sub hash_rw {
-    my ($hash, $update) = @_;
 }
 
 sub hash_apply {
