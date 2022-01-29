@@ -187,8 +187,6 @@ sub v_copy {
     return $w;
 }
 
-
-
 # recursive injection
 sub hash_inject {
     my ($hash, $update) = @_;
