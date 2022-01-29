@@ -92,9 +92,8 @@ sub arg_to_list {
 =cut    
 
 sub hash_update {
-    my ($hash, $update, $opts) = @_;
+    my ($hash, $update) = @_;
 
-    $opts ||= {};
     return unless $update;
 
     while( my($k, $v) = each %{$update} ){
@@ -222,14 +221,16 @@ sub dict_update {
         my $v_upd  = $update->{$k};
         my $v_dict = $dict->{$k};
 
-        if(1){
-          $dict->{$k} = $v_upd;
+        my $d_type  = defined $v_dict ? ( reftype $v_dict || '' ) : '';
+        my $u_type  = defined $v_upd ? ( reftype $v_upd || '' ) : '';
+
+        if ($d_type eq 'HASH' && $u_type eq 'HASH') {
+          dict_update($v_dict, $v_upd);
           next;
         }
 
-        if (reftype $v_upd eq 'HASH') {
-          dict_update($v_dict, $v_upd);
-        }
+        $dict->{$k} = $v_upd;
+
     }
 
     return $dict;
