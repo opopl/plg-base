@@ -193,8 +193,6 @@ sub v_copy {
 sub hash_inject {
     my ($hash, $update) = @_;
 
-    #print Dumper($update) . "\n";
-
     while( my($k, $v) = each %{$update} ){
         my $h = $hash->{$k};
         if (defined $h){
