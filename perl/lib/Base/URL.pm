@@ -16,7 +16,10 @@ use Path::Tiny qw(path);
 
 use URI::Simple;
 use Data::Dumper;
-use Base::Arg qw(hash_update);
+use Base::Arg qw(
+    hash_update
+    hash_inject
+);
 
 #use Base::URL::Norm;
 
@@ -195,8 +198,7 @@ sub url_normalize {
     
     my $defs = { proto => 'http' };
     
-    my $o = { keep_already_defined => 1 };
-    hash_update($ref, $defs, $o );
+    hash_inject($ref, $defs);
 
     my $type = $ref->{type} || url_type($url);
 

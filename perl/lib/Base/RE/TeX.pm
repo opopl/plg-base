@@ -4,7 +4,7 @@ package Base::RE::TeX;
 use strict;
 use warnings;
 
-use Base::Arg qw( hash_update );
+use Base::Arg qw( hash_inject );
 
 sub new
 {
@@ -27,7 +27,7 @@ sub init {
         label => qr{^\\label\{(?<label>.*)\}\s*$},
     };
 
-    hash_update($self, $h, { keep_already_defined => 1 });
+    hash_inject($self, $h);
 
     return $self;
 }

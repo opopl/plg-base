@@ -320,9 +320,8 @@ sub pl_to_xml {
                 $vnode = $dom->createElement( $k );
             }
 
-            hash_update($o,{
-                key    => $k,
-            });
+            hash_update($o, { key => $k });
+
             my ($xml, $cnodes) = pl_to_xml($v, $o);
 
             if ($vnode) {
