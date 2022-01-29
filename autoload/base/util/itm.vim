@@ -186,22 +186,52 @@ function! base#util#itm#x_sh (...)
       \ })
   endif
 
-  for i in dd_prompt
-    let var_name = base#x#get(i,'@var','')
+  for i_prompt in dd_prompt
+    let var_name = base#x#get(i_prompt,'@var','')
     if !len(var_name) | continue | endif
 
-    let comps   = base#x#get(i,'@comps',[])
-    let default = base#x#get(i,'@default','')
+    let comps   = base#x#get(i_prompt,'@comps',[])
+    let default = base#x#get(i_prompt,'@default','')
 
     let msg  = printf('%s: ',var_name)
-    let msg  = base#x#get(i,'@msg',msg)
+    let msg  = base#x#get(i_prompt,'@msg',msg)
 
-    call base#varset('this',comps)
+    let this = []
+    for cmp in comps
+      if base#type(cmp) == 'String'
+        call add(this,cmp)
 
-    let value = base#input_we(msg,default,{ 'this' : 1 })
+      elseif base#type(cmp) == 'List'
+        call extend(this,cmp)
+
+      elseif base#type(cmp) == 'Dictionary'
+        let yield_func = base#x#get(cmp,'@yield','')
+        let yield_args = base#x#get(cmp,'@args',[])
+        let yield_result =  call(yield_func,yield_args)
+        call extend(this,yield_result)
+
+      endif
+    endfor
+
+    call base#varset('this',this)
+
+    let prm_func = base#x#get(i_prompt,'@prm_func','base#input_we')
+
+    let prm_args = []
+    if prm_func == 'base#input_we'
+      let prm_args = [ msg, default, { 'this' : 1 } ]
+    endif
+    let prm_args = base#x#get(i_prompt,'@prm_args',prm_args)
+
+    "let value = base#input_we(msg,default,{ 'this' : 1 })
+    let value = call(prm_func, prm_args)
     call extend(dd_vars,{ var_name : value })
 
   endfor
+
+  let dd_pathid = base#sh#expand({
+      \ 'sh'   : dd_pathid,
+      \ 'vars' : dd_vars })
 
   let dd_cmd = base#sh#expand({ 
       \ 'sh'   : dd_cmd,
@@ -209,7 +239,7 @@ function! base#util#itm#x_sh (...)
 
   let dd_cmd = base#util#itm#expand#str({ 
       \ 'str'   : dd_cmd,
-      \ '%itm' :  itm_ })
+      \ '%itm'  : itm_ })
 
   let dd_done  = base#x#get(d_sh,'@done',{})
   let dd_out   = base#x#get(dd_done,'@out',{})
@@ -237,9 +267,6 @@ function! base#util#itm#x_sh (...)
   let vim_cmds = base#x#list(vim_cmds,{ 'sep' : "\n" })
 
   let done_vcode = join(vim_cmds, "\n")
-  let done_vcode = base#sh#expand({ 
-    \ 'sh' : done_vcode, 
-    \ 'vars' : dd_vars })
 
   " {
   if !dd_async
@@ -261,6 +288,9 @@ function! base#util#itm#x_sh (...)
       call base#util#itm#x_sh_qflist(r_qflist)
     endif
 
+    let done_vcode = base#sh#expand({
+      \ 'sh'   : done_vcode,
+      \ 'vars' : dd_vars })
     exec done_vcode
 
   " }{
@@ -269,6 +299,7 @@ function! base#util#itm#x_sh (...)
       \ 'cmd'       : dd_cmd,
       \ 'dd_split'  : dd_split,
       \ 'dd_qflist' : dd_qflist,
+      \ 'dd_vars'   : dd_vars,
       \ 'done' : { 
           \  'vcode' : done_vcode
           \ },
@@ -279,8 +310,10 @@ function! base#util#itm#x_sh (...)
       let temp_file = a:temp_file
       let code      = self.return_code
 
-      let dd_split = get(self,'dd_split',0)
+      let dd_split  = get(self,'dd_split',0)
       let dd_qflist = get(self,'dd_qflist',0)
+
+      let dd_vars   = get(self,'dd_vars',{})
 
       let done = get(self,'done',{})
       let done_vcode = get(done,'vcode','')
@@ -297,6 +330,10 @@ function! base#util#itm#x_sh (...)
         call extend(r_qflist,{ 'out' : out })
         call base#util#itm#x_sh_qflist(r_qflist)
       endif
+
+      let done_vcode = base#sh#expand({
+        \ 'sh'   : done_vcode,
+        \ 'vars' : dd_vars })
 
       try 
         exec done_vcode 

@@ -303,17 +303,23 @@ sub hash_inject {
 sub recursive_update {
     my ($dict, $update) = @_;
 
+    my $c = { 
+      'dict'   => clone($dict),
+      'update' => clone($update),
+    };
+
     foreach my $k (keys %$update) {
-        my $v_upd = $update->{$k};
-        my $v_old = $dict->{$k};
+        my $v_upd = $c->{update}->{$k};
+        my $v_old = $c->{dict}->{$k};
         if (ref $v_upd eq 'dict' && ref $v_old eq 'dict') {
-            $dict->{$k} = recursive_update($dict->{$k}, $v_upd);
+            $c->{dict}->{$k} = recursive_update($v_old, $v_upd);
         }else{
-            $dict->{$k} = $v_upd;
+            $c->{dict}->{$k} = $v_upd;
         }
     }
 
-    return $dict;
+    $dict = $c->{dict};
+    return $c->{dict};
 }
 
 1;
