@@ -10,7 +10,7 @@ use Clone qw(clone);
 use Hash::Merge qw(merge);
 use Data::Dumper qw(Dumper);
 
-use Scalar::Util qw(blessed);
+use Scalar::Util qw(blessed reftype);
 
 use Exporter ();
 use base qw(Exporter);
@@ -43,7 +43,7 @@ my @ex_vars_array=qw(
         hash_merge_left
         hash_merge_right
 
-        recursive_update
+        dict_update
 
         hash_inject
         hash_apply
@@ -212,26 +212,27 @@ sub hash_inject {
     return;
 }
 
-sub recursive_update {
+sub dict_update {
     my ($dict, $update) = @_;
 
-    my $c = { 
-      'dict'   => clone($dict),
-      'update' => clone($update),
-    };
+    return unless reftype $dict eq 'HASH';
+    return unless reftype $update eq 'HASH';
 
     foreach my $k (keys %$update) {
-        my $v_upd = $c->{update}->{$k};
-        my $v_old = $c->{dict}->{$k};
-        if (ref $v_upd eq 'dict' && ref $v_old eq 'dict') {
-            $c->{dict}->{$k} = recursive_update($v_old, $v_upd);
-        }else{
-            $c->{dict}->{$k} = $v_upd;
+        my $v_upd  = $update->{$k};
+        my $v_dict = $dict->{$k};
+
+        if(1){
+          $dict->{$k} = $v_upd;
+          next;
+        }
+
+        if (reftype $v_upd eq 'HASH') {
+          dict_update($v_dict, $v_upd);
         }
     }
 
-    $dict = $c->{dict};
-    return $c->{dict};
+    return $dict;
 }
 
 1;
