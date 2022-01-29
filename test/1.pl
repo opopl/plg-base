@@ -17,4 +17,6 @@ use Data::Dumper qw(Dumper);
 
 #my $a = "\N{CITYSCAPE}\N{VARIATION SELECTOR-16}";
 #print qq{$a} . "\n";
-print ref undef;
+#print ref undef;
+#
+print undef // 2;

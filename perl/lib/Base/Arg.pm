@@ -219,6 +219,8 @@ sub dict_update {
 
     foreach my $k (keys %$update) {
         my $v_upd  = $update->{$k};
+        next unless defined $v_upd;
+
         my $v_dict = $dict->{$k};
 
         my $d_type  = defined $v_dict ? ( reftype $v_dict || '' ) : '';
