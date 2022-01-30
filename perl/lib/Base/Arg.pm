@@ -225,10 +225,15 @@ sub dict_update {
         my $v_upd  = $update->{$k};
         next unless defined $v_upd;
 
-        my ($km, @ctl) = map { trim($_) } split '@' => $k;
-        $k = $km if @ctl;
+        my ($km, $ctl_line) = str_split($k, { 'sep' => '@' });
+        my %ctl = map { $_ => 1 } str_split($ctl_line, { 'sep' => ',' });
+        $k = $km if keys(%ctl);
+
+        #$DB::single = 1 if keys(%ctl);
 
         my $v_dict = $dict->{$k};
+
+        #$DB::single = 1 if $k eq 'include';
 
         my $d_type  = defined $v_dict ? ( reftype $v_dict || '' ) : '';
         my $u_type  = defined $v_upd ? ( reftype $v_upd || '' ) : '';
@@ -238,19 +243,29 @@ sub dict_update {
              dict_update($v_dict, $v_upd);
 
           }elsif($d_type eq 'ARRAY'){
-             if (grep { /^push$/ } @ctl) {
-                push @$v_dict, @$v_upd;
+             my $done;
+
+             if($ctl{push}){
+                push @$v_dict, @$v_upd; $done = 1;
+             }
+             if($ctl{prepend}){
+                unshift @$v_dict, @$v_upd; $done = 1;
+             }
+             if($ctl{uniq}){
+                $dict->{$k} = uniq($v_dict); $done = 1;
              }
 
-             if (grep { /^prepend$/ } @ctl) {
-                unshift @$v_dict, @$v_upd;
-             }
-
-             if (grep { /^uniq$/ } @ctl) {
-                $dict->{$k} = uniq($v_dict);
-             }
+             next if $done;
           }
-          next;
+        }
+
+        if($d_type eq ''){
+          if ($u_type eq 'ARRAY') {
+            if ($ctl{push}) {
+              $dict->{$k} = [ $v_dict, @$v_upd ];
+              next;
+            }
+          }
         }
 
         $dict->{$k} = $v_upd;
