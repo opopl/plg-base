@@ -23,6 +23,8 @@ $VERSION = '0.01';
 use Base::String qw(str_split);
 use String::Util qw(trim);
 
+use Base::List qw(uniq);
+
 ###export_vars_scalar
 my @ex_vars_scalar=qw(
 );
@@ -223,9 +225,8 @@ sub dict_update {
         my $v_upd  = $update->{$k};
         next unless defined $v_upd;
 
-        my ($km, $ctl) = map { trim($_) } split '@' => $k;
-        $ctl //= '';
-        $k = $km if $ctl;
+        my ($km, @ctl) = map { trim($_) } split '@' => $k;
+        $k = $km if @ctl;
 
         my $v_dict = $dict->{$k};
 
@@ -237,12 +238,16 @@ sub dict_update {
              dict_update($v_dict, $v_upd);
 
           }elsif($d_type eq 'ARRAY'){
-             if ($ctl eq 'push') {
+             if (grep { /^push$/ } @ctl) {
                 push @$v_dict, @$v_upd;
+             }
 
-             } elsif ($ctl eq 'prepend') {
+             if (grep { /^prepend$/ } @ctl) {
                 unshift @$v_dict, @$v_upd;
+             }
 
+             if (grep { /^uniq$/ } @ctl) {
+                $dict->{$k} = uniq($v_dict);
              }
           }
           next;
