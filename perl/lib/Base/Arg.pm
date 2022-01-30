@@ -212,7 +212,9 @@ sub hash_inject {
 }
 
 sub dict_update {
-    my ($dict, $update) = @_;
+    my ($dict, $update, $opts) = @_;
+
+    $opts ||= {};
 
     return unless reftype $dict eq 'HASH';
     return unless reftype $update eq 'HASH';
@@ -221,13 +223,28 @@ sub dict_update {
         my $v_upd  = $update->{$k};
         next unless defined $v_upd;
 
+        my ($km, $ctl) = map { trim($_) } split '@' => $k;
+        $ctl //= '';
+        $k = $km if $ctl;
+
         my $v_dict = $dict->{$k};
 
         my $d_type  = defined $v_dict ? ( reftype $v_dict || '' ) : '';
         my $u_type  = defined $v_upd ? ( reftype $v_upd || '' ) : '';
 
-        if ($d_type eq 'HASH' && $u_type eq 'HASH') {
-          dict_update($v_dict, $v_upd);
+        if ($d_type eq $u_type) {
+          if($d_type eq 'HASH'){
+             dict_update($v_dict, $v_upd);
+
+          }elsif($d_type eq 'ARRAY'){
+             if ($ctl eq 'push') {
+                push @$v_dict, @$v_upd;
+
+             } elsif ($ctl eq 'prepend') {
+                unshift @$v_dict, @$v_upd;
+
+             }
+          }
           next;
         }
 
