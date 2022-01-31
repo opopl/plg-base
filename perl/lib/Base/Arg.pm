@@ -246,7 +246,7 @@ sub dict_update {
 
         my ($km, $ctl_line) = str_split($k, { 'sep' => '@' });
         my %ctl = map { $_ => 1 } str_split($ctl_line, { 'sep' => ',' });
-        $k = $km if keys(%ctl);
+        $k = $km if keys(%ctl) && $opts->{ctl};
 
         my $v_dict = $dict->{$k};
         #$DB::single = 1 if $k eq 'sections';
@@ -256,31 +256,33 @@ sub dict_update {
 
         if ($d_type eq $u_type) {
           if($d_type eq 'HASH'){
-             dict_update($v_dict, $v_upd);
+             dict_update($v_dict, $v_upd, $opts);
              next;
 
           }elsif($d_type eq 'ARRAY'){
-             my $done;
-             $v_dict ||= [];
+             if($opts->{ctl}){
+               my $done;
 
-             if($ctl{push}){
-                push @$v_dict, @$v_upd;  $done = 1;
+               $v_dict ||= [];
+               if($ctl{push}){
+                  push @$v_dict, @$v_upd;  $done = 1;
+               }
+               if($ctl{prepend}){
+                  unshift @$v_dict, @$v_upd; $done = 1;
+               }
+               if($ctl{uniq}){
+                  $v_dict = uniq($v_dict); $done = 1;
+               }
+               $dict->{$k} = $v_dict;
+    
+               next if $done;
              }
-             if($ctl{prepend}){
-                unshift @$v_dict, @$v_upd; $done = 1;
-             }
-             if($ctl{uniq}){
-                $v_dict = uniq($v_dict); $done = 1;
-             }
-             $dict->{$k} = $v_dict;
-
-             next if $done;
           }
         }
 
         if($d_type eq ''){
           if ($u_type eq 'ARRAY') {
-            if ($ctl{push}) {
+            if ($ctl{push} && $opts->{ctl}) {
               $dict->{$k} = [];
               push @{$dict->{$k}}, defined $v_dict ? $v_dict : (), @$v_upd;
               next;
@@ -289,10 +291,7 @@ sub dict_update {
         }
 
         $dict->{$k} = $v_upd;
-
     }
-
-    dict_rm_ctl($dict);
 
     return $dict;
 }
