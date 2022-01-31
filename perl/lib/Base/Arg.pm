@@ -46,6 +46,7 @@ my @ex_vars_array=qw(
         hash_merge_right
 
         dict_update
+        dict_rm_ctl
 
         hash_inject
         hash_apply
@@ -213,13 +214,31 @@ sub hash_inject {
     return;
 }
 
+sub dict_rm_ctl {
+    my ($dict) = @_;
+
+    foreach my $k (keys %$dict) {
+        my $v_dict = $dict->{$k};
+
+        my ($km, $ctl_line) = str_split($k, { 'sep' => '@' });
+        if($ctl_line){
+           $dict->{$km} = $v_dict;
+           delete $dict->{$k};
+        }
+
+        if (ref $v_dict eq 'HASH') {
+           dict_rm_ctl($dict->{$km});
+        }
+    }
+}
+
 sub dict_update {
     my ($dict, $update, $opts) = @_;
 
     $opts ||= {};
 
-    return unless reftype $dict eq 'HASH';
-    return unless reftype $update eq 'HASH';
+    return unless $dict && reftype $dict eq 'HASH';
+    return unless $update && reftype $update eq 'HASH';
 
     foreach my $k (keys %$update) {
         my $v_upd  = $update->{$k};
@@ -229,11 +248,8 @@ sub dict_update {
         my %ctl = map { $_ => 1 } str_split($ctl_line, { 'sep' => ',' });
         $k = $km if keys(%ctl);
 
-        #$DB::single = 1 if keys(%ctl);
-
         my $v_dict = $dict->{$k};
-
-        #$DB::single = 1 if $k eq 'include';
+        #$DB::single = 1 if $k eq 'sections';
 
         my $d_type  = defined $v_dict ? ( reftype $v_dict || '' ) : '';
         my $u_type  = defined $v_upd ? ( reftype $v_upd || '' ) : '';
@@ -241,19 +257,22 @@ sub dict_update {
         if ($d_type eq $u_type) {
           if($d_type eq 'HASH'){
              dict_update($v_dict, $v_upd);
+             next;
 
           }elsif($d_type eq 'ARRAY'){
              my $done;
+             $v_dict ||= [];
 
              if($ctl{push}){
-                push @$v_dict, @$v_upd; $done = 1;
+                push @$v_dict, @$v_upd;  $done = 1;
              }
              if($ctl{prepend}){
                 unshift @$v_dict, @$v_upd; $done = 1;
              }
              if($ctl{uniq}){
-                $dict->{$k} = uniq($v_dict); $done = 1;
+                $v_dict = uniq($v_dict); $done = 1;
              }
+             $dict->{$k} = $v_dict;
 
              next if $done;
           }
@@ -262,7 +281,8 @@ sub dict_update {
         if($d_type eq ''){
           if ($u_type eq 'ARRAY') {
             if ($ctl{push}) {
-              $dict->{$k} = [ $v_dict, @$v_upd ];
+              $dict->{$k} = [];
+              push @{$dict->{$k}}, defined $v_dict ? $v_dict : (), @$v_upd;
               next;
             }
           }
@@ -271,6 +291,8 @@ sub dict_update {
         $dict->{$k} = $v_upd;
 
     }
+
+    dict_rm_ctl($dict);
 
     return $dict;
 }
