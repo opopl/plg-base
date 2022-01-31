@@ -20,10 +20,19 @@ use Base::Arg qw(dict_update);
 #print qq{$a} . "\n";
 #print ref undef;
 #
-print undef // 2;
+#print undef // 2;
 
-my $d = { a => { 1 => 2 } };
-my $u = { a => { 2 => 3 } };
+#my $d = { a => { 1 => 2 } };
+#my $u = { a => { 2 => 3 } };
 
-dict_update($d, $u);
-print Dumper($d) . "\n";
+#dict_update($d, $u);
+#print Dumper($d) . "\n";
+#my $a = {};
+#$a->{1}->{2} = 3;
+#print Dumper($a) . "\n";
+
+my @a = (1 .. 10);
+for my $x (@a){
+  $x *= 2;
+}
+print Dumper(\@a) . "\n";
