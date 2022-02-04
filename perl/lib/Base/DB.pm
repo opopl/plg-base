@@ -574,11 +574,35 @@ sub cond_where {
     my $e = q{`};
 
     my @fields_where = keys %$w;
-    my @values_where = map { $w->{$_} } @fields_where;
+    my @values_where;
+
+    my @cond_a;
+    foreach my $k (@fields_where) {
+        my $v = $w->{$k};
+
+        unless (ref $v) {
+            push @values_where, $v;
+            push @cond_a, trim($k) . ' = ? ';
+
+        }elsif(ref $v eq 'HASH'){
+            if ($k eq '@regexp') {
+               while(my ($key, $pat) = each %$v){
+                  next unless $pat;
+                  push @cond_a, sprintf(' RGX("%s",%s) IS NOT NULL ', $pat, $key);
+               }
+            }
+        }
+        elsif(ref $v eq 'ARRAY'){
+            push @cond_a, join ' OR ' => map { $k . ' = ? ' } @$v;
+            push @values_where, @$v;
+        }
+
+    }
 
     my $q = '';
     if (@values_where) {
-        $q .= q{ WHERE } . join(sprintf(' %s ',$sep),map { $e . trim($_) . $e . ' = ? ' } @fields_where);
+        #$q .= q{ WHERE } . join(sprintf(' %s ',$sep),map { $e . trim($_) . $e . ' = ? ' } @fields_where);
+        $q .= q{ WHERE } . join(sprintf(' %s ',$sep),@cond_a);
     }
 
     my @p = @values_where;

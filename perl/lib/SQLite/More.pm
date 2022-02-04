@@ -27,6 +27,7 @@ sub sqlite_more
   my %funcs = (
      # regex($pattern, $string, $flags, $index )
      'regexp'    => [ -1, sub { rgx_match(@_) } ],
+     'rgx'       => [ -1, sub { rgx_match(@_) } ],
      'basename' => [ 1, sub { basename(shift) } ],
      'dirname'  => [ 1, sub { dirname(shift) } ],
      'extension'  => [ 1, sub { 
