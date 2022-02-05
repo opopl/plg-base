@@ -46,6 +46,7 @@ my @ex_vars_array=qw(
         hash_merge_right
 
         dict_update
+        dict_new
         dict_rm_ctl
 
         hash_inject
@@ -231,6 +232,59 @@ sub dict_rm_ctl {
         }
     }
 }
+
+# my $d = {};
+# dict_new('a.b.c','aa');
+sub dict_new {
+   my ($path, $val, $sep) = @_;
+   $sep ||= '\.';
+
+   my $dcn;
+   $dcn = sub { 
+      my ($dct, $path, $val) = @_;
+
+	  while ($path =~ /^\Q$sep\E/) {
+	    $path = substr $path, 1;
+	  }
+      my @parts = split $sep => $path, 2;
+
+      my $front = $parts[0];
+
+      if (@parts > 1) {
+        $dct->{$front} ||= {};
+        my $branch = $dct->{$front};
+        $dcn->($branch, $parts[1], $val);
+      }else{
+        unless (exists $dct->{$front}) {
+          $dct->{$front} = $val;
+        }
+      }
+   };
+
+   my $d = {};
+   $dcn->($d,$path,$val);
+   return $d;
+}
+
+#def dictnew(path='', val='', sep='.'):
+  #''' 
+    #d = dictnew('a.b.c.d',value)
+    #d = dictnew('a/b/c/d',value,sep='/')
+  #''' 
+  #def _dictnew(dct, path, val):
+    #while path.startswith(sep):
+      #path = path[1:]
+    #parts = path.split(sep, 1)
+    #if len(parts) > 1:
+        #branch = dct.setdefault(parts[0], {})
+        #_dictnew(branch, parts[1], val)
+    #else:
+        #if not parts[0] in dct:
+          #dct[parts[0]] = val
+
+  #d = {}
+  #_dictnew(d,path,val)
+  #return d
 
 sub dict_update {
     my ($dict, $update, $opts) = @_;

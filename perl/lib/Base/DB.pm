@@ -68,7 +68,11 @@ my @ex_vars_array = qw();
     dbh_sth_exec
     dbh_update_hash
     dbi_connect
+
     cond_where
+    cond_inner_join
+
+    jcond
 )],
 'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -216,6 +220,8 @@ sub dbh_select {
     my $t = $ref->{t} || '';
     $t = trim($t);
 
+    my $t_alias = $ref->{t_alias} || $t;
+
     # query if input
     my $q = $ref->{q};
 
@@ -242,11 +248,12 @@ sub dbh_select {
         $res;
     } @f : '*';
 
+    my $t_str = ( $t eq $t_alias ) ? $t : qq{ $t $t_alias };
     $q ||= qq| 
-        $SELECT $f FROM `$t` 
+        $SELECT $f FROM $t_str
     |;
 
-    $q .= cond_inner_join($t, $inner_join);
+    $q .= cond_inner_join($t, $t_alias, $inner_join);
 
     my ($q_wh, $p_wh) = cond_where($w);
     $q .= $q_wh;
@@ -572,22 +579,40 @@ sub dbh_update_hash {
     return $ok;
 }
 
+sub jcond {
+   my ($op, $cond, %opts) = @_;
+   $cond //= [];
+
+   my $tf = $opts{braces} ? sub { '( ' . shift . ' )' } : sub { shift };
+
+   $op = sprintf(' %s ',uc $op);
+   my $jnd = join $op => map { $_ ? $tf->($_) : () } @$cond;
+
+   return $jnd;
+}
+
 sub cond_inner_join {
-    my ($table, $ij) = @_;
+    my ($main, $main_alias, $ij) = @_;
     $ij ||= {};
+
+    $main_alias ||= $main;
 
     my $cij='';
     if (ref $ij eq 'HASH') {
-	    my $on  = $ij->{on};
-	    my $tbl = $ij->{tbl};
+        my $on  = $ij->{on};
 
-	    if ($on && $tbl) {
-	        $cij .= qq{ INNER JOIN $tbl ON $table.$on = $tbl.$on };
-	    }
+        my $tbl       = $ij->{tbl};
+        my $tbl_alias = $ij->{tbl_alias} || $tbl;
+
+        if ($on && $tbl) {
+            my $tbl_str = ( $tbl_alias eq $tbl ) ? $tbl : qq{ $tbl $tbl_alias }; 
+            $cij .= qq{ INNER JOIN $tbl_str ON $main_alias.$on = $tbl_alias.$on };
+            $cij .= "\n";
+        }
 
     } elsif (ref $ij eq 'ARRAY') {
         foreach my $x (@$ij) {
-            $cij .= cond_inner_join($table, $x);
+            $cij .= cond_inner_join($main, $main_alias, $x);
         }
     }
 
