@@ -222,6 +222,8 @@ sub dbh_select {
     # where ... AND statement
     my $w = $ref->{w} || {};
 
+    my $inner_join = $ref->{ij} || {};
+
     my $fetch = $ref->{fetch} || 'fetchrow_hashref';
 
     # additional conditions
@@ -244,6 +246,8 @@ sub dbh_select {
         $SELECT $f FROM `$t` 
     |;
 
+    $q .= cond_inner_join($t, $inner_join);
+
     my ($q_wh, $p_wh) = cond_where($w);
     $q .= $q_wh;
     push @p, @$p_wh;
@@ -261,6 +265,7 @@ sub dbh_select {
         }
     }
 
+    $DB::single = 1;
     my $sth;
     eval { $sth = $dbh->prepare($q); };
     if($@){ $warn->($@,$dbh->errstr,$q);  }
@@ -272,7 +277,6 @@ sub dbh_select {
         $warn->(@w);
         return [];
     }
-
     
     eval { $sth->execute(@p) or do { $warn->($dbh->errstr,$q,@p); }; };
     if($@){ $warn->($@,$dbh->errstr,$q,@p); }
@@ -302,6 +306,8 @@ sub dbh_select {
             res => $res
         });
     }
+
+    $DB::single = 1;
 
     return ($rows, $cols, $q, [@p]);
 }
@@ -566,6 +572,27 @@ sub dbh_update_hash {
     return $ok;
 }
 
+sub cond_inner_join {
+    my ($table, $ij) = @_;
+    $ij ||= {};
+
+    my $cij='';
+    if (ref $ij eq 'HASH') {
+	    my $on  = $ij->{on};
+	    my $tbl = $ij->{tbl};
+
+	    if ($on && $tbl) {
+	        $cij .= qq{ INNER JOIN $tbl ON $table.$on = $tbl.$on };
+	    }
+
+    } elsif (ref $ij eq 'ARRAY') {
+        foreach my $x (@$ij) {
+            $cij .= cond_inner_join($table, $x);
+        }
+    }
+
+    return $cij;
+}
 
 sub cond_where {
     my ($w,$sep) = @_;
@@ -601,7 +628,6 @@ sub cond_where {
 
     my $q = '';
     if (@values_where) {
-        #$q .= q{ WHERE } . join(sprintf(' %s ',$sep),map { $e . trim($_) . $e . ' = ? ' } @fields_where);
         $q .= q{ WHERE } . join(sprintf(' %s ',$sep),@cond_a);
     }
 
