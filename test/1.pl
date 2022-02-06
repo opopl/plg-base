@@ -10,9 +10,6 @@ use Base::Arg qw(
     dict_new
 );
 
-#my %a;
-#$a{1} .= '22';
-
-my $d = dict_new('a.b.c',{ 1  => 2 });
-
-print Dumper($d) . "\n";
+local $_ = 'aa aa';
+my @a = (m/aa/g);
+print Dumper(\@a) . "\n";

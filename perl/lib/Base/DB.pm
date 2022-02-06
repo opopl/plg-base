@@ -272,7 +272,6 @@ sub dbh_select {
         }
     }
 
-    $DB::single = 1;
     my $sth;
     eval { $sth = $dbh->prepare($q); };
     if($@){ $warn->($@,$dbh->errstr,$q);  }
@@ -313,8 +312,7 @@ sub dbh_select {
             res => $res
         });
     }
-
-    $DB::single = 1;
+	$DB::single = 1;
 
     return ($rows, $cols, $q, [@p]);
 }
@@ -652,8 +650,8 @@ sub cond_where {
     }
 
     my $q = '';
-    if (@values_where) {
-        $q .= q{ WHERE } . join(sprintf(' %s ',$sep),@cond_a);
+    if (@cond_a) {
+        $q .= q{ WHERE } . join(sprintf(' %s ',$sep), @cond_a);
     }
 
     my @p = @values_where;
