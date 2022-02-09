@@ -14,4 +14,6 @@ use Base::Arg qw(
 #my @a = (m/aa/g);
 #print Dumper(\@a) . "\n";
 my $a = 1 if 0;
-print Dumper($a) . "\n";
+my $cc = 1 if 0;
+my $ccc = 1 if undef;
+print Dumper($ccc) . "\n";
