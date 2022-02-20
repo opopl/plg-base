@@ -10,14 +10,6 @@ use Base::Arg qw(
     dict_new
 );
 
-#local $_ = 'aa aa';
-#my @a = (m/aa/g);
-#print Dumper(\@a) . "\n";
-my $a = 1 if 0;
-my $cc = 1 if 0;
-my $ccc = 1 if undef;
-print Dumper($ccc) . "\n";
 
-my @a = ('',undef);
-my $j = join ' ' => @a;
-print Dumper($j) . "\n";
+my $a = 1 unless (undef,undef);
+print Dumper($a) . "\n";
