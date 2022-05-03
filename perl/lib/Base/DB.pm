@@ -312,7 +312,6 @@ sub dbh_select {
             res => $res
         });
     }
-    $DB::single = 1;
 
     return ($rows, $cols, $q, [@p]);
 }
