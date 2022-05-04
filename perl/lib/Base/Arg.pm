@@ -243,9 +243,9 @@ sub dict_new {
    $dcn = sub { 
       my ($dct, $path, $val) = @_;
 
-	  while ($path =~ /^\Q$sep\E/) {
-	    $path = substr $path, 1;
-	  }
+      while ($path =~ /^\Q$sep\E/) {
+        $path = substr $path, 1;
+      }
       my @parts = split $sep => $path, 2;
 
       my $front = $parts[0];
