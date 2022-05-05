@@ -13,3 +13,9 @@ use Base::Arg qw(
 
 my $a = 1 unless (undef,undef);
 print Dumper($a) . "\n";
+
+my $b = {
+	a_a => 1
+};
+
+print Dumper($b) . "\n";
