@@ -12,6 +12,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 
 use Data::Dumper qw(Dumper);
 use File::Basename qw(basename dirname);
+use Digest::MD5;
 
 use Base::Enc qw(
     enc_out 
@@ -44,7 +45,8 @@ my @ex_vars_array=qw(
         file_w
         file_r
         dmp
-		iswin
+        iswin
+        md5sum
     )],
     'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -54,6 +56,21 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 our @EXPORT  = qw( );
 
 our $VERSION = '0.01';
+
+sub md5sum
+{
+    my $file = shift;
+    my $digest = "";
+    eval{
+        open(FILE, $file) or die "Can't find file $file\n";
+        my $ctx = Digest::MD5->new;
+        $ctx->addfile(*FILE);
+        $digest = $ctx->hexdigest;
+        close(FILE);
+    };
+    if($@){ print $@; return ""; }
+    return $digest; 
+}
 
 
 sub replace_undefs {
@@ -81,7 +98,7 @@ sub replace_undefs {
 }
 
 sub iswin {
-	($^O eq 'MSWin32') ? 1 : 0;
+    ($^O eq 'MSWin32') ? 1 : 0;
 }
 
 sub dmp {
@@ -198,7 +215,7 @@ sub file_r {
     my ( $file, $lines, $enc, $text ) = @{$ref}{@f};
 
     $lines ||= [];
-	$text ||= '';
+    $text ||= '';
 
     $enc ||= UNC;
 
@@ -214,25 +231,25 @@ sub file_r {
     binmode $out, sprintf('%s:encoding(%s)',( $ref->{raw} ? ':raw' : '' ), $enc);
 
     eval {
-		local $SIG{__WARN__} = sub {
-			my $msgs = [
-				'file: ' . basename($file),
-				'slurp warn:'
-			];
-			push @$msgs, @_;
-			$warn->($msgs);
-		};
+        local $SIG{__WARN__} = sub {
+            my $msgs = [
+                'file: ' . basename($file),
+                'slurp warn:'
+            ];
+            push @$msgs, @_;
+            $warn->($msgs);
+        };
 
-		unless ($ref->{slurp}) {
-	        for(<$out>){
-	            chomp;
-	            push @$lines, $_;
-	        }
-		}else{
-			local $/ = undef;
-			$text = <$out>;
-			@$lines = split("\n",$text);
-		}
+        unless ($ref->{slurp}) {
+            for(<$out>){
+                chomp;
+                push @$lines, $_;
+            }
+        }else{
+            local $/ = undef;
+            $text = <$out>;
+            @$lines = split("\n",$text);
+        }
     };
     if ($@) { 
         my $r = { 
