@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+script="$PLG/base/bin/db_init.pl"
+
+if [[ $PERLDB ]]; then
+  perl -d $script $*
+else
+  perl $script $*
+fi

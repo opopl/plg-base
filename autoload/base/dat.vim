@@ -35,6 +35,18 @@ function! base#dat#view (...)
   endif
 endf
 
+if 0
+  call tree
+    calls
+      base#datlist
+        base#datafiles
+          base#sqlite#datfiles
+            pymy#sqlite#query
+  sql
+    SELECT DISTINCT datfile FROM datfiles WHERE keyfull = ?
+    SELECT keyfull, datfile FROM datfiles
+endif
+
 function! base#dat#render_list ()
   let dats = base#datlist()
   let dats = sort(dats)
@@ -53,19 +65,19 @@ function! base#dat#render_list ()
     endif
   endfor
 
-	let delim = repeat( 'x', 50 )
+  let delim = repeat( 'x', 50 )
 
-	let lines = []
-	call extend(lines,['BaseDatView'])
-	call extend(lines,[
-		\	delim,
-		\	'	Vim Functions: ',
-		\	'		base#dat#render_list base#dat#view',
-		\	delim,
-		\	])
+  let lines = []
+  call extend(lines,['BaseDatView'])
+  call extend(lines,[
+    \ delim,
+    \ ' Vim Functions: ',
+    \ '   base#dat#render_list base#dat#view',
+    \ delim,
+    \ ])
 
 
-	call extend(lines,['List of DAT files: '])
+  call extend(lines,['List of DAT files: '])
   call extend(lines, pymy#data#tabulate({
     \ 'data'    : info,
     \ 'headers' : base#qw('dat buf description'),

@@ -18,8 +18,8 @@ my $sub_log  = sub { print $_."\n" for(@_) };
 my $sub_warn = sub { warn $_."\n" for(@_)};
 
 our $plgbase = Vim::Plg::Base->new(
-	sub_log  => $sub_log,
-	sub_warn => $sub_warn,
-	dbfile   => $dbfile,
+    sub_log  => $sub_log,
+    sub_warn => $sub_warn,
+    dbfile   => $dbfile,
 )->init;
 

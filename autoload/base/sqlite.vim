@@ -100,8 +100,8 @@ function! base#sqlite#datfiles (...)
     for rh in rows_h
         call add(datlist,get(rh,'datfile',''))
     endfor
-		let datlist = base#mapsub(datlist,'\\','/','g')
-		let datlist = base#uniq(datlist)
+    let datlist = base#mapsub(datlist,'\\','/','g')
+    let datlist = base#uniq(datlist)
     return datlist
   else
     let datfiles = {}
