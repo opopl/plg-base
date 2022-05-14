@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-script="$PLG/base/bin/db_init.pl"
+script="$PLG/base/perl/bin/db_init.pl"
 
 if [[ $PERLDB ]]; then
   perl -d $script $*
