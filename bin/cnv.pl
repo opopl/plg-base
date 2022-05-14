@@ -97,7 +97,9 @@ sub find_files {
             foreach my $ext (@exts) {
                 if (/\.$ext$/) {
                     my $path = $File::Find::name;
-                    $path =~ s{\/}{\\}g;
+                    if ($^O eq 'MSWin32') {
+                      $path =~ s{\/}{\\}g;
+                    }
         
                     push @files,abs2rel($path,$self->{plg_dir});
                 }

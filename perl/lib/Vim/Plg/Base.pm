@@ -233,7 +233,7 @@ sub update_self {
 }
 
 sub reload_from_fs {
-    my ($self)=@_;
+    my ($self) = @_;
 
     my $tb_order = [qw(
         plugins 
@@ -293,6 +293,7 @@ sub dat_locate_from_fs {
     my $prefix = $ref->{prefix} || '';
     my $type   = $ref->{type} || '';
     my $plugin = $ref->{plugin} || 'base';
+    $DB::single = 1;
 
     my $pat  = qr/\.i\.dat$/;
     File::Find::find({ 
@@ -303,6 +304,7 @@ sub dat_locate_from_fs {
             /$pat/ && do {
                     s/$pat//g;
                     my $kfull = ($prefix) ? join("_",$prefix,$_) : $_;
+                    print qq{$kfull} . "\n";
 
                     dbh_insert_hash({
                         t => 'datfiles',
@@ -506,7 +508,6 @@ sub db_create_tables {
     Fill datfiles hash either from FS (if one resets "datfiles" table) or from the database
 
 =cut
-
 
 sub init_dat_base {
     my $self=shift;
