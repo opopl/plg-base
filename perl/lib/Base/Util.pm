@@ -48,7 +48,7 @@ my @ex_vars_array=qw(
         iswin
         md5sum
     )],
-    'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
+    'vars'  => [ @ex_vars_scalar, @ex_vars_array, @ex_vars_hash ]
 );
 
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );

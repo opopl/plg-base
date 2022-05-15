@@ -15,6 +15,8 @@ use File::Dat::Utils qw(readarr);
 use File::Basename qw(basename dirname);
 use File::Slurp qw(read_file);
 
+use Getopt::Long qw(GetOptions);
+
 use File::Find;
 use File::Find::Rule;
 
@@ -24,6 +26,13 @@ use Vim::Perl qw(VimMsg);
 
 use DBD::SQLite;
 use DBI;
+
+use FindBin qw($Bin $Script);
+
+use Base::Arg qw( 
+    hash_inject
+    hash_update
+);
 
 use Base::DB qw(
     dbh_insert_hash
@@ -65,11 +74,15 @@ sub init {
     my $self=shift;
 
     #return unless $^O eq 'MSWin32';
+    $DB::single = 1;
 
     $self
         ->init_dirs
         ->init_sqlstm
         ->init_vars
+        #  ---------------------
+        ->get_opt
+        #  ---------------------
         ->db_connect
         ->db_drop_tables
         ->db_create_tables
@@ -79,6 +92,109 @@ sub init {
 
 }
 
+sub get_opt {
+    my ($self) = @_;
+
+    return $self unless $self->{do_get_opt};
+    
+    Getopt::Long::Configure(qw(bundling no_getopt_compat no_auto_abbrev no_ignore_case_always));
+    
+    my (@optstr, %opt);
+
+    @optstr = ( 
+        # image file, pattern, or directory
+        "add|a=s@",
+        # config
+        "config|c=s@",
+        # tex file
+        "file|f=s",
+        "proj|p=s",
+        "root|r=s",
+        "sec|s=s",
+        # e.g. load_file
+        "cmd|c=s",
+        "reset",
+        "reload",
+        "debug|d",
+        # queries to img.db
+        "query|q=s",
+        "param=s@",
+    );
+    
+    unless( @ARGV ){ 
+        $self->print_help;
+        exit 0;
+    }else{
+        GetOptions(\%opt,@optstr);
+        $self->{opt} = \%opt;
+    }
+
+    hash_update($self, \%opt);
+
+    if ($self->{add}) {
+        $self->{cmd} = 'add_images';
+    }
+
+    return $self;    
+}
+
+sub print_help {
+    my ($self) = @_;
+
+    my $pack = __PACKAGE__;
+    print qq{
+        ENVIRONMENT:
+            IMG_ROOT   $ENV{IMG_ROOT}
+            HTML_ROOT  $ENV{HTML_ROOT}
+            PLG        $ENV{PLG}
+        SEE ALSO:
+            base#bufact#tex#list_img 
+            BufAct list_img
+        PACKAGES:
+            $pack
+            Plg::Projs::GetImg::Fetcher
+        LOCATION:
+            $0
+        OPTIONS:
+            --add -a string (TODO) add image file, pattern or directory
+
+            --file -f FILE string TeX file with urls
+            --proj -p PROJ string
+            --root -r ROOT string
+            --sec  -s SEC  string
+
+            --cmd  -c CMD  string    e.g. load_file
+
+            --reset (DISABLED) reset database, remove image files
+            --reload
+
+            --debug -d
+        
+            # queries to img.db
+            --query -q QUERY string
+            --param PARAMS
+        USAGE:
+            PROCESS SINGLE TEX-FILE:
+                perl $Script -f TEXFILE 
+                perl $Script --file TEXFILE 
+            PROCESS WHOLE PROJECT:
+                perl $Script -p PROJ -r ROOT 
+            DEBUGGING:
+                perl $Script -p PROJ -r ROOT -d
+                perl $Script -p PROJ -r ROOT --debug
+            QUERY IMAGE DATABASE:
+                perl $Script --cmd query -q "select count(*) from imgs" 
+                perl $Script --cmd query 
+                    --query "select count(*) from imgs where url = ? " 
+                    --param URL
+    } . "\n";
+    exit 0;
+
+    return $self;
+}
+
+
+
 sub init_vars {
     my $self=shift;
 
@@ -86,7 +202,7 @@ sub init_vars {
 
     my $tb_order = (-e $dat) ? readarr($dat) : [];
 
-    my $h={
+    my $h = {
         withvim      => $self->_withvim(),
         dbfile       => ':memory:',
         dattypes     => [@TYPES],
@@ -97,7 +213,7 @@ sub init_vars {
 
     };
 
-    my @k=keys %$h;
+    my @k = keys %$h;
 
     for(@k){ $self->{$_} = $h->{$_} unless defined $self->{$_}; }
 
@@ -444,7 +560,7 @@ sub db_drop_tables {
     # order of tables to be dropped
     my $tb_order=$ref->{tb_order} || $dbopts->{tb_order} || [];
 
-    my $dbh=$self->dbh;
+    my $dbh = $self->dbh;
 
     my @drop;
     foreach my $tb (@$tb_order) {
@@ -639,6 +755,8 @@ sub init_plugins_all {
 sub init_dat {
     my $self = shift;
 
+    $DB::single = 1;
+
     $self
         ->init_dat_base
         ->init_plugins
@@ -652,7 +770,8 @@ sub init_dat {
 
 BEGIN {
     ###__ACCESSORS_SCALAR
-    our @scalar_accessors=qw(
+    our @scalar_accessors = qw(
+        do_get_opt
         dbh
         sth
         dbfile

@@ -21,5 +21,6 @@ our $plgbase = Vim::Plg::Base->new(
     sub_log  => $sub_log,
     sub_warn => $sub_warn,
     dbfile   => $dbfile,
+    do_get_opt  => 1,
 )->init;
 
