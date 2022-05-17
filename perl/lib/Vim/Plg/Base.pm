@@ -81,6 +81,7 @@ sub init {
         ->init_sqlstm
         ->init_vars
         #  ---------------------
+        #  see also: print_help
         ->get_opt
         #  ---------------------
         ->db_connect
@@ -102,23 +103,8 @@ sub get_opt {
     my (@optstr, %opt);
 
     @optstr = ( 
-        # image file, pattern, or directory
-        "add|a=s@",
-        # config
-        "config|c=s@",
-        # tex file
-        "file|f=s",
-        "proj|p=s",
-        "root|r=s",
-        "sec|s=s",
-        # e.g. load_file
+        # command to execute 
         "cmd|c=s",
-        "reset",
-        "reload",
-        "debug|d",
-        # queries to img.db
-        "query|q=s",
-        "param=s@",
     );
     
     unless( @ARGV ){ 
@@ -147,46 +133,13 @@ sub print_help {
             IMG_ROOT   $ENV{IMG_ROOT}
             HTML_ROOT  $ENV{HTML_ROOT}
             PLG        $ENV{PLG}
-        SEE ALSO:
-            base#bufact#tex#list_img 
-            BufAct list_img
         PACKAGES:
             $pack
-            Plg::Projs::GetImg::Fetcher
         LOCATION:
             $0
         OPTIONS:
-            --add -a string (TODO) add image file, pattern or directory
-
-            --file -f FILE string TeX file with urls
-            --proj -p PROJ string
-            --root -r ROOT string
-            --sec  -s SEC  string
-
-            --cmd  -c CMD  string    e.g. load_file
-
-            --reset (DISABLED) reset database, remove image files
-            --reload
-
-            --debug -d
-        
-            # queries to img.db
-            --query -q QUERY string
-            --param PARAMS
+            --cmd -c (string) command to execute
         USAGE:
-            PROCESS SINGLE TEX-FILE:
-                perl $Script -f TEXFILE 
-                perl $Script --file TEXFILE 
-            PROCESS WHOLE PROJECT:
-                perl $Script -p PROJ -r ROOT 
-            DEBUGGING:
-                perl $Script -p PROJ -r ROOT -d
-                perl $Script -p PROJ -r ROOT --debug
-            QUERY IMAGE DATABASE:
-                perl $Script --cmd query -q "select count(*) from imgs" 
-                perl $Script --cmd query 
-                    --query "select count(*) from imgs where url = ? " 
-                    --param URL
     } . "\n";
     exit 0;
 
@@ -420,7 +373,6 @@ sub dat_locate_from_fs {
             /$pat/ && do {
                     s/$pat//g;
                     my $kfull = ($prefix) ? join("_",$prefix,$_) : $_;
-                    print qq{$kfull} . "\n";
 
                     dbh_insert_hash({
                         t => 'datfiles',
