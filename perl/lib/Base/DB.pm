@@ -58,11 +58,15 @@ my @ex_vars_array = qw();
 ###export_funcs
 'funcs' => [qw( 
     dbh_insert_hash
+    dbh_insert_update_hash
+
     dbh_select
     dbh_select_first
     dbh_select_as_list
     dbh_select_fetchone
+
     dbh_do
+
     dbh_list_tables
     dbh_selectall_arrayref
     dbh_sth_exec
@@ -487,6 +491,20 @@ sub dbh_insert_hash {
         eval { $dbh->disconnect; };
         if ($@) { $warn->($@); }
     }
+
+    return $ok;
+}
+
+sub dbh_insert_update_hash {
+    my ($ref) = @_;
+
+    my $dbh  = $ref->{dbh} || $DBH;
+    my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
+
+    my $dbfile = $ref->{dbfile};
+    if($dbfile){ $dbh = dbi_connect($ref); }
+
+    my $ok;
 
     return $ok;
 }

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+arr=( 1 2 3 )
+#for remote in ${arr[@]}
+echo $BK_REMOTES
+for remote in ${BK_REMOTES[@]}
+do
+  echo "$remote"
+  echo "2"
+done
