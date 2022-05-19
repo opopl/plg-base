@@ -553,9 +553,7 @@ sub dbh_update_hash {
 
     my @set = map { $e . trim($_) . $e . "= ? " } @fields_update;
     my $set = join "," => @set;
-    my $q = qq| 
-        $UPDATE `$t` SET $set
-    |;
+    my $q = qq| $UPDATE `$t` SET $set |;
 
     my ($q_wh, $p_wh) = cond_where($w);
 
