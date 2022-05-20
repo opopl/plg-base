@@ -22,6 +22,7 @@ use DBI;
 use Base::Arg qw(
     hash_apply
 );
+
 use String::Util qw(trim);
 use SQLite::More;
 
@@ -560,6 +561,10 @@ sub dbh_base2info {
   #   be expanded into 'info' table
   my $bcols = $ref->{'bcols'} // [];
 
+  # additional options
+  my $opts = $ref->{'opts'} // {};
+  my $length = $opts->{length} // 0;
+
   # for each of the 'base' columns labeled as 'bcol',
   #    create corresponding 'info' table
   foreach my $bcol (@$bcols) {
@@ -579,13 +584,19 @@ sub dbh_base2info {
   my $scols = [ $jcol ];
   push @$scols, @$bcols;
 
-  my $cond =  join(" OR " => map { "LENGTH($_) > 0" } @$bcols );
+  my $ok = 1;
+
+  my $cond = $length ? join(" OR " => map { "LENGTH($_) > 0" } @$bcols ) : '';
   my ($cond_bw, $p_bw) = cond_where($bwhere);
   if ($cond_bw) {
     $cond_bw =~ s/^\s*WHERE\s+//g;
-    $cond = qq{ WHERE ($cond) AND ($cond_bw) };
+    if ($cond) {
+      $cond = qq{ WHERE ($cond) AND ($cond_bw) };
+    }else{
+      $cond = qq{ WHERE $cond_bw };
+    }
   }else{
-    $cond = qq{ WHERE $cond };
+    $cond = qq{ WHERE $cond } if $cond;
   }
 
   my ($rows_base) = dbh_select({
@@ -611,7 +622,7 @@ sub dbh_base2info {
        #my $ivals = string.split_n_trim(bval,sep=',')
        my @ivals = map { length ? trim($_) : () } split ',' => $bval; 
 
-       dbh_delete({
+       $ok &&= dbh_delete({
           dbh => $dbh,
           t   => $itb,
           w   => { $jcol => $jval }
@@ -628,7 +639,7 @@ sub dbh_base2info {
               w   => $ins
            });
            unless (@$rows) {
-              dbh_insert_hash({ 
+              $ok &&= dbh_insert_hash({
                  dbh => $dbh,
                  t   => $itb,
                  h   => $ins
@@ -637,6 +648,8 @@ sub dbh_base2info {
        }
      }
   }
+
+  return $ok;
 
 }
 
