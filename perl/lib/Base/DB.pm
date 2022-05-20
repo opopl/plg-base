@@ -60,12 +60,15 @@ my @ex_vars_array = qw();
     dbh_insert_hash
     dbh_insert_update_hash
 
+    dbh_base2info
+
     dbh_select
     dbh_select_first
     dbh_select_as_list
     dbh_select_fetchone
 
     dbh_do
+    dbh_delete
 
     dbh_list_tables
     dbh_selectall_arrayref
@@ -77,6 +80,7 @@ my @ex_vars_array = qw();
     cond_inner_join
 
     jcond
+    _sql_ct_info
 )],
 'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
@@ -478,9 +482,9 @@ sub dbh_insert_hash {
     my @v = map { $h->{$_} } @f ;
     my $e = q{`};
     my $f = join ',' => map { $e . $_ . $e } @f;
-    my $q = qq| 
-        $INSERT INTO `$t` ($f) VALUES ($ph) 
-    |;
+
+    my $q = qq| $INSERT INTO `$t` ($f) VALUES ($ph) |;
+
     my $ok = eval { $dbh->do($q, undef, @v); };
     if ($@) {
         $warn->($@, $q, $dbh->errstr);
@@ -495,6 +499,147 @@ sub dbh_insert_hash {
     return $ok;
 }
 
+sub _sql_ct_info {
+   my ($ref) = @_;
+   $ref ||= {};
+
+   # 'base' table
+   my $tbase = $ref->{tbase} || '';
+
+   # join column
+   my $jcol = $ref->{jcol} || '';
+
+   # 'base' column
+   my $bcol = $ref->{bcol} || '';
+
+   # 'info' column
+   my $icol = $ref->{icol} || $bcol;
+
+   return unless $tbase && $bcol && $icol && $jcol;
+
+   my $itb = q{_info_}. $tbase . q{_} . $bcol;
+
+   my $q = qq{ CREATE TABLE IF NOT EXISTS $itb (
+        $jcol TEXT NOT NULL,
+        $icol TEXT, 
+        FOREIGN KEY($jcol) REFERENCES $tbase($jcol)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
+      );
+   };
+   
+   return $q;
+}
+
+# see also base2info in DBW.py
+
+sub dbh_base2info {
+  my ($ref) = @_;
+
+  my $dbh = $ref->{dbh} || $DBH;
+  my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
+
+  # database file
+  my $dbfile = $ref->{dbfile};
+  if($dbfile){ $dbh = dbi_connect($ref); }
+
+  # initial ('base') table
+  my $tbase = $ref->{'tbase'} // '';
+
+  # where condition for 'base' table
+  my $bwhere = $ref->{'bwhere'} // {};
+
+  # 'join' column, i.e. foreign key field
+  #   which 'joins' 'base' and 'info' tables
+  my $jcol = $ref->{'jcol'} // '';
+
+  # 'base' => 'info' columns mapping
+  my $b2i = $ref->{'b2i'} // {};
+
+  # columns in 'base' table which have to 
+  #   be expanded into 'info' table
+  my $bcols = $ref->{'bcols'} // [];
+
+  # for each of the 'base' columns labeled as 'bcol',
+  #    create corresponding 'info' table
+  foreach my $bcol (@$bcols) {
+     my $icol = $b2i->{$bcol} // $bcol;
+     my $sql = _sql_ct_info({ 
+        tbase => $tbase,
+        bcol  => $bcol,
+        jcol  => $jcol,
+        icol  => $icol,
+     });
+     dbh_do({ 
+        dbh => $dbh,
+        q   => $sql,
+     });
+  }
+
+  my $scols = [ $jcol ];
+  push @$scols, @$bcols;
+
+  my $cond =  join(" OR " => map { "LENGTH($_) > 0" } @$bcols );
+  my ($cond_bw, $p_bw) = cond_where($bwhere);
+  if ($cond_bw) {
+    $cond_bw =~ s/^\s*WHERE\s+//g;
+    $cond = qq{ WHERE ($cond) AND ($cond_bw) };
+  }else{
+    $cond = qq{ WHERE $cond };
+  }
+
+  my ($rows_base) = dbh_select({
+     dbh  => $dbh,
+     t    => $tbase,
+     f    => $scols,
+     cond => $cond,
+     p    => $p_bw,
+  });
+
+  foreach my $rw (@$rows_base) {
+     my $jval = $rw->{$jcol} // '';
+     foreach my $bcol (@$bcols) {
+       # 'info' column name (icol) in the relevent 'info' table (itb)
+       my $icol = $b2i->{$bcol} // $bcol;
+
+       # 'info' table name
+       my $itb = sprintf(q{_info_%s_%s}, $tbase, $bcol);
+
+       # comma-separated value
+       my $bval = $rw->{$bcol} // '';
+
+       #my $ivals = string.split_n_trim(bval,sep=',')
+       my @ivals = map { length ? trim($_) : () } split ',' => $bval; 
+
+       dbh_delete({
+          dbh => $dbh,
+          t   => $itb,
+          w   => { $jcol => $jval }
+       });
+
+       foreach my $ival (@ivals) {
+           my $ins = { 
+              $jcol => $jval, 
+              $icol => $ival
+           };
+           my ($rows) = dbh_select({ 
+              dbh => $dbh,
+              t   => $itb,
+              w   => $ins
+           });
+           unless (@$rows) {
+              dbh_insert_hash({ 
+                 dbh => $dbh,
+                 t   => $itb,
+                 h   => $ins
+              })
+           }
+       }
+     }
+  }
+
+}
+
 sub dbh_insert_update_hash {
     my ($ref) = @_;
 
@@ -504,8 +649,60 @@ sub dbh_insert_update_hash {
     my $dbfile = $ref->{dbfile};
     if($dbfile){ $dbh = dbi_connect($ref); }
 
-    my $ok;
+    # data to insert
+    my $h = $ref->{h} || {};
 
+    # table name
+    my $t = $ref->{t} || '';
+    $t = trim($t);
+
+    # insert command
+    my $INSERT  = $ref->{i} || 'INSERT';
+
+    my $on_list = $ref->{on_list} || [];
+    my $on_w = {};
+    foreach my $on (@$on_list) {
+        my $on_val = $h->{$on} // '';
+        $on_w->{$on} = $on_val;
+    }
+
+    my $w_cond = '';
+    my (@w_cond_a, @w_values);
+    while( my($on, $on_val) = each %$on_w){
+       push @w_cond_a, qq{ $on = ? };
+       push @w_values, $on_val;
+    }
+    $w_cond = join(" and " => @w_cond_a);
+
+    my $ok = 1;
+
+    my $cnt;
+    {
+      my $q = qq{ SELECT COUNT(*) FROM $t WHERE $w_cond };
+      my $p = [@w_values];
+      $cnt = dbh_select_fetchone({ dbh => $dbh, q => $q, p => $p });
+    }
+
+    unless ($cnt) {
+       $ok &&= dbh_insert_hash({ 
+          dbh => $dbh,
+          t   => $t,
+          h   => $h,
+          i   => $INSERT,
+       });
+    }else{
+       foreach my $on (@$on_list) {
+          delete $h->{$on};
+       }
+
+       $ok &&= dbh_update_hash({ 
+          dbh => $dbh,
+          t   => $t,
+          h   => $h,
+          w   => $on_w,
+       });
+    }
+  
     return $ok;
 }
 
@@ -546,7 +743,7 @@ sub dbh_insert_update_hash {
 =cut
 
 sub dbh_update_hash {
-    my ($ref)=@_;
+    my ($ref) = @_;
 
     my $dbh = $ref->{dbh} || $DBH;
     my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
@@ -578,7 +775,7 @@ sub dbh_update_hash {
     $q .= $q_wh;
 
     my @p = ( @values_update, @$p_wh );
-    my $ok = eval {$dbh->do($q,undef,@p); };
+    my $ok = eval { $dbh->do($q,undef,@p); };
     if ($@) {
         $warn->($@,$q,$dbh->errstr);
         return;
@@ -725,8 +922,10 @@ sub dbh_do  {
     my $dbh  = $ref->{dbh} || $DBH;
     my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
 
+    my $close = $ref->{close};
+
     my $dbfile = $ref->{dbfile};
-    if($dbfile){ $dbh = dbi_connect($ref); }
+    if($dbfile){ $dbh = dbi_connect($ref); $close = 1; }
 
     my $q = $ref->{q} || '';
     my $p = $ref->{p} || [];
@@ -755,8 +954,7 @@ sub dbh_do  {
 
     }
 
-
-    if ($ref->{close}) {
+    if ($close) {
         if($dbfile && $dbh){
             eval { $dbh->disconnect; };
             if ($@) { $warn->($@); }
@@ -764,6 +962,43 @@ sub dbh_do  {
     }
 
     return $FINE;
+}
+
+sub dbh_delete {
+    my ($ref)  = @_;
+
+    my $dbh = $ref->{dbh} || $DBH;
+    my $warn = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
+
+    my $dbfile = $ref->{dbfile};
+    if($dbfile){ $dbh = dbi_connect($ref); }
+
+    my $t = $ref->{t} // '';
+    my $q = $ref->{q} // '';
+    my @p = @{$ref->{p} // []};
+
+    #my @f = @{$ref->{f} // []};
+    #my $f = (@f) ? join ',' => map { length ? trim($_) : () } @f : '*';
+
+    my $cond = $ref->{cond} // '';
+
+    $q ||= qq{ DELETE FROM $t };
+
+    # where ... AND statement
+    my $w = $ref->{w} // {};
+    my ($q_wh, $p_wh) = cond_where($w);
+    $q .= $q_wh;
+    push @p, @$p_wh;
+
+    $q .= ' ' . $cond;
+
+    my $ok = dbh_do({ 
+       dbh => $dbh,
+       q   => $q,
+       p   => \@p,
+    });
+
+    return $ok;
 }
 
 sub dbh_sth_exec {

@@ -1401,7 +1401,7 @@ fun! base#input_we(msg,default,...)
      call base#varset('this',hist)
   endif
 
-	if use_this
+  if use_this
     let complete = 'custom,base#complete#this'
   endif
 
@@ -3619,29 +3619,35 @@ fun! base#home()
 endf  
 
 if 0
-  call tree
-  calls
-    base#file#catfile
-    base#readarr
-    base#varset
-    base#plgdir
-    base#inlist
-    base#init#cmds
-    base#init#au
-    base#init#sqlite
-    base#init#files
-    base#init#paths
-    base#init#vars
-    base#init#plugins
-    base#init#tagids
-    base#menus#init
-    base#stl#setparts
-    base#env#init
-    base#initpaths#apoplavskiynb()
-    base#omni#init
-    base#rtp#update
-endif
+  files and variables
+    $PLG/base/data/list/init_order.i.dat      => init_order
+    $PLG/base/data/list/all_init_cmds.i.dat   => all_init_cmds
 
+  call tree
+    calls
+      base#file#catfile
+      base#readarr
+      base#varset
+      base#plgdir
+      base#inlist
+      base#init#cmds
+      base#init#au
+      base#init#sqlite
+      base#init#files
+      base#init#paths
+      base#init#vars
+      base#init#plugins
+      base#init#tagids
+      base#menus#init
+      base#stl#setparts
+      base#env#init
+      base#initpaths#apoplavskiynb()
+      base#omni#init
+      base#rtp#update
+
+    called by
+      .vimrc
+endif
 
 fun! base#init (...)
 
