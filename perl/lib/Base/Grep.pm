@@ -32,6 +32,8 @@ sub get_opt {
 
         # (grep)pattern to grep
         "pat|p=s",
+
+        "ignore_case|i",
     );
     
     unless( @ARGV ){ 
@@ -130,7 +132,13 @@ sub find_grep {
            ->name(@glob)
            ->in(@dirs);
 
-    my @r = fgrep { /$pat/ } @files;
+    my @r;
+    if ($self->{ignore_case}) {
+      @r = fgrep { /$pat/i } @files;
+    }else{
+      @r = fgrep { /$pat/ } @files;
+    }
+
     my @out;
     foreach my $rm (@r) {
        my $cnt = $rm->{count} // 0;

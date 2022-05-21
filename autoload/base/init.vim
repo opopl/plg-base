@@ -552,7 +552,10 @@ perl << eof
 #     $Vim::Perl::DBH=$dbh; 
 #   },
     dbfile   => $dbfile,
-  )->init;
+    cmd => 'run',
+  );
+
+  $plgbase->main;
 
 eof
 

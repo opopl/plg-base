@@ -22,6 +22,12 @@ use File::Find::Rule;
 
 use Data::Dumper;
 
+use base qw(
+    Class::Accessor::Complex
+    Base::Logging
+    Base::Cmd
+);
+
 use Vim::Perl qw(VimMsg);
 
 use DBD::SQLite;
@@ -41,10 +47,6 @@ use Base::DB qw(
     dbh_do
 );
 
-use base qw( 
-    Class::Accessor::Complex 
-    Base::Logging
-);
 
 use File::Path qw(mkpath);
 use File::stat qw(stat);
@@ -71,10 +73,9 @@ our @TYPES = qw( list dict listlines );
 =cut
 
 sub init {
-    my $self=shift;
+    my ($self) = @_;
 
     #return unless $^O eq 'MSWin32';
-    $DB::single = 1;
 
     $self
         ->init_dirs
@@ -82,14 +83,31 @@ sub init {
         ->init_vars
         #  ---------------------
         #  see also: print_help
-        ->get_opt
+        ->get_opt;
         #  ---------------------
+
+    $self;
+
+}
+
+sub main {
+    my ($self) = @_;
+
+    $self->run_cmd;
+
+    return $self;
+}
+
+sub cmd_run {
+    my ($self) = @_;
+
+    $self
         ->db_connect
         ->db_drop_tables
         ->db_create_tables
         ->init_dat;
 
-    $self;
+    return $self;
 
 }
 
@@ -116,10 +134,6 @@ sub get_opt {
     }
 
     hash_update($self, \%opt);
-
-    if ($self->{add}) {
-        $self->{cmd} = 'add_images';
-    }
 
     return $self;    
 }
@@ -362,7 +376,6 @@ sub dat_locate_from_fs {
     my $prefix = $ref->{prefix} || '';
     my $type   = $ref->{type} || '';
     my $plugin = $ref->{plugin} || 'base';
-    $DB::single = 1;
 
     my $pat  = qr/\.i\.dat$/;
     File::Find::find({ 
@@ -507,10 +520,10 @@ sub db_drop_tables {
     my $dbopts = $ref->{dbopts} || $self->dbopts;
 
     # which tables to drop 
-    my $tb_reset=$ref->{tb_reset} || $dbopts->{tb_reset} || {};
+    my $tb_reset = $ref->{tb_reset} || $dbopts->{tb_reset} || {};
 
     # order of tables to be dropped
-    my $tb_order=$ref->{tb_order} || $dbopts->{tb_order} || [];
+    my $tb_order = $ref->{tb_order} || $dbopts->{tb_order} || [];
 
     my $dbh = $self->dbh;
 
