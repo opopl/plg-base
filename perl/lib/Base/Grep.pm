@@ -8,7 +8,13 @@ use Getopt::Long qw(GetOptions);
 use File::Basename qw(basename dirname);
 use FindBin qw($Bin $Script);
 
+use File::Grep qw(fgrep);
+
 use File::Find::Rule;
+use Base::DB qw(
+    dbi_connect
+    dbh_insert_hash
+);
       
 sub get_opt {
     my ($self) = @_;
@@ -18,7 +24,14 @@ sub get_opt {
     my (@optstr, %opt);
     @optstr = ( 
         "help|h=s",
-        "cmd|c=s",
+
+        # (find) file extensions
+        "exts|e=s@",
+        # (find) directories
+        "dirs|d=s@",
+
+        # (grep)pattern to grep
+        "pat|p=s",
     );
     
     unless( @ARGV ){ 
@@ -29,8 +42,26 @@ sub get_opt {
         $self->{opt} = \%opt;
     }
 
-    foreach my $k (keys %opt) {
-        $self->{$k} = $opt{$k};
+    while(my($k,$v) = each %opt){
+
+        if (grep { /^$k$/ } qw(exts)) {
+           $self->{$k} ||= [];
+
+           my @arr;  
+           if (ref $v eq 'ARRAY') {
+             for my $x (@$v){
+                push @arr, split(',' => $x);
+             }
+           }else{
+             push @arr, split(',' => $v);
+           }
+
+           push @{$self->{$k}}, @arr;
+
+           next;
+        }
+
+        $self->{$k} = $v;
     }
 
     return $self;   
@@ -44,10 +75,16 @@ sub dhelp {
     USAGE
         perl $Script OPTIONS
     OPTIONS
+       find
+          @ --exts -e (STRING, comma-separated list) extensions 
+          @ --dirs -d (STRING) directories 
+
+       grep
+          --pat -p STRING grep pattern 
 
     EXAMPLES
-        perl $Script ...
-
+        perl $Script -e vim -p aa
+        perl $Script --exts vim,pm --pat bb --dirs DIR
     };
 
     print $s . "\n";
@@ -77,10 +114,67 @@ sub init {
     return $self;
 }
 
+# find + grep
+sub find_grep {
+    my ($self) = @_;
+
+    my @exts = @{$self->{exts} || []};
+    my @dirs = @{$self->{dirs} || []};
+    my $pat  = $self->{pat} // '';
+
+    return $self unless $pat && @exts && @dirs;
+
+    my @glob  = map { "*.$_" } @exts;
+    my @files = File::Find::Rule
+           ->file()
+           ->name(@glob)
+           ->in(@dirs);
+
+    my @r = fgrep { /$pat/ } @files;
+    my @out;
+    foreach my $rm (@r) {
+       my $cnt = $rm->{count} // 0;
+       next unless $cnt;
+
+       my $m = $rm->{matches} // {};
+       my $file = $rm->{filename} // '';
+       my @nums = sort keys %$m;
+
+       foreach my $num (@nums) {
+          my $line = $m->{$num};
+
+          my $str = sprintf(q{%s:%s:%s}, $file, $num, $line );
+          print qq{$str};
+       }
+
+       1;
+    }
+
+    my @lines;
+    foreach my $file (@files) {
+        #my $cmd = qq{ grep -iRnH '$pat' $file };
+        #my @out = qx{  };
+        #print qq{$_} . "\n" for(@out);
+        #system("$cmd");
+        my ($r) = fgrep { /$pat/ } $file;
+        my $m = $r->{matches} // {};
+
+        next unless keys %$m;
+
+        1;
+    }
+        $DB::single = 1;
+
+    return $self;
+}
+
 sub run {
     my ($self) = @_;
 
-    $self->get_opt;
+    $self
+        ->get_opt
+        ->find_grep
+        ;
 
     return $self;
 }
