@@ -37,7 +37,7 @@ sub get_opt {
     );
     
     unless( @ARGV ){ 
-        $self->dhelp;
+        $self->print_help;
         exit 0;
     }else{
         GetOptions(\%opt,@optstr);
@@ -69,7 +69,7 @@ sub get_opt {
     return $self;   
 }
 
-sub dhelp {
+sub print_help {
     my ($self) = @_;
 
     my $s = qq{
@@ -83,6 +83,9 @@ sub dhelp {
 
        grep
           --pat -p STRING grep pattern 
+
+       grep options
+          --ignore_case -i 
 
     EXAMPLES
         perl $Script -e vim -p aa

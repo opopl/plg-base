@@ -154,8 +154,13 @@ sub print_help {
         LOCATION:
             $0
         OPTIONS:
-            --cmd -c (string) command to execute
+            --cmd -c (string) command to execute. 
+                Available commands:
+                  run
+                  reload_from_fs
         USAGE:
+            $Script -c run
+            $Script -c reload_from_fs
     } . "\n";
     exit 0;
 
@@ -317,7 +322,7 @@ sub update_self {
     $self;
 }
 
-sub reload_from_fs {
+sub cmd_reload_from_fs {
     my ($self) = @_;
 
     my $tb_order = [qw(
@@ -325,7 +330,7 @@ sub reload_from_fs {
         plugins_all 
         datfiles
     )];
-    my $tb_reset = map { ($_ => 1 ) } @$tb_order;
+    my $tb_reset = { map { ($_ => 1 ) } @$tb_order };
 
     my %o = (
         dbopts       => {
@@ -544,7 +549,7 @@ sub db_drop_tables {
 }
 
 sub db_create_tables {
-    my ($self)=@_;
+    my ($self) = @_;
 
     my $dbopts = $self->dbopts;
 
@@ -555,10 +560,10 @@ sub db_create_tables {
 
     my @create;
     foreach my $tb (@$tb_order) {
-        push @create,$self->sqlstm('create_table_'.$tb);
+        push @create, $self->sqlstm('create_table_'.$tb);
         
         unless ($self->db_table_exists($tb)) {
-            $tb_reset->{$tb}=1;
+            $tb_reset->{$tb} = 1;
         }
     }
 
@@ -721,8 +726,6 @@ sub init_plugins_all {
 
 sub init_dat {
     my $self = shift;
-
-    $DB::single = 1;
 
     $self
         ->init_dat_base

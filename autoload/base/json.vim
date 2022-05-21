@@ -23,6 +23,34 @@ eof
   
 endfunction
 
+function! base#json#decode (...)
+  if !has('python3') | return | endif
+
+	let ref = get(a:000,0,{})
+
+  let file  = get(ref,'file','')
+	let json = ''
+	if filereadable(file)
+	  let lines = readfile(file)
+	  let json  = join(lines, "\n")
+	endif
+
+  let jstr = get(ref,'json',json)
+
+python3 << eof
+import json
+
+jstr = vim.eval('jstr')
+
+decoded = json.loads(jstr)
+
+eof
+
+  let decoded = py3eval('decoded')
+  return decoded
+
+endfunction
+
 function! base#json#encode_perl (...)
   if !has('perl') | return | endif
 
