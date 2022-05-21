@@ -736,7 +736,8 @@ sub init_dat {
 BEGIN {
     ###__ACCESSORS_SCALAR
     our @scalar_accessors = qw(
-        do_get_opt
+        cmd do_get_opt
+
         dbh
         sth
         dbfile
