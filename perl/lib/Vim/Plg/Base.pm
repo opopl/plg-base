@@ -83,8 +83,11 @@ sub init {
         ->init_vars
         #  ---------------------
         #  see also: print_help
-        ->get_opt;
+        ->get_opt
         #  ---------------------
+        ->db_connect
+        #  ---------------------
+        ;
 
     $self;
 
@@ -102,7 +105,6 @@ sub cmd_run {
     my ($self) = @_;
 
     $self
-        ->db_connect
         ->db_drop_tables
         ->db_create_tables
         ->init_dat;
