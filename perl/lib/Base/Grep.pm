@@ -8,8 +8,10 @@ use Getopt::Long qw(GetOptions);
 use File::Basename qw(basename dirname);
 use FindBin qw($Bin $Script);
 use File::Spec::Functions qw(catfile);
+use File::Path qw(mkpath rmtree);
 
 use File::Grep qw(fgrep);
+use Cwd qw(getcwd);
 
 use File::Find::Rule;
 use Base::DB qw(
@@ -34,6 +36,9 @@ sub get_opt {
         # (find) directories
         "dirs|d=s@",
 
+        # files
+        "files|f=s@",
+
         # (grep)pattern to grep
         "pat|p=s",
 
@@ -44,7 +49,7 @@ sub get_opt {
         $self->print_help;
         exit 0;
     }else{
-        GetOptions(\%opt,@optstr);
+        GetOptions(\%opt, @optstr);
         $self->{opt} = \%opt;
     }
 
@@ -120,7 +125,11 @@ sub init {
     
     #$self->SUPER::init();
     
-    my $h = {};
+    my $h = {
+      'cache_dir' => catfile($ENV{HOME},qw( .cache base-grep )),
+    };
+
+    mkpath $h->{cache_dir} unless -d $h->{cache_dir};
         
     hash_inject($self, $h);
 
@@ -155,7 +164,9 @@ sub find_grep {
     my @dirs = @{$self->{dirs} || []};
     my $pat  = $self->{pat} // '';
 
-    return $self unless $pat && @exts && @dirs;
+    push @dirs, getcwd() unless @dirs;
+
+    return $self unless $pat && @exts;
 
     my @glob  = map { "*.$_" } @exts;
     my @files = File::Find::Rule
