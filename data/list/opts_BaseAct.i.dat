@@ -27,6 +27,8 @@ paths_from_db
 async_run
 ###file
 file_view
+###grep
+grep
 ###buf
 buffs_loclist
 buf_onload

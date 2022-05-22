@@ -198,14 +198,40 @@ function! base#act#url_parse ()
 endfunction
 
 function! base#act#rm_menus(...)
-	let rm_menus = base#varget('baseact_rm_menus',[])
-	for m in rm_menus
-		try
-		  silent exe printf('aunmenu %s',m)
-		catch 
-		endtry
-	endfor
-	"call base#menu#add('lts')
+  let rm_menus = base#varget('baseact_rm_menus',[])
+  for m in rm_menus
+    try
+      silent exe printf('aunmenu %s',m)
+    catch
+    endtry
+  endfor
+  "call base#menu#add('lts')
+
+endfunction
+
+function! base#act#grep (...)
+  let msg_a = [
+    \ "base#act#grep",
+    \ "",
+    \ "Extensions (comma-separated list):",
+    \ ]
+  let msg = join(msg_a,"\n")
+  let exts = base#input_we(msg,'',{ })
+  let pathids = base#pathlist()
+
+  call base#varset('this',pathids)
+  "let pathid = base#input_we('','',{ 'complete' : 'custom,base#complete#this' })
+
+  let dirs = []
+  let pathqw_list = base#inpx#ctl({
+        \ 'list'  : pathids,
+        \ 'thing' : 'pathid'
+        \ })
+
+  for pathqw in pathqw_list
+    let dir = base#qw#catpath(pathqw)
+    call add(dirs,dir)
+  endfor
 
 endfunction
 
