@@ -92,8 +92,9 @@ sub print_help {
     USAGE
         perl $Script OPTIONS
     PACKAGES
-        $pack
-		Base::File::Grep
+        $pack - calling package
+
+        Base::File::Grep - cloned from File::Grep 
     OPTIONS
        find
           @ --exts -e (STRING, comma-separated list) extensions 
