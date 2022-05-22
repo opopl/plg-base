@@ -1,6 +1,5 @@
-#!/usr/bin/env perl 
-#
-package cnv;
+
+package Vim::Plg::Base::Cnv;
 
 use strict;
 use warnings;
@@ -48,7 +47,7 @@ sub init {
     my $plg_root = $ENV{PLG} || catfile($ENV{VIMRUNTIME},qw(plg));
     my $plg      = shift @ARGV || 'base';
     
-    my $plg_dir  = catfile($plg_root,$plg);
+    my $plg_dir  = catfile($plg_root, $plg);
     my $html_dir = catfile($ENV{HTMLOUT},qw( plg ) );
     mkpath $html_dir;
 
@@ -373,10 +372,6 @@ sub get_funcs {
 
 }
 
-package main;
-
-use base qw(cnv);
-
-__PACKAGE__->new->run;
-
+1;
+ 
 

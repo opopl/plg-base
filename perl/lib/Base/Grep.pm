@@ -7,6 +7,7 @@ use Base::Arg qw( hash_inject );
 use Getopt::Long qw(GetOptions);
 use File::Basename qw(basename dirname);
 use FindBin qw($Bin $Script);
+use File::Spec::Functions qw(catfile);
 
 use File::Grep qw(fgrep);
 
@@ -14,6 +15,9 @@ use File::Find::Rule;
 use Base::DB qw(
     dbi_connect
     dbh_insert_hash
+    dbh_do
+
+    $DBH
 );
       
 sub get_opt {
@@ -72,10 +76,14 @@ sub get_opt {
 sub print_help {
     my ($self) = @_;
 
+    my $pack = __PACKAGE__;
+
     my $s = qq{
 
     USAGE
         perl $Script OPTIONS
+    PACKAGES
+        $pack
     OPTIONS
        find
           @ --exts -e (STRING, comma-separated list) extensions 
@@ -116,7 +124,27 @@ sub init {
         
     hash_inject($self, $h);
 
+    $self->init_db;
+
     return $self;
+}
+
+sub init_db {
+    my ($self) = @_;
+
+    my $dbfile = catfile($ENV{HOME},qw( db fs.db ));
+    my $dbh = $DBH = dbi_connect({ dbfile => $dbfile });
+
+    my $q = qq{
+        CREATE TABLE IF NOT EXISTS files (
+           path TEXT NOT NULL UNIQUE
+        );
+    };
+    
+    my $ok = dbh_do({ q => $q });
+
+    return $self;
+
 }
 
 # find + grep
