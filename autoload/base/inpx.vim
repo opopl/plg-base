@@ -8,6 +8,8 @@ if 0
     let r = { 
       \ 'list'  : lst,
       \ 'thing' : 'author_id',
+      \ 'prefix' : prefix,
+      \ 'header' : [ ... ],
       \ }
 
     let value = base#inpx#ctl(r) 
