@@ -210,28 +210,50 @@ function! base#act#rm_menus(...)
 endfunction
 
 function! base#act#grep (...)
-  let msg_a = [
-    \ "base#act#grep",
-    \ "",
-    \ "Extensions (comma-separated list):",
-    \ ]
-  let msg = join(msg_a,"\n")
+
+  let msg  = "(grep) Extensions (comma-separated list):"
   let exts = base#input_we(msg,'',{ })
+
+  let msg  = "(grep) pattern:"
+  let pat  = base#input_we(msg,'',{ })
+
   let pathids = base#pathlist()
+  call add(pathids,'%pwd')
 
   call base#varset('this',pathids)
-  "let pathid = base#input_we('','',{ 'complete' : 'custom,base#complete#this' })
 
   let dirs = []
   let pathqw_list = base#inpx#ctl({
         \ 'list'  : pathids,
-        \ 'thing' : 'pathid'
+        \ 'thing' : 'pathid',
+        \ 'split' : 1,
         \ })
 
   for pathqw in pathqw_list
-    let dir = base#qw#catpath(pathqw)
-    call add(dirs,dir)
+    let dir = ''
+
+    let m_pwd = matchlist(pathqw, '^\zs%pwd\(\|\s\+\(.*\)\)\ze$')
+    if len(m_pwd)
+      let qw = get(m_pwd,2,'')
+      let dir_pwd = getcwd()
+      let dir_a = [dir_pwd]
+      call extend(dir_a,split(qw,' '))
+      let dir = join(dir_a, '/')
+    else
+      let dir = base#qw#catpath(pathqw)
+
+    endif
+
+    if isdirectory(dir)
+      call add(dirs,dir)
+    endif
   endfor
+
+  call base#grep#async({ 
+    \ 'dirs' : dirs,
+    \ 'pat'  : pat,
+    \ 'exts' : exts,
+    \ })
 
 endfunction
 

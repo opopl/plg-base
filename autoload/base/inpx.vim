@@ -40,6 +40,8 @@ fun! base#inpx#ctl(...)
   let msg     = base#x#get(ref,'msg',msg)
   let default = base#x#get(ref,'default','')
 
+  let split   = base#x#get(ref,'split',0)
+
   let msg_things_del = 'delete: '
   let msg_head_cmds_a = [
       \ '',
@@ -146,6 +148,10 @@ fun! base#inpx#ctl(...)
     if cnt | continue | endif
     break
   endw
+
+  if split
+    return split(tgs,',')
+  endif
 
   return tgs
 

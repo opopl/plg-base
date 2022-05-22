@@ -167,10 +167,8 @@ sub print_help {
     return $self;
 }
 
-
-
 sub init_vars {
-    my $self=shift;
+    my $self = shift;
 
     my $dat = catfile($self->dirs('plgroot'),qw( data list db_table_order.i.dat ));
 

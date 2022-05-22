@@ -14,36 +14,26 @@ function! base#grep#async (...)
   let ref = get(a:000,0,{})
 
   let files = get(ref,'files',[])
-"<<<<<<< HEAD
-  "let pat = get(ref,'pat','')
-  "let dir = get(ref,'dir','')
+  let dirs  = get(ref,'dirs',[])
 
-  "let cmd = printf('grep -iRnH %s',pat)
-
-  "let env = {}
-  "function env.get(temp_file) dict
-    "let code = self.return_code
-
-    "let temp_file = a:temp_file
-
-    "if filereadable(temp_file)
-      "try
-        "exe 'cgetfile ' . escape(temp_file,'\ ')
-        "BaseAct copen
-      "catch 
-        "call base#rdw('error ' . v:exception)
-      "endtry
-    "endif
-  "endfunction
-"=======
-  let dir   = get(ref,'dir','')
+  let exts  = get(ref,'exts','')
   let pat   = get(ref,'pat','')
 
   let pat   = escape(pat,'#')
   let pat   = substitute(pat,'\',repeat('\',8),'g')
 
-  let args = [ 'grep -iRnH -P', shellescape(pat) ]
-  call extend(args, files)
+  let args = [ 'base-grep', '-i', '-p', shellescape(pat) ]
+
+  if len(exts)
+    call extend(args, [ '-e', shellescape(exts) ])
+  endif
+
+  for file in files
+    call extend(args, [ '-f', shellescape(file) ] )
+  endfor
+  for dir in dirs
+    call extend(args, [ '-d', shellescape(dir) ] )
+  endfor
 
   let cmd = join(args, ' ')
 
@@ -55,18 +45,17 @@ function! base#grep#async (...)
   function env.get(temp_file) dict
     let code = self.return_code
   
-    if filereadable(a:temp_file)
-      exe 'cgetfile ' . a:temp_file
+    if !filereadable(a:temp_file) | return | endif
+
+    try
+      exe 'cgetfile ' . escape(a:temp_file,'\ ')
       BaseAct copen
-    endif
+    catch 
+      call base#rdwe('error ' . v:exception)
+    endtry
+
   endfunction
 
-  if strlen(dir)
-    if isdirectory(dir)
-      exe 'cd ' . dir
-    endif
-  endif
-  
   call asc#run({ 
     \  'cmd' : cmd, 
     \  'Fn'  : asc#tab_restore(env) 
