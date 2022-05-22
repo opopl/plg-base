@@ -41,33 +41,33 @@ sub _str {
 
     my $str = $wr->document($dom);
 
-	foreach my $k (qw( text_update line_update )) {
-    	my $sub = $ref->{$k};
-	    if ( $sub && ref $sub eq 'CODE' ) {
+    foreach my $k (qw( text_update line_update )) {
+        my $sub = $ref->{$k};
+        if ( $sub && ref $sub eq 'CODE' ) {
 
-			for($k){
-				/^text_update$/ && do { 
-    				local $_ = $str;
-	        		$sub->();
-					$str = $_;
-					last;
-				};
+            for($k){
+                /^text_update$/ && do { 
+                    local $_ = $str;
+                    $sub->();
+                    $str = $_;
+                    last;
+                };
 
-				/^line_update$/ && do { 
-					my @lines = split("\n",$str);
-					foreach(@lines) {
-						chomp;
-	        			$sub->();
-					}
-					$str = join("\n",@lines);
-					last;
-				};
+                /^line_update$/ && do { 
+                    my @lines = split("\n",$str);
+                    foreach(@lines) {
+                        chomp;
+                        $sub->();
+                    }
+                    $str = join("\n",@lines);
+                    last;
+                };
 
-				last;
+                last;
 
-			}
-	    }
-	}
+            }
+        }
+    }
 
     #s/\&/\&amp;/\&/g; 
 
@@ -102,25 +102,25 @@ sub css {
     my ($self, $ref) = @_;
     $ref ||= {};
 
-	my $css   = $ref->{css} || [];
-	my $css_s = (ref $css eq 'ARRAY') ? join("\n",@$css) : $css;
+    my $css   = $ref->{css} || [];
+    my $css_s = (ref $css eq 'ARRAY') ? join("\n",@$css) : $css;
 
-	my $dom = $self->{dom};
-	$self->update({
-		xpath => '/html/head',
-		sub   => sub { 
-			my ($n) = @_;
+    my $dom = $self->{dom};
+    $self->update({
+        xpath => '/html/head',
+        sub   => sub { 
+            my ($n) = @_;
 
-			my $e = $dom->createElement('style');
+            my $e = $dom->createElement('style');
 
-			$e->appendText($css_s);
-			$n->appendChild($e);
+            $e->appendText($css_s);
+            $n->appendChild($e);
 
-			return $n;
-		}
-	});
+            return $n;
+        }
+    });
 
-	return $self;
+    return $self;
 }
 
 
@@ -129,17 +129,17 @@ sub update {
 
     $ref ||= {};
 
-	my $sub   = $ref->{sub};
-	my $xpath = $ref->{xpath};
+    my $sub   = $ref->{sub};
+    my $xpath = $ref->{xpath};
 
-	unless ($xpath && $sub) {
-		return $self;
-	}
+    unless ($xpath && $sub) {
+        return $self;
+    }
 
     my $dom = $self->{dom};
-	$dom
-		->findnodes($xpath)
-		->map($sub);
+    $dom
+        ->findnodes($xpath)
+        ->map($sub);
 
     return $self;
 }
