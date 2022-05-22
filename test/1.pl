@@ -10,12 +10,7 @@ use Base::Arg qw(
     dict_new
 );
 
+my @k = qw(a b c );
+my %a = map { $_ => 2 } @k;
 
-my $a = 1 unless (undef,undef);
-print Dumper($a) . "\n";
-
-my $b = {
-	a_a => 1
-};
-
-print Dumper($b) . "\n";
+print Dumper(\%a) . "\n";

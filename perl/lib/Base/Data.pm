@@ -48,7 +48,13 @@ my @ex_vars_array=qw(
 sub d_path {
     my ($data, $path, $default) = @_;
 
-    my @path = split(' ',$path);
+    my @path; 
+    unless (ref $path) {
+        push @path, split(' ',$path);
+    }elsif(ref $path eq 'ARRAY'){
+        @path = @$path;
+    }
+
     my $val = deepvalue($data,@path) // $default;
     return $val;
 }
