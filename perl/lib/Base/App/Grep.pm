@@ -1,7 +1,11 @@
-package Base::Grep;
+package Base::App::Grep;
 
 use strict;
 use warnings;
+
+use utf8;
+
+binmode STDOUT,':encoding(utf8)';
 
 use Base::Arg qw( hash_inject );
 use Getopt::Long qw(GetOptions);
@@ -10,7 +14,7 @@ use FindBin qw($Bin $Script);
 use File::Spec::Functions qw(catfile);
 use File::Path qw(mkpath rmtree);
 
-use File::Grep qw(fgrep);
+use Base::File::Grep qw(fgrep);
 use Cwd qw(getcwd);
 
 use File::Find::Rule;
@@ -89,6 +93,7 @@ sub print_help {
         perl $Script OPTIONS
     PACKAGES
         $pack
+		Base::File::Grep
     OPTIONS
        find
           @ --exts -e (STRING, comma-separated list) extensions 
@@ -199,21 +204,6 @@ sub find_grep {
 
        1;
     }
-
-    my @lines;
-    foreach my $file (@files) {
-        #my $cmd = qq{ grep -iRnH '$pat' $file };
-        #my @out = qx{  };
-        #print qq{$_} . "\n" for(@out);
-        #system("$cmd");
-        my ($r) = fgrep { /$pat/ } $file;
-        my $m = $r->{matches} // {};
-
-        next unless keys %$m;
-
-        1;
-    }
-        $DB::single = 1;
 
     return $self;
 }

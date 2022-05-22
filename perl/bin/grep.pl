@@ -9,7 +9,7 @@ use FindBin qw($Bin $Script);
 
 use lib "$Bin/../lib";
 
-use Base::Grep;
+use Base::App::Grep;
 
-Base::Grep->new->run;
+Base::App::Grep->new->run;
 

@@ -25,30 +25,30 @@ my @ex_vars_array=qw(
 
 %EXPORT_TAGS = (
 ###export_funcs
-	'funcs' => [qw( 
-		file_tail
-		win2unix
-	)],
-	'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
+    'funcs' => [qw( 
+        file_tail
+        win2unix
+    )],
+    'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
 
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 
 sub win2unix {
-	my ($file) = @_;
+    my ($file) = @_;
 
-	$file =~ s{\\}{\/}g;
+    $file =~ s{\\}{\/}g;
 
-	return $file;
+    return $file;
 }
 
 sub file_tail {
-	my ($file) = @_;
-	
-	my $bname  = basename($file);
-	my ($tail) = ($bname =~ /^(.*)\.(\w+)$/);
+    my ($file) = @_;
+    
+    my $bname  = basename($file);
+    my ($tail) = ($bname =~ /^(.*)\.(\w+)$/);
 
-	return $tail;
+    return $tail;
 }
 
 1;
