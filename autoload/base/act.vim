@@ -142,13 +142,13 @@ function! base#act#cclose ()
 endfunction
 
 function! base#act#last_split_open ()
-  let list = base#varget('last_split_lines',[])
+  let list = base#varget('last_split_lines', [])
   call base#buf#open_split({ 'lines' : list })
 
 endfunction
 
 function! base#act#cnv (...)
-  let cmd = 'cnv'
+  let cmd = 'base-cnv'
   
   let env = {}
   function env.get(temp_file) dict
