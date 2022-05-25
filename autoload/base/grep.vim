@@ -20,7 +20,8 @@ function! base#grep#async (...)
   let pat   = get(ref,'pat','')
 
   let pat   = escape(pat,'#')
-  let pat   = substitute(pat,'\',repeat('\',8),'g')
+  let pat   = escape(pat,'\')
+  "let pat   = substitute(pat,'\',repeat('\',8),'g')
 
   let args = [ 'base-grep', '-i', '-p', shellescape(pat) ]
 
@@ -37,7 +38,7 @@ function! base#grep#async (...)
 
   let cmd = join(args, ' ')
 
-  let env = { 
+  let env = {
     \ 'files' : files,
     \ 'pat'   : pat,
     \ }
@@ -49,6 +50,7 @@ function! base#grep#async (...)
 
     try
       exe 'cgetfile ' . escape(a:temp_file,'\ ')
+      "debug exe 'cgetfile ' . escape(a:temp_file,'\ ')
       BaseAct copen
     catch 
       call base#rdwe('error ' . v:exception)

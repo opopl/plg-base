@@ -10,7 +10,8 @@ use Base::Arg qw(
     dict_new
 );
 
-my @k = qw(a b c );
-my %a = map { $_ => 2 } @k;
+my $a = 0;
+my $b ||= $a ? 2 : 3;
+print Dumper($b) . "\n";
 
-print Dumper(\%a) . "\n";
+
