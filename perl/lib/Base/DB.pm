@@ -770,6 +770,9 @@ sub dbh_insert_update_hash {
     # data to insert
     my $h = $ref->{h} || {};
 
+    # uniq row
+    my $uniq = $ref->{uniq} || {};
+
     # table name
     my $t = $ref->{t} || '';
     $t = trim($t);
@@ -778,6 +781,8 @@ sub dbh_insert_update_hash {
     my $INSERT  = $ref->{i} || 'INSERT';
 
     my $on_list = $ref->{on_list} || [];
+    @$on_list = keys %$h if $uniq;
+
     my $on_w = {};
     foreach my $on (@$on_list) {
         my $on_val = $h->{$on} // '';
