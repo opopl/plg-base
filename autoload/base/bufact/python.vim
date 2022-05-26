@@ -5,7 +5,7 @@ function! base#bufact#python#exe ()
 	let start = base#varget('bufact_start',0)
 	let end   = base#varget('bufact_end',line('$'))
 
-  let cmd = 'python ' . b:file
+  let cmd = 'python3 ' . b:file
   let ok = base#sys({ 
           \        "cmds"         : [cmd],
           \        })

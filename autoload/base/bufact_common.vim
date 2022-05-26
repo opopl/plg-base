@@ -34,8 +34,8 @@ endfunction
 
 """bfac_term
 function! base#bufact_common#term (...)
-	call ap#GoToFileLocation()
-	terminal
+  call ap#GoToFileLocation()
+  terminal
 
 endfunction
 
@@ -120,7 +120,12 @@ function! base#bufact_common#matches_delete ()
 endfunction
 
 function! base#bufact_common#chmod_rx ()
-	call base#file#chmod({ 'file' : b:file })
+  call base#file#chmod({ 'file' : b:file })
+
+endfunction
+
+function! base#bufact_common#ft_perl ()
+  setlocal ft=perl
 
 endfunction
 

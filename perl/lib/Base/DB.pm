@@ -26,13 +26,13 @@ use Base::Arg qw(
 use String::Util qw(trim);
 use SQLite::More;
 
-use utf8; 
+use utf8;
 use open qw(:utf8 :std);
 
 use vars qw(
     $VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS
 
-    $DBH 
+    $DBH
     $DBH_CACHE
     $WARN
 );
@@ -57,7 +57,7 @@ my @ex_vars_array = qw();
 
 %EXPORT_TAGS = (
 ###export_funcs
-'funcs' => [qw( 
+'funcs' => [qw(
     dbh_insert_hash
     dbh_insert_update_hash
 
@@ -112,10 +112,10 @@ my @ex_vars_array = qw();
         user => $user,
         pwd  => $password,
 
-        # optional, DBI driver name, 
+        # optional, DBI driver name,
         #   default: sqlite
         driver => $driver,
-        
+
         # attributes passed on to DBI->connect
         attr => $attr || {},
 
@@ -170,7 +170,7 @@ sub dbh_cache_add {
 }
 
 
-=head2 dbh_select 
+=head2 dbh_select
 
 =head3 Usage
 
@@ -215,8 +215,8 @@ sub dbh_select {
 
     my $use_cache = $ref->{use_cache};
 
-    if($dbfile){ 
-        $dbh = dbi_connect($ref); 
+    if($dbfile){
+        $dbh = dbi_connect($ref);
         $ref->{close} ||= 1;
     }
 
@@ -249,7 +249,7 @@ sub dbh_select {
 
     #my $e = q{`};
     my $e = q{};
-    my $f = (@f) ? join ',' => map { 
+    my $f = (@f) ? join ',' => map {
         $_ = trim($_);
         my ($start, $as) = ( m/(.*)\^(\w+)$/g );
         my $expr = $as ? join(' AS ' => $start, $as) : $_;
@@ -259,7 +259,7 @@ sub dbh_select {
     } @f : '*';
 
     my $t_str = ( $t eq $t_alias ) ? $t : qq{ $t $t_alias };
-    $q ||= qq| 
+    $q ||= qq|
         $SELECT $f FROM $t_str
     |;
 
@@ -294,7 +294,7 @@ sub dbh_select {
         $warn->(@w);
         return [];
     }
-    
+
     eval { $sth->execute(@p) or do { $warn->($dbh->errstr,$q,@p); }; };
     if($@){ $warn->($@,$dbh->errstr,$q,@p); }
 
@@ -318,7 +318,7 @@ sub dbh_select {
             rows => $rows,
             cols => $cols,
         };
-        dbh_cache_add({ 
+        dbh_cache_add({
             q   => $q,
             res => $res
         });
@@ -447,18 +447,18 @@ sub dbh_list_tables {
     $ref ||= {};
 
     my $q = q{
-        SELECT 
-            name 
-        FROM 
+        SELECT
+            name
+        FROM
             sqlite_master
-        WHERE 
+        WHERE
             type IN ('table','view') AND name NOT LIKE 'sqlite_%'
         UNION ALL
-        SELECT 
-            name 
-        FROM 
+        SELECT
+            name
+        FROM
             sqlite_temp_master
-        WHERE 
+        WHERE
             type IN ('table','view')
         ORDER BY 1
     };
@@ -511,12 +511,12 @@ sub dbh_selectall_arrayref {
 
     for my $q (@q){
         my $rows;
-        eval { $rows = $dbh->selectall_arrayref($q,{},@$p) or 
+        eval { $rows = $dbh->selectall_arrayref($q,{},@$p) or
             do { $warn->($q,$dbh->errstr);  };
-        }; 
+        };
         if ($@) { $warn->($q,$@,$dbh->errstr); }
 
-        push @$res,{ 
+        push @$res,{
             q    => $q,
             rows => $rows,
             err  => $dbh->err ? [$dbh->errstr] : [],
@@ -534,16 +534,16 @@ sub dbh_selectall_arrayref {
 
 }
 
-=head2 dbh_insert_hash 
+=head2 dbh_insert_hash
 
 =head3 Usage
 
-    dbh_insert_hash({ 
+    dbh_insert_hash({
         # database handle
-        dbh => $dbh, 
+        dbh => $dbh,
 
         # input hash of values
-        h => $hash, 
+        h => $hash,
 
         # table name
         t => $table,
@@ -627,13 +627,13 @@ sub _sql_ct_info {
 
    my $q = qq{ CREATE TABLE IF NOT EXISTS $itb (
         $jcol TEXT NOT NULL,
-        $icol TEXT, 
+        $icol TEXT,
         FOREIGN KEY($jcol) REFERENCES $tbase($jcol)
             ON DELETE CASCADE
             ON UPDATE CASCADE
       );
    };
-   
+
    return $q;
 }
 
@@ -662,7 +662,7 @@ sub dbh_base2info {
   # 'base' => 'info' columns mapping
   my $b2i = $ref->{'b2i'} // {};
 
-  # columns in 'base' table which have to 
+  # columns in 'base' table which have to
   #   be expanded into 'info' table
   my $bcols = $ref->{'bcols'} // [];
 
@@ -674,13 +674,13 @@ sub dbh_base2info {
   #    create corresponding 'info' table
   foreach my $bcol (@$bcols) {
      my $icol = $b2i->{$bcol} // $bcol;
-     my $sql = _sql_ct_info({ 
+     my $sql = _sql_ct_info({
         tbase => $tbase,
         bcol  => $bcol,
         jcol  => $jcol,
         icol  => $icol,
      });
-     dbh_do({ 
+     dbh_do({
         dbh => $dbh,
         q   => $sql,
      });
@@ -725,7 +725,7 @@ sub dbh_base2info {
        my $bval = $rw->{$bcol} // '';
 
        #my $ivals = string.split_n_trim(bval,sep=',')
-       my @ivals = map { length ? trim($_) : () } split ',' => $bval; 
+       my @ivals = map { length ? trim($_) : () } split ',' => $bval;
 
        $ok &&= dbh_delete({
           dbh => $dbh,
@@ -734,11 +734,11 @@ sub dbh_base2info {
        });
 
        foreach my $ival (@ivals) {
-           my $ins = { 
-              $jcol => $jval, 
+           my $ins = {
+              $jcol => $jval,
               $icol => $ival
            };
-           my ($rows) = dbh_select({ 
+           my ($rows) = dbh_select({
               dbh => $dbh,
               t   => $itb,
               w   => $ins
@@ -802,7 +802,7 @@ sub dbh_insert_update_hash {
     }
 
     unless ($cnt) {
-       $ok &&= dbh_insert_hash({ 
+       $ok &&= dbh_insert_hash({
           dbh => $dbh,
           t   => $t,
           h   => $h,
@@ -812,26 +812,27 @@ sub dbh_insert_update_hash {
        foreach my $on (@$on_list) {
           delete $h->{$on};
        }
-
-       $ok &&= dbh_update_hash({ 
-          dbh => $dbh,
-          t   => $t,
-          h   => $h,
-          w   => $on_w,
-       });
+       if (keys %$h) {
+           $ok &&= dbh_update_hash({
+              dbh => $dbh,
+              t   => $t,
+              h   => $h,
+              w   => $on_w,
+           });
+       }
     }
-  
+
     return $ok;
 }
 
-=head2 dbh_update_hash 
+=head2 dbh_update_hash
 
 =head3 Usage
 
     use Base::DB qw(dbh_update_hash);
 
     my $ref = {
-        # OPTIONAL, database handle, 
+        # OPTIONAL, database handle,
         #   if not provided, package's $DBH variable
         #   will be used
         dbh => $dbh,
@@ -933,7 +934,7 @@ sub cond_inner_join {
         my $tbl_alias = $ij->{tbl_alias} || $tbl;
 
         if ($on && $tbl) {
-            my $tbl_str = ( $tbl_alias eq $tbl ) ? $tbl : qq{ $tbl $tbl_alias }; 
+            my $tbl_str = ( $tbl_alias eq $tbl ) ? $tbl : qq{ $tbl $tbl_alias };
             $cij .= qq{ INNER JOIN $tbl_str ON $main_alias.$on = $tbl_alias.$on };
             $cij .= "\n";
         }
@@ -998,26 +999,26 @@ sub cond_where {
 =head3 Usage
 
     use Base::DB qw(dbh_do);
-    
+
     my $ref = {
-        # OPTIONAL, will use package's $DBH variable 
+        # OPTIONAL, will use package's $DBH variable
         #   if not set
         dbh => $dbh,
-        
+
         # OPTIONAL
         warn => $warn,
-        
+
         # OPTIONAL
         dbfile => $dbfile,
-        
+
         # REQUIRED
         q => q{ SELECT remote FROM saved WHERE ... },
-        
+
         # OPTIONAL, needed when query needs parameter binding
         #   array of values of bound parameters
         p => [ ... ],
     };
-    
+
     my $ok = dbh_do($ref);
 
 =head3 Returns
@@ -1058,7 +1059,7 @@ sub dbh_do  {
         eval { $ok = $dbh->do($query,undef,@$p); };
         $FINE=0 unless $ok;
         if ($@) {
-            my @w; 
+            my @w;
             push @w,
                 map { ( $_->[0] => $_->[1] ) }   (
                     [ 'Query:', $query ],
@@ -1110,7 +1111,7 @@ sub dbh_delete {
 
     $q .= ' ' . $cond;
 
-    my $ok = dbh_do({ 
+    my $ok = dbh_do({
        dbh => $dbh,
        q   => $q,
        p   => \@p,
@@ -1130,15 +1131,15 @@ sub dbh_sth_exec {
 
     my $q   = $ref->{q};
     my @e   = @{ $ref->{p} || [] };
-    
+
     my $sth;
     my $spl = SQL::SplitStatement->new;
 
     my @q = $spl->split($q);
 
     for(@q){
-        eval { $sth = $dbh->prepare($_) 
-                or $warn->($_,$dbh->errstr) 
+        eval { $sth = $dbh->prepare($_)
+                or $warn->($_,$dbh->errstr)
         };
         if ($@) { $warn->($_,$@,$dbh->errstr); }
         eval { $sth->execute(@e); };
@@ -1155,5 +1156,5 @@ sub dbh_sth_exec {
 }
 
 1;
- 
+
 
