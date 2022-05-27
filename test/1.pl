@@ -10,8 +10,26 @@ use Base::Arg qw(
     dict_new
 );
 
-my $a = 0;
-my $b ||= $a ? 2 : 3;
-print Dumper($b) . "\n";
+use Capture::Tiny qw(capture);
 
+use Base::Git qw(
+    git_add
+    git_rm
+    git_mv
+    git_has
+);
 
+#my $a = 0;
+#my $b ||= $a ? 2 : 3;
+#print Dumper($b) . "\n";
+
+#print Dumper(3 % 2) . "\n";
+
+#my $cmd = 'git ls aa';
+#my @args;
+
+#my ($stdout, $stderr, $exit) = capture {
+  #system( $cmd, @args );
+#};
+
+print Dumper(git_has('aa')) . "\n";

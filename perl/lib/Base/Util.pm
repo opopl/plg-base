@@ -15,7 +15,7 @@ use File::Basename qw(basename dirname);
 use Digest::MD5;
 
 use Base::Enc qw(
-    enc_out 
+    enc_out
     enc_in
     enc
     unc_encode
@@ -39,7 +39,7 @@ my @ex_vars_array=qw(
 
 %EXPORT_TAGS = (
 ###export_funcs
-    'funcs' => [qw( 
+    'funcs' => [qw(
         replace_undefs
         now
         file_w
@@ -69,7 +69,7 @@ sub md5sum
         close(FILE);
     };
     if($@){ print $@; return ""; }
-    return $digest; 
+    return $digest;
 }
 
 
@@ -111,10 +111,10 @@ sub dmp {
     $title ||= 'dump';
 
     my @msg;
-    push @msg, 
+    push @msg,
         Data::Dumper->Dump([$ref],['dump'])
         ;
-    
+
 
     for(@msg){
         print $_ . "\n";
@@ -123,7 +123,7 @@ sub dmp {
 
 sub now {
     #my $now = POSIX::strftime( "%a %b %e %H:%M:%S %Y", localtime() );
-    my $now = localtime(); 
+    my $now = localtime();
     return $now;
 }
 
@@ -133,14 +133,14 @@ sub now {
 
     # $file - SCALAR, lines - ARRAYREF
     file_w({
-        file => $file, 
-        lines => $lines 
+        file => $file,
+        lines => $lines
     });
 
     # $file - SCALAR, text - SCALAR
-    file_w({ 
-        file => $file, 
-        text => $text 
+    file_w({
+        file => $file,
+        text => $text
     });
 
 =cut
@@ -153,7 +153,7 @@ sub file_w {
     my @f = qw( file lines text decode enc);
     my ($file, $lines, $text, $decode, $enc) = @{$ref}{@f};
 
-    my $warn = $ref->{warn} || sub { 
+    my $warn = $ref->{warn} || sub {
         my ($msgs) = @_;
         warn $_ . "\n" for(@$msgs);
     };
@@ -186,19 +186,19 @@ sub file_w {
             binmode $fh;
         }
         eval { print $fh $text; };
-        if ($@) { 
-            my $r = { 
+        if ($@) {
+            my $r = {
                 enc    => $enc,
                 file   => $file,
                 decode => $decode,
             };
             my @msgs;
-            push @msgs, 
+            push @msgs,
                 '(file_w) Failures while printing to file',
                 Dumper($r),
                 $@
                 ;
-            $warn->(\@msgs); 
+            $warn->(\@msgs);
         }
         #eval { print $fh $text; };
         #eval { local $SIG{__WARN__} = sub{}; print $fh $text; };
@@ -219,7 +219,7 @@ sub file_r {
 
     $enc ||= UNC;
 
-    my $warn = $ref->{warn} || sub { 
+    my $warn = $ref->{warn} || sub {
         my ($msgs) = @_;
         warn $_ . "\n" for(@$msgs);
     };
@@ -251,18 +251,18 @@ sub file_r {
             @$lines = split("\n",$text);
         }
     };
-    if ($@) { 
-        my $r = { 
+    if ($@) {
+        my $r = {
             enc    => $enc,
             file   => $file,
         };
         my @msgs;
-        push @msgs, 
+        push @msgs,
             '(file_r) Failures while reading file',
             Dumper($r),
             $@
             ;
-        $warn->(\@msgs); 
+        $warn->(\@msgs);
     }
     close $out;
 
@@ -270,7 +270,6 @@ sub file_r {
 
 }
 
-
 1;
- 
+
 

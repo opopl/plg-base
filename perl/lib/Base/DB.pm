@@ -58,10 +58,14 @@ my @ex_vars_array = qw();
 %EXPORT_TAGS = (
 ###export_funcs
 'funcs' => [qw(
+    dbi_connect
+
     dbh_insert_hash
     dbh_insert_update_hash
 
     dbh_base2info
+
+    dbh_create_fk
 
     dbh_select
     dbh_select_join
@@ -76,7 +80,6 @@ my @ex_vars_array = qw();
     dbh_selectall_arrayref
     dbh_sth_exec
     dbh_update_hash
-    dbi_connect
 
     cond_where
     cond_inner_join
@@ -131,6 +134,8 @@ sub dbi_connect {
     my $dbfile = $ref->{dbfile};
     my $warn   = $ref->{warn} || $WARN || sub { warn $_ for(@_); };
 
+    my $fk = $ref->{fk} || 1;
+
     my $drivers = {
         sqlite => 'SQLite'
     };
@@ -154,6 +159,13 @@ sub dbi_connect {
     if ($@) { $warn->( $@, DBI->errstr ); return; }
 
     sqlite_more($dbh) if $dbh;
+
+    if ($fk) {
+      dbh_do({
+         dbh => $dbh,
+         q => 'PRAGMA foreign_keys=ON'
+      });
+    }
     return $dbh;
 }
 
@@ -1086,6 +1098,14 @@ sub dbh_do  {
     }
 
     return $FINE;
+}
+
+sub dbh_create_fk {
+    my ($ref)  = @_;
+    $ref ||= {};
+
+    my $dbh = $ref->{dbh} || $DBH;
+
 }
 
 sub dbh_delete {
