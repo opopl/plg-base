@@ -32,4 +32,11 @@ use Base::Git qw(
   #system( $cmd, @args );
 #};
 
-print Dumper(git_has('aa')) . "\n";
+#print Dumper(git_has('aa')) . "\n";
+  #
+#my $a = "1\n";
+#print $a =~ /\n$/ ? 1 : 0;
+
+my $a;
+$a->{2} = 3;
+print Dumper($a) . "\n";

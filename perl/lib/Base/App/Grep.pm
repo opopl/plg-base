@@ -25,14 +25,14 @@ use Base::DB qw(
 
     $DBH
 );
-      
+
 sub get_opt {
     my ($self) = @_;
-    
+
     Getopt::Long::Configure(qw(bundling no_getopt_compat no_auto_abbrev no_ignore_case_always));
-    
+
     my (@optstr, %opt);
-    @optstr = ( 
+    @optstr = (
         "help|h=s",
 
         # (find) file extensions
@@ -48,8 +48,8 @@ sub get_opt {
 
         "ignore_case|i",
     );
-    
-    unless( @ARGV ){ 
+
+    unless( @ARGV ){
         $self->print_help;
         exit 0;
     }else{
@@ -62,7 +62,7 @@ sub get_opt {
         if (grep { /^$k$/ } qw(exts)) {
            $self->{$k} ||= [];
 
-           my @arr;  
+           my @arr;
            if (ref $v eq 'ARRAY') {
              for my $x (@$v){
                 push @arr, split(',' => $x);
@@ -79,7 +79,7 @@ sub get_opt {
         $self->{$k} = $v;
     }
 
-    return $self;   
+    return $self;
 }
 
 sub print_help {
@@ -94,17 +94,17 @@ sub print_help {
     PACKAGES
         $pack - calling package
 
-        Base::File::Grep - cloned from File::Grep 
+        Base::File::Grep - cloned from File::Grep
     OPTIONS
        find
-          @ --exts -e (STRING, comma-separated list) extensions 
-          @ --dirs -d (STRING) directories 
+          @ --exts -e (STRING, comma-separated list) extensions
+          @ --dirs -d (STRING) directories
 
        grep
-          --pat -p STRING grep pattern 
+          --pat -p STRING grep pattern
 
        grep options
-          --ignore_case -i 
+          --ignore_case -i
 
     EXAMPLES
         perl $Script -e vim -p aa
@@ -113,7 +113,7 @@ sub print_help {
 
     print $s . "\n";
 
-    return $self;   
+    return $self;
 }
 
 sub new
@@ -128,15 +128,15 @@ sub new
 
 sub init {
     my ($self) = @_;
-    
+
     #$self->SUPER::init();
-    
+
     my $h = {
       'cache_dir' => catfile($ENV{HOME},qw( .cache base-grep )),
     };
 
     mkpath $h->{cache_dir} unless -d $h->{cache_dir};
-        
+
     hash_inject($self, $h);
 
     $self->init_db;
@@ -155,7 +155,7 @@ sub init_db {
            path TEXT NOT NULL UNIQUE
         );
     };
-    
+
     my $ok = dbh_do({ q => $q });
 
     return $self;
@@ -221,5 +221,5 @@ sub run {
 }
 
 1;
- 
+
 
