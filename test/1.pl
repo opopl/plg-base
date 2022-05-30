@@ -37,6 +37,9 @@ use Base::Git qw(
 #my $a = "1\n";
 #print $a =~ /\n$/ ? 1 : 0;
 
-my $a;
-$a->{2} = 3;
-print Dumper($a) . "\n";
+my $a=[1];
+#$a->{2} = 3;
+#print Dumper($a) . "\n";
+
+#print $a && @$a ? 1 : 0;
+print 1 unless $a && @$a;
