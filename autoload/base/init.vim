@@ -35,21 +35,26 @@ fun! base#init#cmds_plg ()
 
 endf
 
-
 fun! base#init#paths_env()
-    let file_env = base#qw#catpath('plg base data list envvars.i.dat')
-    let envlist = base#readdatfile({
-          \ "file" : file_env,
-          \ "type" : "List",
-          \ })
+  let file_env = base#qw#catpath('plg base data list envvars.i.dat')
+  let envlist = base#readdatfile({
+     \ "file" : file_env,
+     \ "type" : "List",
+     \ })
 
-    for env in envlist
-      let val = base#envvar(toupper(env))
+  let plg_envlist_str = base#envvar('PLG_ENVLIST')
+	if len(plg_envlist_str)
+	  let plg_envlist = split(plg_envlist_str,':')
+	  call extend(envlist, plg_envlist)
+	endif
 
-      if len(val)
-        call base#pathset({ env : val })
-      endif
-    endfor
+  for env in envlist
+    let val = base#envvar(toupper(env))
+
+    if len(val)
+      call base#pathset({ env : val })
+    endif
+  endfor
 endf
 
 """base_initpaths
@@ -94,7 +99,6 @@ fun! base#init#paths(...)
       \ })
 
     call base#init#paths_env()
-
         
     if has('win32')
       let pf       = base#envvar('PROGRAMFILES')

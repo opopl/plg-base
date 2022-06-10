@@ -32,14 +32,17 @@ use Base::Git qw(
   #system( $cmd, @args );
 #};
 
+my $a ||= 0 ? 2 : 3;
+print qq{$a} . "\n";
+
 #print Dumper(git_has('aa')) . "\n";
   #
 #my $a = "1\n";
 #print $a =~ /\n$/ ? 1 : 0;
 
-my $a=[1];
+#my $a=[1];
 #$a->{2} = 3;
 #print Dumper($a) . "\n";
 
 #print $a && @$a ? 1 : 0;
-print 1 unless $a && @$a;
+#print 1 unless $a && grep { /^243$/ } @$a;
