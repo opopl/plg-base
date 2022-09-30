@@ -19,30 +19,7 @@ use Base::Git qw(
     git_has
 );
 
-#my $a = 0;
-#my $b ||= $a ? 2 : 3;
-#print Dumper($b) . "\n";
+my $a = '3.4';
 
-#print Dumper(3 % 2) . "\n";
+print 111111111 if $a > '3.00';
 
-#my $cmd = 'git ls aa';
-#my @args;
-
-#my ($stdout, $stderr, $exit) = capture {
-  #system( $cmd, @args );
-#};
-
-my $a ||= 0 ? 2 : 3;
-print qq{$a} . "\n";
-
-#print Dumper(git_has('aa')) . "\n";
-  #
-#my $a = "1\n";
-#print $a =~ /\n$/ ? 1 : 0;
-
-#my $a=[1];
-#$a->{2} = 3;
-#print Dumper($a) . "\n";
-
-#print $a && @$a ? 1 : 0;
-#print 1 unless $a && grep { /^243$/ } @$a;
