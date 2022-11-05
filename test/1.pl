@@ -19,7 +19,12 @@ use Base::Git qw(
     git_has
 );
 
-my $a = '3.4';
+my $b = '22';
+eval { 
+$b++;
+};
 
-print 111111111 if $a > '3.00';
+#print $b;
 
+my $c = undef;
+print Dumper(ref $c) . "\n";
