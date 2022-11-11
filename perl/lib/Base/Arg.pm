@@ -49,6 +49,8 @@ my @ex_vars_array=qw(
         dict_new
         dict_rm_ctl
 
+        dict_expand_env
+
         hash_inject
         hash_apply
 
@@ -348,6 +350,24 @@ sub dict_update {
     }
 
     return $dict;
+}
+
+sub dict_expand_env {
+    my ($dict) = @_;
+
+    return unless $dict && ref $dict eq 'HASH';
+
+    while(my($k, $v) = each %{$dict}){
+        if (ref $v eq "HASH"){
+           dict_expand_env($v);
+
+        }elsif(! ref $v){
+           $v =~ s|\@env\{(\w+)\}|$ENV{$1} // ''|ge;
+        }
+
+        $dict->{$k} = $v;
+    }
+
 }
 
 1;
