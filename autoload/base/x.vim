@@ -26,10 +26,36 @@ function! base#x#list (...)
   
 endfunction
 
+function! base#x#expand_env (ref)
+  let ref     = a:ref
+
+  let tp = base#type(ref)
+
+  if base#inlist(tp, base#qw('Dictionary'))
+    for [ k, v ] in items(ref)
+      let v = base#x#expand_env(v)
+      call extend(ref,{ k : v })
+    endfor
+
+  elseif tp == 'String'
+    let s:obj = {}
+    function! s:obj.init (lst) dict
+      let var = get(a:lst,1,'')
+      return base#envvar(var)
+    endfunction
+
+    let Fc = s:obj.init
+    let ref = substitute(ref,'@env{\(\w\+\)}',Fc,'g')
+  endif
+
+  return ref
+
+endfunction
+
 if 0
-	let d = { 'a' : { 'b' : 2 }}
-	let val = base#x#getpath(d,'a.b',3)
-	echo val
+  let d = { 'a' : { 'b' : 2 }}
+  let val = base#x#getpath(d,'a.b',3)
+  echo val
 endif
 
 function! base#x#getpath (ref,path,default)
@@ -45,8 +71,8 @@ default_ = vim.eval('default')
 
 val_ = util.get( ref_, path_, default_ )
 eof
-	let val = py3eval('val_')
-	return val
+  let val = py3eval('val_')
+  return val
 
 endfunction
 
@@ -61,8 +87,8 @@ function! base#x#get (ref,key,default)
 
   let tp = base#type(ref)
 
-  if base#inlist(tp,base#qw('Dictionary List'))
-    let val = get(ref,key,default)
+  if base#inlist(tp, base#qw('Dictionary List'))
+    let val = get(ref, key, default)
   
     let okv = okv && (type(val) != type(v:none))
     let okv = okv && (type(val) != type('') || len(val))
