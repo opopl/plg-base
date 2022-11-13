@@ -60,10 +60,10 @@ my @ex_vars_array=qw(
   #my $pat = qr/^([^=]+)(?:\s*|=([^=]+))$/;
 
   #for(@opts){
-	 #my ($k, $v) = (m/$pat/);
-	 #$k = trim($k);
+     #my ($k, $v) = (m/$pat/);
+     #$k = trim($k);
 
-	 #$dict->{$k} = defined $v ? trim($v) : 1;
+     #$dict->{$k} = defined $v ? trim($v) : 1;
   #}
 
   #return $dict;
@@ -147,14 +147,15 @@ sub str_split_pm {
 }
 
 sub str_split_trim {
-    my ($text) = @_;
+    my ($text, $sep) = @_;
+    $sep ||= "\n";
 
     my @a = map { 
         s/^\t*//g; 
         s/^\s*//g; 
         s/\s*$//g; 
         length > 0 ? $_ : ()
-    } split "\n" => $text;
+    } split $sep => $text;
 
     return @a;
 }

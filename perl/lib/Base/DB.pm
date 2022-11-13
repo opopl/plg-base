@@ -347,6 +347,9 @@ sub dbh_select_join {
 
     my $dbh = $select->{dbh} || $DBH;
 
+    # mode for output: list, rows
+    my $mode = $select->{mode} || 'list';
+
     # e.g. tags author_id
     my $keys = $select->{keys} || [];
 
@@ -434,7 +437,13 @@ sub dbh_select_join {
         cond    => $cond,
         limit   => $limit,
     };
-    push @$list, dbh_select_as_list($ref);
+
+    if ($mode eq 'list') {
+       push @$list, dbh_select_as_list($ref);
+    }elsif ($mode eq 'rows') {
+       my ($rows) = dbh_select($ref);
+       push @$list, @$rows;
+    }
 
     $DB::single = 1 if $select->{dbg};
 
