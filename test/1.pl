@@ -11,6 +11,13 @@ use Base::Arg qw(
 );
 
 use Capture::Tiny qw(capture);
+use Plg::Projs::Tex qw(
+    texify
+    texify_ref
+    $texify_in
+    $texify_out
+);
+
 
 use Base::Git qw(
     git_add
@@ -19,12 +26,11 @@ use Base::Git qw(
     git_has
 );
 
-my $b = '22';
-eval { 
-$b++;
-};
+my $a = {};
+my $b = $a->{1}->{2};
 
-#print $b;
+print Dumper(%{$b || {}}) . "\n";
 
-my $c = undef;
-print Dumper(ref $c) . "\n";
+my @a = 1;
+print Dumper(\@a) . "\n";
+

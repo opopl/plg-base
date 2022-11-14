@@ -63,6 +63,26 @@ my @ex_vars_array=qw(
 
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
 
+sub opts2dict {
+  my ($opts_s) = @_;
+
+  return unless defined $opts_s;
+
+  my @opts = grep { length } map { defined ? trim($_) : () } split("," => $opts_s);
+
+  return unless @opts;
+  my $dict = {};
+
+  for(@opts){
+     my ($k, $v) = (/^([^=]+)(?:|=([^=]+))$/g);
+     $k = trim($k);
+
+     $dict->{$k} = defined $v ? trim($v) : 1;
+  }
+
+  return $dict;
+}
+
 sub arg_to_list {
     my ($arg) = @_;
 
