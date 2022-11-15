@@ -20,7 +20,10 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT  = qw( );
 $VERSION = '0.01';
 
-use Base::String qw(str_split);
+use Base::String qw(
+    str_split
+    str_split_trim
+);
 use String::Util qw(trim);
 
 use Base::List qw(uniq);
@@ -57,11 +60,51 @@ my @ex_vars_array=qw(
         v_copy
 
         opts2dict
+        d2dict
+        d2list
     )],
     'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
 
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
+
+sub d2list {
+  my ($d, $key) = @_;
+
+  my @list;
+
+  my $dk = $d->{'@' . $key} || $d->{$key} || '';
+  if (!ref $dk) {
+     push @list, str_split_trim($dk => ",");
+
+  } elsif (ref $dk eq 'ARRAY') {
+     foreach my $item (@$dk) {
+        push @list, str_split_trim($item => ",");
+     }
+  }
+
+  wantarray ? @list : \@list;
+}
+
+sub d2dict {
+  my ($d, $key) = @_;
+
+  my $dict={};
+
+  my $dk = $d->{'@' . $key} || $d->{$key} || '';
+  if (ref $dk eq 'ARRAY') {
+     for(@$dk) {
+        my $dd = opts2dict($_) || {};
+        dict_update($dict, $dd);
+     }
+  }
+  elsif (!ref $dk) {
+     my $dd = opts2dict($dk) || {};
+     dict_update($dict, $dd);
+  }
+
+  return $dict;
+}
 
 sub opts2dict {
   my ($opts_s) = @_;
