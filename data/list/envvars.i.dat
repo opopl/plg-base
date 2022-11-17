@@ -3,6 +3,8 @@ appdata
 config_win
 htmlout
 img_root
+img_root_pc
+pic_data
 java_home
 jsdocs
 p_ae

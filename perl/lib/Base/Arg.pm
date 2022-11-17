@@ -62,11 +62,27 @@ my @ex_vars_array=qw(
         opts2dict
         d2dict
         d2list
+        dict_update_kv
     )],
     'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
 );
 
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
+
+sub dict_update_kv {
+  my ($dict, $k, $v) = @_;
+
+  $dict ||= {};
+
+  if (defined $dict->{$k}) {
+     my $ka = '@' . $k;
+     $dict->{$ka} ||= [ $dict->{$k} ];
+     push @{$dict->{$ka}}, $v;
+  }
+  $dict->{$k} = $v;
+
+  return $dict;
+}
 
 sub d2list {
   my ($d, $key) = @_;
