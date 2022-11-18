@@ -124,6 +124,10 @@ function! base#bufact_common#chmod_rx ()
 
 endfunction
 
+function! base#bufact_common#set_ft ()
+
+endfunction
+
 function! base#bufact_common#ft_perl ()
   setlocal ft=perl
 

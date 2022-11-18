@@ -40,7 +40,7 @@ my @ex_vars_array=qw(
 
 %EXPORT_TAGS = (
 ###export_funcs
-    'funcs' => [qw( 
+    'funcs' => [qw(
         arg_to_list
         hash_update
 
@@ -64,7 +64,7 @@ my @ex_vars_array=qw(
         d2list
         dict_update_kv
     )],
-    'vars'  => [ @ex_vars_scalar,@ex_vars_array,@ex_vars_hash ]
+    'vars'  => [ @ex_vars_scalar, @ex_vars_array, @ex_vars_hash ]
 );
 
 @EXPORT_OK = ( @{ $EXPORT_TAGS{'funcs'} }, @{ $EXPORT_TAGS{'vars'} } );
@@ -105,7 +105,7 @@ sub d2list {
 sub d2dict {
   my ($d, $key) = @_;
 
-  my $dict={};
+  my $dict = {};
 
   my $dk = $d->{'@' . $key} || $d->{$key} || '';
   if (ref $dk eq 'ARRAY') {
