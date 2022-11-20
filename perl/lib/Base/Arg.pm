@@ -107,7 +107,9 @@ sub d2dict {
 
   my $dict = {};
 
-  my $dk = $d->{'@' . $key} || $d->{$key} || '';
+  my $dk = $d->{'@' . $key} || $d->{$key};
+  return unless $dk;
+
   if (ref $dk eq 'ARRAY') {
      for(@$dk) {
         my $dd = opts2dict($_) || {};
@@ -126,6 +128,10 @@ sub opts2dict {
   my ($opts_s) = @_;
 
   return unless defined $opts_s;
+
+  if (ref $opts_s eq 'ARRAY') {
+  	# body...
+  }
 
   my @opts = grep { length } map { defined ? trim($_) : () } split("," => $opts_s);
 
