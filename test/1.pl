@@ -34,3 +34,11 @@ print Dumper(%{$b || {}}) . "\n";
 my @a = 1;
 print Dumper(\@a) . "\n";
 
+
+my @b = ( '1' , '2' );
+for(@b){
+	s/1//g;
+}
+print Dumper(\@b) . "\n";
+
+

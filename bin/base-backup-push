@@ -1,10 +1,10 @@
-#!/usr/bin/env bash
+#!/usr/bin/env perl
 
-arr=( 1 2 3 )
-#for remote in ${arr[@]}
-echo $BK_REMOTES
-for remote in ${BK_REMOTES[@]}
-do
-  echo "$remote"
-  echo "2"
-done
+use warnings;
+use strict;
+
+use utf8;
+
+my @usb = qw( blue seagate );
+
+
