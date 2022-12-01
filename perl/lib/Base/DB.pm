@@ -746,7 +746,7 @@ sub dbh_base2info {
        my $bval = $rw->{$bcol} // '';
 
        #my $ivals = string.split_n_trim(bval,sep=',')
-       my @ivals = map { length ? trim($_) : () } split ',' => $bval;
+       my @ivals = map { length $_ ? trim($_) : () } split ',' => $bval;
 
        $ok &&= dbh_delete({
           dbh => $dbh,

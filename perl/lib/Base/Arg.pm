@@ -133,13 +133,15 @@ sub opts2dict {
   	# body...
   }
 
-  my @opts = grep { length } map { defined ? trim($_) : () } split("," => $opts_s);
+  my @opts = grep { length $_ } map { defined $_ ? trim($_) : () } split("," => $opts_s);
 
   return unless @opts;
   my $dict = {};
 
+  my $eq = '=';
+  my $qr = qr/^([^=]+)(?:|=([^=]+))$/;
   for(@opts){
-     my ($k, $v) = (/^([^=]+)(?:|=([^=]+))$/g);
+     my ($k, $v) = (/$qr/g);
      $k = trim($k);
 
      $dict->{$k} = defined $v ? trim($v) : 1;
