@@ -54,10 +54,15 @@ my @ex_vars_array=qw(
 
         dict_expand_env
 
+        dict_exe_cb
+        list_exe_cb
+        obj_exe_cb
+
         hash_inject
         hash_apply
 
         v_copy
+        v_update
 
         opts2dict
         d2dict
@@ -130,7 +135,7 @@ sub opts2dict {
   return unless defined $opts_s;
 
   if (ref $opts_s eq 'ARRAY') {
-  	# body...
+    # body...
   }
 
   my @opts = grep { length $_ } map { defined $_ ? trim($_) : () } split("," => $opts_s);
@@ -266,6 +271,12 @@ sub hash_apply {
             last;
         }
     }
+
+    return;
+}
+
+sub v_update {
+    my ($obj, $update) = @_;
 
     return;
 }
@@ -437,6 +448,54 @@ sub dict_update {
     }
 
     return $dict;
+}
+
+sub list_exe_cb {
+    my ($list, $cb) = @_;
+
+    return unless $list && ref $list eq 'ARRAY';
+    return unless $cb && ref $cb eq 'CODE';
+
+    foreach my $x (@$list) {
+        $x = $cb->($x);
+    }
+}
+
+sub obj_exe_cb {
+    my ($obj, $cb) = @_;
+
+    if(!ref $obj || ref $obj eq 'CODE') {
+        return $cb->($obj);
+
+    } elsif (ref $obj eq 'HASH') {
+        dict_exe_cb($obj, $cb);
+
+    } elsif (ref $obj eq 'ARRAY') {
+        list_exe_cb($obj, $cb);
+    }
+
+    return $obj;
+}
+
+
+sub dict_exe_cb {
+    my ($dict, $cb) = @_;
+
+    return unless $dict && ref $dict eq 'HASH';
+    return unless $cb && ref $cb eq 'CODE';
+
+    while(my($k, $v) = each %{$dict}){
+        unless(ref $v) {
+            $dict->{$k} = $cb->($v);
+
+        }elsif(ref $v eq 'HASH'){
+            dict_exe_cb($v, $cb);
+
+        }elsif(ref $v eq 'ARRAY'){
+            list_exe_cb($v, $cb);
+        }
+    }
+
 }
 
 sub dict_expand_env {

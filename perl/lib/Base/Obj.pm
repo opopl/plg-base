@@ -31,8 +31,18 @@ sub _hash_w2file {
     write_file($file,Dumper($h) . "\n");
 }
 
+sub _vals_ {
+    my ($self, $path, $sep) = @_;
+	$sep ||= '\.';
+
+    my @path_split = map { split($sep => $_) } ( ref $path eq 'ARRAY' ? @$path : ($path));
+
+    my $val = deepvalue($self->_hash_, @path_split);
+    return $val;
+}
+
 sub _val_ {
-    my ($self,@path) = @_;
+    my ($self, @path) = @_;
 
     @path = map { split(" " => $_) } @path;
 
