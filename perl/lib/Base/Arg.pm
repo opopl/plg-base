@@ -485,7 +485,7 @@ sub dict_exe_cb {
     return unless $cb && ref $cb eq 'CODE';
 
     while(my($k, $v) = each %{$dict}){
-        unless(ref $v) {
+        if(!ref $v || ref $v eq 'CODE') {
             $dict->{$k} = $cb->($v);
 
         }elsif(ref $v eq 'HASH'){
