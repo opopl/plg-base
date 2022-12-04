@@ -8,3 +8,4 @@ let b:did_yaml_vim_ftplugin = 1
 let b:finfo   = base#getfileinfo()
 let b:dirname = get(b:finfo,'dirname','')
 
+nnoremap <buffer><silent> \rs :BufAct check_syntax<CR>

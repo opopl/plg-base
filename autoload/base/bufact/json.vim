@@ -16,6 +16,7 @@ function! base#bufact#json#show ()
 
 endfunction
 
+
 function! base#bufact#yaml#check_syntax ()
   let file = b:file
 
