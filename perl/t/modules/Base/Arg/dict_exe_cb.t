@@ -63,7 +63,7 @@ sub t_vars {
     };
 
     my $ax = dict_exe_cb(clone($a), {
-        cb => sub { },
+        cb => sub { shift },
         cb_list => sub { varexp(shift, $vars); },
     });
     is_deeply($ax, $expected->{zero}->{$zero}->{a},'dict_exe_cb: cb_list => varexp, zero => ' . $zero);
