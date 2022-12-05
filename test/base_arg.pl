@@ -1,4 +1,4 @@
-#!/usr/bin/env perl 
+#!/usr/bin/env perl
 
 use strict;
 use warnings;
@@ -6,32 +6,54 @@ use utf8;
 
 use Data::Dumper qw(Dumper);
 use Base::Arg qw(
-	hash_apply
+    hash_apply
+    dict_exe_cb
+    varexp
 );
+use Clone qw(clone);
 
-my $a = {
-   # a => 1,
-	#b => 2,
-	#d => 4,
-	#h => { w => 10 },
-};
-my $b = {
-	a => 11,
-	b => 22,
-	c => 333,
-	h => { w => { z => 100 }, v => 20 },
-};
+use Test::More;
 
-hash_apply($a, $b);
+sub t_vars {
+    my $a_z = [( 'a' .. 'z' )];
+
+    my $expected = {
+        z0 => {
+            a => {
+              'a' => $a_z,
+              'b' => [],
+	          'c' => [
+	                   'section',
+	                   'section'
+	                 ]
+            }
+        }
+    };
+
+    my $vars = {
+        sec => 'section',
+        zero => 0,
+    };
+
+    my $a = {
+        a => [@$a_z],
+        b => [ map { '$ifvar{zero} ' . $_ } @$a_z],
+        c => [
+           '$var{sec}',
+           '$ifvar{zero} zzz',
+           '$ifvar{sec} $var{sec}',
+        ]
+    };
+
+    my $a0 = dict_exe_cb(clone($a), {
+        cb => sub { },
+        cb_list => sub { varexp(shift, $vars); },
+    });
+    is_deeply($a0, $expected->{z0}->{a},'dict_exe_cb + list varexp');
+}
+
+t_vars();
+
+done_testing();
 
 
-$$a{2}{4}{6} =3333;
-
-my @a;
-push @a , join " " => (1,2,3);
-#print Dumper(\@a) . "\n";
-
-my $d = $$b{222} = 'a';
-
-print Dumper($b) . "\n";
-print Dumper($d) . "\n";

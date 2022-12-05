@@ -515,6 +515,7 @@ sub dict_exe_cb {
         }
     }
 
+    return $dict;
 }
 
 sub dict_expand_env {
@@ -556,6 +557,7 @@ sub varexp {
            next unless defined $x;
            push @$new,$x;
        }
+       @$val = @$new;
        return $new;
     }
 

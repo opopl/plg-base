@@ -2,9 +2,11 @@
 use strict;
 use warnings;
 
-use Test::More;                      
+use Test::More;
+use Data::Dumper qw(Dumper);
+use Clone qw(clone);
 
-BEGIN { 
+BEGIN {
     require_ok('Base::Arg');
 
     my @funcs = qw(
@@ -14,19 +16,45 @@ BEGIN {
     use_ok('Base::Arg',@funcs);
 }
 
-my $vars = {
-    sec => '22_10_2022'
-};
+sub t_vars {
+    my $a_z = [( 'a' .. 'z' )];
 
-my $a = { 
-    a => [( 'a' .. 'z' )],
-    b => [ '$var{sec}' ]
-};
+    my $expected = {
+        z0 => {
+            a => {
+              'a' => $a_z,
+              'b' => [],
+              'c' => [
+                       'section',
+                       'section'
+                     ]
+            }
+        }
+    };
 
-dict_exe_cb($a, { 
-    cb => sub { },
-    cb_list => sub { varexp(shift, $vars) },
-});
+    my $vars = {
+        sec => 'section',
+        zero => 0,
+    };
+
+    my $a = {
+        a => [@$a_z],
+        b => [ map { '$ifvar{zero} ' . $_ } @$a_z],
+        c => [
+           '$var{sec}',
+           '$ifvar{zero} zzz',
+           '$ifvar{sec} $var{sec}',
+        ]
+    };
+
+    my $a0 = dict_exe_cb(clone($a), {
+        cb => sub { },
+        cb_list => sub { varexp(shift, $vars); },
+    });
+    is_deeply($a0, $expected->{z0}->{a},'dict_exe_cb + list varexp');
+}
+
+t_vars();
 
 #is_deeply()
 
