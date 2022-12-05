@@ -17,10 +17,13 @@ BEGIN {
 }
 
 sub t_vars {
+    my ($zero) = @_;
+
     my $a_z = [( 'a' .. 'z' )];
 
     my $expected = {
-        z0 => {
+        zero => {
+          0 => {
             a => {
               'a' => $a_z,
               'b' => [],
@@ -29,12 +32,24 @@ sub t_vars {
                        'section'
                      ]
             }
+          },
+          1 => {
+            a => {
+              'a' => $a_z,
+              'b' => $a_z,
+              'c' => [
+                       'section',
+                       'zzz',
+                       'section'
+                     ]
+            }
+          }
         }
     };
 
     my $vars = {
         sec => 'section',
-        zero => 0,
+        zero => $zero,
     };
 
     my $a = {
@@ -47,14 +62,15 @@ sub t_vars {
         ]
     };
 
-    my $a0 = dict_exe_cb(clone($a), {
+    my $ax = dict_exe_cb(clone($a), {
         cb => sub { },
         cb_list => sub { varexp(shift, $vars); },
     });
-    is_deeply($a0, $expected->{z0}->{a},'dict_exe_cb + list varexp');
+    is_deeply($ax, $expected->{zero}->{$zero}->{a},'dict_exe_cb, cb_list => varexp, zero => ' . $zero);
 }
 
-t_vars();
+t_vars(0);
+t_vars(1);
 
 #is_deeply()
 
