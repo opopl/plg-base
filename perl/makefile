@@ -1,0 +1,3 @@
+
+all:
+	prove -rv
