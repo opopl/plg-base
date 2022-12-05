@@ -454,13 +454,20 @@ sub dict_update {
 }
 
 sub list_exe_cb {
-    my ($list, $cb) = @_;
+    my ($list, $ref) = @_;
+    $ref ||= {};
+
+    my ($cb, $cb_list) = @{$ref}{qw( cb cb_list )};
 
     return unless $list && ref $list eq 'ARRAY';
     return unless $cb && ref $cb eq 'CODE';
 
-    foreach my $x (@$list) {
-        $x = $cb->($x);
+    if ($cb_list && ref $cb_list eq 'CODE') {
+        $cb_list->($list);
+    }else{
+        foreach my $x (@$list) {
+            $x = $cb->($x);
+        }
     }
 }
 
@@ -471,10 +478,10 @@ sub obj_exe_cb {
         return $cb->($obj);
 
     } elsif (ref $obj eq 'HASH') {
-        dict_exe_cb($obj, $cb);
+        dict_exe_cb($obj, { cb => $cb });
 
     } elsif (ref $obj eq 'ARRAY') {
-        list_exe_cb($obj, $cb);
+        list_exe_cb($obj, { cb => $cb });
     }
 
     return $obj;
@@ -482,7 +489,10 @@ sub obj_exe_cb {
 
 
 sub dict_exe_cb {
-    my ($dict, $cb) = @_;
+    my ($dict, $ref) = @_;
+    $ref ||= {};
+
+    my $cb = $ref->{cb};
 
     return unless $dict && ref $dict eq 'HASH';
     return unless $cb && ref $cb eq 'CODE';
@@ -492,10 +502,10 @@ sub dict_exe_cb {
             $dict->{$k} = $cb->($v);
 
         }elsif(ref $v eq 'HASH'){
-            dict_exe_cb($v, $cb);
+            dict_exe_cb($v, $ref);
 
         }elsif(ref $v eq 'ARRAY'){
-            list_exe_cb($v, $cb);
+            list_exe_cb($v, $ref);
         }
     }
 
