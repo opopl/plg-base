@@ -466,7 +466,13 @@ sub list_exe_cb {
         $cb_list->($list);
     }else{
         foreach my $x (@$list) {
-            $x = $cb->($x);
+            unless (ref $x) {
+                $x = $cb->($x);
+            } elsif(ref $x eq 'ARRAY'){
+                list_exe_cb($x, $ref);
+            } elsif(ref $x eq 'HASH'){
+                dict_exe_cb($x, $ref);
+            }
         }
     }
 }
