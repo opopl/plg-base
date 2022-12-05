@@ -464,17 +464,18 @@ sub list_exe_cb {
 
     if ($cb_list && ref $cb_list eq 'CODE') {
         $cb_list->($list);
-    }else{
-        foreach my $x (@$list) {
-            unless (ref $x) {
-                $x = $cb->($x);
-            } elsif(ref $x eq 'ARRAY'){
-                list_exe_cb($x, $ref);
-            } elsif(ref $x eq 'HASH'){
-                dict_exe_cb($x, $ref);
-            }
+    }
+
+    foreach my $x (@$list) {
+        unless (ref $x) {
+            $x = $cb->($x);
+        } elsif(ref $x eq 'ARRAY'){
+            list_exe_cb($x, $ref);
+        } elsif(ref $x eq 'HASH'){
+            dict_exe_cb($x, $ref);
         }
     }
+    
 }
 
 sub obj_exe_cb {

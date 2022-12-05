@@ -66,7 +66,7 @@ sub t_vars {
         cb => sub { },
         cb_list => sub { varexp(shift, $vars); },
     });
-    is_deeply($ax, $expected->{zero}->{$zero}->{a},'dict_exe_cb, cb_list => varexp, zero => ' . $zero);
+    is_deeply($ax, $expected->{zero}->{$zero}->{a},'dict_exe_cb: cb_list => varexp, zero => ' . $zero);
 }
 
 t_vars(0);
