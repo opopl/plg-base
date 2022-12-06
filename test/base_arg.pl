@@ -10,6 +10,10 @@ use Base::Arg qw(
     dict_exe_cb
     varexp
 );
+use Base::String qw(
+	str_split
+);
+
 use Clone qw(clone);
 
 use Test::More;
@@ -63,7 +67,7 @@ my $ch = "\N{U+1F3FC}";
 #print Dumper($name) . "\n";
 use Encode;
 
-print Encode::encode_utf8($ch) . "\n";
+#print Encode::encode_utf8($ch) . "\n";
 #print Encode::decode_utf8($ch) . "\n";
 #
 use utf8;
@@ -71,11 +75,19 @@ use utf8;
 #my $str = 'इस परीक्षण के लिए है';
 my $str = $ch;
 
-printf("%04x", ord($ch));
+#printf("%04x", ord($ch));
 
 #for my $c (split //, $str) {
     #printf("\\u%04x", ord($c));
 #}
 
+my $opts = { ctl => 1 };
+#my $k = 'bb @ push, uniq';
+my $k = 'b @@aa';
+my ($km, $ctl_line) = str_split($k, { 'sep' => '@' });
 
+my %ctl = map { $_ => 1 } str_split($ctl_line, { 'sep' => ',' });
+$k = $km if keys(%ctl) && $opts->{ctl};
 
+#print Dumper({ km => $km, ctl_line => $ctl_line }) . "\n";
+print Dumper(\%ctl) . "\n";
