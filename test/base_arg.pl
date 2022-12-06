@@ -52,8 +52,30 @@ sub t_vars {
     is_deeply($a0, $expected->{z0}->{a},'dict_exe_cb + list varexp');
 }
 
-t_vars();
+#t_vars();
+#done_testing();
 
-done_testing();
+use charnames ();
+#my $name = charnames::viacode(0x03A3);
+#my $ch = "\N{U+20BD}";
+my $ch = "\N{U+1F3FC}";
+#my $name = charnames::viacode();
+#print Dumper($name) . "\n";
+use Encode;
+
+print Encode::encode_utf8($ch) . "\n";
+#print Encode::decode_utf8($ch) . "\n";
+#
+use utf8;
+
+#my $str = 'इस परीक्षण के लिए है';
+my $str = $ch;
+
+printf("%04x", ord($ch));
+
+#for my $c (split //, $str) {
+    #printf("\\u%04x", ord($c));
+#}
+
 
 

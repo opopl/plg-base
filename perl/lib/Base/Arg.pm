@@ -392,7 +392,7 @@ sub dict_new {
 sub dict_update {
     my ($dict, $update, $opts) = @_;
 
-    $opts ||= {};
+    $opts ||= { ctl => 1 };
 
     return unless $dict && reftype $dict eq 'HASH';
     return unless $update && reftype $update eq 'HASH';
@@ -408,10 +408,14 @@ sub dict_update {
         my $v_dict = $dict->{$k};
         #$DB::single = 1 if $k eq 'sections';
 
+        # original var
         my $d_type  = defined $v_dict ? ( reftype $v_dict || '' ) : '';
+
+        # update var
         my $u_type  = defined $v_upd ? ( reftype $v_upd || '' ) : '';
 
         if ($d_type eq $u_type) {
+
           if($d_type eq 'HASH'){
              dict_update($v_dict, $v_upd, $opts);
              next;
