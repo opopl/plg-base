@@ -55,5 +55,18 @@ use Base::Git qw(
 #
 #dict_exe_cb($b, sub { sprintf('aaa %s', shift); });
 ##print Dumper($b) . "\n";
-my $a = 'a b c';
-print Dumper([split " " => $a ]) . "\n";
+#my $a = 'a b c';
+#print Dumper([split " " => $a ]) . "\n";
+	#
+local $_ = '222';
+
+sub r {
+	my ($sref) = @_;
+	local $_ = $$sref;
+
+	s/2/3/g;
+	$$sref = $_;
+}
+
+r(\$_);
+print Dumper($_) . "\n";

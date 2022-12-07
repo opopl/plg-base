@@ -59,7 +59,9 @@ my @ex_vars_array=qw(
 
         dict_exe_cb
         list_exe_cb
+
         obj_exe_cb
+        obj2dict
 
         hash_inject
         hash_apply
@@ -482,6 +484,14 @@ sub list_exe_cb {
     
 }
 
+sub obj2dict {
+    my ($obj) = @_;
+
+    my %dict = map { $_ => $obj->{$_} } keys %{$obj};
+
+    return \%dict;
+}
+
 sub obj_exe_cb {
     my ($obj, $cb) = @_;
 
@@ -545,8 +555,10 @@ sub varval {
     my ($path, $vars, $default) = @_;
     $vars ||= {};
 
+    my $dict = blessed($vars) ? obj2dict($vars) : $vars;
+
     my @path_a = split('\.', $path);
-    my $val = deepvalue($vars, @path_a ) // $default;
+    my $val = deepvalue($dict, @path_a ) // $default;
     return $val;
 }
 
@@ -564,6 +576,12 @@ sub varexp {
        }
        @$val = @$new;
        return $new;
+
+    }elsif(ref $val eq 'HASH'){
+       while(my($k,$v)=each %{$val}){
+           $val->{$k} = varexp($v => $vars);
+       }
+       return $val;
     }
 
     local $_ = $val;
