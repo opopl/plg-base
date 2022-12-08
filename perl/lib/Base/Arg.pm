@@ -63,6 +63,8 @@ my @ex_vars_array=qw(
         obj_exe_cb
         obj2dict
 
+        dump_enc
+
         hash_inject
         hash_apply
 
@@ -92,6 +94,15 @@ sub dict_update_kv {
   $dict->{$k} = $v;
 
   return $dict;
+}
+
+sub dump_enc {
+  my ($obj) = @_;
+
+  my $dmp = Dumper($obj);
+  #$dmp =~ s/\\x\{([0-9a-f]{2,})\}/chr hex $1/ger;
+
+  return $dmp;
 }
 
 sub d2list {

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+script="$PLG/base/bin/ppz.pl"
+
+if [[ $PERLDB ]]; then
+  perl -d $script $*
+else
+  perl $script $*
+fi

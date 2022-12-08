@@ -102,7 +102,8 @@ sub dhelp {
 
     my ($scr_bn) = ($Script =~ /^(.*)\.(\w+)$/g );
 
-    my $scr = $^O eq 'MSWin32' ? $scr_bn : $scr_bn . '.sh';
+    #my $scr = $^O eq 'MSWin32' ? $scr_bn : $scr_bn . '.sh';
+    my $scr = 'base-ppz';
     my $s = qq{
 
     LOCATION
