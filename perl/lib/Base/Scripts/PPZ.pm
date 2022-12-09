@@ -170,16 +170,16 @@ sub wf_files_make4ht {
     my $p =<< 'eof';
 
 Make:add("xindy", function(par)
-	par.idxfile = par.idxfile or par.input .. ".idx"
-	local modules = par.modules or {par.input}
-	local t = {}
-	for k,v in ipairs(modules) do
-		t[#t+1] = "-M ".. v
-	end
-	par.moduleopt = table.concat(t, " ")
-	local xindy_call = "xindy -L ${language} -C ${encoding} ${moduleopt} ${idxfile}" % par
-	print(xindy_call)
-	return os.execute(xindy_call)
+    par.idxfile = par.idxfile or par.input .. ".idx"
+    local modules = par.modules or {par.input}
+    local t = {}
+    for k,v in ipairs(modules) do
+        t[#t+1] = "-M ".. v
+    end
+    par.moduleopt = table.concat(t, " ")
+    local xindy_call = "xindy -L ${language} -C ${encoding} ${moduleopt} ${idxfile}" % par
+    print(xindy_call)
+    return os.execute(xindy_call)
 end, { language = "english", encoding = "utf8"} )
 
 if mode=="draft" then
@@ -287,9 +287,9 @@ sub wf_packs {
 
 #        my $code = $self->{data}->{$pack}->{code} || '';
         #if ($code) {
-			#push @tex,
+            #push @tex,
                 #'',
-				#sprintf(q{\%s{%s}}, $self->_sect('code'), 'Code'),
+                #sprintf(q{\%s{%s}}, $self->_sect('code'), 'Code'),
                 #'',
                 #q{\begin{verbatim}}, 
                 #split("\n" => $code),
@@ -615,6 +615,8 @@ sub _tex_preamble {
 
 \makeindex[title=Subroutine Index,name=subs]
 
+\begin{document}
+
 };
     return $p;
 }
@@ -701,6 +703,7 @@ sub load_f_ppi_to_data {
         $node->isa( 'PPI::Statement::Include' ) && do {};
     };
     my @nodes = @{ $doc->find( $f ) || [] };
+    $DB::single = 1;
 
 
     return $self;   
@@ -714,11 +717,12 @@ sub load_module {
     my $module = $ref->{module} || $self->{module} || '';
 
     return $self unless $module;
+    $DB::single = 1;
 
     my @libs;
  
     my @data = list_pm_files($module,@libs);
-	#print Dumper(\@data) . "\n";
+    #print Dumper(\@data) . "\n";
  
     foreach my $item (@data) {
         my $file = $item->{path};
@@ -745,11 +749,11 @@ sub load_yaml {
         $self->{$x} = $data->{$x};
     }
 
-	my $paths = $self->{paths};
-	foreach my $path (@$paths) {
-		$path = str_env($path);
-	}
-	#print Dumper($self->{paths}) . "\n";
+    my $paths = $self->{paths};
+    foreach my $path (@$paths) {
+        $path = str_env($path);
+    }
+    #print Dumper($self->{paths}) . "\n";
 
     return $self;
 }
@@ -763,10 +767,10 @@ sub load_f {
     my $module  = $self->{module};
     my $modules = $self->{modules};
 
-	#unless (keys %$ref) {
-	#print Dumper($self->{paths}) . "\n";
-	#print Dumper($self->{files}) . "\n";
-	#}
+    #unless (keys %$ref) {
+    #print Dumper($self->{paths}) . "\n";
+    #print Dumper($self->{files}) . "\n";
+    #}
 
 
     while (1) {
@@ -813,7 +817,7 @@ sub data_to_tex_single {
                 '',
             ]);
 
-            my $code = $self->_val_(qw(data), $pack, $sub, qw(code));
+            my $code = $self->_val_(qw(data), $pack, qw(subs), $sub, qw(code));
 
             next unless $code;
             $self->tex_push([ 
