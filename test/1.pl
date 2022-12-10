@@ -12,6 +12,8 @@ use Base::Arg qw(
     list_exe_cb
     dict_exe_cb
 );
+use Cwd qw(getcwd);
+use File::Find::Rule;
 
 use Capture::Tiny qw(capture);
 use Plg::Projs::Tex qw(
@@ -57,16 +59,37 @@ use Base::Git qw(
 ##print Dumper($b) . "\n";
 #my $a = 'a b c';
 #print Dumper([split " " => $a ]) . "\n";
-	#
-local $_ = '222';
+    #
+#local $_ = '222';
 
-sub r {
-	my ($sref) = @_;
-	local $_ = $$sref;
+#sub r {
+    #my ($sref) = @_;
+    #local $_ = $$sref;
 
-	s/2/3/g;
-	$$sref = $_;
-}
+    #s/2/3/g;
+    #$$sref = $_;
+#}
 
-r(\$_);
-print Dumper($_) . "\n";
+#r(\$_);
+#print Dumper($_) . "\n";
+
+#0 && print 3;
+    #
+
+my $rule = File::Find::Rule->new;
+my @bn;
+
+my @pall = $rule
+        ->name('*.pl')
+        ->maxdepth(1)
+        ->exec(sub { 
+            my ($shortname, $path, $fullname) = @_;
+            push @bn, $shortname;
+            #push @bn, $path;
+            push @bn, $fullname;
+        })
+        ->in(getcwd())
+        ;
+
+#print Dumper(\@pall) . "\n";
+print Dumper(\@bn) . "\n";

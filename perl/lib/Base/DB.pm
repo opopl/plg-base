@@ -23,6 +23,9 @@ use Base::Arg qw(
     hash_apply
 );
 
+use File::Find::Rule;
+use File::Slurp::Unicode;
+
 use String::Util qw(trim);
 use SQLite::More;
 
@@ -66,6 +69,7 @@ my @ex_vars_array = qw();
     dbh_base2info
 
     dbh_create_fk
+    dbh_create_tables
 
     dbh_select
     dbh_select_join
@@ -1107,6 +1111,35 @@ sub dbh_do  {
     }
 
     return $FINE;
+}
+
+sub dbh_create_tables {
+    my ($ref)  = @_;
+
+    my $dbh = $ref->{dbh} || $DBH;
+
+    my $rule = File::Find::Rule->new;
+
+    my $sql_dir = $ref->{sql_dir};
+    return unless $sql_dir && -d $sql_dir;
+
+    my $prefix = $ref->{prefix} || 'create_table_';
+    my $table_order = $ref->{table_order} || [];
+    return unless @$table_order;
+
+    my $ok = 1;
+    foreach my $table (@$table_order) {
+        my $sql_file = catfile($sql_dir, sprintf('%s%s.sql', $prefix, $table));
+        next unless -f $sql_file;
+
+        my $sql_code = read_file $sql_file;
+        $ok &&= dbh_do({
+           dbh => $dbh,
+           q => $sql_code,
+        });
+    }
+
+    return $ok;
 }
 
 sub dbh_create_fk {
