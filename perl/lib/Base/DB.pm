@@ -25,6 +25,7 @@ use Base::Arg qw(
 
 use File::Find::Rule;
 use File::Slurp::Unicode;
+use File::Spec::Functions qw(catfile);
 
 use String::Util qw(trim);
 use SQLite::More;
