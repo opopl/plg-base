@@ -797,7 +797,7 @@ sub dbh_insert_update_hash {
     my $h = $ref->{h} || {};
 
     # uniq row
-    my $uniq = $ref->{uniq} || {};
+    my $uniq = $ref->{uniq};
 
     # table name
     my $t = $ref->{t} || '';
