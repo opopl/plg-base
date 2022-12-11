@@ -584,7 +584,7 @@ sub varexp {
        my $list = $val;
        my $new = [];
        foreach my $x (@$list) {
-           $x = varexp($x, $vars);
+           $x = varexp($x, $vars, $opts);
            next unless defined $x;
            push @$new,$x;
        }
@@ -593,12 +593,13 @@ sub varexp {
 
     }elsif(ref $val eq 'HASH'){
        while(my($k,$v)=each %{$val}){
-           $val->{$k} = varexp($v => $vars);
+           $val->{$k} = varexp($v => $vars, $opts);
        }
        return $val;
     }
 
     local $_ = $val;
+    return unless defined $_;
 
     my $s_ifvar = '^' . $pref . 'ifvar\{([^{}]+)\}\s*';
     my $s_revar = $pref . 'var' .  '\{([^{}]+)\}';
