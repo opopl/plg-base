@@ -277,6 +277,7 @@ sub run_pf {
     );
 
     my $pf = Base::PerlFile->new(%o);
+	$DB::single = 1;
 
     my $start = time();
     $pf->$action;

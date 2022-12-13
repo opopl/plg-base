@@ -579,6 +579,7 @@ sub ppi_process {
     } else {
         $files = $ref->{files} || $self->files_from_db || [];
     }
+	$DB::single = 1;
 
     if (@$files) {
         my $nfiles = scalar @$files;
@@ -627,6 +628,8 @@ sub ppi_process {
         p    => [$file],
     });
 
+	$DB::single = 1;
+
     unless($redo_files){
         # if we are not forcing redo, then:
         #   file is NOT modified compared to its data stored in database,
@@ -637,6 +640,7 @@ sub ppi_process {
             return $self;
         }
     }
+
 
     # file is modified, so process it via PPI
     #
