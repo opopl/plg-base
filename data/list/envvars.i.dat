@@ -2,6 +2,7 @@ apache
 appdata
 config_win
 htmlout
+doc_root
 img_root
 img_root_pc
 pic_data

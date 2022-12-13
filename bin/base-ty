@@ -1,0 +1,9 @@
+#!/bin/bash
+
+script="$PLG/base/perl/bin/ty.pl"
+
+if [[ $PERLDB ]]; then
+  perl -d $script $*
+else
+  perl $script $*
+fi
