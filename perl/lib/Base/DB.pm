@@ -991,6 +991,7 @@ sub cond_where {
             my ($c, $p) = cond_where($ww);
             next unless $c;
             $c =~ s/^\s+WHERE\s+//g;
+            $c = trim($c);
             push @cond, $c;
             push @params, @$p;
         }

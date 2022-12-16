@@ -21,22 +21,22 @@ BEGIN {
 sub t_cond_where {
 	my $data = [
 		{ 
-		  input => { a => 1, b => 1 },
+		  input => [ { a => 1 }, { b => 1 } ],
 		  expect => { 
-			  q => ' WHERE a = ?  AND b = ? ',
+			  q => ' WHERE ( a = ? ) OR ( b = ? )',
 			  p => [ 1, 1 ],
 		  }
 		},
-		#{ 
-		  #input => { a => 1, b => 1, c => undef },
-		  #expect => { 
-			  #q => ' WHERE a = ?  AND b = ?  AND c = ? ',
-			  #p => [ 1, 1, undef ],
-		  #}
-		#},
+		{ 
+		  input => [ { a => 1 }, { b => 1 }, { c => undef } ],
+		  expect => { 
+			  q => ' WHERE ( a = ? ) OR ( b = ? ) OR ( c = ? )',
+			  p => [ 1, 1, undef ],
+		  }
+		},
 	];
 
-	my $w = { a => 1, b => 1 };
+	my $w = [ { a => 1 }, { b => 1 }, { c => undef } ];
 	my ($q, $p) = cond_where($w);
 
 
@@ -46,17 +46,10 @@ sub t_cond_where {
 
 		my ($q_got, $p_got) = cond_where($where);
 
-		#ok(1, Dumper($q_got));
-
-		is($q_got, $expect->{q}, 'cond_where query');
-		is_deeply($p_got, $expect->{p}, 'cond_where params');
-
+		is($q_got, $expect->{q}, 'cond_where query OR');
+		is_deeply($p_got, $expect->{p}, 'cond_where params OR');
 	}
 
-	#ok(1, Dumper($q));
-	#ok(1, Dumper($p));
-
-    #is($ax, $expected->{zero}->{$zero}->{a},'dict_exe_cb: cb_list => varexp, zero => ' . $zero);
 }
 
 t_cond_where();
