@@ -30,11 +30,33 @@ sub t_cond_where {
               p => [ 1, 1 ],
           }
         },
+#        {
+          #test => 'a_b_c',
+          #input => { a => 1, b => 10, c => undef },
+          #expect => {
+              #q => [
+                  #' WHERE ( a = ? ) AND ( b = ? ) AND ( c = ? )',
+                  #' WHERE ( a = ? ) AND ( c = ? ) AND ( b = ? )',
+                  #' WHERE ( b = ? ) AND ( a = ? ) AND ( c = ? )',
+                  #' WHERE ( b = ? ) AND ( c = ? ) AND ( a = ? )',
+                  #' WHERE ( c = ? ) AND ( a = ? ) AND ( b = ? )',
+                  #' WHERE ( c = ? ) AND ( b = ? ) AND ( a = ? )',
+              #],
+              #p => [ 1, 10, undef ],
+          #}
+        #},
         {
           input => [ { a => 1 } ],
           expect => {
               q => ' WHERE a = ?',
               p => [ 1 ],
+          }
+        },
+        {
+          input => [ { a => undef } ],
+          expect => {
+              q => ' WHERE a = ?',
+              p => [ undef ],
           }
         },
         {
@@ -57,7 +79,8 @@ sub t_cond_where {
     #my ($q, $p) = cond_where($w);
 
     foreach(@$data) {
-        my ($where, $expect) = @{$_}{qw( input expect )};
+        my ($where, $expect, $test) = @{$_}{qw( input expect test )};
+        #next unless $test && $test eq 'a_b_c';
 
         my ($q_got, $p_got) = cond_where($where);
 
