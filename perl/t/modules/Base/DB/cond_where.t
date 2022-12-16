@@ -8,6 +8,7 @@ binmode STDOUT,':encoding(utf8)';
 
 use Test::More;
 use Data::Dumper qw(Dumper);
+use Algorithm::Permute;
 
 BEGIN {
     require_ok('Base::DB');
@@ -19,6 +20,20 @@ BEGIN {
 }
 
 sub t_cond_where {
+
+    my $perms = {
+        'abc' => [],
+    };
+    my @abc = 'a' .. 'c';
+    my $p_iterator = Algorithm::Permute->new(\@abc);
+
+    while (my @perm = $p_iterator->next) {
+        push @{$perms->{abc}}, [@perm];
+    }
+
+    my $q3_and = ' WHERE ( %s = ? ) AND ( %s = ? ) AND ( %s = ? )';
+    my $q3_and_perm = [ map { sprintf($q3_and, @$_) } @{$perms->{abc}} ];
+
     my $data = [
         {
           input => { a => 1, b => 1 },
@@ -30,18 +45,11 @@ sub t_cond_where {
               p => [ 1, 1 ],
           }
         },
-#        {
+ #       {
           #test => 'a_b_c',
           #input => { a => 1, b => 10, c => undef },
-          #expect => {
-              #q => [
-                  #' WHERE ( a = ? ) AND ( b = ? ) AND ( c = ? )',
-                  #' WHERE ( a = ? ) AND ( c = ? ) AND ( b = ? )',
-                  #' WHERE ( b = ? ) AND ( a = ? ) AND ( c = ? )',
-                  #' WHERE ( b = ? ) AND ( c = ? ) AND ( a = ? )',
-                  #' WHERE ( c = ? ) AND ( a = ? ) AND ( b = ? )',
-                  #' WHERE ( c = ? ) AND ( b = ? ) AND ( a = ? )',
-              #],
+          #expect => { 
+              #q => $q3_and_perm,
               #p => [ 1, 10, undef ],
           #}
         #},
