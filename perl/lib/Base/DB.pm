@@ -982,6 +982,7 @@ sub cond_inner_join {
 sub cond_where {
     my ($w, $sep) = @_;
     $sep ||= 'AND';
+    $sep = trim($sep);
 
     my $e = q{`};
 
@@ -1009,7 +1010,7 @@ sub cond_where {
 
         unless (ref $v) {
             push @values_where, $v;
-            push @cond_a, trim($k) . ' = ? ';
+            push @cond_a, trim($k) . ' = ?';
 
         }elsif(ref $v eq 'HASH'){
             if ($k eq '@regexp') {
@@ -1020,7 +1021,7 @@ sub cond_where {
             }
         }
         elsif(ref $v eq 'ARRAY'){
-            push @cond_a, join ' OR ' => map { $k . ' = ? ' } @$v;
+            push @cond_a, join ' OR ' => map { $k . ' = ?' } @$v;
             push @values_where, @$v;
         }
 
@@ -1028,6 +1029,7 @@ sub cond_where {
 
     my $q = '';
     if (@cond_a) {
+        @cond_a = map { '( '. $_ .' )' } @cond_a if @cond_a > 1;
         $q .= q{ WHERE } . join(sprintf(' %s ',$sep), @cond_a);
     }
 
