@@ -997,7 +997,12 @@ sub cond_where {
             push @params, @$p;
         }
 
-        my $q = q{ WHERE } . join(' OR ', map { '( '. $_ .' )'  } @cond);
+        my $q; 
+        if (@cond) {
+            @cond = map { '( '. $_ .' )' } @cond if @cond > 1;
+            $q = q{ WHERE } . join(' OR ', @cond);
+        }
+
         return ($q, [@params]);
     }
 

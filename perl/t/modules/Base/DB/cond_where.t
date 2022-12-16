@@ -31,6 +31,13 @@ sub t_cond_where {
           }
         },
         {
+          input => [ { a => 1 } ],
+          expect => {
+              q => ' WHERE a = ?',
+              p => [ 1 ],
+          }
+        },
+        {
           input => [ { a => 1 }, { b => 1 } ],
           expect => {
               q => ' WHERE ( a = ? ) OR ( b = ? )',
