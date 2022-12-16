@@ -980,10 +980,24 @@ sub cond_inner_join {
 }
 
 sub cond_where {
-    my ($w,$sep) = @_;
+    my ($w, $sep) = @_;
     $sep ||= 'AND';
 
     my $e = q{`};
+
+    if (ref $w eq 'ARRAY') {
+        my (@cond, @params);
+        foreach my $ww (@$w) {
+            my ($c, $p) = cond_where($ww);
+            next unless $c;
+            $c =~ s/^\s+WHERE\s+//g;
+            push @cond, $c;
+            push @params, @$p;
+        }
+
+        my $q = q{ WHERE } . join(' OR ', map { '( '. $_ .' )'  } @cond);
+        return ($q, [@params]);
+    }
 
     my @fields_where = keys %$w;
     my @values_where;
