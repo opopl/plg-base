@@ -45,13 +45,13 @@ sub t_cond_where {
               p => [ 1, 1 ],
           }
         },
- #       {
+#        {
           #test => 'a_b_c',
           #input => { a => 1, b => 10, c => undef },
-          #expect => { 
+          #expect => [
               #q => $q3_and_perm,
               #p => [ 1, 10, undef ],
-          #}
+          #],
         #},
         {
           input => [ { a => 1 } ],
