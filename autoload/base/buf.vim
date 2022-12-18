@@ -403,12 +403,14 @@ function! base#buf#onload_process_ft (...)
   elseif &ft == 'snippets'
     setlocal ts=2
 
+  elseif &ft == 'javascript'
+    setlocal indentexpr=GetPerlIndent
+
   elseif &ft == 'vim'
     call extend(maps.nnoremap,{ ';ss' : 'BufAct source_script' })
     if b:basename == 'html.vim'
       TgAdd perl_html
     endif
-
 
   elseif &ft == 'idat'
     "BufAct update_var 
