@@ -593,7 +593,21 @@ sub varexp {
        return $new;
 
     }elsif(ref $val eq 'HASH'){
-       while(my($k,$v)=each %{$val}){
+       my @keys = keys %$val;
+
+       foreach my $k (@keys) {
+           my $v = $val->{$k};
+
+           my $k_exp = varexp($k => $vars, $opts);
+           unless(defined $k_exp){
+               delete $val->{$k};
+               next;
+           }elsif($k_exp ne $k){
+               $val->{$k_exp} = varexp($v => $vars, $opts);
+               delete $val->{$k};
+               next;
+           }
+
            $val->{$k} = varexp($v => $vars, $opts);
        }
        return $val;
