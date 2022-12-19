@@ -579,6 +579,7 @@ sub varexp {
 
     $opts ||= {};
     my $pref = $opts->{pref} || '\$';
+    my $name = $opts->{name} || 'var';
 
     if(ref $val eq 'ARRAY'){
        my $list = $val;
@@ -601,8 +602,8 @@ sub varexp {
     local $_ = $val;
     return unless defined $_;
 
-    my $s_ifvar = '^' . $pref . 'ifvar\{([^{}]+)\}\s*';
-    my $s_revar = $pref . 'var' .  '\{([^{}]+)\}';
+    my $s_ifvar = '^' . $pref . 'if' . $name . '\{([^{}]+)\}\s*';
+    my $s_revar = $pref . $name .  '\{([^{}]+)\}';
 
     my $re_ifvar = qr/$s_ifvar/;
     my $re_var = qr/$s_revar/;
