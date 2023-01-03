@@ -21,7 +21,7 @@ function! base#tg#set (...)
   let tfile = escape(tfile,' \')
   exe 'setlocal tags=' . tfile
   let b:tgids = [ tgid ]
-  
+
 endfunction
 
 if 0
@@ -46,7 +46,7 @@ function! base#tg#add (...)
 
   let tfile = escape(tfile,' \')
   exe 'setlocal tags+=' . tfile
-  let tgs = base#tg#ids() 
+  let tgs = base#tg#ids()
   call add(tgs,tgid)
 
   let tgs     = base#uniq(tgs)
@@ -61,7 +61,7 @@ function! base#tg#go (...)
   let tg=''
   if base#type(tgs) == 'String'
     let tg = tgs
-    
+
   elseif base#type(tgs) == 'List'
     for tg in tgs
       call base#tg#go(tg,ref)
@@ -75,14 +75,14 @@ function! base#tg#go (...)
   for cmd in before
     try
       exe cmd
-    catch 
+    catch
       echo v:exception
     endtry
   endfor
 
   try
     silent exe 'tag '. tg
-  catch 
+  catch
     echo v:exception
   endtry
 
@@ -197,9 +197,9 @@ function! base#tg#update_w_files (...)
   let f = base#qw#catpath(printf('tmp_bat list_tgupdate_%s.txt',tgid))
   let f_u = base#file#win2unix(f)
 
-  call base#file#write_lines({ 
+  call base#file#write_lines({
     \ 'lines' : filelist,
-    \ 'file'  : f, 
+    \ 'file'  : f,
     \})
 
   return f_u
@@ -209,7 +209,7 @@ if 0
   call tree
     called by
       base#tg#update
-    calls 
+    calls
       base#file#write_lines
 endif
 
@@ -275,9 +275,9 @@ function! base#tg#update_w_bat (...)
 
   endif
 
-  call base#file#write_lines({ 
-    \ 'lines' : batlines, 
-    \ 'file'  : batfile, 
+  call base#file#write_lines({
+    \ 'lines' : batlines,
+    \ 'file'  : batfile,
     \})
 
   if has('mac') || has('unix')
@@ -318,16 +318,16 @@ function! base#tg#update_tygs (...)
 
   if prompt
     let msg_a = [
-      \ " ",  
-      \ "This will produce TYGS for tag ID = " . tgid,  
-      \ " ",  
-      \ "REDO flag - sets redo flag in Base::PerlFile, and does all", 
-      \ "   calculations from the file system", 
-      \ " ",  
-      \ "redo (1/0): ", 
+      \ " ",
+      \ "This will produce TYGS for tag ID = " . tgid,
+      \ " ",
+      \ "REDO flag - sets redo flag in Base::PerlFile, and does all",
+      \ "   calculations from the file system",
+      \ " ",
+      \ "redo (1/0): ",
       \ ]
     let msg = join(msg_a,"\n")
-  
+
     let redo = base#input_we(msg, redo, {})
 
     let do_nyt_prof = input('profiling with Devel::NYTProf ? (1/0): ', do_nyt_prof )
@@ -396,7 +396,7 @@ function! base#tg#update_Fc (self,temp_file)
 
    endif
 
-   let okref = { 
+   let okref = {
        \ "cmd"  : cmd,
        \ "tgid" : tgid,
        \ "ok"   : ok,
@@ -406,7 +406,7 @@ function! base#tg#update_Fc (self,temp_file)
    if type(Fc_done) == type(function('call'))
      call call(Fc_done,[])
    endif
-   
+
    return ok
 endf
 
@@ -418,7 +418,7 @@ endf
 function! base#tg#update (...)
   let opts = get(a:000,1,{})
 
-  if a:0 
+  if a:0
     let tgid = a:1
   else
     let tgs = base#tg#ids()
@@ -430,8 +430,8 @@ function! base#tg#update (...)
 
   let msg = printf('tgid => %s, opts => %s', tgid, base#dump(opts) )
   let msgs = [ msg ]
-  let prf = { 
-    \ 'plugin' : 'base', 
+  let prf = {
+    \ 'plugin' : 'base',
     \ 'func'   : 'base#tg#update' }
   call base#log(msgs, prf)
 
@@ -467,7 +467,7 @@ function! base#tg#update (...)
   " list of files
   let files = ''
 
-  " list of files (to be written to a file which will be processed by 
+  " list of files (to be written to a file which will be processed by
   "   ctags via -L option)
   let files_arr = []
 
@@ -490,18 +490,18 @@ function! base#tg#update (...)
     for tg in tagids
       call base#tg#add(tg)
     endfor
-    return 
+    return
 
 """tgupdate_idephp_help
   elseif tgid == 'idephp_help'
-    call idephp#help#helptags({ 
-      \ 'tfile' : tfile 
+    call idephp#help#helptags({
+      \ 'tfile' : tfile
       \ })
 
-    let okref = { 
+    let okref = {
       \ "tgid" : tgid,
       \ "ok"   : 1,
-      \ "add"  : 0, 
+      \ "add"  : 0,
       \ }
 
     let ok = base#tg#ok(okref)
@@ -519,7 +519,7 @@ function! base#tg#update (...)
     let lib  = base#file#catfile([ dir, 'lib' ])
     let dirs = [ lib ]
 
-    call base#tg#update_tygs({ 
+    call base#tg#update_tygs({
       \ 'tgid'   : tgid ,
       \ 'dirs'   : dirs ,
       \ 'prompt' : 1 ,
@@ -532,7 +532,7 @@ function! base#tg#update (...)
     let lib  = base#file#catfile([ dir, 'lib' ])
     let dirs = [ lib ]
 
-    call base#tg#update_tygs({ 
+    call base#tg#update_tygs({
       \ 'tgid'   : tgid ,
       \ 'dirs'   : dirs ,
       \ 'prompt' : 1,
@@ -544,10 +544,10 @@ function! base#tg#update (...)
   elseif tgid == 'help_perlmy'
     call perlmy#help#helptags()
 
-    let okref = { 
+    let okref = {
       \ "tgid" : tgid,
       \ "ok"   : 1,
-      \ "add"  : 0, 
+      \ "add"  : 0,
       \ }
 
     let ok= base#tg#ok(okref)
@@ -558,10 +558,10 @@ function! base#tg#update (...)
 
     call base#vim#helptags({ 'dir' : hdir })
 
-    let okref = { 
+    let okref = {
       \ "tgid" : tgid,
       \ "ok"   : 1,
-      \ "add"  : 0, 
+      \ "add"  : 0,
       \ }
 
     let ok = base#tg#ok(okref)
@@ -572,10 +572,10 @@ function! base#tg#update (...)
 
     call base#vim#helptags({ 'dir' : hdir })
 
-    let okref = { 
+    let okref = {
       \ "tgid" : tgid,
       \ "ok"   : 1,
-      \ "add"  : 0, 
+      \ "add"  : 0,
       \ }
 
     let ok = base#tg#ok(okref)
@@ -586,10 +586,10 @@ function! base#tg#update (...)
 
     call base#vim#helptags({ 'dir' : hdir })
 
-    let okref = { 
+    let okref = {
       \ "tgid" : tgid,
       \ "ok"   : 1,
-      \ "add"  : 0, 
+      \ "add"  : 0,
       \ }
 
     let ok = base#tg#ok(okref)
@@ -599,10 +599,10 @@ function! base#tg#update (...)
     let hdir   = base#qw#catpath('plg', 'idephp help bootstrap')
 
     call base#vim#helptags({ 'dir' : hdir })
-    let okref = { 
+    let okref = {
       \ "tgid" : tgid,
       \ "ok"   : 1,
-      \ "add"  : 0, 
+      \ "add"  : 0,
       \ }
 
     let ok = base#tg#ok(okref)
@@ -612,10 +612,10 @@ function! base#tg#update (...)
     let hdir   = base#qw#catpath('plg', 'idephp help html')
 
     call base#vim#helptags({ 'dir' : hdir })
-    let okref = { 
+    let okref = {
       \ "tgid" : tgid,
       \ "ok"   : 1,
-      \ "add"  : 0, 
+      \ "add"  : 0,
       \ }
 
     let ok = base#tg#ok(okref)
@@ -626,10 +626,10 @@ function! base#tg#update (...)
     let hdir   = base#qw#catpath('plg', 'idephp help latex')
 
     call base#vim#helptags({ 'dir' : hdir })
-    let okref = { 
+    let okref = {
       \ "tgid" : tgid,
       \ "ok"   : 1,
-      \ "add"  : 0, 
+      \ "add"  : 0,
       \ }
 
     let ok = base#tg#ok(okref)
@@ -639,10 +639,10 @@ function! base#tg#update (...)
     let hdir   = base#qw#catpath('plg', 'idephp help css')
 
     call base#vim#helptags({ 'dir' : hdir })
-    let okref = { 
+    let okref = {
       \ "tgid" : tgid,
       \ "ok"   : 1,
-      \ "add"  : 0, 
+      \ "add"  : 0,
       \ }
 
     let ok = base#tg#ok(okref)
@@ -652,10 +652,10 @@ function! base#tg#update (...)
   elseif tgid == 'help_python'
     call pymy#help#helptags()
 
-    let okref = { 
+    let okref = {
       \ "tgid" : tgid,
       \ "ok"   : 1,
-      \ "add"  : 0, 
+      \ "add"  : 0,
       \ }
 
     let ok = base#tg#ok(okref)
@@ -665,10 +665,10 @@ function! base#tg#update (...)
   elseif tgid == 'help_plg_perlmy'
  "   call idephp#help#helptags()
 
-    "let okref = { 
+    "let okref = {
       "\  "tgid" : tgid,
       "\  "ok"   : 1,
-      "\  "add"  : 0, 
+      "\  "add"  : 0,
       "\  }
 
     "let ok= base#tg#ok(okref)
@@ -682,7 +682,7 @@ function! base#tg#update (...)
     call add(dirs,dir_src)
     call add(dirs,base#path('include_win_sdk'))
 
-    let files_arr = base#find({ 
+    let files_arr = base#find({
       \ "dirs"    : dirs,
       \ "exts"    : base#qw('c h'),
       \ "relpath" : 0,
@@ -698,9 +698,9 @@ function! base#tg#update (...)
 
     let filelist = base#qw#catpath('plg','idephp pj files_tags '.tgid.'.txt')
 
-    call base#file#write_lines({ 
-      \ 'lines' : f, 
-      \ 'file'  : filelist, 
+    call base#file#write_lines({
+      \ 'lines' : f,
+      \ 'file'  : filelist,
       \})
 
     let a=[]
@@ -709,21 +709,21 @@ function! base#tg#update (...)
     call extend(a,[ base#string#qq( ap#file#win( tfile ) ) ] )
     call extend(a,[ libs ])
     call extend(a,[ '-L',base#string#qq(filelist) ] )
-    
+
     let cmd = join(a," ")
 
-    echo "Calling ctags command for: " . tgid 
+    echo "Calling ctags command for: " . tgid
 
     let ok = base#sys(refsys)
 
-    let okref = { 
+    let okref = {
         \ "cmd"  : cmd,
         \ "tgid" : tgid,
         \ "ok"   : ok,
         \ "add"  : get(opts,'add',0) }
 
     let ok = base#tg#ok(okref)
-  
+
     return  ok
 
 
@@ -784,7 +784,7 @@ function! base#tg#update (...)
 
   elseif tgid == 'pipp'
     call base#tg#update('perl_inc_plg_projs')
-    return 
+    return
 
   elseif tgid == 'perl_inc_plg_idephp'
 
@@ -806,6 +806,7 @@ function! base#tg#update (...)
     endfor
 
     let json = base#json#encode(locs)
+
 
 """tgupdate_perl_inc
   elseif tgid == 'perl_inc'
@@ -841,7 +842,7 @@ function! base#tg#update (...)
     let dir = base#path('mkvimrc')
     let cwd = getcwd()
 
-    let files_arr = base#find({ 
+    let files_arr = base#find({
       \ "dirs"    : [ dir ],
       \ "exts"    : [ "vim"  ],
       \ "relpath" : 0,
@@ -884,9 +885,9 @@ function! base#tg#update (...)
     let plgdir   = base#catpath('plg',plg)
     let plgdir_u = base#file#win2unix(plgdir)
 
-    let files_arr = base#find({ 
-      \ "dirs" : [ plgdir ], 
-      \ "exts" : [ "vim"  ], 
+    let files_arr = base#find({
+      \ "dirs" : [ plgdir ],
+      \ "exts" : [ "vim"  ],
       \ })
     call map(files_arr,'base#file#win2unix(v:val)')
     call filter(files_arr,'filereadable(v:val)')
@@ -901,10 +902,10 @@ function! base#tg#update (...)
   elseif tgid == 'projs_tex'
       if base#plg#loaded('projs')
         let root = projs#root()
-    
-         " let files_tex = base#find({ 
-          "\  "dirs" : [ root ], 
-          "\  "exts" : [ "tex"  ], 
+
+         " let files_tex = base#find({
+          "\  "dirs" : [ root ],
+          "\  "exts" : [ "tex"  ],
           "\ })
         "let files = join(files_tex,' ')
         "echo files
@@ -916,24 +917,24 @@ function! base#tg#update (...)
     if base#plg#loaded('projs')
         let proj  = projs#proj#name()
         let exts  = base#qw('tex vim bib')
-    
+
         let files = proj . '.*.tex' . ' ' . proj . '.tex'
-    
+
         let tfile = projs#path([ proj . '.tags' ])
-    
+
         call projs#rootcd()
 
         let root = projs#root()
         let bsh = join([ root, printf('b_vimtags_%s.sh',proj) ], '/')
         if filereadable(bsh)
           let cmd = bsh
-          
+
           let env = { 'Fc_done' : Fc_done }
 
           function env.get(temp_file) dict
             let temp_file = a:temp_file
             let code      = self.return_code
-          
+
             if filereadable(a:temp_file)
               let out = readfile(a:temp_file)
               call base#buf#open_split({ 'lines' : out })
@@ -944,20 +945,30 @@ function! base#tg#update (...)
               call call(Fc_done,[])
             endif
           endfunction
-          
-          call asc#run({ 
-            \  'cmd' : cmd, 
-            \  'Fn'  : asc#tab_restore(env) 
+
+          call asc#run({
+            \  'cmd' : cmd,
+            \  'Fn'  : asc#tab_restore(env)
             \  })
           return 1
         endif
     endif
 
+"""tgupdate_js_alist
+  elseif tgid == 'js_alist'
+     let dir = base#qw#catpath('repos_git','alist server')
+
+     let files_a = base#find({
+        \ 'dirs' : [dir],
+        \ 'exts' : base#qw('js'),
+        \ })
+     let files = join(files_a,' ')
+
 """tgupdate_dir_this
   elseif tgid == 'dir_this'
      let dir = expand('%:p:h')
-     let files_a = base#find({ 
-        \ 'dirs' : [dir] 
+     let files_a = base#find({
+        \ 'dirs' : [dir]
         \ })
      let files = join(files_a,' ')
 
@@ -966,8 +977,8 @@ function! base#tg#update (...)
 
     call base#CD(id)
 
-    let libs=join( [ 
-      \ ap#file#win( base#catpath(id,'lib') ), 
+    let libs=join( [
+      \ ap#file#win( base#catpath(id,'lib') ),
       \ ] ," ")
 
 
@@ -975,7 +986,7 @@ function! base#tg#update (...)
 """tgupdate_thisfile
   elseif tgid == 'thisfile'
     let files.= ' ' . expand('%:p')
-  else 
+  else
     call base#warn({"text" : "unknown tagid!"})
     return 0
   endif
@@ -1002,16 +1013,16 @@ function! base#tg#update (...)
     let [ cmd, execmd ] = base#tg#update_w_bat(r_bat)
   endif
 
-  echo "Calling ctags command for: " . tgid 
+  echo "Calling ctags command for: " . tgid
 
   let l:start = localtime()
 
   if async && ( exists(':AsyncCommand') == 2 )
     let ok = 1
 
-    let env = { 
-      \ 'tgid'  : tgid, 
-      \ 'cmd'   : cmd, 
+    let env = {
+      \ 'tgid'  : tgid,
+      \ 'cmd'   : cmd,
       \ 'start' : l:start,
       \ 'opts'  : opts,
       \ }
@@ -1027,10 +1038,10 @@ function! base#tg#update (...)
       call base#tg#update_Fc(self,a:temp_file)
     endfunction
 """tgupdate_async
-    
-    call asc#run({ 
-      \ 'cmd' : execmd, 
-      \ 'Fn'  : asc#tab_restore(env) 
+
+    call asc#run({
+      \ 'cmd' : execmd,
+      \ 'Fn'  : asc#tab_restore(env)
       \ })
 
     return
@@ -1039,7 +1050,7 @@ function! base#tg#update (...)
     let ok = base#sys(refsys)
   endif
 
-  let okref = { 
+  let okref = {
       \ "cmd"  : cmd,
       \ "tgid" : tgid,
       \ "ok"   : ok,
@@ -1062,21 +1073,21 @@ function! base#tg#ok (...)
 
   let tfile = base#tg#tfile(tgid)
   let tfile = get(okref, 'tfile', tfile)
-  
+
   "elapsed time
   let l:els  = get(okref, 'els', '')
 
   if ok
     redraw!
     echohl MoreMsg
-    let msg = "TAGS UPDATE OK: " .  tgid 
+    let msg = "TAGS UPDATE OK: " .  tgid
     if strlen(l:els)
       let msg .= ' ' . l:els
     endif
-    echo msg 
+    echo msg
     echohl None
 
-    let h = { 
+    let h = {
       \ "update_ifabsent" : 0,
       \ }
 
@@ -1084,7 +1095,7 @@ function! base#tg#ok (...)
       call extend(h, { 'tfile' : tfile })
     endif
 
-    if add 
+    if add
       call base#tg#add (tgid, h)
     else
       call base#tg#set (tgid, h)
@@ -1102,12 +1113,12 @@ function! base#tg#ok (...)
   endif
 
   return ok
-  
+
 endfunction
 
 function! base#tg#view (...)
 
-  if a:0 
+  if a:0
     let tgid = a:1
   else
     call base#tags#view()
@@ -1134,5 +1145,5 @@ function! base#tg#view (...)
 
   let tfile=escape(tfile,' \')
   exe 'setlocal tags+='.tfile
-  
+
 endfunction
