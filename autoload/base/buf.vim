@@ -375,10 +375,16 @@ function! base#buf#onload_process_ext (...)
   let ref  = get(a:000,0,{})
 
   if b:ext == 'tags'
-    setf tags
+    setlocal ft=tags
 
   elseif b:ext == 'nsh'
-    setf nsis
+    setlocal ft=nsis
+
+  elseif b:ext == 'phtml'
+    setlocal ft=perl
+
+  elseif b:ext == 'psql'
+    setlocal ft=sql
 
   endif
 endfunction
