@@ -16,6 +16,7 @@ use Carp;
 use Plg::Projs::Rgx qw(
    rgx_match
 );
+use Encode qw();
 
 use File::Basename qw(basename dirname);
 
@@ -23,24 +24,33 @@ sub sqlite_more
 {
   my ($dbh) = @_;
 
-  # my 
+  # my
   my %funcs = (
      # regex($pattern, $string, $flags, $index )
      'regexp'    => [ -1, sub { rgx_match(@_) } ],
      'rgx'       => [ -1, sub { rgx_match(@_) } ],
      'basename' => [ 1, sub { basename(shift) } ],
      'dirname'  => [ 1, sub { dirname(shift) } ],
-     'extension'  => [ 1, sub { 
-         local $_ = shift || ''; /\.(\w+)$/ ? $1 : ''; 
+     'extension'  => [ 1, sub {
+         local $_ = shift || ''; /\.(\w+)$/ ? $1 : '';
       } ],
   );
- 
+
   while(my($k,$v) = each %{funcs}){
      $dbh->sqlite_create_function($k, @$v );
   }
 
-  # endmy 
-  
+  # endmy
+  $dbh->sqlite_create_function( 'md5',       1, sub { Digest::MD5::md5(@_) } );
+  $dbh->sqlite_create_function( 'md5_hex',   1, sub { Digest::MD5::md5_hex(@_) } );
+
+  $dbh->sqlite_create_function( 'md5_hex_utf',   1,
+      sub {
+          my $str = shift;
+          $str = Encode::encode('utf8',$str);
+          Digest::MD5::md5_hex($str);
+      } );
+
   $dbh->sqlite_create_function( 'nvl',       2, sub { nvl(@_) } );
   $dbh->sqlite_create_function( 'decode',   -1, sub { decode(@_) } );
 #  $dbh->sqlite_create_function( 'sysdate',   0, sub { sysdate() } ); #hm
@@ -48,8 +58,6 @@ sub sqlite_more
   $dbh->sqlite_create_function( 'lower',     1, sub { lc($_[0]) } );
   $dbh->sqlite_create_function( 'least',    -1, sub { min(@_) } );
   $dbh->sqlite_create_function( 'greatest', -1, sub { max(@_) } );
-  $dbh->sqlite_create_function( 'md5',       1, sub { Digest::MD5::md5(@_) } );
-  $dbh->sqlite_create_function( 'md5_hex',   1, sub { Digest::MD5::md5_hex(@_) } );
   $dbh->sqlite_create_function( 'random',    2, sub { random(@_) } );
   $dbh->sqlite_create_function( 'sprintf',  -1, sub { sprintf(shift(),@_) } );
   $dbh->sqlite_create_function( 'time',      0, sub { time() } );
@@ -67,7 +75,7 @@ sub sqlite_more
   $dbh->sqlite_create_function( 'tan',       1, sub { sin($_[0])/cos($_[0]) } );
   $dbh->sqlite_create_function( 'atan2',     2, sub { atan2(shift,shift) } );
   $dbh->sqlite_create_function( 'perlhash', -1, sub { perlhash(@_) } );
-  
+
   $dbh->sqlite_create_function( 'distance',  4, sub { distance(@_) } );
 
  #$dbh->sqlite_create_function( 'sum',      -1, sub { sum(@_) } );
@@ -305,7 +313,7 @@ Normal row functions:
  sin(x)                      returns result of x of trigonometric sinus, x in radians, sin(pi/2) = 1
  cos(x)                      returns result of x of trigonometric sinus, x in radians, cos(pi) = -1
  tan(x)                      tan(x) = sin(x) / cos(x)
- atan2(x,y)                  
+ atan2(x,y)
 
  distance(lat1,lon1,lat2,lon2)   ca the earth surface distance in meters given two geographical coordinates
 
