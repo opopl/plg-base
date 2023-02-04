@@ -5,6 +5,8 @@ use 5.006;
 use strict;
 use warnings;
 
+use Scalar::Util qw(reftype);
+
 require Exporter;
 
 our @ISA = qw(Exporter);
@@ -114,9 +116,9 @@ sub deepvalue {
 		my $key = shift;
 		# force key as string
 		$key .= '';
-		if (ref $hr eq 'HASH') {
+		if (reftype $hr eq 'HASH') {
 			return unless defined ($hr = $hr->{$key});
-		} elsif (ref $hr eq 'ARRAY') {
+		} elsif (reftype $hr eq 'ARRAY') {
 			return unless defined ($hr = $hr->[$key]);
 		} else {
 			return;
