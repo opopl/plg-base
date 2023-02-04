@@ -48,7 +48,7 @@ sub new
 
 sub init {
     my ($self) = @_;
-    
+
     my $h = {
         sects => {
             sub       => 'paragraph',
@@ -60,18 +60,18 @@ sub init {
         data => {},
         proj => 'main',
     };
-        
+
     hash_inject($self, $h);
     return $self;
 }
-      
+
 sub get_opt {
     my ($self) = @_;
-    
+
     Getopt::Long::Configure(qw(bundling no_getopt_compat no_auto_abbrev no_ignore_case_always));
-    
+
     my (@optstr, %opt);
-    @optstr = ( 
+    @optstr = (
         "help|h",
         "file|f=s",
         "file_out|o=s",
@@ -81,8 +81,8 @@ sub get_opt {
         "proj|p=s",
         "cmd|c=s",
     );
-    
-    unless( @ARGV ){ 
+
+    unless( @ARGV ){
         $self->dhelp;
         exit 0;
     }else{
@@ -94,7 +94,7 @@ sub get_opt {
         $self->{$k} = $opt{$k};
     }
 
-    return $self;   
+    return $self;
 }
 
 sub dhelp {
@@ -135,7 +135,7 @@ sub dhelp {
 
     print $s . "\n";
 
-    return $self;   
+    return $self;
 }
 
 sub wf_main {
@@ -159,7 +159,7 @@ sub wf_main {
         ;
 
     write_file($self->_file_sec('_main_'),join("\n",@tex_main) . "\n");
-    return $self;   
+    return $self;
 }
 
 sub wf_files_make4ht {
@@ -200,7 +200,7 @@ end
 eof
 
     write_file(catfile($dir,$self->{proj} . '.mk4'),$p);
-    return $self;   
+    return $self;
 }
 
 
@@ -219,7 +219,7 @@ eof
     write_file($f,$p);
     system("chmod +rx $f");
 
-    return $self;   
+    return $self;
 }
 
 
@@ -227,12 +227,12 @@ sub wf_cfg {
     my ($self) = @_;
 
     my @tex_cfg;
-    push @tex_cfg, 
+    push @tex_cfg,
         $self->_tex_cfg;
 
     write_file($self->_file_sec('_cfg_'),join("\n",@tex_cfg) . "\n");
 
-    return $self;   
+    return $self;
 }
 
 sub wf_packs {
@@ -242,7 +242,7 @@ sub wf_packs {
 
     push @tex_packs,
        sprintf(q{\%s{%s}}, $self->_sect('packs'), 'Packages');
-       ; 
+       ;
     foreach my $pack ($self->_packages) {
         my (@tex);
 
@@ -278,9 +278,9 @@ sub wf_packs {
                 '',
                 sprintf(q{\index[subs]{%s!%s}},$sub_tex,$pack_tex),
                 '',
-                q{\begin{verbatim}}, 
+                q{\begin{Verbatim}},
                 split("\n" => $code),
-                q{\end{verbatim}},
+                q{\end{Verbatim}},
                 '',
                 ;
         }
@@ -291,9 +291,9 @@ sub wf_packs {
                 #'',
                 #sprintf(q{\%s{%s}}, $self->_sect('code'), 'Code'),
                 #'',
-                #q{\begin{verbatim}}, 
+                #q{\begin{Verbatim}},
                 #split("\n" => $code),
-                #q{\end{verbatim}},
+                #q{\end{Verbatim}},
                 #''
                 #;
         #}
@@ -305,7 +305,7 @@ sub wf_packs {
 
     write_file($self->_file_sec('packs'),join("\n",@tex_packs) . "\n");
 
-    return $self;   
+    return $self;
 }
 
 sub wf_index {
@@ -313,7 +313,7 @@ sub wf_index {
 
     write_file($self->_file_sec('index'),$self->_tex_index);
 
-    return $self;   
+    return $self;
 }
 
 sub wf_tabcont {
@@ -321,17 +321,17 @@ sub wf_tabcont {
 
 my $p =<< 'eof';
 \phantomsection
- 
+
 \addcontentsline{toc}{chapter}{\contentsname}
 \hypertarget{tabcont}{}
- 
+
 \tableofcontents
 \newpage
 eof
 
     write_file($self->_file_sec('tabcont'),$p);
 
-    return $self;   
+    return $self;
 }
 
 sub wf_body {
@@ -344,7 +344,7 @@ sub wf_body {
 
     write_file($self->_file_sec('body'),join("\n",@tex_body) . "\n");
 
-    return $self;   
+    return $self;
 }
 
 sub wf_preamble {
@@ -357,7 +357,7 @@ sub wf_preamble {
 
     write_file($self->_file_sec('preamble'),join("\n",@tex_preamble) . "\n");
 
-    return $self;   
+    return $self;
 }
 
 sub cmd_tex_write_dir {
@@ -383,7 +383,7 @@ sub cmd_tex_write_dir {
         ->wf_files_make4ht
         ;
 
-    return $self;   
+    return $self;
 }
 
 sub cmd_tex_write_fs {
@@ -399,7 +399,7 @@ sub cmd_tex_write_fs {
                 $self->_tex_lines,
                 $self->_tex_postamble,
                 ;
-    
+
             write_file($self->{file_out},join("\n",@tex) . "\n");
             last;
         };
@@ -413,7 +413,7 @@ sub cmd_tex_write_fs {
         last;
     }
 
-    return $self;   
+    return $self;
 }
 
 =head3 _subnames($pack)
@@ -427,7 +427,7 @@ sub _subnames {
 
     return sort keys %{$self->{data}->{$pack}->{subs} || {}};
 
-    return $self;   
+    return $self;
 }
 
 =head3 _subnames()
@@ -483,7 +483,7 @@ sub _tex_def_ii {
     $p = sprintf($p,$proj);
 
     return $p;
-    
+
 }
 
 sub _file_sec {
@@ -536,20 +536,20 @@ sub _tex_cfg {
     background-color : gray;
     color            : white;
   }
-} 
+}
 
 
 \ifOption{frames}{%
     \Configure{frames}%
              {\HorFrames[
-                   frameborder="yes" 
-                   border="1"  
-                   %framespacing="1" 
-                   rows="*"]{*,3*}  
-               \Frame[ name="tex4ht-menu" frameborder="2" ]{tex4ht-toc}  
+                   frameborder="yes"
+                   border="1"
+                   %framespacing="1"
+                   rows="*"]{*,3*}
+               \Frame[ name="tex4ht-menu" frameborder="2" ]{tex4ht-toc}
                \Frame[ name="tex4ht-main" frameborder="2" ]{tex4ht-body}
-             }  
-    {\let\contentsname=\empty \tableofcontents}  
+             }
+    {\let\contentsname=\empty \tableofcontents}
 }{}
 
 \newcommand{\thealt}{No alt test was set.}
@@ -560,14 +560,14 @@ sub _tex_cfg {
 
 \Configure{graphics*}{png}{
 \Picture[\HCode{\thealt}]{\csname Gin@base\endcsname.png}}
-  
-\Configure{graphics*}  
-{pdf}  
+
+\Configure{graphics*}
+{pdf}
 {%
-    \Needs{"convert \csname Gin@base\endcsname.pdf \csname Gin@base\endcsname.png"}%  
-    \Picture[pict]{\csname Gin@base\endcsname.png}%  
+    \Needs{"convert \csname Gin@base\endcsname.pdf \csname Gin@base\endcsname.png"}%
+    \Picture[pict]{\csname Gin@base\endcsname.png}%
     \special{t4ht+@File: \csname Gin@base\endcsname.png}
-}%  
+}%
 
 \begin{document}
 
@@ -639,7 +639,7 @@ sub tex_push {
         push @{$self->{tex_lines}}, @$lines;
     }
 
-    return $self;   
+    return $self;
 }
 
 sub load_f_ppi_to_data {
@@ -656,7 +656,7 @@ sub load_f_ppi_to_data {
     my $add = {};
     $add->{$_} = 1 for(qw(vars subs packs));
 
-    my $f = sub { 
+    my $f = sub {
         my $node = $_[1];
 
         if ($pack && exists $self->{data}->{$pack}->{code}){
@@ -664,8 +664,8 @@ sub load_f_ppi_to_data {
         }
 
 ###PPI_Statement_Package
-        $node->isa( 'PPI::Statement::Package' ) && do { 
-            $pack = $node->namespace; 
+        $node->isa( 'PPI::Statement::Package' ) && do {
+            $pack = $node->namespace;
 
             $self->{data}->{$pack} ||= {};
             $self->{data}->{$pack}->{code} ||= '';
@@ -674,12 +674,12 @@ sub load_f_ppi_to_data {
         };
 
 ###PPI_Statement_Sub
-        $node->isa( 'PPI::Statement::Sub' ) && do { 
+        $node->isa( 'PPI::Statement::Sub' ) && do {
             return unless $add->{subs};
 
-            $pack ||= 'main'; 
+            $pack ||= 'main';
             $subname_full  = $pack . '::' . $node->name;
-            $subname_short = $node->name; 
+            $subname_short = $node->name;
 
             my $code = $node->block->content;
             $self->{data}->{$pack} ||= {};
@@ -689,7 +689,7 @@ sub load_f_ppi_to_data {
         };
 
 ###PPI_Statement_Variable
-        $node->isa( 'PPI::Statement::Variable' ) && do { 
+        $node->isa( 'PPI::Statement::Variable' ) && do {
             return unless $add->{vars};
 
             my $type = $node->type;
@@ -706,7 +706,7 @@ sub load_f_ppi_to_data {
     $DB::single = 1;
 
 
-    return $self;   
+    return $self;
 
 }
 
@@ -720,10 +720,10 @@ sub load_module {
     $DB::single = 1;
 
     my @libs;
- 
+
     my @data = list_pm_files($module,@libs);
     #print Dumper(\@data) . "\n";
- 
+
     foreach my $item (@data) {
         my $file = $item->{path};
         next unless $file;
@@ -804,7 +804,7 @@ sub data_to_tex_single {
     my ($self) = @_;
 
     foreach my $pack ($self->_packages) {
-        $self->tex_push([ 
+        $self->tex_push([
            sprintf(q{\%s{%s}}, $self->_sect('pack'), texify($pack,'rpl_special')),
            ' ',
         ]);
@@ -812,7 +812,7 @@ sub data_to_tex_single {
         foreach my $sub ($self->_subnames($pack)) {
             my $sub_tex = texify($sub,'rpl_special');
 
-            $self->tex_push([ 
+            $self->tex_push([
                 sprintf(q{\%s{%s}}, $self->_sect('sub'), $sub_tex),
                 '',
             ]);
@@ -820,10 +820,10 @@ sub data_to_tex_single {
             my $code = $self->_val_(qw(data), $pack, qw(subs), $sub, qw(code));
 
             next unless $code;
-            $self->tex_push([ 
-                q{\begin{verbatim}}, 
+            $self->tex_push([
+                q{\begin{Verbatim}},
                 split("\n" => $code),
-                q{\end{verbatim}}, 
+                q{\end{Verbatim}},
             ]);
         }
     }
@@ -840,10 +840,10 @@ sub run {
         ->load_f
         ->run_cmd       # Base::Cmd
         ;
-    
+
     $self;
 }
 
 1;
- 
+
 
