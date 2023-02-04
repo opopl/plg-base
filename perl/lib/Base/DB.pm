@@ -78,6 +78,8 @@ my @ex_vars_array = qw();
     dbh_select_as_list
     dbh_select_fetchone
 
+    dbh_table_info
+
     dbh_do
     dbh_delete
 
@@ -464,6 +466,57 @@ sub dbh_select_as_list {
 
     return wantarray ? @list : \@list;
 
+}
+
+sub dbh_table_metadata {
+    my ($ref)  = @_;
+
+# https://stackoverflow.com/questions/604939/how-can-i-get-the-list-of-a-columns-in-a-table-for-a-sqlite-database
+#SELECT
+  #m.name AS table_name,
+  #p.cid AS col_id,
+  #p.name AS col_name,
+  #p.type AS col_type,
+  #p.pk AS col_is_pk,
+  #p.dflt_value AS col_default_val,
+  #p.[notnull] AS col_is_not_null
+#FROM sqlite_master m
+#LEFT OUTER JOIN pragma_table_info((m.name)) p
+  #ON m.name <> p.name
+#WHERE m.type = 'table'
+#ORDER BY table_name, col_id;
+  #
+}
+
+sub dbh_table_info {
+    my ($ref)  = @_;
+    $ref ||= {};
+
+    my $info = {};
+
+# https://stackoverflow.com/questions/604939/how-can-i-get-the-list-of-a-columns-in-a-table-for-a-sqlite-database
+    my $q = q{
+        SELECT
+            m.name as tbl,
+            p.name as col
+        FROM
+            sqlite_master m
+        LEFT OUTER JOIN
+            pragma_table_info((m.name)) p
+        ON m.name <> p.name
+        ORDER BY tbl, col
+    };
+    my ($rows) = dbh_select({ q => $q, %$ref });
+    foreach my $rw (@$rows) {
+        my ($tbl, $col) = @{$rw}{qw(tbl col)};
+        next if $tbl =~ /^sqlite_/;
+
+        $info->{$tbl}->{cols} ||= [];
+
+        push @{$info->{$tbl}->{cols}}, $col;
+    }
+
+    return $info;
 }
 
 
@@ -997,7 +1050,7 @@ sub cond_where {
             push @params, @$p;
         }
 
-        my $q; 
+        my $q;
         if (@cond) {
             @cond = map { '( '. $_ .' )' } @cond if @cond > 1;
             $q = q{ WHERE } . join(' OR ', @cond);
