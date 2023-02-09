@@ -351,6 +351,7 @@ sub dict_rm_ctl {
 
 # my $d = {};
 # dict_new('a.b.c','aa');
+# dict_new('a@b@c','aa','@');
 sub dict_new {
    my ($path, $val, $sep) = @_;
    $sep ||= '\.';
@@ -563,12 +564,13 @@ sub dict_expand_env {
 }
 
 sub varval {
-    my ($path, $vars, $default) = @_;
+    my ($path, $vars, $default, $sep) = @_;
     $vars ||= {};
+    $sep ||= '\.';
 
     my $dict = blessed($vars) ? obj2dict($vars) : $vars;
 
-    my @path_a = split('\.', $path);
+    my @path_a = split($sep, $path);
     my $val = deepvalue($dict, @path_a ) // $default;
     return $val;
 }
