@@ -179,10 +179,10 @@ sub arg_to_list {
     my @list;
     if (ref $arg eq "ARRAY"){
         @list = @$arg;
-        
+
     }elsif(ref $arg eq ""){
         @list = str_split($arg);
-        
+
     }
     return wantarray ? @list : \@list ;
 }
@@ -197,13 +197,13 @@ sub arg_to_list {
 
     my ($hash, $update);
 
-    # update $hash with the contents of 
+    # update $hash with the contents of
     #   $update;
     hash_update($hash, $update);
 
 =head3 Examples
 
-=cut    
+=cut
 
 sub hash_update {
     my ($hash, $update) = @_;
@@ -269,14 +269,14 @@ sub hash_apply {
             elsif(ref $h eq 'ARRAY'){
                 my $w = clone($v);
 
-                if(ref $w eq 'ARRAY'){ 
+                if(ref $w eq 'ARRAY'){
                     foreach my $x (@$w) {
                         my $z = clone($x);
                         push @$h, $z;
                     }
                 }
                 last;
-            } 
+            }
 
             if (blessed($v)) {
                 $hash->{$k} = $v;
@@ -357,7 +357,7 @@ sub dict_new {
    $sep ||= '\.';
 
    my $dcn;
-   $dcn = sub { 
+   $dcn = sub {
       my ($dct, $path, $val) = @_;
 
       while ($path =~ /^\Q$sep\E/) {
@@ -384,10 +384,10 @@ sub dict_new {
 }
 
 #def dictnew(path='', val='', sep='.'):
-  #''' 
+  #'''
     #d = dictnew('a.b.c.d',value)
     #d = dictnew('a/b/c/d',value,sep='/')
-  #''' 
+  #'''
   #def _dictnew(dct, path, val):
     #while path.startswith(sep):
       #path = path[1:]
@@ -449,7 +449,7 @@ sub dict_update {
                   $v_dict = uniq($v_dict); $done = 1;
                }
                $dict->{$k} = $v_dict;
-    
+
                next if $done;
              }
           }
@@ -493,7 +493,7 @@ sub list_exe_cb {
             dict_exe_cb($x, $ref);
         }
     }
-    
+
 }
 
 sub obj2dict {
@@ -581,7 +581,8 @@ sub varexp {
 
     $opts ||= {};
     my $pref = $opts->{pref} || '\$';
-    my $name = $opts->{name} || 'var';
+    my $kwd  = $opts->{name} || 'var';
+    my $kwd_val  = $pref . 'val';
 
     if(ref $val eq 'ARRAY'){
        my $list = $val;
@@ -618,23 +619,54 @@ sub varexp {
     local $_ = $val;
     return unless defined $_;
 
-    my $s_ifvar = '^' . $pref . 'if' . $name . '\{([^{}]+)\}\s*';
-    my $s_revar = $pref . $name .  '\{([^{}]+)\}';
+    # @ifvar{..var_path..}{..then..}
+    my $s_ifvar = $pref . 'if' . $kwd . '\{(?<var_path>[^{}]+)\}';
+    my $s_ifvar_then = '(?:\{(?<then>[^{}]+)\}|)';
+    $s_ifvar .= $s_ifvar_then;
+    $s_ifvar .= '\s*';
 
     my $re_ifvar = qr/$s_ifvar/;
+    my $re_ifvar_begin = qr/^\s*$s_ifvar/;
+
+    # @var{..var_path..}
+    my $s_revar = $pref . $kwd .  '\{(?<var_path>[^{}]+)\}';
     my $re_var = qr/$s_revar/;
+    my $re_var_begin = qr/^\s*$s_revar/;
 
-    /$re_ifvar/ && do {
-       my $val = varval($1, $vars);
-       return unless $val;
+    /$re_ifvar_begin/ && do {
+       my ($var_path, $then) = @+{qw( var_path then )};
+       $then //= '';
+       my $var_val = varval($var_path, $vars);
+       $then =~ s/$kwd_val/$var_val/g;
+       return unless $var_val;
 
-       s/$re_ifvar//g;
+       s/$re_ifvar_begin/$then/;
     };
 
-    if (/^$re_var$/) {
-        $_ = varval($1, $vars);
+    while(/$re_ifvar/){
+       my ($var_path, $then, $else) = @+{qw( var_path then )};
+       my $var_val = varval($var_path, $vars, '');
+       $then //= '';
+       $else //= '';
+       $then =~ s/$kwd_val/$var_val/g;
+       if ($var_val) {
+           s/$re_ifvar/$then/;
+       }else{
+           s/$re_ifvar/$else/;
+       }
+    };
+
+    if (/$re_var_begin$/) {
+        # at the begining, match whole expression, undef
+        my $var_path = $+{'var_path'};
+        $_ = varval($var_path, $vars);
+
     }elsif(/$re_var/){
-        s|$re_var|varval($1, $vars, '')|ge;
+        while(/$re_var/){
+            # in the middle, empty string
+            my $var_path = $+{'var_path'};
+            s|$re_var|varval($var_path, $vars, '')|e;
+        }
     }
 
     return $_;
@@ -642,5 +674,5 @@ sub varexp {
 
 
 1;
- 
+
 
