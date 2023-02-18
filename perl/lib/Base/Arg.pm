@@ -72,6 +72,8 @@ my @ex_vars_array=qw(
         v_update
 
         opts2dict
+        dict2opts
+
         d2dict
         d2list
         dict_update_kv
@@ -143,6 +145,19 @@ sub d2dict {
   }
 
   return $dict;
+}
+
+sub dict2opts {
+  my ($dict) = @_;
+
+  my @opts;
+  while(my($k,$v)=each %$dict){
+      next unless defined $v;
+      push @opts, sprintf('%s=%s',$k => $v);
+  }
+  my $opts_s = join(',' => @opts);
+
+  return $opts_s;
 }
 
 sub opts2dict {

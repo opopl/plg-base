@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use utf8;
 
+use Carp qw(croak);
+
 use Data::Dumper qw(Dumper);
 use Base::Arg qw(
     dict_update
@@ -76,20 +78,36 @@ use Base::Git qw(
 #0 && print 3;
     #
 
-my $rule = File::Find::Rule->new;
-my @bn;
+#my $rule = File::Find::Rule->new;
+#my @bn;
 
-my @pall = $rule
-        ->name('*.pl')
-        ->maxdepth(1)
-        ->exec(sub { 
-            my ($shortname, $path, $fullname) = @_;
-            push @bn, $shortname;
-            #push @bn, $path;
-            push @bn, $fullname;
-        })
-        ->in(getcwd())
-        ;
+#my @pall = $rule
+        #->name('*.pl')
+        #->maxdepth(1)
+        #->exec(sub { 
+            #my ($shortname, $path, $fullname) = @_;
+            #push @bn, $shortname;
+            ##push @bn, $path;
+            #push @bn, $fullname;
+        #})
+        #->in(getcwd())
+        #;
 
-#print Dumper(\@pall) . "\n";
-print Dumper(\@bn) . "\n";
+##print Dumper(\@pall) . "\n";
+#print Dumper(\@bn) . "\n";
+		#
+#my $a = {};
+#$a->{b}++;
+##print Dumper(4 % 4) . "\n";
+
+#3 =~ /2/;
+#3 =~ /(?<aa>2)/;
+#print Dumper(\%+) . "\n";
+#print Dumper(\@+) . "\n";
+		#
+my $a = 1 && 3;
+print Dumper($a) . "\n";
+eval { die };
+
+print qq{$@} . "\n";
+print qq{bb} . "\n";

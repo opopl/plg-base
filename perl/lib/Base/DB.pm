@@ -79,6 +79,7 @@ my @ex_vars_array = qw();
     dbh_select_fetchone
 
     dbh_table_info
+    dbh_table_modify
 
     dbh_do
     dbh_delete
@@ -486,6 +487,11 @@ sub dbh_table_metadata {
 #WHERE m.type = 'table'
 #ORDER BY table_name, col_id;
   #
+}
+
+sub dbh_table_modify {
+    my ($ref)  = @_;
+    $ref ||= {};
 }
 
 sub dbh_table_info {

@@ -12,6 +12,8 @@ use DBD::SQLite 1.27;  #minimum with $dbh->sqlite_create_function
 use DBI         1.609; #minimum with $dbh->sqlite_create_function
 use Digest::MD5;
 use Carp;
+use File::Spec::Functions qw(catfile);
+use File::stat;
 
 use Plg::Projs::Rgx qw(
    rgx_match
@@ -34,6 +36,21 @@ sub sqlite_more
      'extension'  => [ 1, sub {
          local $_ = shift || ''; /\.(\w+)$/ ? $1 : '';
       } ],
+     'env'      => [ 1, sub { my $var = shift; $ENV{$var} // ''; } ],
+     'catfile'  => [ 2, sub { catfile(shift, shift) } ],
+     'file_mtime' => [ 1, sub {
+                                my $file = shift;
+                                return unless -f $file;
+                                my $st = stat($file);
+                                $st->mtime;
+                          } ],
+     'file_stat' => [ 2, sub {
+                                my ($file, $sub) = @_;
+                                return unless -f $file;
+                                my $st = stat($file);
+                                $st->$sub;
+                          } ],
+     'is_file' => [ 1, sub { my $file = shift; -f $file; } ],
   );
 
   while(my($k,$v) = each %{funcs}){
