@@ -105,9 +105,17 @@ use Base::Git qw(
 #print Dumper(\%+) . "\n";
 #print Dumper(\@+) . "\n";
 		#
-my $a = 1 && 3;
-print Dumper($a) . "\n";
-eval { die };
+#my $a = 1 && 3;
+#print Dumper($a) . "\n";
+#eval { die };
 
-print qq{$@} . "\n";
-print qq{bb} . "\n";
+#print qq{$@} . "\n";
+#print qq{bb} . "\n";
+		#
+my $a = { 1 => { 2 => 3 } }; 
+my $b = delete $a->{1};
+
+print Dumper($b, $a) . "\n";
+
+#my @a = ( 1 .. 9 );
+#print $_ for @a;
